@@ -1,0 +1,10 @@
+/straight
+/eln-cache
+/site-lisp
+/projects
+/transient
+/auto-save-list
+.bookmarks.el
+company-statistics-cache.el
+custom.el
+recentf
