@@ -61,15 +61,17 @@
    '(completions-first-difference ((t (:background nil :weight normal)))))
 
 ;; font
-(defun p-regular-font ()
-  (interactive)
-  (set-face-attribute 'default nil :font "Hack" :height 110 :weight 'regular))
+(defvar p-font "Hack")
 
-(defun p-large-font ()
+(defun p-set-regular-font ()
   (interactive)
-  (set-face-attribute 'default nil :font "Hack" :height 160 :weight 'regular))
+  (set-face-attribute 'default nil :font p-font :height 110 :weight 'regular))
 
-(p-regular-font)
+(defun p-set-large-font ()
+  (interactive)
+  (set-face-attribute 'default nil :font p-font :height 160 :weight 'regular))
+
+(p-set-regular-font)
 
 ;; ;; rainbow-delimiters
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
