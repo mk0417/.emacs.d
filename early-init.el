@@ -9,13 +9,18 @@
   (add-hook 'emacs-startup-hook
             (lambda () (setq gc-cons-threshold normal-gc-cons-threshold))))
 
-;;(setq package-enable-at-startup nil)
-
 ;; inhibit resizing frame
-;;(setq frame-inhibit-implied-resize t)
+(setq frame-inhibit-implied-resize t)
 
 ;; use straight to manage packages
 (require 'init-straight)
 
+;; disable too bar and scroll bar
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+
+;; make titlebar color consistent with system
+(when (featurep 'ns)
+  (push '(ns-transparent-titlebar . t) default-frame-alist))
 
 ;;; early-init.el ends here

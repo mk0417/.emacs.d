@@ -29,6 +29,13 @@
 (setq-default recentf-max-saved-items 50
 	      recentf-exclude `("/Applications/Emacs.app/Contents/Resources/lisp/" "/tmp/" "/ssh:"))
 
+;; increase the amount of data which Emacs reads from the process
+(setq read-process-output-max (* 1024 1024))
+
+;; do not compact font caches during GC
+;; prefer speed at the cost of memory usage
+(setq inhibit-compacting-font-caches t)
+
 ;; disable bell sound
 (setq ring-bell-function 'ignore)
 

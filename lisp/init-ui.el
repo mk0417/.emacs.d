@@ -3,9 +3,6 @@
 ;; package
 (straight-use-package 'rainbow-delimiters)
 
-;; make titlebar color consistent with system
-(push '(ns-transparent-titlebar . t) default-frame-alist)
-
 ;; titlebar format
 (if (< emacs-major-version 28)
     (setq frame-title-format
@@ -16,10 +13,8 @@
   (setq frame-title-format nil
 	us-use-proxy-icon nil))
 
-;; minimal UI
-(tool-bar-mode -1)
+;; disable menu bar
 (menu-bar-mode -1)
-(set-scroll-bar-mode nil)
 
 ;; no startup message
 (setq inhibit-startup-screen t)
@@ -66,44 +61,17 @@
    '(completions-first-difference ((t (:background nil :weight normal)))))
 
 ;; font
-(setq prot-fonts-typeface-sets-alist
-      '((small . ( :fixed-pitch-family "Hack"
-		   :fixed-pitch-regular-weight regular
-		   :fixed-pitch-heavy-weight bold
-		   :fixed-pitch-height 75
-		   :fixed-pitch-line-spacing 1
-		   :variable-pitch-family "FiraGO"
-		   :variable-pitch-height 1.05
-		   :variable-pitch-regular-weight normal))
-	(regular . ( :fixed-pitch-family "Hack"
-		     :fixed-pitch-regular-weight regular
-		     :fixed-pitch-heavy-weight bold
-		     :fixed-pitch-height 105
-		     :fixed-pitch-line-spacing nil
-		     :variable-pitch-family "FiraGO"
-		     :variable-pitch-height 1.05
-		     :variable-pitch-regular-weight normal))
-	(large . ( :fixed-pitch-family "Hack"
-		   :fixed-pitch-regular-weight normal
-		   :fixed-pitch-heavy-weight bold
-		   :fixed-pitch-height 130
-		   :fixed-pitch-line-spacing nil
-		   :variable-pitch-family "FiraGO"
-		   :variable-pitch-height 1.05
-		   :variable-pitch-regular-weight normal))
-	(large-alt . ( :fixed-pitch-family "Iosevka Comfy"
-		       :fixed-pitch-regular-weight book
-		       :fixed-pitch-heavy-weight extrabold
-		       :fixed-pitch-height 155
-		       :fixed-pitch-line-spacing nil
-		       :variable-pitch-family "Noto Sans"
-		       :variable-pitch-height 1.0
-		       :variable-pitch-regular-weight normal))))
+(defun p-regular-font ()
+  (interactive)
+  (set-face-attribute 'default nil :font "Hack" :height 110 :weight 'regular))
 
-(autoload 'prot-fonts-fonts-per-monitor "prot-fonts")
-(prot-fonts-fonts-per-monitor)
+(defun p-large-font ()
+  (interactive)
+  (set-face-attribute 'default nil :font "Hack" :height 160 :weight 'regular))
 
-;; rainbow-delimiters
+(p-regular-font)
+
+;; ;; rainbow-delimiters
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 ;; show whitespace and delete on saving

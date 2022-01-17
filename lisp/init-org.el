@@ -334,14 +334,11 @@
 (setq org-tree-slide-deactivate-message
       (format "Presentation %s" (propertize "OFF" 'face 'error)))
 
-(setq prot-logos-org-presentation nil)
-(setq prot-logos-variable-pitch nil)
-(setq prot-logos-scroll-lock nil)
-(setq prot-logos-hidden-modeline t)
-
 (with-eval-after-load 'olivetti
   (dolist (m '(org-indent-mode visual-line-mode olivetti-mode text-scale-mode))
     (diminish m)))
+
+(autoload 'olivetti-set-width "olivetti")
 
 (add-hook 'org-tree-slide-play-hook (lambda ()
                                       (text-scale-increase 4)
@@ -350,8 +347,6 @@
 (add-hook 'org-tree-slide-stop-hook (lambda ()
                                       (text-scale-adjust 0)
                                       (olivetti-mode -1)))
-
-(autoload 'prot-logos-focus-mode "prot-logos")
 
 ;; keybindings
 (global-set-key (kbd "C-c a") 'org-agenda)
@@ -376,7 +371,6 @@
    "." '(org-toggle-narrow-to-subtree :which-key "narrow to substree")
    "," '(org-toggle-latex-fragment :which-key "latex preview")
    "i" '(org-toggle-inline-images :which-key "toggle inline image")
-   "f" '(prot-logos-focus-mode :which-key "focus mode")
    ";" '(org-tree-slide-mode :which-key "presentation mode")
    "n" '(org-tree-slide-move-next-tree :which-key "next slide")
    "p" '(org-tree-slide-move-previous-tree :which-key "previous slide")
