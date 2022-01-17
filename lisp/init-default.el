@@ -46,9 +46,6 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 
-;; do not ask to confirm
-;;(setq confirm-kill-processes nil)
-
 ;; don't create .# files
 (setq create-lockfiles nil)
 
@@ -76,6 +73,11 @@
     (shell-command (concat "trash -vF \"" path "\"" "| sed -e 's/^/Trashed: /'")
 		   nil
 		   "*Trash Error Buffer*")))
+
+;; auto-fill column
+(defun p-text-mode-auto-fill ()
+  (setq-local fill-column 100)
+  (auto-fill-mode))
 
 ;; which-key
 (setq-default which-key-idle-delay 0.8)

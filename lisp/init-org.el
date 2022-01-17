@@ -36,6 +36,7 @@
   (require 'org-tempo)
   (require 'ob)
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.8))
+  (add-hook 'org-mode-hook 'p-text-mode-auto-fill)
   (add-to-list 'org-structure-template-alist '("b" . "src shell"))
   (add-to-list 'org-structure-template-alist '("p" . "src elisp")))
 

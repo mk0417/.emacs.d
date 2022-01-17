@@ -25,6 +25,10 @@
 (setq usls-file-region-separator-heading-level 1)
 (setq usls-custom-header-function nil)
 
+;;auto fill
+(dolist (hook '(markdown-mode-hook text-mode-hook))
+  (add-hook hook 'p-text-mode-auto-fill))
+
 ;; keybindings
 (with-eval-after-load 'evil
   (general-create-definer p-space-leader-def
