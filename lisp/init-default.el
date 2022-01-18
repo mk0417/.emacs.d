@@ -77,7 +77,8 @@
 ;; auto-fill column
 (defun p-text-mode-auto-fill ()
   (setq-local fill-column 100)
-  (auto-fill-mode))
+  (auto-fill-mode)
+  (diminish 'auto-fill-function))
 
 ;; which-key
 (setq-default which-key-idle-delay 0.8)

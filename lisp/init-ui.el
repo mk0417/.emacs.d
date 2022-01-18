@@ -84,7 +84,6 @@
 
 (dolist (hook '(prog-mode-hook markdown-mode-hook org-mode-hook conf-mode-hook text-mode-hook))
   (add-hook hook 'p-enable-trailing-whitespace))
-(diminish 'auto-fill)
 
 (provide 'init-ui)
 ;;; init-ui.el ends here
