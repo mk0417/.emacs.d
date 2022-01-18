@@ -61,15 +61,18 @@
    '(completions-first-difference ((t (:background nil :weight normal)))))
 
 ;; font
-(defvar p-font "Hack")
+(defvar p-default-font "Hack")
+(defvar p-variable-pitch-font "FiraGo")
 
 (defun p-set-regular-font ()
   (interactive)
-  (set-face-attribute 'default nil :font p-font :height 110 :weight 'regular))
+  (set-face-attribute 'default nil :font p-default-font :height 110 :weight 'regular)
+  (set-face-attribute 'variable-pitch nil :font p-variable-pitch-font :height 1.05 :weight 'regular))
 
 (defun p-set-large-font ()
   (interactive)
-  (set-face-attribute 'default nil :font p-font :height 160 :weight 'regular))
+  (set-face-attribute 'default nil :font p-default-font :height 160 :weight 'regular)
+  (set-face-attribute 'variable-pitch nil :font p-variable-pitch-font :height 1.05 :weight 'regular))
 
 (p-set-regular-font)
 
