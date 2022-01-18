@@ -81,7 +81,10 @@
 (defun p-enable-trailing-whitespace ()
   (setq show-trailing-whitespace t)
   (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))
-(add-hook 'prog-mode-hook 'p-enable-trailing-whitespace)
+
+(dolist (hook '(prog-mode-hook markdown-mode-hook org-mode-hook conf-mode-hook text-mode-hook))
+  (add-hook hook 'p-enable-trailing-whitespace))
+(diminish 'auto-fill)
 
 (provide 'init-ui)
 ;;; init-ui.el ends here

@@ -24,9 +24,9 @@
   (setq exec-path (append p-env-path (list "." exec-directory))))
 
 ;; init
+(require 'init-default)
 (require 'init-ui)
 (require 'init-theme)
-(require 'init-default)
 (require 'init-evil)
 (require 'init-git)
 (require 'init-org)
