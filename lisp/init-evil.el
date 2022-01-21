@@ -145,6 +145,7 @@
     "t" '(:ignore t :which-key "toggle")
     "tf" '(p-set-regular-font :which-key "set regular font")
     "tF" '(p-set-large-font :which-key "set large font")
+    "te" '(p-set-extra-large-font :which-key "set extra large font")
     "tM" '(toggle-frame-fullscreen :which-key "fullscreen")
     "tp" '(variable-pitch-mode :which-key "pitch font mode")
     "tw" '(count-words :which-key "count words")

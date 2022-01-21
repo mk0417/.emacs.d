@@ -74,7 +74,12 @@
   (set-face-attribute 'default nil :font p-default-font :height 160 :weight 'regular)
   (set-face-attribute 'variable-pitch nil :font p-variable-pitch-font :height 1.05 :weight 'regular))
 
-(p-set-regular-font)
+(defun p-set-extra-large-font ()
+  (interactive)
+  (set-face-attribute 'default nil :font p-default-font :height 190 :weight 'regular)
+  (set-face-attribute 'variable-pitch nil :font p-variable-pitch-font :height 1.05 :weight 'regular))
+
+(add-hook 'after-init-hook 'p-set-regular-font)
 
 ;; ;; rainbow-delimiters
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
