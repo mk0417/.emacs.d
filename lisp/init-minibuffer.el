@@ -13,7 +13,7 @@
 (setq completion-styles '(orderless))
 
 ;; mct
-(setq completion-cycle-threshold 3)
+(setq completion-cycle-threshold 2)
 (setq mct-live-update-delay 0.5)
 (setq mct-completion-passlist '(embark-prefix-help-command Info-goto-node Info-index Info-menu vc-retrieve-tag))
 (mct-minibuffer-mode 1)

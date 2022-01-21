@@ -58,6 +58,8 @@
 ;; do not center when scrolling after last visible line
 (setq scroll-conservatively 101)
 
+(setq tab-always-indent 'complete)
+
 ;; trash
 (setq delete-by-moving-to-trash t)
 
