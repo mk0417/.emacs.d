@@ -133,7 +133,7 @@
 	"b" 'p-insert-pound))))
 
 ;; smartparens
-(smartparens-global-mode t)
+(add-hook 'after-init-hook 'smartparens-global-mode)
 
 (with-eval-after-load 'smartparens
   (diminish 'smartparens-mode)

@@ -11,7 +11,7 @@
 (when (eq system-type 'darwin)
   (setq dired-use-ls-dired nil))
 
-(diredfl-global-mode)
+(add-hook 'after-init-hook 'diredfl-global-mode)
 
 (with-eval-after-load 'dired
   (general-create-definer p-dired-leader-def

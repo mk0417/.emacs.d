@@ -14,7 +14,7 @@
 (setq evil-symbol-word-search t)
 (setq evil-respect-visual-line-mode t)
 (setq evil-want-C-u-scroll t)
-(evil-mode 1)
+(add-hook 'after-init-hook 'evil-mode)
 
 ;; change cursor type and color
 ;; https://github.com/hlissner/doom-emacs/issues/1848

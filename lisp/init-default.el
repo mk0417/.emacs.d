@@ -84,7 +84,7 @@
 
 ;; which-key
 (setq-default which-key-idle-delay 0.8)
-(which-key-mode 1)
+(add-hook 'after-init-hook 'which-key-mode)
 (diminish 'which-key-mode)
 
 ;; eldoc
