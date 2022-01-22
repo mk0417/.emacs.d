@@ -34,6 +34,7 @@
 (require 'init-function)
 (require 'init-minibuffer)
 (require 'init-company)
+;; (require 'init-completion)
 (require 'init-text)
 (require 'init-avy)
 (require 'init-programming)

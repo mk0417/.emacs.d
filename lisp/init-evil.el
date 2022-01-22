@@ -66,6 +66,12 @@
     (beginning-of-defun)
     (evilmi-select-items))
 
+  ;; I prefer to use C-n and C-p in many other places
+  (define-key evil-normal-state-map (kbd "C-n") nil)
+  (define-key evil-normal-state-map (kbd "C-p") nil)
+  (define-key evil-insert-state-map (kbd "C-n") nil)
+  (define-key evil-insert-state-map (kbd "C-p") nil)
+
   (define-key evil-normal-state-map (kbd ",.") 'p-select-function)
   (define-key evil-normal-state-map (kbd ";a") 'evil-beginning-of-line)
   (define-key evil-normal-state-map (kbd ";e") 'evil-end-of-line)
