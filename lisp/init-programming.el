@@ -5,6 +5,7 @@
 (straight-use-package 'ess)
 (straight-use-package '(ess-stata-mode :type git :host github :repo "emacs-ess/ess-stata-mode"))
 (straight-use-package 'julia-mode)
+(straight-use-package 'go-mode)
 
 ;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -95,6 +96,10 @@
     "pp"  '(project-switch-project :which-key "switch project")
     "pb"  '(project-switch-to-buffer :which-key "switch buffer in project")
     "pf"  '(project-find-file :which-key "project find file")))
+
+;; golang
+(autoload 'go-mode "go-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
 
 (provide 'init-programming)
 ;;; init-programming.el ends here
