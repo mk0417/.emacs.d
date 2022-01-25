@@ -63,8 +63,37 @@
 			   (buffer-substring (region-beginning) (region-end))
 			 (read-string "Search YouTube: "))))))
 
+(defun p-beginning-of-line-or-block ()
+  (interactive)
+  (let (($p (point)))
+    (if (or (equal (point) (line-beginning-position))
+            (equal last-command this-command ))
+        (if (re-search-backward "\n[\t\n ]*\n+" nil "NOERROR")
+            (progn
+              (skip-chars-backward "\n\t ")
+              (forward-char ))
+          (goto-char (point-min)))
+      (progn
+        (back-to-indentation)
+        (when (eq $p (point))
+          (beginning-of-line))))))
+
+(defun p-end-of-line-or-block ()
+  (interactive)
+  (if (or (equal (point) (line-end-position))
+          (equal last-command this-command ))
+      (progn
+        (re-search-forward "\n[\t\n ]*\n+" nil "NOERROR" ))
+    (end-of-line)))
+
 ;; keybindings
 (with-eval-after-load 'evil
+  (define-key evil-normal-state-map (kbd ";a") 'p-beginning-of-line-or-block)
+  (define-key evil-normal-state-map (kbd ";e") 'p-end-of-line-or-block)
+
+  (define-key evil-visual-state-map (kbd ";a") 'p-beginning-of-line-or-block)
+  (define-key evil-visual-state-map (kbd ";e") 'p-end-of-line-or-block)
+
   (general-create-definer p-space-leader-def
     :prefix "SPC"
     :states '(normal visual))

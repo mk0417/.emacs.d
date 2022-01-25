@@ -73,8 +73,6 @@
   (define-key evil-insert-state-map (kbd "C-p") nil)
 
   (define-key evil-normal-state-map (kbd ",.") 'p-select-function)
-  (define-key evil-normal-state-map (kbd ";a") 'evil-beginning-of-line)
-  (define-key evil-normal-state-map (kbd ";e") 'evil-end-of-line)
   (define-key evil-normal-state-map (kbd "gl") 'evil-shift-right)
   (define-key evil-normal-state-map (kbd "gh") 'evil-shift-left)
   (define-key evil-normal-state-map (kbd "gcc") 'comment-line)
@@ -82,8 +80,6 @@
   (define-key evil-normal-state-map (kbd ",a") 'beginning-of-defun)
   (define-key evil-normal-state-map (kbd ",e") 'end-of-defun)
 
-  (define-key evil-visual-state-map (kbd ";a") 'evil-beginning-of-line)
-  (define-key evil-visual-state-map (kbd ";e") 'evil-end-of-line)
   (define-key evil-visual-state-map (kbd "gcc") 'comment-line)
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
   (define-key evil-visual-state-map (kbd ",a") 'beginning-of-defun)
