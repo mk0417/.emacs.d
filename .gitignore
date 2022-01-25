@@ -4,6 +4,7 @@
 /projects
 /transient
 /auto-save-list
+/anaconda-mode
 .bookmarks.el
 company-statistics-cache.el
 custom.el

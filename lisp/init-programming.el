@@ -6,6 +6,8 @@
 (straight-use-package '(ess-stata-mode :type git :host github :repo "emacs-ess/ess-stata-mode"))
 (straight-use-package 'julia-mode)
 (straight-use-package 'go-mode)
+(straight-use-package 'anaconda-mode)
+(straight-use-package 'company-anaconda)
 
 ;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -33,7 +35,15 @@
 (with-eval-after-load 'python
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-guess-indent-offset nil)
-  (add-hook 'python-mode-hook 'display-fill-column-indicator-mode))
+  (add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
+  (add-hook 'python-mode-hook 'anaconda-mode)
+  (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+
+(with-eval-after-load 'anaconda-mode
+  (diminish 'anaconda-mode))
+
+(eval-after-load "company"
+ '(add-to-list 'company-backends 'company-anaconda))
 
 ;; R
 (with-eval-after-load 'ess
@@ -68,8 +78,15 @@
 (with-eval-after-load 'julia-mode
   (add-hook 'julia-mode-hook 'display-fill-column-indicator-mode))
 
+;; golang
+(autoload 'go-mode "go-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+
 ;; keybindings
 (with-eval-after-load 'evil
+  (define-key evil-normal-state-map (kbd "gcr") 'anaconda-mode-find-references)
+  (define-key evil-normal-state-map (kbd "gca") 'anaconda-mode-find-assignments)
+
   (general-create-definer p-jupyter-leader-def
     :prefix ";"
     :states '(normal visual)
@@ -96,10 +113,6 @@
     "pp"  '(project-switch-project :which-key "switch project")
     "pb"  '(project-switch-to-buffer :which-key "switch buffer in project")
     "pf"  '(project-find-file :which-key "project find file")))
-
-;; golang
-(autoload 'go-mode "go-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
 
 (provide 'init-programming)
 ;;; init-programming.el ends here
