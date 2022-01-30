@@ -8,6 +8,7 @@
 (straight-use-package 'embark-consult)
 (straight-use-package 'consult-dir)
 (straight-use-package '(mct :type git :host gitlab :repo "protesilaos/mct"))
+(straight-use-package 'wgrep)
 
 ;; orderless
 (setq completion-styles '(orderless))
@@ -125,6 +126,12 @@
 
 (advice-add #'embark-completing-read-prompter :around #'embark-hide-which-key-indicator)
 
+;; open folder in Finder
+;; https://book.emacs-china.org/#org404700d
+(defun p-open-directory-externally (file)
+  (interactive "fOpen externally: ")
+  (shell-command-to-string (encode-coding-string (format "open %s" (file-name-directory (expand-file-name file))) 'gbk)))
+
 (with-eval-after-load 'embark
   (setq embark-keymap-prompter-key ",")
   (setq embark-indicators '(embark-which-key-indicator embark-highlight-indicator embark-isearch-highlight-indicator))
@@ -134,7 +141,25 @@
   (setq embark-indicators
         '(embark-which-key-indicator
           embark-highlight-indicator
-          embark-isearch-highlight-indicator)))
+          embark-isearch-highlight-indicator))
+  (define-key embark-file-map (kbd "O") #'p-open-directory-externally))
+
+;; export to do editing
+;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-funcs.el
+(defun p-embark-export-write ()
+  (interactive)
+  (require 'embark)
+  (require 'wgrep)
+  (pcase-let ((`(,type . ,candidates)
+	       (run-hook-with-args-until-success 'embark-candidate-collectors)))
+    (pcase type
+      ('consult-grep (let ((embark-after-export-hook #'wgrep-change-to-wgrep-mode))
+		       (embark-export)))
+      ('file (let ((embark-after-export-hook #'wdired-change-to-wdired-mode))
+	       (embark-export)))
+      ('consult-location (let ((embark-after-export-hook #'occur-edit-mode))
+			   (embark-export)))
+      (x (user-error "embark category %S doesn't support writable export" x)))))
 
 ;; keystrokes feedback interval
 (setq echo-keystrokes 0.02)
@@ -142,6 +167,7 @@
 ;; keybindings
 (global-set-key (kbd "C-c C-d") 'consult-dir)
 (global-set-key (kbd "C-c C-j") 'consult-dir-jump-file)
+(global-set-key (kbd "C-c C-.") 'p-embark-export-write)
 
 (with-eval-after-load 'evil
   (general-create-definer p-space-leader-def
@@ -166,7 +192,9 @@
     "sf" '(p-consult-fd-global :which-key "consult-fd global files")
     "sF" '(p-consult-fd-local :which-key "consult-fd local files")
     "si" '(consult-imenu :which-key "consult imenu")
-    "sl" '(consult-outline :which-key "consult outline")))
+    "sl" '(consult-outline :which-key "consult outline")
+    "t"  '(:ignore t :which-key "toggle")
+    "to" '(p-open-directory-externally :which-key "open directory externally")))
 
 (provide 'init-minibuffer)
 ;;; init-minibuffer.el ends here

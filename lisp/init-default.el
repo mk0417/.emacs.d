@@ -96,6 +96,7 @@
 (global-set-key (kbd "C-c C-e") 'occur-edit-mode)
 (global-set-key (kbd "M-i") #'forward-paragraph)
 (global-set-key (kbd "M-o") #'backward-paragraph)
+(global-set-key (kbd "C-c r") #'query-replace-regexp)
 (define-key minibuffer-local-map (kbd "C-k") 'delete-backward-char)
 (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
 
