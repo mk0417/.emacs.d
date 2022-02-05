@@ -11,7 +11,7 @@
       modus-themes-mode-line '(moody)
       modus-themes-completions 'opinionated
       modus-themes-fringes 'intense
-      modus-themes-hl-line 'intense
+      modus-themes-hl-line '(intense)
       modus-themes-paren-match '(intense bold underline)
       modus-themes-region '(no-extend accented))
 
