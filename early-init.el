@@ -12,6 +12,9 @@
 ;; inhibit resizing frame
 (setq frame-inhibit-implied-resize t)
 
+;; no titlebar
+(add-to-list 'default-frame-alist '(undecorated . t))
+
 ;; use straight to manage packages
 (require 'init-straight)
 
