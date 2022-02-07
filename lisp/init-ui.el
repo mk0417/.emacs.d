@@ -61,7 +61,8 @@
    '(completions-first-difference ((t (:background nil :weight normal)))))
 
 ;; font
-(defvar p-default-font "Hack")
+;; (defvar p-default-font "Hack")
+(defvar p-default-font "Iosevka Comfy")
 (defvar p-variable-pitch-font "FiraGo")
 
 (defun p-set-regular-font ()
