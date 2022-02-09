@@ -43,8 +43,6 @@
 			consult-bookmark
 			consult-recent-file
 			consult-xref
-			consult--source-file
-			consult--source-project-file
 			consult--source-bookmark
 			p-consult-rg-at-point-project
 			p-consult-rg-current-dir
