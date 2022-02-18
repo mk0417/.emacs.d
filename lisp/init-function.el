@@ -30,6 +30,12 @@
   (let ((default-directory (file-truename (file-name-directory user-init-file))))
     (call-interactively 'find-file)))
 
+;; open my log file
+(defun p-find-file-in-log ()
+  (interactive)
+  (let ((default-directory (file-truename (file-name-directory (expand-file-name "~/Dropbox/peng_log/")))))
+    (call-interactively 'find-file)))
+
 ;; reveal file in Finder
 ;; https://github.com/xuchunyang/emacs.d/blob/master/lisp/chunyang-mac.el
 (defun p-reveal-file-in-finder (file)
@@ -100,6 +106,7 @@
   (p-space-leader-def
     "f"  '(:ignore t :which-key "file")
     "fp" '(p-find-file-in-config :which-key "find config file")
+    "fl" '(p-find-file-in-log :which-key "find log file")
     "fR" '(p-rename-this-file-and-buffer :which-key "rename file")
     "s"  '(:ignore t :which-key "search")
     "sg" '(p-google-search :which-key "search on google")
