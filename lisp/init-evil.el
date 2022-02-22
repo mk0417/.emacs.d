@@ -48,6 +48,10 @@
 ;; winum
 (add-hook 'after-init-hook 'winum-mode)
 
+;; set evil normal state for grep mode
+(dolist (mode '(grep-mode occur-mode occur-edit-mode))
+  (evil-set-initial-state mode 'normal))
+
 ;; keybindings
 (with-eval-after-load 'evil
   ;; ex-evil replace buffer
