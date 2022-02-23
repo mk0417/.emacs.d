@@ -20,8 +20,10 @@
      ((t (:background "#69adc6"))))))
 
 ;; cape
-(dolist (c '(cape-file cape-keyword cape-dabbrev cape-line cape-symbol cape-tex cape-abbrev cape-dict cape-ispell))
-  (add-to-list 'completion-at-point-functions c))
+(add-to-list 'completion-at-point-functions #'cape-file)
+(add-to-list 'completion-at-point-functions #'cape-keyword)
+(add-to-list 'completion-at-point-functions #'cape-dabbrev)
+(add-to-list 'completion-at-point-functions #'cape-tex)
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
