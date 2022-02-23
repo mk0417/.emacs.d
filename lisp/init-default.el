@@ -4,26 +4,6 @@
 (straight-use-package 'which-key)
 (straight-use-package 'diminish)
 
-;; initial scratch buffer message
-(setq initial-scratch-message
-      (concat ";; Hello Peng, welcome to EMACS and happy hacking\n"
-	      (format ";; Emacs version: %s\n" (car (split-string emacs-version)))))
-
-;; startup time
-(add-hook 'emacs-startup-hook
-	  (lambda ()
-	    (message "*** Emacs loaded in %s."
-		     (format "%.2f seconds"
-			     (float-time
-			      (time-subtract after-init-time before-init-time))))))
-
-;; https://www.masteringemacs.org/article/speed-up-emacs-libjansson-native-elisp-compilation
-(if (>= emacs-major-version 28)
-    (setq native-comp-async-jobs-number 6
-	  native-comp-async-report-warnings-errors nil
-	  compilation-scroll-output t
-	  load-prefer-newer t))
-
 ;; recentf-mode
 (add-hook 'after-init-hook 'recentf-mode)
 (setq-default recentf-max-saved-items 50
