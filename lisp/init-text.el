@@ -3,6 +3,7 @@
 ;; package
 (straight-use-package 'key-chord)
 (straight-use-package 'smartparens)
+(straight-use-package 'cycle-at-point)
 
 ;; select a block
 (defun p-select-block ()
@@ -178,6 +179,7 @@
   (define-key evil-normal-state-map (kbd "goc") 'p-clear-line)
   (define-key evil-normal-state-map (kbd "god") 'kill-sexp)
   (define-key evil-normal-state-map (kbd "goi") 'p-kill-sexp-and-insert)
+  (define-key evil-normal-state-map (kbd ";c") 'cycle-at-point)
 
   (define-key evil-visual-state-map (kbd ";u") 'p-beginning-of-block)
   (define-key evil-visual-state-map (kbd ";l") 'p-end-of-block)
