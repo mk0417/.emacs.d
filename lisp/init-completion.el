@@ -17,12 +17,12 @@
 (with-eval-after-load 'corfu
   (custom-set-faces
    '(corfu-border
-     ((t (:background "#69adc6"))))))
+     ((t (:background "#2fafff"))))))
 
 ;; cape
-(add-to-list 'completion-at-point-functions #'cape-file)
-(add-to-list 'completion-at-point-functions #'cape-keyword)
 (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+(add-to-list 'completion-at-point-functions #'cape-keyword)
+(add-to-list 'completion-at-point-functions #'cape-file)
 (add-to-list 'completion-at-point-functions #'cape-tex)
 
 (provide 'init-completion)
