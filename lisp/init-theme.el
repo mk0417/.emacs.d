@@ -13,7 +13,7 @@
 (setq modus-themes-hl-line '(intense))
 (setq modus-themes-paren-match '(intense bold underline))
 (setq modus-themes-region '(no-extend accented))
-(setq modus-themes-completions '((t background intense accented)))
+(setq modus-themes-completions '((t extrabold background intense accented)))
 
 (setq modus-themes-org-agenda
       '((header-block . (variable-pitch scale-title))
