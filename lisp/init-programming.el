@@ -6,7 +6,7 @@
 (straight-use-package '(ess-stata-mode :type git :host github :repo "emacs-ess/ess-stata-mode"))
 (straight-use-package 'julia-mode)
 (straight-use-package 'go-mode)
-
+(straight-use-package '(consult-project-extra :type git :host github :repo "Qkessler/consult-project-extra"))
 
 ;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -97,10 +97,11 @@
     :prefix "SPC"
     :states '(normal))
   (p-space-leader-def
-    "p"   '(:ignore t :which-key "projects and packages")
-    "pp"  '(project-switch-project :which-key "switch project")
-    "pb"  '(project-switch-to-buffer :which-key "switch buffer in project")
-    "pf"  '(project-find-file :which-key "project find file")))
+    "p"  '(:ignore t :which-key "projects and packages")
+    "pp" '(project-switch-project :which-key "switch project")
+    "pb" '(project-switch-to-buffer :which-key "switch buffer in project")
+    "pf" '(project-find-file :which-key "project find file")
+    "pc" '(consult-project-extra-find :which-key "consult project find")))
 
 (provide 'init-programming)
 ;;; init-programming.el ends here
