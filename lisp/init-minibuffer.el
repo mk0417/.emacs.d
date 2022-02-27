@@ -13,9 +13,17 @@
 ;; orderless
 (setq completion-styles '(orderless))
 
+(let ((map minibuffer-local-completion-map))
+  (define-key map (kbd "SPC") nil)
+  (define-key map (kbd "?") nil))
+
 ;; mct
 (setq completion-cycle-threshold 2)
 (setq mct-live-update-delay 0.5)
+
+(setq mct-live-completion t)
+(setq mct-persist-dynamic-completion t)
+
 (setq mct-completion-passlist '(embark-prefix-help-command Info-goto-node Info-index Info-menu vc-retrieve-tag))
 (mct-minibuffer-mode 1)
 
