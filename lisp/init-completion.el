@@ -3,6 +3,7 @@
 ;; package
 (straight-use-package 'corfu)
 (straight-use-package 'cape)
+(straight-use-package '(corfu-doc :type git :host github :repo "galeo/corfu-doc"))
 
 ;; corfu
 (setq corfu-cycle t)
@@ -24,6 +25,14 @@
 (add-to-list 'completion-at-point-functions #'cape-keyword)
 (add-to-list 'completion-at-point-functions #'cape-file)
 (add-to-list 'completion-at-point-functions #'cape-tex)
+
+;; corfu-doc
+(add-hook 'corfu-mode-hook #'corfu-doc-mode)
+
+(with-eval-after-load 'corfu
+(define-key corfu-map (kbd "M-j") #'corfu-doc-scroll-down)
+(define-key corfu-map (kbd "M-k") #'corfu-doc-scroll-up)
+(define-key corfu-map (kbd "M-d") #'corfu-doc-toggle))
 
 (provide 'init-completion)
 ;;; init-completion.el ends here
