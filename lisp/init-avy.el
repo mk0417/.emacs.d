@@ -48,6 +48,8 @@
   (define-key evil-normal-state-map (kbd "ft") 'avy-goto-char-timer)
   (define-key evil-normal-state-map (kbd "fw") 'avy-goto-word-0)
   (define-key evil-normal-state-map (kbd "fl") 'avy-goto-line)
+  (define-key evil-normal-state-map (kbd "fr") 'avy-copy-region)
+  (define-key evil-normal-state-map (kbd "fc") 'avy-copy-line)
   (define-key evil-normal-state-map (kbd "f.") 'p-avy-goto-word-current-line)
   (define-key evil-normal-state-map (kbd "f,") 'p-avy-goto-word-block)
   (define-key evil-normal-state-map (kbd "fK") 'p-avy-goto-bracket)
