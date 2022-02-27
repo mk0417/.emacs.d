@@ -56,6 +56,7 @@
 (require 'init-avy)
 (require 'init-programming)
 (require 'init-note)
+(require 'init-template)
 
 ;; Make GC pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
