@@ -7,7 +7,7 @@
 (straight-use-package 'embark)
 (straight-use-package 'embark-consult)
 (straight-use-package 'consult-dir)
-(straight-use-package '(mct :type git :host gitlab :repo "protesilaos/mct"))
+(straight-use-package '(mct :type git :host gitlab :repo "protesilaos/mct" :files ("*.el" "extensions/*.el")))
 (straight-use-package 'wgrep)
 
 ;; orderless
@@ -18,14 +18,27 @@
   (define-key map (kbd "?") nil))
 
 ;; mct
+;; https://gitlab.com/protesilaos/mct
 (setq completion-cycle-threshold 2)
 (setq mct-live-update-delay 0.5)
-
 (setq mct-live-completion t)
 (setq mct-persist-dynamic-completion t)
-
 (setq mct-completion-passlist '(embark-prefix-help-command Info-goto-node Info-index Info-menu vc-retrieve-tag))
+
 (mct-minibuffer-mode 1)
+
+(dolist (map (list mct-minibuffer-local-completion-map
+		   mct-minibuffer-completion-list-map))
+  (define-key map (kbd "C-.") #'mct-avy-choose-completion-exit))
+
+(add-hook 'completion-list-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
+
+(defun corfu-in-minibuffer ()
+  "Enable Corfu in the minibuffer only if Mct/Vertico are not active."
+  (unless  (mct--minibuffer-p)
+    (corfu-mode 1)))
+
+(add-hook 'minibuffer-setup-hook #'corfu-in-minibuffer 1)
 
 ;; marginalia
 (setq marginalia-max-relative-age 0)
