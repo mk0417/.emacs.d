@@ -50,13 +50,5 @@ manual."
 			   (disable-theme 'modus-vivendi)))
     (_ (error "No Modus theme is loaded; evaluate `modus-themes-load-themes' first"))))
 
-(with-eval-after-load 'evil
-  (general-create-definer p-space-leader-def
-    :prefix "SPC"
-    :states '(normal))
-  (p-space-leader-def
-    "t" '(:ignore t :which-key "toggle")
-    "tt" '(my-modus-themes-toggle :which-key "toggle modus theme")))
-
 (provide 'init-theme)
 ;;;;; init-theme.el ends here
