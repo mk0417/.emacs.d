@@ -78,7 +78,7 @@
   (general-create-definer p-jupyter-leader-def
     :prefix ";"
     :states '(normal visual)
-    :keymaps '(python-mode-map julia-mode-map))
+    :keymaps '(python-mode-map julia-mode-map ess-r-mode-map))
   (p-jupyter-leader-def
     "j"  '(:ignore t :which-key "jupyter")
     "jj" 'jupyter-run-repl
