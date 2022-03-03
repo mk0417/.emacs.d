@@ -35,5 +35,28 @@
 (modus-themes-load-themes)
 (modus-themes-load-vivendi)
 
+;; Toggle themes
+;; https://protesilaos.com/emacs/modus-themes#h:b40aca50-a3b2-4c43-be58-2c26fcd14237
+(defun my-modus-themes-toggle ()
+  "Toggle between `modus-operandi' and `modus-vivendi' themes.
+This uses `enable-theme' instead of the standard method of
+`load-theme'.  The technicalities are covered in the Modus themes
+manual."
+  (interactive)
+  (pcase (modus-themes--current-theme)
+    ('modus-operandi (progn (enable-theme 'modus-vivendi)
+			    (disable-theme 'modus-operandi)))
+    ('modus-vivendi (progn (enable-theme 'modus-operandi)
+			   (disable-theme 'modus-vivendi)))
+    (_ (error "No Modus theme is loaded; evaluate `modus-themes-load-themes' first"))))
+
+(with-eval-after-load 'evil
+  (general-create-definer p-space-leader-def
+    :prefix "SPC"
+    :states '(normal))
+  (p-space-leader-def
+    "t" '(:ignore t :which-key "toggle")
+    "tt" '(my-modus-themes-toggle :which-key "toggle modus theme")))
+
 (provide 'init-theme)
 ;;; init-theme.el ends here
