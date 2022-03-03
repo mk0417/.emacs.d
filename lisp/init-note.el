@@ -1,11 +1,12 @@
 ;;; init-note.el --- Note -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'markdown-mode)
 (straight-use-package 'auctex)
 (straight-use-package 'latex-preview-pane)
 (straight-use-package 'evil-tex)
 (straight-use-package '(usls :type git :host gitlab :repo "protesilaos/usls"))
+(straight-use-package '(logos :type git :host gitlab :repo "protesilaos/logos"))
 
 ;; markdown
 (add-to-list 'auto-mode-alist '("\\.md\\.html\\'"))
@@ -25,6 +26,38 @@
 (setq usls-file-region-separator-heading-level 1)
 (setq usls-custom-header-function nil)
 
+;; logos
+;; https://gitlab.com/protesilaos/logos
+(setq logos-outlines-are-pages t)
+(setq logos-outline-regexp-alist
+      '((emacs-lisp-mode . "^;;;+ ")
+        (org-mode . "^\\*+ +")
+        (t . ,(or outline-regexp logos--page-delimiter))))
+
+(setq-default logos-hide-mode-line nil)
+(setq-default logos-scroll-lock nil)
+(setq-default logos-variable-pitch nil)
+
+(defun my-logos--olivetti-mode ()
+  (if (or (bound-and-true-p olivetti-mode)
+	  (null (logos--focus-p)))
+      (olivetti-mode -1)
+    (olivetti-mode 1)))
+
+(add-hook 'logos-focus-mode-hook #'my-logos--olivetti-mode)
+
+(defun my-logos--reveal ()
+  (cond
+   ((and (eq major-mode 'org-mode)
+	 (org-at-heading-p))
+    (org-show-entry)
+    (org-reveal t))
+   ((or (bound-and-true-p prot-outline-minor-mode)
+	(bound-and-true-p outline-minor-mode))
+    (outline-show-entry))))
+
+(add-hook 'logos-page-motion-hook #'my-logos--reveal)
+
 ;;auto fill
 (dolist (hook '(markdown-mode-hook text-mode-hook))
   (add-hook hook 'p-text-mode-auto-fill))
@@ -41,7 +74,12 @@
     "nN" '(usls-append-region-buffer-or-file :which-key "usls append")
     "nd" '(usls-dired :which-key "usls dired")
     "ni" '(usls-id-insert :which-key "usls insert id")
-    "nl" '(usls-follow-link :which-key "usls follow link"))
+    "nk" '(usls-follow-link :which-key "usls follow link")
+    "nl"  '(:ignore t :which-key "logos")
+    "nln" '(logos-narrow-dwim :which-key "narrow")
+    "nlf" '(logos-forward-page-dwim :which-key "forward page")
+    "nlb" '(logos-backward-page-dwim :which-key "backward page")
+    "nll" '(logos-focus-mode :which-key "focus mode"))
 
   (general-create-definer p-latex-leader-def
     :prefix ";"
