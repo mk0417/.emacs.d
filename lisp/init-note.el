@@ -1,4 +1,4 @@
-;;; init-note.el --- Note -*- lexical-binding: t -*-
+;;;;; init-note.el --- Note -*- lexical-binding: t -*-
 
 ;;; package
 (straight-use-package 'markdown-mode)
@@ -8,16 +8,16 @@
 (straight-use-package '(usls :type git :host gitlab :repo "protesilaos/usls"))
 (straight-use-package '(logos :type git :host gitlab :repo "protesilaos/logos"))
 
-;; markdown
+;;; markdown
 (add-to-list 'auto-mode-alist '("\\.md\\.html\\'"))
 (setq markdown-italic-underscore t)
 (setq markdown-asymmetric-header t)
 (setq markdown-fontify-code-blocks-natively t)
 
-;; latex
+;;; latex
 (add-hook 'LaTeX-mode-hook #'evil-tex-mode)
 
-;; usls
+;;; usls
 (setq usls-directory (expand-file-name "~/Dropbox/notes/"))
 (setq usls-known-categories '("research" "work" "misc"))
 (setq usls-file-type-extension ".txt")
@@ -26,7 +26,7 @@
 (setq usls-file-region-separator-heading-level 1)
 (setq usls-custom-header-function nil)
 
-;; logos
+;;; logos
 ;; https://gitlab.com/protesilaos/logos
 (setq logos-outlines-are-pages t)
 (setq logos-outline-regexp-alist
@@ -58,11 +58,11 @@
 
 (add-hook 'logos-page-motion-hook #'my-logos--reveal)
 
-;;auto fill
+;;; auto fill
 (dolist (hook '(markdown-mode-hook text-mode-hook))
   (add-hook hook 'p-text-mode-auto-fill))
 
-;; keybindings
+;;; keybindings
 (with-eval-after-load 'evil
   (general-create-definer p-space-leader-def
     :prefix "SPC"
@@ -90,4 +90,4 @@
    "pp" '(latex-preview-pane-mode :which-key "toggle latex preview pane")))
 
 (provide 'init-note)
-;;; init-note.el ends here
+;;;;; init-note.el ends here

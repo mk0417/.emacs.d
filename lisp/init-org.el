@@ -1,13 +1,13 @@
-;;; init-org.el --- Org-mode -*- lexical-binding: t -*-
+;;;;; init-org.el --- Org-mode -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'org)
 (straight-use-package 'org-superstar)
 (straight-use-package 'org-tree-slide)
 (straight-use-package 'olivetti)
 (straight-use-package '(org-appear :type git :host github :repo "awth13/org-appear"))
 
-;; org
+;;; org
 (setq org-directory "~/Dropbox/org"
       org-agenda-files '("~/Dropbox/org/todo.org")
       org-log-done t
@@ -29,7 +29,7 @@
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WORKING(w)" "|" "DONE(d)" "CANCEL(c)")))
 
-;; fix void function issue
+;;; fix void function issue
 (autoload 'org-element-keyword-parser "org")
 
 (with-eval-after-load 'org
@@ -40,7 +40,7 @@
   (add-to-list 'org-structure-template-alist '("b" . "src shell"))
   (add-to-list 'org-structure-template-alist '("p" . "src elisp")))
 
-;; org-superstar
+;;; org-superstar
 (add-hook 'org-mode-hook 'org-superstar-mode)
 (setq org-superstar-remove-leading-stars t)
 (setq org-superstar-headline-bullets-list '("◉" "▷" "○"))
@@ -49,7 +49,7 @@
 	(?* . ?➤)
 	(?- . ?–)))
 
-;; org appear
+;;; org appear
 ;; https://github.com/willbchang/ward-emacs/blob/master/config.org#org-appear
 (setq org-appear-delay 0)
 (setq org-appear-autolinks t)
@@ -61,7 +61,7 @@
 (add-hook 'evil-normal-state-entry-hook (lambda() (setq org-appear-delay 1)))
 (add-hook 'org-mode-hook 'org-appear-mode)
 
-;; capturing
+;;; capturing
 (setq org-capture-templates
       `(("t" "todo" entry (file ,(concat org-directory "/todo.org"))
 	 "* TODO %^{Title}\nSCHEDULED: %^t\n")
@@ -70,19 +70,19 @@
 	("i" "idea" entry (file ,(concat org-directory "/idea.org"))
 	 "* %^{Title}\n%U\n")))
 
-;; re-align tags when window shape changes
+;;; re-align tags when window shape changes
 (with-eval-after-load 'org-agenda
   (add-hook 'org-agenda-mode-hook
             (lambda () (add-hook 'window-configuration-change-hook 'org-agenda-align-tags nil t))))
 
-;; ignore heading with no_heading tag when exporting
+;;; ignore heading with no_heading tag when exporting
 ;; https://emacs.stackexchange.com/questions/9492/is-it-possible-to-export-content-of-subtrees-without-their-headings/17677
 (defun p-org-export-no-heading (backend)
   (org-map-entries (lambda () (delete-region (point-at-bol) (point-at-eol)))
                    "no_heading"))
 (add-hook 'org-export-before-processing-hook 'p-org-export-no-heading)
 
-;; latex
+;;; latex
 ;; https://github.com/GeneKao/orgmode-latex-templates
 (setq org-latex-pdf-process
       '("latexmk -pdflatex='pdflatex -interaction nonstopmode' -pdf -bibtex -f %f"))
@@ -171,7 +171,7 @@
                                   ("\\section{%s}" . "\\section*{%s}")
                                   ("\\subsection{%s}" . "\\subsection*{%s}")))
 
-;; https://github.com/mclear-tools/dotemacs/blob/master/setup-config/setup-teaching.el
+;;; https://github.com/mclear-tools/dotemacs/blob/master/setup-config/setup-teaching.el
 (setq org-latex-classes '(("beamer" "\\documentclass[presentation]{beamer}"
                            ("\\section{%s}" . "\\section*{%s}")
                            ("\\subsection{%s}" . "\\subsection*{%s}")
@@ -244,7 +244,7 @@
       (goto-char (point-min))
       (org-beamer-export-to-pdf nil t nil nil '(:latex-class "beamer-presentation")))))
 
-;; https://kitchingroup.cheme.cmu.edu/blog/2013/12/08/Selectively-exporting-headlines-in-org-mode/
+;;; https://kitchingroup.cheme.cmu.edu/blog/2013/12/08/Selectively-exporting-headlines-in-org-mode/
 (defun cpm/org-export--file-beamer-presentation ()
   (interactive)
   (let ((org-export-exclude-tags '("handout")))
@@ -252,7 +252,7 @@
       (goto-char (point-min))
       (org-beamer-export-to-pdf t nil nil nil '(:latex-class "beamer-presentation")))))
 
-;;;; Org export to slides w/o notes
+;;; Org export to slides w/o notes
 (defun cpm/org-export-beamer-no-notes ()
   "Export org subtree slide content to useful custom style handout (PDF) form"
   (interactive)
@@ -268,7 +268,7 @@
       (goto-char (point-min))
       (org-beamer-export-to-pdf t nil nil nil '(:latex-class "beamer-slides-no-notes")))))
 
-;; Handouts
+;;; Handouts
 (defun cpm/org-export-beamer-handout ()
   "Export subtree content to PDF handout. Handout uses a distinctive quote style."
   (interactive)
@@ -289,8 +289,7 @@
       (goto-char (point-min))
       (org-latex-export-to-pdf t nil nil nil '(:latex-class "beamer-handout")))))
 
-;; Notes
-;; Org to PDF Notes
+;;; Org to PDF Notes
 (defun cpm/org-export-pdf-notes ()
   "Export subtree of notes to PDF file. Note uses a distinctive quote style."
   (interactive)
@@ -314,7 +313,7 @@
   (interactive)
   (async-shell-command-no-window "trash *.tex *.bbl && mv *.pdf static/materials/handouts"))
 
-;; focus mode and presentation mode
+;;; focus mode and presentation mode
 (setq olivetti-body-width 0.7)
 (setq olivetti-minimum-body-width 80)
 (setq olivetti-recall-visual-line-mode-entry-state t)
@@ -349,7 +348,7 @@
                                       (text-scale-adjust 0)
                                       (olivetti-mode -1)))
 
-;; keybindings
+;;; keybindings
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 (with-eval-after-load 'org
@@ -384,4 +383,4 @@
    "tc" '(org-table-convert-region :which-key "convert region to table")))
 
 (provide 'init-org)
-;;; init-org.el ends here
+;;;;; init-org.el ends here

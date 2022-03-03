@@ -1,9 +1,9 @@
-;;; init-theme.el --- Defaults for themes -*- lexical-binding: t -*-
+;;;;; init-theme.el --- Defaults for themes -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'modus-themes)
 
-;; modus
+;;; modus
 (setq modus-themes-bold-constructs t)
 (setq modus-themes-italic-constructs t)
 (setq modus-themes-links '(faint bold background))
@@ -35,7 +35,7 @@
 (modus-themes-load-themes)
 (modus-themes-load-vivendi)
 
-;; Toggle themes
+;;; Toggle themes
 ;; https://protesilaos.com/emacs/modus-themes#h:b40aca50-a3b2-4c43-be58-2c26fcd14237
 (defun my-modus-themes-toggle ()
   "Toggle between `modus-operandi' and `modus-vivendi' themes.
@@ -59,4 +59,4 @@ manual."
     "tt" '(my-modus-themes-toggle :which-key "toggle modus theme")))
 
 (provide 'init-theme)
-;;; init-theme.el ends here
+;;;;; init-theme.el ends here

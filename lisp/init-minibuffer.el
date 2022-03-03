@@ -1,6 +1,6 @@
-;;; init-minibuffer.el --- Config for minibuffer completion -*- lexical-binding: t; -*-
+;;;;; init-minibuffer.el --- Config for minibuffer completion -*- lexical-binding: t; -*-
 
-;; package
+;;; package
 (straight-use-package 'marginalia)
 (straight-use-package 'orderless)
 (straight-use-package 'consult)
@@ -10,14 +10,14 @@
 (straight-use-package '(mct :type git :host gitlab :repo "protesilaos/mct" :files ("*.el" "extensions/*.el")))
 (straight-use-package 'wgrep)
 
-;; orderless
+;;; orderless
 (setq completion-styles '(orderless))
 
 (let ((map minibuffer-local-completion-map))
   (define-key map (kbd "SPC") nil)
   (define-key map (kbd "?") nil))
 
-;; mct
+;;; mct
 ;; https://gitlab.com/protesilaos/mct
 (setq completion-cycle-threshold 2)
 (setq mct-live-update-delay 0.5)
@@ -40,11 +40,11 @@
 
 (add-hook 'minibuffer-setup-hook #'corfu-in-minibuffer 1)
 
-;; marginalia
+;;; marginalia
 (setq marginalia-max-relative-age 0)
 (add-hook 'after-init-hook 'marginalia-mode)
 
-;; consult
+;;; consult
 (with-eval-after-load 'consult
   (setq consult-line-numbers-widen t
 	consult-async-min-input 2
@@ -110,14 +110,14 @@
   (interactive "P")
   (consult-find (read-directory-name "consult-find directory:") initial))
 
-;; embark
+;;; embark
 (autoload 'embark-act "embark")
 (autoload 'embark-export "embark")
 
 (global-set-key (kbd "C-,") 'embark-act)
 (global-set-key (kbd "C-c C-o") 'embark-export)
 
-;; embark action integration with which-key
+;;; embark action integration with which-key
 (defun embark-which-key-indicator ()
   (lambda (&optional keymap targets prefix)
     (if (null keymap)
@@ -145,7 +145,7 @@
 
 (advice-add #'embark-completing-read-prompter :around #'embark-hide-which-key-indicator)
 
-;; open folder in Finder
+;;; open folder in Finder
 ;; https://book.emacs-china.org/#org404700d
 (defun p-open-directory-externally (file)
   (interactive "fOpen externally: ")
@@ -163,7 +163,7 @@
           embark-isearch-highlight-indicator))
   (define-key embark-file-map (kbd "O") #'p-open-directory-externally))
 
-;; export to do editing
+;;; export to do editing
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-funcs.el
 (defun p-embark-export-write ()
   (interactive)
@@ -180,10 +180,10 @@
 			   (embark-export)))
       (x (user-error "embark category %S doesn't support writable export" x)))))
 
-;; keystrokes feedback interval
+;;; keystrokes feedback interval
 (setq echo-keystrokes 0.02)
 
-;; keybindings
+;;; keybindings
 (global-set-key (kbd "C-c C-d") 'consult-dir)
 (global-set-key (kbd "C-c C-j") 'consult-dir-jump-file)
 (global-set-key (kbd "C-c C-.") 'p-embark-export-write)
@@ -216,4 +216,4 @@
     "to" '(p-open-directory-externally :which-key "open directory externally")))
 
 (provide 'init-minibuffer)
-;;; init-minibuffer.el ends here
+;;;;; init-minibuffer.el ends here

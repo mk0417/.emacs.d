@@ -1,14 +1,14 @@
-;;; init.el --- Load configuration -*- lexical-binding: t -*-
+;;;;; init.el --- Load configuration -*- lexical-binding: t -*-
 
-;; produce backtraces when errors occur: can be helpful to diagnose startup issues
+;;; produce backtraces when errors occur: can be helpful to diagnose startup issues
 (setq debug-on-error t)
 
-;; initial scratch buffer message
+;;; initial scratch buffer message
 (setq initial-scratch-message
       (concat ";; Hello Peng, welcome to EMACS and happy hacking\n"
 	      (format ";; Emacs version: %s\n" (car (split-string emacs-version)))))
 
-;; startup time
+;;; startup time
 (add-hook 'emacs-startup-hook
 	  (lambda ()
 	    (message "*** Emacs loaded in %s."
@@ -18,7 +18,7 @@
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
-;; inherit variables from .zshrc
+;;; inherit variables from .zshrc
 ;; http://xahlee.info/emacs/emacs/emacs_env_var_paths.html
 (let ((p-env-path
        '("/Users/ml/anaconda3/bin"
@@ -38,7 +38,7 @@
   (setenv "PATH" (mapconcat 'identity p-env-path ":") )
   (setq exec-path (append p-env-path (list "." exec-directory))))
 
-;; init
+;;; init
 ;; use straight to manage packages
 (require 'init-straight)
 (require 'init-default)
@@ -58,5 +58,7 @@
 (require 'init-note)
 (require 'init-template)
 
-;; Make GC pauses faster by decreasing the threshold.
+;;; Make GC pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+
+;;;;; init.el ends here

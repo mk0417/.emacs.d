@@ -1,6 +1,6 @@
-;;; init-function.el --- Useful functions -*- lexical-binding: t -*-
+;;;;; init-function.el --- Useful functions -*- lexical-binding: t -*-
 
-;; list all installed package
+;;; list all installed package
 ;; https://github.com/raxod502/straight.el/issues/262
 (defun p-list-installed-packages ()
   (interactive)
@@ -9,7 +9,7 @@
 	 (list (cons (straight--repos-dir) 1))))
     (magit-list-repositories)))
 
-;; rename the current file
+;;; rename the current file
 ;; https://github.com/purcell/emacs.d/blob/master/lisp/init-utils.el
 (defun p-rename-this-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
@@ -24,19 +24,19 @@
       (set-visited-file-name new-name)
       (rename-buffer new-name))))
 
-;; find file in my config
+;;; find file in my config
 (defun p-find-file-in-config ()
   (interactive)
   (let ((default-directory (file-truename (file-name-directory user-init-file))))
     (call-interactively 'find-file)))
 
-;; open my log file
+;;; open my log file
 (defun p-find-file-in-log ()
   (interactive)
   (let ((default-directory (file-truename (file-name-directory (expand-file-name "~/Dropbox/peng_log/")))))
     (call-interactively 'find-file)))
 
-;; reveal file in Finder
+;;; reveal file in Finder
 ;; https://github.com/xuchunyang/emacs.d/blob/master/lisp/chunyang-mac.el
 (defun p-reveal-file-in-finder (file)
   (interactive (list (or (buffer-file-name) ".")))
@@ -47,7 +47,7 @@
 		   "end tell")
 	   (expand-file-name file))))
 
-;; google search
+;;; google search
 ;; https://emacsredux.com/blog/2013/03/28/google/
 (defun p-google-search ()
   (interactive)
@@ -58,7 +58,7 @@
 			   (buffer-substring (region-beginning) (region-end))
 			 (read-string "Google: "))))))
 
-;; youtube search
+;;; youtube search
 ;; https://emacsredux.com/blog/2013/08/26/search-youtube/
 (defun p-youtube-search ()
   (interactive)
@@ -92,7 +92,7 @@
         (re-search-forward "\n[\t\n ]*\n+" nil "NOERROR" ))
     (end-of-line)))
 
-;; keybindings
+;;; keybindings
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd ";a") 'p-beginning-of-line-or-block)
   (define-key evil-normal-state-map (kbd ";e") 'p-end-of-line-or-block)
@@ -117,4 +117,4 @@
     "pS" '(p-list-installed-packages :which-key "list installed packages")))
 
 (provide 'init-function)
-;;; init-function.el ends here
+;;;;; init-function.el ends here

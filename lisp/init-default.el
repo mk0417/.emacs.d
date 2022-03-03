@@ -1,49 +1,49 @@
-;;; init-default.el --- Better default -*- lexical-binding: t -*-
+;;;;; init-default.el --- Better default -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'which-key)
 (straight-use-package 'diminish)
 
-;; recentf-mode
+;;; recentf-mode
 (add-hook 'after-init-hook 'recentf-mode)
 (setq-default recentf-max-saved-items 50
 	      recentf-exclude `("/Applications/Emacs.app/Contents/Resources/lisp/" "/tmp/" "/ssh:"))
 
-;; increase the amount of data which Emacs reads from the process
+;;; increase the amount of data which Emacs reads from the process
 (setq read-process-output-max (* 1024 1024))
 
-;; do not compact font caches during GC
+;;; do not compact font caches during GC
 ;; prefer speed at the cost of memory usage
 (setq inhibit-compacting-font-caches t)
 
-;; disable bell sound
+;;; disable bell sound
 (setq ring-bell-function 'ignore)
 
-;; y or n
+;;; y or n
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; custom file
+;;; custom file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 
-;; don't create .# files
+;;; don't create .# files
 (setq create-lockfiles nil)
 
-;; no backup file
+;;; no backup file
 (setq make-backup-files nil)
 
-;; do not autosave
+;;; do not autosave
 (setq auto-save-default nil)
 
-;; do not center when scrolling after last visible line
+;;; do not center when scrolling after last visible line
 (setq scroll-conservatively 101)
 
 (setq tab-always-indent 'complete)
 
-;; trash
+;;; trash
 (setq delete-by-moving-to-trash t)
 
-;; mac tweaks
+;;; mac tweaks
 (when (memq window-system '(mac ns))
   ;; enable left option + 3 to type #
   (setq ns-option-modifier 'nil)
@@ -56,21 +56,21 @@
 		   nil
 		   "*Trash Error Buffer*")))
 
-;; auto-fill column
+;;; auto-fill column
 (defun p-text-mode-auto-fill ()
   (setq-local fill-column 100)
   (auto-fill-mode)
   (diminish 'auto-fill-function))
 
-;; which-key
+;;; which-key
 (setq-default which-key-idle-delay 0.8)
 (which-key-mode)
 (diminish 'which-key-mode)
 
-;; eldoc
+;;; eldoc
 (diminish 'eldoc-mode)
 
-;; keybindings
+;;; keybindings
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
 (global-set-key (kbd "C-x K") 'kill-buffer-and-window)
 (global-set-key (kbd "C-c C-e") 'occur-edit-mode)
@@ -81,4 +81,4 @@
 (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
 
 (provide 'init-default)
-;;; init-default.el ends here
+;;;;; init-default.el ends here

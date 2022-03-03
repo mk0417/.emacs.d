@@ -1,11 +1,11 @@
-;;; init-text.el --- Text -*- lexical-binding: t -*-
+;;;;; init-text.el --- Text -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'key-chord)
 (straight-use-package 'smartparens)
 (straight-use-package 'cycle-at-point)
 
-;; select a block
+;;; select a block
 (defun p-select-block ()
   (interactive)
   (if (region-active-p)
@@ -19,21 +19,21 @@
       (previous-line)
       (end-of-line))))
 
-;; go to beginning of block
+;;; go to beginning of block
 (defun p-beginning-of-block ()
   (interactive)
   (skip-chars-forward " \n\t")
   (when (re-search-backward "\n[ \t]*\n" nil 1)
     (goto-char (match-end 0))))
 
-;; go to end of block
+;;; go to end of block
 (defun p-end-of-block ()
   (interactive)
   (re-search-forward "\n[ \t]*\n" nil 1)
   (previous-line)
   (end-of-line))
 
-;; insert date
+;;; insert date
 (defun p-insert-uk-date ()
   (interactive)
   (insert (format-time-string "%d-%m-%Y")))
@@ -46,17 +46,17 @@
   (interactive)
   (insert (format-time-string "%Y-%m-%d, %A")))
 
-;; insert current buffer name
+;;; insert current buffer name
 (defun p-insert-file-name ()
   (interactive)
   (insert (buffer-file-name)))
 
-;; backward kill to the beginning of line
+;;; backward kill to the beginning of line
 (defun p-kill-to-begin-of-line ()
   (interactive)
   (kill-line 0))
 
-;; delete to tab
+;;; delete to tab
 (defun p-delete-backward-to-tab ()
   (interactive)
   (when (evil-normal-state-p)
@@ -67,22 +67,22 @@
     (kill-line 0)
     (insert "    ")))
 
-;; clear line
+;;; clear line
 (defun p-clear-line ()
   (interactive)
   (beginning-of-line)
   (kill-line))
 
-;; add four spaces
+;;; add four spaces
 (defun p-insert-spaces ()
   (interactive)
   (insert "    "))
 
-;; key-chord typing
+;;; key-chord typing
 (add-hook 'after-init-hook 'key-chord-mode)
 (setq key-chord-two-keys-delay 0.3)
 
-;; define my key chord
+;;; define my key chord
 (with-eval-after-load 'evil
   (dolist (m (list evil-insert-state-map evil-ex-completion-map minibuffer-local-map))
     (key-chord-define m "kk" "()\C-b")
@@ -133,7 +133,7 @@
 	:timeout 0.3
 	"b" 'p-insert-pound))))
 
-;; smartparens
+;;; smartparens
 (add-hook 'after-init-hook 'smartparens-global-mode)
 
 (with-eval-after-load 'smartparens
@@ -165,13 +165,13 @@
     (interactive)
     (sp-wrap-with-pair "{")))
 
-;; kill-sexp and insert
+;;; kill-sexp and insert
 (defun p-kill-sexp-and-insert ()
     (interactive)
     (kill-sexp)
     (evil-insert 0))
 
-;; keybindings
+;;; keybindings
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd ";u") 'p-beginning-of-block)
   (define-key evil-normal-state-map (kbd ";l") 'p-end-of-block)
@@ -213,4 +213,4 @@
     "d" '(p-add-double-quote :which-key "p-add-double-quote")))
 
 (provide 'init-text)
-;;; init-text.el ends here
+;;;;; init-text.el ends here

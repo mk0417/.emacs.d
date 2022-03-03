@@ -1,6 +1,6 @@
-;;; init-avy.el --- Avy -*- lexical-binding: t -*-
+;;;;; init-avy.el --- Avy -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'avy)
 
 (require 'avy)
@@ -11,10 +11,10 @@
 
 (setq avy-dispatch-alist nil)
 
-;; https://karthinks.com/software/avy-can-do-anything/
+;;; https://karthinks.com/software/avy-can-do-anything/
 (setq avy-keys '(?q ?e ?r ?y ?u ?o ?p ?a ?s ?d ?f ?g ?h ?j ?l ?x ?c ?v ?b ?n))
 
-;; Avy command
+;;; Avy command
 (global-set-key (kbd "C-c m") 'avy-goto-char-timer)
 
 (defun p-avy-goto-word-current-line ()
@@ -42,7 +42,7 @@
     (avy-with p-avy-goto-bracket
       (p-avy-goto-bracket block-beginning-position block-end-position))))
 
-;; keybindings
+;;; keybindings
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd "f") 'nil)
   (define-key evil-normal-state-map (kbd "ft") 'avy-goto-char-timer)
@@ -56,4 +56,4 @@
   (define-key evil-normal-state-map (kbd "fk") 'p-avy-goto-bracket-block))
 
 (provide 'init-avy)
-;;; init-avy.el ends here
+;;;;; init-avy.el ends here

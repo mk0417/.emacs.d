@@ -1,9 +1,9 @@
-;;; init-dired.el --- Dired -*- lexical-binding: t -*-
+;;;;; init-dired.el --- Dired -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'diredfl)
 
-;; dired
+;;; dired
 (require 'dired)
 
 (setq dired-recursive-deletes 'always)
@@ -29,4 +29,4 @@
     "i"  '(dired-find-file :which-key "enter directory")))
 
 (provide 'init-dired)
-;;; init-dired.el ends here
+;;;;; init-dired.el ends here

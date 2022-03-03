@@ -1,9 +1,9 @@
-;;; init-template.el --- Template -*- lexical-binding: t -*-
+;;;;; init-template.el --- Template -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'tempel)
 
-;; keybindings
+;;; keybindings
 (with-eval-after-load 'tempel
   (define-key tempel-map (kbd "M-j") 'tempel-next)
   (define-key tempel-map (kbd "M-k") 'tempel-previous))
@@ -12,4 +12,4 @@
 (global-set-key (kbd "C-c t t") 'tempel-complete)
 
 (provide 'init-template)
-;;; init-template.el ends here
+;;;;; init-template.el ends here

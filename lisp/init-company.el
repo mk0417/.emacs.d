@@ -1,10 +1,10 @@
-;;; init-company.el --- Company -*- lexical-binding: t -*-
+;;;;; init-company.el --- Company -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'company)
 (straight-use-package 'company-statistics)
 
-;; company
+;;; company
 (setq company-backends
       '((company-files company-keywords company-capf company-yasnippet) (company-abbrev company-dabbrev)))
 
@@ -28,7 +28,7 @@
                                  gud-mode
                                  vterm-mode))
 
-;; remove duplicate candidate.
+;;; remove duplicate candidate.
 (with-eval-after-load 'company
   (add-to-list 'company-transformers #'delete-dups))
 
@@ -68,4 +68,4 @@
   (diminish 'company-mode))
 
 (provide 'init-company)
-;;; init-company.el ends here
+;;;;; init-company.el ends here

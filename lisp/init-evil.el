@@ -1,6 +1,6 @@
-;;; init-evil.el --- Evil-mode/Vim -*- lexical-binding: t -*-
+;;;;; init-evil.el --- Evil-mode/Vim -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'evil)
 (straight-use-package 'general)
 (straight-use-package 'evil-surround)
@@ -9,32 +9,32 @@
 (straight-use-package 'evil-goggles)
 (straight-use-package 'winum)
 
-;; evil
+;;; evil
 (setq evil-undo-system 'undo-redo)
 (setq evil-symbol-word-search t)
 (setq evil-respect-visual-line-mode t)
 (setq evil-want-C-u-scroll t)
 (add-hook 'after-init-hook 'evil-mode)
 
-;; change cursor type and color
+;;; change cursor type and color
 ;; https://github.com/hlissner/doom-emacs/issues/1848
 (setq evil-normal-state-cursor '(box "#cf5a65"))
 (setq evil-insert-state-cursor '(hbar "#00ff00"))
 (setq evil-visual-state-cursor '(hollow "#cf5a65"))
 
-;; evil surround
+;;; evil surround
 (global-evil-surround-mode 1)
 
-;; evil escape
+;;; evil escape
 (setq-default evil-escape-key-sequence "fd")
 (evil-escape-mode 1)
 (diminish 'evil-escape-mode)
 
-;; evil-matchit
+;;; evil-matchit
 (setq evilmi-shortcut "m")
 (global-evil-matchit-mode 1)
 
-;; evil goggles
+;;; evil goggles
 (setq evil-goggles-pulse t)
 (setq evil-goggles-duration 0.35)
 (evil-goggles-mode 1)
@@ -45,14 +45,14 @@
  '(evil-goggles-yank-face ((t (:background "#cf5a65")))))
 (diminish 'evil-goggles-mode)
 
-;; winum
+;;; winum
 (add-hook 'after-init-hook 'winum-mode)
 
-;; set evil normal state for grep mode
+;;; set evil normal state for grep mode
 (dolist (mode '(grep-mode occur-mode occur-edit-mode))
   (evil-set-initial-state mode 'normal))
 
-;; keybindings
+;;; keybindings
 (with-eval-after-load 'evil
   ;; ex-evil replace buffer
   (defun p-ex-evil-buffer-replace ()
@@ -161,4 +161,4 @@
     "qq" '(kill-emacs :which-key "quit emacs")))
 
 (provide 'init-evil)
-;;; init-evil.el ends here
+;;;;; init-evil.el ends here

@@ -1,4 +1,4 @@
-;;; init-straight.el --- Settings straight for package management -*- lexical-binding: t -*-
+;;;;; init-straight.el --- Settings straight for package management -*- lexical-binding: t -*-
 
 (setq straight-repository-branch "develop")
 (setq straight-vc-git-default-clone-depth 1)
@@ -16,6 +16,5 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
-
 (provide 'init-straight)
-;;; init-straight.el ends here
+;;;;; init-straight.el ends here

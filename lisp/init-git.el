@@ -1,17 +1,17 @@
-;;; init-git.el --- Git -*- lexical-binding: t -*-
+;;;;; init-git.el --- Git -*- lexical-binding: t -*-
 
-;; package
+;;; package
 (straight-use-package 'diff-hl)
 (straight-use-package 'magit)
 (straight-use-package 'git-messenger)
 
-;; magit
+;;; magit
 (setq-default magit-diff-refine-hunk t)
 (autoload 'magit-status "magit")
 (autoload 'magit-diff "magit")
 (autoload 'magit-blame "magit")
 
-;;; diff-hl
+;;;; diff-hl
 (autoload 'diff-hl-mode "diff-hl")
 (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
 (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -22,11 +22,11 @@
                    (diff-hl-mode)
                    (diff-hl-margin-mode))))
 
-;; git-messenger
+;;; git-messenger
 (setq git-messenger:show-detail t)
 (setq git-messenger:use-magit-popup t)
 
-;; keybindings
+;;; keybindings
 (with-eval-after-load 'git-messenger
   (define-key git-messenger-map (kbd "y") 'git-messenger:copy-message))
 
@@ -47,4 +47,4 @@
     "gp" '(git-messenger:popup-message :which-key "git message")))
 
 (provide 'init-git)
-;;; init-git.el ends here
+;;;;; init-git.el ends here
