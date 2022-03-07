@@ -368,19 +368,24 @@
     :states 'normal
     :keymaps 'org-mode-map)
   (p-org-leader-def
-   "." '(org-toggle-narrow-to-subtree :which-key "narrow to substree")
-   "," '(org-toggle-latex-fragment :which-key "latex preview")
-   "i" '(org-toggle-inline-images :which-key "toggle inline image")
-   ";" '(org-tree-slide-mode :which-key "presentation mode")
-   "n" '(org-tree-slide-move-next-tree :which-key "next slide")
-   "p" '(org-tree-slide-move-previous-tree :which-key "previous slide")
-   "h" '(org-tree-slide-display-header-toggle :which-key "toggle slide header")
-   "t"  '(:ignore t :which-key "table")
-   "tk" '(org-table-move-row-up :which-key "move row up")
-   "tj" '(org-table-move-row-down :which-key "move row down")
-   "tl" '(org-table-move-column-right :which-key "move column right")
-   "th" '(org-table-move-column-left :which-key "move column left")
-   "tc" '(org-table-convert-region :which-key "convert region to table")))
+    "." '(org-toggle-narrow-to-subtree :which-key "narrow to substree")
+    "," '(org-toggle-latex-fragment :which-key "latex preview")
+    "i" '(org-toggle-inline-images :which-key "toggle inline image")
+    ";" '(org-tree-slide-mode :which-key "presentation mode")
+    "n" '(org-tree-slide-move-next-tree :which-key "next slide")
+    "p" '(org-tree-slide-move-previous-tree :which-key "previous slide")
+    "h" '(org-tree-slide-display-header-toggle :which-key "toggle slide header"))
+  (general-create-definer p-org-leader-def
+    :prefix ";"
+    :states '(normal visual)
+    :keymaps 'org-mode-map)
+  (p-org-leader-def
+    "t"  '(:ignore t :which-key "table")
+    "tk" '(org-table-move-row-up :which-key "move row up")
+    "tj" '(org-table-move-row-down :which-key "move row down")
+    "tl" '(org-table-move-column-right :which-key "move column right")
+    "th" '(org-table-move-column-left :which-key "move column left")
+    "tc" '(org-table-convert-region :which-key "convert region to table")))
 
 (provide 'init-org)
 ;;;;; init-org.el ends here
