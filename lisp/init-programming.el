@@ -6,7 +6,7 @@
 (straight-use-package '(ess-stata-mode :type git :host github :repo "emacs-ess/ess-stata-mode"))
 (straight-use-package 'julia-mode)
 (straight-use-package 'go-mode)
-(straight-use-package '(consult-project-extra :type git :host github :repo "Qkessler/consult-project-extra"))
+(straight-use-package 'consult-project-extra)
 
 ;;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
