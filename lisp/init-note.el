@@ -15,6 +15,7 @@
 (setq markdown-fontify-code-blocks-natively t)
 
 ;;; latex
+(add-to-list 'auto-mode-alist '("\\.tex\\'" . LaTeX-mode))
 (add-hook 'LaTeX-mode-hook #'evil-tex-mode)
 
 ;;; usls
