@@ -25,10 +25,10 @@
 (setq modus-themes-intense-markup t)
 
 (setq modus-themes-headings
-      '((1 . (background overline variable-pitch 1.7))
-        (2 . (background overline variable-pitch 1.5))
-        (3 . (background overline variable-pitch 1.2))
-        (t . (background overline variable-pitch 1))))
+      '((1 . (variable-pitch 1.7))
+        (2 . (variable-pitch 1.5))
+        (3 . (variable-pitch 1.2))
+        (t . (variable-pitch 1))))
 
 (setq x-underline-at-descent-line t)
 
