@@ -11,10 +11,12 @@
 ;;; startup time
 (add-hook 'emacs-startup-hook
 	  (lambda ()
-	    (message "*** Emacs loaded in %s."
-		     (format "%.2f seconds"
-			     (float-time
-			      (time-subtract after-init-time before-init-time))))))
+	    (message "*** Emacs loaded in %s seconds."
+		     ;; (format "%.2f seconds"
+		     ;; 	     (float-time
+		     ;; 	      (time-subtract after-init-time before-init-time)))
+
+		     (emacs-init-time "%.2f"))))
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 

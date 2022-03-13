@@ -1,8 +1,7 @@
 ;;;;; init-org.el --- Org-mode -*- lexical-binding: t -*-
 
 ;;; package
-(straight-use-package 'org)
-(straight-use-package 'org-superstar)
+(straight-use-package 'org-modern)
 (straight-use-package 'org-tree-slide)
 (straight-use-package 'olivetti)
 (straight-use-package '(org-appear :type git :host github :repo "awth13/org-appear"))
@@ -19,47 +18,28 @@
       org-confirm-babel-evaluate nil
       org-fontify-quote-and-verse-blocks t
       org-hide-emphasis-markers t
-      org-catch-invisible-edits 'show
       org-export-coding-system 'utf-8
       org-fast-tag-selection-single-key 'expert
       org-html-validation-link nil
       org-export-kill-product-buffer-when-displayed t
-      org-tags-column 80)
+      org-catch-invisible-edits 'show-and-error
+      org-special-ctrl-a/e t
+      org-insert-heading-respect-content t
+      org-pretty-entities t
+      org-ellipsis "…"
+      org-agenda-block-separator ?─
+      org-agenda-time-grid
+      '((daily today require-timed)
+	(800 1000 1200 1400 1600 1800 2000)
+	" ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
+      org-agenda-current-time-string "⭠ now ─────────────────────────────────────────────────"
+      org-tags-column 0)
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WORKING(w)" "|" "DONE(d)" "CANCEL(c)")))
 
 ;;; fix void function issue
-(autoload 'org-element-keyword-parser "org")
-
-(with-eval-after-load 'org
-  (require 'org-tempo)
-  (require 'ob)
-  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.8))
-  (add-hook 'org-mode-hook 'p-text-mode-auto-fill)
-  (add-to-list 'org-structure-template-alist '("b" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("p" . "src elisp")))
-
-;;; org-superstar
-(add-hook 'org-mode-hook 'org-superstar-mode)
-(setq org-superstar-remove-leading-stars t)
-(setq org-superstar-headline-bullets-list '("◉" "▷" "○"))
-(setq org-superstar-item-bullet-alist
-      '((?+ . ?•)
-	(?* . ?➤)
-	(?- . ?–)))
-
-;;; org appear
-;; https://github.com/willbchang/ward-emacs/blob/master/config.org#org-appear
-(setq org-appear-delay 0)
-(setq org-appear-autolinks t)
-(setq org-appear-autoentities t)
-(setq org-appear-autokeywords t)
-(setq org-appear-autosubmarkers t)
-
-(add-hook 'evil-insert-state-entry-hook (lambda() (setq org-appear-delay 0)))
-(add-hook 'evil-normal-state-entry-hook (lambda() (setq org-appear-delay 1)))
-(add-hook 'org-mode-hook 'org-appear-mode)
+;; (autoload 'org-element-keyword-parser "org")
 
 ;;; capturing
 (setq org-capture-templates
@@ -81,6 +61,30 @@
   (org-map-entries (lambda () (delete-region (point-at-bol) (point-at-eol)))
                    "no_heading"))
 (add-hook 'org-export-before-processing-hook 'p-org-export-no-heading)
+
+(with-eval-after-load 'org
+  (require 'org-tempo)
+  ;; (require 'ob)
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.8))
+  (add-hook 'org-mode-hook 'p-text-mode-auto-fill)
+  (add-to-list 'org-structure-template-alist '("b" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("p" . "src elisp")))
+
+;;; org-modern-mode
+(add-hook 'org-mode-hook #'org-modern-mode)
+(add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+
+;;; org appear
+;; https://github.com/willbchang/ward-emacs/blob/master/config.org#org-appear
+(setq org-appear-delay 0)
+(setq org-appear-autolinks t)
+(setq org-appear-autoentities t)
+(setq org-appear-autokeywords t)
+(setq org-appear-autosubmarkers t)
+
+(add-hook 'evil-insert-state-entry-hook (lambda() (setq org-appear-delay 0)))
+(add-hook 'evil-normal-state-entry-hook (lambda() (setq org-appear-delay 1)))
+(add-hook 'org-mode-hook 'org-appear-mode)
 
 ;;; focus mode and presentation mode
 (setq olivetti-body-width 0.7)
