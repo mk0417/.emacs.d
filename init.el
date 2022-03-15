@@ -11,12 +11,7 @@
 ;;; startup time
 (add-hook 'emacs-startup-hook
 	  (lambda ()
-	    (message "*** Emacs loaded in %s seconds."
-		     ;; (format "%.2f seconds"
-		     ;; 	     (float-time
-		     ;; 	      (time-subtract after-init-time before-init-time)))
-
-		     (emacs-init-time "%.2f"))))
+	    (message "*** Emacs loaded in %s seconds." (emacs-init-time "%.2f"))))
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
@@ -59,7 +54,7 @@
 (require 'init-programming)
 (require 'init-note)
 (require 'init-template)
-(require 'init-tree-sitter)
+;; (require 'init-tree-sitter)
 
 ;;; Make GC pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
