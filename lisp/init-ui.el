@@ -43,8 +43,10 @@
 
 ;;; column indicator
 (when (boundp 'display-fill-column-indicator)
-  (setq-default display-fill-column-indicator-column 80
-		display-fill-column-indicator-character ?|))
+  (setq-default display-fill-column-indicator-column 80)
+  (custom-set-faces
+   '(fill-column-indicator
+     ((t (:background nil :foreground "grey30"))))))
 
 ;;; cursor type in minibuffer
 (defun p-minibuffer-cursor-type ()
