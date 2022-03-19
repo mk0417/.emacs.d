@@ -8,6 +8,7 @@
 (straight-use-package 'go-mode)
 (straight-use-package 'consult-project-extra)
 (straight-use-package 'eglot)
+(straight-use-package 'symbol-overlay)
 
 ;;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -97,6 +98,17 @@
 
 ;;; keybindings
 (with-eval-after-load 'evil
+  (define-key evil-normal-state-map (kbd ";sh") 'symbol-overlay-put)
+  (define-key evil-normal-state-map (kbd ";sn") 'symbol-overlay-jump-next)
+  (define-key evil-normal-state-map (kbd ";sp") 'symbol-overlay-jump-prev)
+  (define-key evil-normal-state-map (kbd ";sw") 'symbol-overlay-save-symbol)
+  (define-key evil-normal-state-map (kbd ";st") 'symbol-overlay-toggle-in-scope)
+  (define-key evil-normal-state-map (kbd ";sd") 'symbol-overlay-jump-to-definition)
+  (define-key evil-normal-state-map (kbd ";ss") 'symbol-overlay-isearch-literally)
+  (define-key evil-normal-state-map (kbd ";sq") 'symbol-overlay-query-replace)
+  (define-key evil-normal-state-map (kbd ";sr") 'symbol-overlay-rename)
+  (define-key evil-normal-state-map (kbd ";sc") 'symbol-overlay-remove-all)
+
   (general-create-definer p-jupyter-leader-def
     :prefix ";"
     :states '(normal visual)
