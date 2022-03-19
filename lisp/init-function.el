@@ -69,6 +69,15 @@
 			   (buffer-substring (region-beginning) (region-end))
 			 (read-string "Search YouTube: "))))))
 
+;;; baidu search
+(defun p-baidu-search ()
+  (interactive)
+  (browse-url
+   (concat "https://baidu.com/s?&wd="
+	   (url-hexify-string (if mark-active
+				  (buffer-substring (region-beginning) (region-end))
+				(read-string "Search Baidu: "))))))
+
 (defun p-beginning-of-line-or-block ()
   (interactive)
   (let (($p (point)))
@@ -92,6 +101,26 @@
         (re-search-forward "\n[\t\n ]*\n+" nil "NOERROR" ))
     (end-of-line)))
 
+(defun p-insert-num-list (start end format-string from)
+  (interactive
+   (list (region-beginning) (region-end)
+	 (read-string "Number rectangle: "
+		      (if (looking-back "^ *") "%d. " "%d"))
+	 (read-number "From: " 1)))
+  (save-excursion
+    (goto-char start)
+    (setq start (point-marker))
+    (goto-char end)
+    (setq end (point-marker))
+    (goto-char start)
+    (cl-loop with column = (current-column)
+	     while (and (<= (point) end) (not (eobp)))
+	     for i from from do
+	     (move-to-column column t)
+	     (insert (format format-string i))
+	     (forward-line 1)))
+  (goto-char start))
+
 ;;; keybindings
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd ";a") 'p-beginning-of-line-or-block)
@@ -104,6 +133,8 @@
     :prefix "SPC"
     :states '(normal visual))
   (p-space-leader-def
+    "e"  '(:ignore t :which-key "editing")
+    "ei" '(p-insert-num-list :which-key "insert number list")
     "f"  '(:ignore t :which-key "file")
     "fp" '(p-find-file-in-config :which-key "find config file")
     "fl" '(p-find-file-in-log :which-key "find log file")
@@ -111,6 +142,7 @@
     "s"  '(:ignore t :which-key "search")
     "sg" '(p-google-search :which-key "search on google")
     "sy" '(p-youtube-search :which-key "search on youtube")
+    "sb" '(p-baidu-search :which-key "search on baidu")
     "t"  '(:ignore t :which-key "toggle")
     "tr" '(p-reveal-file-in-finder :which-key "reveal file in finder")
     "p"  '(:ignore t :which-key "projects and packages")
