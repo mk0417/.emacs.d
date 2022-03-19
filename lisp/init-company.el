@@ -39,17 +39,17 @@
 (with-eval-after-load 'company
   (company-statistics-mode)
 
-  ;; (custom-set-faces
-  ;;  '(company-preview-common
-  ;;    ((t (:inherit company-preview))))
-  ;;  '(company-tooltip
-  ;;    ((t (:background "#ffeead" :foreground "black"))))
-  ;;  '(company-tooltip-selection
-  ;;    ((t (:background "#69adc6" :foreground "white"))))
-  ;;  '(company-tooltip-annotation
-  ;;    ((t (:background "#ffeead" :foreground "red"))))
-  ;;  '(company-tooltip-common
-  ;;    ((t (:background "#ffeead" :foreground "black")))))
+  (custom-set-faces
+   '(company-preview-common
+     ((t (:inherit company-preview))))
+   '(company-tooltip
+     ((t (:background "#ffeead" :foreground "black"))))
+   '(company-tooltip-selection
+     ((t (:background "#69adc6" :foreground "white"))))
+   '(company-tooltip-annotation
+     ((t (:background "#ffeead" :foreground "red"))))
+   '(company-tooltip-common
+     ((t (:background "#ffeead" :foreground "black")))))
 
   (setq company-show-quick-access 'left)
   (custom-set-variables

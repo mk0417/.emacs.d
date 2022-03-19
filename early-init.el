@@ -27,13 +27,13 @@
 ;;; no titlebar
 (add-to-list 'default-frame-alist '(undecorated . t))
 
-;;; disable too bar and scroll bar
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-
 ;;; make titlebar color consistent with system
 (when (featurep 'ns)
   (push '(ns-transparent-titlebar . t) default-frame-alist))
+
+;;; disable too bar and scroll bar
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
 
 ;;; Make the initial buffer load faster by setting its mode to fundamental-mode
 (setq initial-major-mode 'fundamental-mode)
