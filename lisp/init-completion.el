@@ -3,7 +3,7 @@
 ;;; package
 (straight-use-package 'corfu)
 (straight-use-package 'cape)
-(straight-use-package '(corfu-doc :type git :host github :repo "galeo/corfu-doc"))
+(straight-use-package 'corfu-doc)
 
 ;;; corfu
 (setq corfu-cycle t)
