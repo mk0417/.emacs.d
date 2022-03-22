@@ -84,7 +84,14 @@
 
 (add-hook 'after-init-hook 'p-set-regular-font)
 
-;;; ;; rainbow-delimiters
+;; mode-line variable-pitch font
+(defun p-set-mode-line-font ()
+  (interactive)
+  (set-face-attribute 'mode-line nil :inherit 'variable-pitch :height 1))
+
+(add-hook 'after-init-hook 'p-set-mode-line-font)
+
+;;; rainbow-delimiters
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 ;;; show whitespace and delete on saving
