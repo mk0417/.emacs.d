@@ -28,7 +28,7 @@
 ;;; full path in mode-line
 (setq-default mode-line-buffer-identification
 	      (list 'buffer-file-name
-		    '(:eval (propertize (format "  %s" buffer-file-truename) 'face 'bold))))
+		    '(:eval (propertize (format "  %s" buffer-file-truename) 'face 'regular))))
 
 ;;; no fringe
 (fringe-mode '(0 . 0))
