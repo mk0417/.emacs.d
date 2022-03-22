@@ -4,7 +4,7 @@
 (straight-use-package 'org-modern)
 (straight-use-package 'org-tree-slide)
 (straight-use-package 'olivetti)
-(straight-use-package '(org-appear :type git :host github :repo "awth13/org-appear"))
+;; (straight-use-package '(org-appear :type git :host github :repo "awth13/org-appear"))
 
 ;;; org
 (setq org-directory "~/Dropbox/org"
@@ -38,9 +38,6 @@
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WORKING(w)" "|" "DONE(d)" "CANCEL(c)")))
 
-;;; fix void function issue
-;; (autoload 'org-element-keyword-parser "org")
-
 ;;; capturing
 (setq org-capture-templates
       `(("t" "todo" entry (file ,(concat org-directory "/todo.org"))
@@ -63,7 +60,7 @@
 (add-hook 'org-export-before-processing-hook 'p-org-export-no-heading)
 
 (with-eval-after-load 'org
-  (require 'org-tempo)
+  ;; (require 'org-tempo)
   ;; (require 'ob)
   (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.8))
   (add-hook 'org-mode-hook 'p-text-mode-auto-fill)
@@ -76,15 +73,15 @@
 
 ;;; org appear
 ;; https://github.com/willbchang/ward-emacs/blob/master/config.org#org-appear
-(setq org-appear-delay 0)
-(setq org-appear-autolinks t)
-(setq org-appear-autoentities t)
-(setq org-appear-autokeywords t)
-(setq org-appear-autosubmarkers t)
+;; (setq org-appear-delay 0)
+;; (setq org-appear-autolinks t)
+;; (setq org-appear-autoentities t)
+;; (setq org-appear-autokeywords t)
+;; (setq org-appear-autosubmarkers t)
 
-(add-hook 'evil-insert-state-entry-hook (lambda() (setq org-appear-delay 0)))
-(add-hook 'evil-normal-state-entry-hook (lambda() (setq org-appear-delay 1)))
-(add-hook 'org-mode-hook 'org-appear-mode)
+;; (add-hook 'evil-insert-state-entry-hook (lambda() (setq org-appear-delay 0)))
+;; (add-hook 'evil-normal-state-entry-hook (lambda() (setq org-appear-delay 1)))
+;; (add-hook 'org-mode-hook 'org-appear-mode)
 
 ;;; focus mode and presentation mode
 (setq olivetti-body-width 0.7)
