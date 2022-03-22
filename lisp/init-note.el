@@ -6,7 +6,7 @@
 (straight-use-package 'latex-preview-pane)
 (straight-use-package 'evil-tex)
 (straight-use-package '(usls :type git :host gitlab :repo "protesilaos/usls"))
-(straight-use-package '(logos :type git :host gitlab :repo "protesilaos/logos"))
+(straight-use-package 'logos)
 
 ;;; markdown
 (add-to-list 'auto-mode-alist '("\\.md\\.html\\'"))
@@ -28,36 +28,42 @@
 (setq usls-custom-header-function nil)
 
 ;;; logos
+;; need outline otherwise outline-regexp is void variable
+(require 'outline)
+(autoload 'logos-focus-mode "logos")
+
 ;; https://gitlab.com/protesilaos/logos
 (setq logos-outlines-are-pages t)
+
 (setq logos-outline-regexp-alist
       '((emacs-lisp-mode . "^;;;+ ")
-        (org-mode . "^\\*+ +")
-        (t . ,(or outline-regexp logos--page-delimiter))))
+	(org-mode . "^\\*+ +")
+	(text-mode . "^\\* [0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\},")
+	(t . ,(or outline-regexp logos--page-delimiter))))
 
-(setq-default logos-hide-mode-line nil)
-(setq-default logos-scroll-lock nil)
-(setq-default logos-variable-pitch nil)
+(setq-default logos-hide-mode-line nil
+	      logos-scroll-lock nil
+	      logos-variable-pitch nil
+	      logos-indicate-buffer-boundaries nil
+	      logos-buffer-read-only nil
+	      logos-olivetti t)
 
-(defun my-logos--olivetti-mode ()
-  (if (or (bound-and-true-p olivetti-mode)
-	  (null (logos--focus-p)))
-      (olivetti-mode -1)
-    (olivetti-mode 1)))
-
-(add-hook 'logos-focus-mode-hook #'my-logos--olivetti-mode)
-
-(defun my-logos--reveal ()
+(defun logos--reveal-entry ()
   (cond
    ((and (eq major-mode 'org-mode)
 	 (org-at-heading-p))
-    (org-show-entry)
-    (org-reveal t))
-   ((or (bound-and-true-p prot-outline-minor-mode)
+    (org-show-subtree))
+   ((or (eq major-mode 'outline-mode)
 	(bound-and-true-p outline-minor-mode))
-    (outline-show-entry))))
+    (outline-show-subtree))))
 
-(add-hook 'logos-page-motion-hook #'my-logos--reveal)
+(add-hook 'logos-page-motion-hook #'logos--reveal-entry)
+
+;; place point at the top when changing pages
+(defun my-logos--recenter-top ()
+  (recenter 0))
+
+(add-hook 'logos-page-motion-hook #'my-logos--recenter-top)
 
 ;;; auto fill
 (dolist (hook '(markdown-mode-hook text-mode-hook))
