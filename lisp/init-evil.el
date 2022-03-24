@@ -70,6 +70,18 @@
     (beginning-of-defun)
     (evilmi-select-items))
 
+  (defun p-switch-to-scratch ()
+    (interactive)
+    (switch-to-buffer "*scratch*"))
+
+  (defun p-switch-to-messages ()
+    (interactive)
+    (switch-to-buffer "*Messages*"))
+
+  (defun p-switch-to-previous-buffer ()
+    (interactive)
+    (switch-to-buffer nil))
+
   ;; I prefer to use C-n and C-p in many other places
   (define-key evil-normal-state-map (kbd "C-n") nil)
   (define-key evil-normal-state-map (kbd "C-p") nil)
@@ -123,10 +135,10 @@
     "bi" '(ibuffer :which-key "ibuffer")
     "bD" '(kill-buffer-and-window :which-key "kill buffer and window")
     "br" '(revert-buffer :which-key "revert buffer")
-    "bs" '((lambda () (interactive) (switch-to-buffer "*scratch*")) :which-key "switch to scratch")
-    "bm" '((lambda () (interactive) (switch-to-buffer "*Messages*")) :which-key "switch to messages")
-    "§" '((lambda () (interactive) (switch-to-buffer nil)) :which-key "switch to previous buffer")
-    "`" '((lambda () (interactive) (switch-to-buffer nil)) :which-key "switch to previous buffer")
+    "bs" '(p-switch-to-scratch :which-key "switch to scratch")
+    "bm" '(p-switch-to-messages :which-key "switch to messages")
+    "§" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
+    "`" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
     "d" '(:ignore t :which-key "dired")
     "dd" '(dired :which-key "dired directory")
     "dj" '(dired-jump :which-key "dired jump")
@@ -147,6 +159,7 @@
     "p" '(:ignore t :which-key "projects and packages")
     "ps" '(straight-pull-package-and-deps :which-key "straight-pull-package-and-deps")
     "pr" '(straight-remove-unused-repos :which-key "straight-remove-unused-repos")
+    "pU" '(straight-pull-recipe-repositories :which-key "straight-pull-recipe-repositories")
     "pu" '(straight-pull-all  :which-key "straight update all packages")
     "t" '(:ignore t :which-key "toggle")
     "tf" '(p-set-regular-font :which-key "set regular font")
