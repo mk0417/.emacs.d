@@ -1,7 +1,7 @@
 ;;;;; early-init.el --- Emacs>=27 pre-initialisation config  -*- lexical-binding: t; -*-
 
 ;;; Increase the GC threshold for faster startup
-;; The default is 800 kilobytes.  Measured in bytes.
+;; The default is 800 kilobytes. Measured in bytes.
 (setq gc-cons-threshold (* 50 1000 1000))
 
 ;;; Prefer loading newest compiled .el file
