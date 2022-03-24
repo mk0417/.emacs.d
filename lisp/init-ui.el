@@ -2,6 +2,7 @@
 
 ;;; package
 (straight-use-package 'rainbow-delimiters)
+(straight-use-package 'pulsar)
 
 ;;; titlebar format
 (if (< emacs-major-version 28)
@@ -93,6 +94,34 @@
 
 ;;; rainbow-delimiters
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
+;;; pulsar
+(pulsar-setup)
+
+(setq pulsar-pulse t)
+(setq pulsar-delay 0.1)
+(setq pulsar-iterations 10)
+(setq pulsar-face 'pulsar-red)
+(setq pulsar-highlight-face 'pulsar-cyan)
+
+(defun p-pulse-line (&rest _)
+  (pulsar-pulse-line))
+
+(dolist (command
+	 '(evil-goto-first-line
+	   winum-select-window-1
+	   winum-select-window-2
+	   winum-select-window-3
+	   p-switch-to-scratch
+	   p-switch-to-messages
+	   p-switch-to-previous-buffer))
+  (advice-add command :after #'p-pulse-line))
+
+(add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
+(add-hook 'consult-after-jump-hook #'pulsar-reveal-entry)
+
+(define-key global-map (kbd "C-c h p") #'pulsar-pulse-line)
+(define-key global-map (kbd "C-c h h") #'pulsar-highlight-line)
 
 ;;; show whitespace and delete on saving
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-basic.el
