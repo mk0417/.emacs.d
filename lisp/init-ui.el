@@ -96,13 +96,14 @@
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
 ;;; pulsar
-(pulsar-setup)
-
 (setq pulsar-pulse t)
 (setq pulsar-delay 0.1)
 (setq pulsar-iterations 10)
 (setq pulsar-face 'pulsar-red)
 (setq pulsar-highlight-face 'pulsar-cyan)
+
+(pulsar-global-mode 1)
+(diminish 'pulsar-mode)
 
 (defun p-pulse-line (&rest _)
   (pulsar-pulse-line))
