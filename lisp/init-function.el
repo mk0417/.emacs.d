@@ -122,6 +122,8 @@
   (goto-char start))
 
 ;;; keybindings
+(global-set-key (kbd "C-c h i") 'p-insert-num-list)
+
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd ";a") 'p-beginning-of-line-or-block)
   (define-key evil-normal-state-map (kbd ";e") 'p-end-of-line-or-block)
@@ -133,8 +135,6 @@
     :prefix "SPC"
     :states '(normal visual))
   (p-space-leader-def
-    "e"  '(:ignore t :which-key "editing")
-    "ei" '(p-insert-num-list :which-key "insert number list")
     "f"  '(:ignore t :which-key "file")
     "fp" '(p-find-file-in-config :which-key "find config file")
     "fl" '(p-find-file-in-log :which-key "find log file")
