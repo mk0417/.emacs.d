@@ -52,6 +52,8 @@
 (dolist (mode '(grep-mode occur-mode occur-edit-mode))
   (evil-set-initial-state mode 'normal))
 
+(evil-set-initial-state 'dired-mode 'emacs)
+
 ;;; keybindings
 (with-eval-after-load 'evil
   ;; ex-evil replace buffer
