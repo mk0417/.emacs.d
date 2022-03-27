@@ -8,6 +8,7 @@
 
 (setq dired-recursive-deletes 'always)
 (setq dired-recursive-copies 'always)
+(setq dired-dwim-target t)
 (when (eq system-type 'darwin)
   (setq dired-use-ls-dired nil))
 
