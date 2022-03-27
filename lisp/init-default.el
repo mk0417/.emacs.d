@@ -4,10 +4,14 @@
 (straight-use-package 'which-key)
 (straight-use-package 'diminish)
 
+;; UTF-8 as default encoding
+(set-language-environment "UTF-8")
+(set-default-coding-systems 'utf-8)
+
 ;;; recentf-mode
 (add-hook 'after-init-hook 'recentf-mode)
 (setq-default recentf-max-saved-items 50
-	      recentf-exclude `("/Applications/Emacs.app/Contents/Resources/lisp/" "/tmp/" "/ssh:"))
+			  recentf-exclude `("/Applications/Emacs.app/Contents/Resources/lisp/" "/tmp/" "/ssh:"))
 
 ;;; increase the amount of data which Emacs reads from the process
 (setq read-process-output-max (* 1024 1024))
@@ -21,6 +25,9 @@
 
 ;;; y or n
 (fset 'yes-or-no-p 'y-or-n-p)
+
+;;; revert-mode
+(global-auto-revert-mode 1)
 
 ;;; custom file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -38,7 +45,9 @@
 ;;; do not center when scrolling after last visible line
 (setq scroll-conservatively 101)
 
+;;; tab
 (setq tab-always-indent 'complete)
+(setq-default tab-width 4)
 
 ;;; trash
 (setq delete-by-moving-to-trash t)
@@ -52,9 +61,9 @@
   ;; https://christiantietze.de/posts/2021/06/emacs-trash-file-macos/
   (setq trash-directory "~/.Trash")
   (defun system-move-file-to-trash (path)
-    (shell-command (concat "trash -vF \"" path "\"" "| sed -e 's/^/Trashed: /'")
-		   nil
-		   "*Trash Error Buffer*")))
+	(shell-command (concat "trash -vF \"" path "\"" "| sed -e 's/^/Trashed: /'")
+				   nil
+				   "*Trash Error Buffer*")))
 
 ;;; auto-fill column
 (defun p-text-mode-auto-fill ()
