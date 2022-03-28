@@ -95,6 +95,7 @@
   (define-key evil-normal-state-map (kbd "gh") 'evil-shift-left)
   (define-key evil-normal-state-map (kbd "gcc") 'comment-line)
   (define-key evil-normal-state-map (kbd "gor") 'p-ex-evil-buffer-replace)
+  (define-key evil-normal-state-map (kbd "gos") 'transpose-sexps)
   (define-key evil-normal-state-map (kbd ",a") 'beginning-of-defun)
   (define-key evil-normal-state-map (kbd ",e") 'end-of-defun)
 
