@@ -18,9 +18,6 @@
 ;; Answer No when first installation and build it to have .dylib file
 (setq jupyter-eval-use-overlays t)
 
-(general-with-eval-after-load 'jupyter-repl
-  (diminish 'jupyter-repl-interaction-mode))
-
 (defun p-jupyter-remove-line-overlay ()
   (interactive)
   (evil-open-below 0)
