@@ -12,7 +12,7 @@
   ;; Silence compiler warnings as they can be pretty disruptive
   (setq native-comp-async-report-warnings-errors nil)
   ;; Make native compilation happens asynchronously
-  (setq native-comp-deferred-compilation t)
+  (setq native-comp-deferred-compilation nil)
   (setq native-comp-async-jobs-number 6)
   (setq  compilation-scroll-output t)
   ;; Set the right directory to store the native compilation cache
