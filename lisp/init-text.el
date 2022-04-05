@@ -144,6 +144,8 @@
     (sp-local-pair "'" nil :actions nil))
   (sp-with-modes '(markdown-mode)
     (sp-local-pair "`" nil :actions nil))
+  ;; automatically close f string in Python
+  (sp-local-pair 'python-mode "f'" "'")
 
   (defun p-add-single-quote ()
     (interactive)
