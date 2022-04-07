@@ -69,6 +69,7 @@
   ;; select functions
   (defun p-select-function ()
     (interactive)
+	(forward-char)
     (beginning-of-defun)
     (evilmi-select-items))
 
