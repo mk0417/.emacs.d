@@ -27,6 +27,7 @@
       org-insert-heading-respect-content t
       org-pretty-entities t
       org-ellipsis "…"
+	  org-adapt-indentation t
       org-agenda-block-separator ?─
       org-agenda-time-grid
       '((daily today require-timed)
