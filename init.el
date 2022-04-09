@@ -20,6 +20,9 @@
 (let ((p-env-path
        '("/Users/ml/anaconda3/bin"
 	 "/Users/ml/anaconda3/bin/jupyter"
+	 "/opt/homebrew/Caskroom/miniforge/base/bin"
+	 "/opt/homebrew/Caskroom/miniforge/base/bin/jupyter"
+	 "/opt/homebrew/bin/"
 	 "/usr/local/bin"
 	 "/usr/local/sbin"
 	 "/usr/bin"
