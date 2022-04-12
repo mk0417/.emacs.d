@@ -114,7 +114,7 @@
 (autoload 'embark-act "embark")
 (autoload 'embark-export "embark")
 
-(global-set-key (kbd "C-,") 'embark-act)
+(global-set-key (kbd "C-;") 'embark-act)
 (global-set-key (kbd "C-c C-o") 'embark-export)
 
 ;;; embark action integration with which-key

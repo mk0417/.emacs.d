@@ -27,7 +27,6 @@
       org-insert-heading-respect-content t
       org-pretty-entities t
       org-ellipsis "…"
-	  org-adapt-indentation t
       org-agenda-block-separator ?─
       org-agenda-time-grid
       '((daily today require-timed)
@@ -38,6 +37,9 @@
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "WORKING(w)" "|" "DONE(d)" "CANCEL(c)")))
+
+;; prevent evil-mode from inserting unnecessary indentation
+(add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
 
 ;;; capturing
 (setq org-capture-templates
