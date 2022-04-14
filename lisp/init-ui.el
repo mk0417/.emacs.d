@@ -60,8 +60,8 @@
 (setq blink-cursor-blinks 30)
 
 ;;; disable face of completions-first-difference
-(custom-set-faces
-   '(completions-first-difference ((t (:background nil :weight normal)))))
+;; (custom-set-faces
+;;    '(completions-first-difference ((t (:background nil :weight normal)))))
 
 ;;; font
 ;; (defvar p-default-font "Hack")
