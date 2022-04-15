@@ -78,6 +78,11 @@
   (interactive)
   (insert "    "))
 
+;;; add my daily log item
+(defun p-insert-log-item ()
+  (interactive)
+  (insert "** ##"))
+
 ;;; key-chord typing
 (add-hook 'after-init-hook 'key-chord-mode)
 (setq key-chord-two-keys-delay 0.3)
@@ -142,7 +147,7 @@
   (sp-local-pair 'ess-stata-mode "`" "'")
   (sp-with-modes '(lisp-mode emacs-lisp-mode lisp-interaction-mode)
     (sp-local-pair "'" nil :actions nil))
-  (sp-with-modes '(markdown-mode)
+  (sp-with-modes '(markdown-mode text-mode)
     (sp-local-pair "`" nil :actions nil))
   ;; automatically close f string in Python
   (sp-local-pair 'python-mode "f'" "'")
@@ -197,6 +202,7 @@
     "f"  '(:ignore t :which-key "file")
     "fi" '(p-insert-file-name :which-key "insert file path and name")
     "e"  '(:ignore t :which-key "editing")
+    "ei" '(p-insert-log-item :which-key "insert log item")
     "ed" '(p-insert-date :which-key "insert date")
     "eD" '(p-insert-date-alt :which-key "insert date alt")
     "eu" '(p-insert-uk-date :which-key "insert UK date"))
