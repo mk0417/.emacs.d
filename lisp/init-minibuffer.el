@@ -7,7 +7,8 @@
 (straight-use-package 'embark)
 (straight-use-package 'embark-consult)
 (straight-use-package 'consult-dir)
-(straight-use-package '(mct :type git :host gitlab :repo "protesilaos/mct" :files ("*.el" "extensions/*.el")))
+;; (straight-use-package '(mct :type git :host gitlab :repo "protesilaos/mct" :files ("*.el" "extensions/*.el")))
+(straight-use-package '(vertico :files ("*.el" "extensions/*.el")))
 (straight-use-package 'wgrep)
 
 ;;; completion
@@ -16,24 +17,54 @@
 
 (with-eval-after-load 'corfu
   (defun corfu-in-minibuffer ()
-	(corfu-mode -1))
-
+    (corfu-mode -1))
   (add-hook 'minibuffer-setup-hook #'corfu-in-minibuffer))
+
+(add-hook 'completion-list-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
 
 ;;; mct
 ;; https://gitlab.com/protesilaos/mct
-(setq mct-live-update-delay 0.5)
-(setq mct-live-completion t)
-(setq mct-persist-dynamic-completion t)
-(setq mct-completion-passlist '(embark-prefix-help-command Info-goto-node Info-index Info-menu vc-retrieve-tag))
+;; (setq mct-live-update-delay 0.5)
+;; (setq mct-live-completion t)
+;; (setq mct-persist-dynamic-completion t)
+;; (setq mct-completion-passlist '(embark-prefix-help-command Info-goto-node Info-index Info-menu vc-retrieve-tag))
 
-(mct-minibuffer-mode 1)
+;; (mct-minibuffer-mode 1)
 
-(dolist (map (list mct-minibuffer-local-completion-map
-		   mct-minibuffer-completion-list-map))
-  (define-key map (kbd "C-.") #'mct-avy-choose-completion-exit))
+;; (dolist (map (list mct-minibuffer-local-completion-map
+;; 		   mct-minibuffer-completion-list-map))
+;;   (define-key map (kbd "C-.") #'mct-avy-choose-completion-exit))
 
-(add-hook 'completion-list-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
+;;; vertico
+(setq vertico-count 20)
+(setq vertico-resize t)
+
+(vertico-mode)
+
+;; input at bottom
+;; https://github.com/minad/vertico/wiki#input-at-bottom-of-completion-list
+(defun vertico-bottom--display-candidates (lines)
+  (move-overlay vertico--candidates-ov (point-min) (point-min))
+  (unless (eq vertico-resize t)
+    (setq lines (nconc (make-list (max 0 (- vertico-count (length lines))) "\n") lines)))
+  (let ((string (apply #'concat lines)))
+    (add-face-text-property 0 (length string) 'default 'append string)
+    (overlay-put vertico--candidates-ov 'before-string string)
+    (overlay-put vertico--candidates-ov 'after-string nil))
+  (vertico--resize-window (length lines)))
+
+(advice-add #'vertico--display-candidates :override #'vertico-bottom--display-candidates)
+
+;; current item indicator
+;; https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow
+(advice-add #'vertico--format-candidate :around
+            (lambda (orig cand prefix suffix index _start)
+              (setq cand (funcall orig cand prefix suffix index _start))
+              (concat
+               (if (= vertico--index index)
+                   (propertize "» " 'face 'vertico-current)
+                 "  ")
+               cand)))
 
 ;;; orderless
 (setq completion-styles '(orderless basic))
@@ -170,14 +201,14 @@
   (require 'embark)
   (require 'wgrep)
   (pcase-let ((`(,type . ,candidates)
-	       (run-hook-with-args-until-success 'embark-candidate-collectors)))
+               (run-hook-with-args-until-success 'embark-candidate-collectors)))
     (pcase type
       ('consult-grep (let ((embark-after-export-hook #'wgrep-change-to-wgrep-mode))
-		       (embark-export)))
+                       (embark-export)))
       ('file (let ((embark-after-export-hook #'wdired-change-to-wdired-mode))
-	       (embark-export)))
+               (embark-export)))
       ('consult-location (let ((embark-after-export-hook #'occur-edit-mode))
-			   (embark-export)))
+                           (embark-export)))
       (x (user-error "embark category %S doesn't support writable export" x)))))
 
 ;;; keystrokes feedback interval
