@@ -6,6 +6,7 @@
 (straight-use-package '(ess-stata-mode :type git :host github :repo "emacs-ess/ess-stata-mode"))
 (straight-use-package 'julia-mode)
 (straight-use-package 'go-mode)
+(straight-use-package 'lua-mode)
 (straight-use-package 'consult-project-extra)
 (straight-use-package 'symbol-overlay)
 ;; (straight-use-package 'eglot)
@@ -74,6 +75,9 @@
 ;;; golang
 (autoload 'go-mode "go-mode" nil t)
 (add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
+
+;;; lua
+(setq-default lua-indent-level 2)
 
 ;; eglot
 ;; disable highlight at point
