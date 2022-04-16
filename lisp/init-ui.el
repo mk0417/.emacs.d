@@ -7,12 +7,12 @@
 ;;; titlebar format
 (if (< emacs-major-version 28)
     (setq frame-title-format
-	  '((:eval (if (buffer-file-name)
-		       (concat " " (abbreviate-file-name (buffer-file-name)))
-		     " %b"))))
+          '((:eval (if (buffer-file-name)
+                       (concat " " (abbreviate-file-name (buffer-file-name)))
+                     " %b"))))
   ;; https://emacs.stackexchange.com/questions/33680/how-to-remove-the-icon-in-the-titlebar
   (setq frame-title-format nil
-	us-use-proxy-icon nil))
+        us-use-proxy-icon nil))
 
 ;;; disable menu bar
 (menu-bar-mode -1)
@@ -23,13 +23,15 @@
 ;;; maximize frame at startup
 (setq initial-frame-alist (quote ((fullscreen . maximized))))
 
+(setq frame-resize-pixelwise t)
+
 ;;; highlight current line
 (global-hl-line-mode 1)
 
 ;;; full path in mode-line
 (setq-default mode-line-buffer-identification
-	      (list 'buffer-file-name
-		    '(:eval (propertize (format "  %s" buffer-file-truename) 'face 'regular))))
+              (list 'buffer-file-name
+                    '(:eval (propertize (format "  %s" buffer-file-truename) 'face 'regular))))
 
 ;;; no fringe
 (fringe-mode '(0 . 0))
