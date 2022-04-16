@@ -36,24 +36,21 @@
 ;;   (define-key map (kbd "C-.") #'mct-avy-choose-completion-exit))
 
 ;;; vertico
+;; mct is discontinued
 (setq vertico-count 20)
+(setq vertico-cycle t)
 (setq vertico-resize t)
+(setq consult-line-start-from-top t)
 
 (vertico-mode)
+(vertico-multiform-mode)
 
-;; input at bottom
-;; https://github.com/minad/vertico/wiki#input-at-bottom-of-completion-list
-(defun vertico-bottom--display-candidates (lines)
-  (move-overlay vertico--candidates-ov (point-min) (point-min))
-  (unless (eq vertico-resize t)
-    (setq lines (nconc (make-list (max 0 (- vertico-count (length lines))) "\n") lines)))
-  (let ((string (apply #'concat lines)))
-    (add-face-text-property 0 (length string) 'default 'append string)
-    (overlay-put vertico--candidates-ov 'before-string string)
-    (overlay-put vertico--candidates-ov 'after-string nil))
-  (vertico--resize-window (length lines)))
-
-(advice-add #'vertico--display-candidates :override #'vertico-bottom--display-candidates)
+(setq vertico-multiform-commands
+      '((p-consult-rg-current-dir buffer)
+        (p-consult-rg-at-point-project buffer)
+        (p-consult-rg-other-dir buffer)
+        (p-consult-rg-at-point-current-dir buffer)
+        (consult-ripgrep buffer)))
 
 ;; current item indicator
 ;; https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow
