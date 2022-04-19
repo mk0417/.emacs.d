@@ -53,7 +53,9 @@
   (define-key evil-normal-state-map (kbd "f.") 'p-avy-goto-word-current-line)
   (define-key evil-normal-state-map (kbd "f,") 'p-avy-goto-word-block)
   (define-key evil-normal-state-map (kbd "fK") 'p-avy-goto-bracket)
-  (define-key evil-normal-state-map (kbd "fk") 'p-avy-goto-bracket-block))
+  (define-key evil-normal-state-map (kbd "fk") 'p-avy-goto-bracket-block)
+  (define-key evil-visual-state-map (kbd "f.") 'p-avy-goto-word-current-line)
+  (define-key evil-visual-state-map (kbd "fk") 'p-avy-goto-bracket-block))
 
 (provide 'init-avy)
 ;;;;; init-avy.el ends here
