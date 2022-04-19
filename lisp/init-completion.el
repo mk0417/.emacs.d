@@ -16,23 +16,26 @@
 (add-hook 'after-init-hook 'corfu-global-mode)
 
 (with-eval-after-load 'corfu
+  (defun no-corfu-in-minibuffer ()
+    (corfu-mode -1))
+  (add-hook 'minibuffer-setup-hook #'no-corfu-in-minibuffer)
+
+  (define-key corfu-map (kbd "M-j") #'corfu-doc-scroll-down)
+  (define-key corfu-map (kbd "M-k") #'corfu-doc-scroll-up)
+  (define-key corfu-map (kbd "M-d") #'corfu-doc-toggle)
+
   (custom-set-faces
    '(corfu-border
      ((t (:background "#2fafff"))))))
+
+;;; corfu-doc
+(add-hook 'corfu-mode-hook #'corfu-doc-mode)
 
 ;;; cape
 (add-to-list 'completion-at-point-functions #'cape-dabbrev)
 (add-to-list 'completion-at-point-functions #'cape-keyword)
 (add-to-list 'completion-at-point-functions #'cape-file)
 (add-to-list 'completion-at-point-functions #'cape-tex)
-
-;;; corfu-doc
-(add-hook 'corfu-mode-hook #'corfu-doc-mode)
-
-(with-eval-after-load 'corfu
-  (define-key corfu-map (kbd "M-j") #'corfu-doc-scroll-down)
-  (define-key corfu-map (kbd "M-k") #'corfu-doc-scroll-up)
-  (define-key corfu-map (kbd "M-d") #'corfu-doc-toggle))
 
 (provide 'init-completion)
 ;;;;; init-completion.el ends here

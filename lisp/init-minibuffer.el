@@ -15,11 +15,6 @@
 (setq completion-ignore-case t)
 (setq completion-cycle-threshold 2)
 
-(with-eval-after-load 'corfu
-  (defun corfu-in-minibuffer ()
-    (corfu-mode -1))
-  (add-hook 'minibuffer-setup-hook #'corfu-in-minibuffer))
-
 (add-hook 'completion-list-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
 
 ;;; mct
@@ -36,11 +31,12 @@
 ;;   (define-key map (kbd "C-.") #'mct-avy-choose-completion-exit))
 
 ;;; vertico
-;; mct is discontinued
+;; Prot will not continue to develop mct
+;; https://protesilaos.com/codelog/2022-04-14-emacs-discontinue-mct/
 (setq vertico-count 20)
 (setq vertico-cycle t)
 (setq vertico-resize t)
-(setq consult-line-start-from-top t)
+(setq vertico-scroll-margin 0)
 
 (vertico-mode)
 (vertico-multiform-mode)
@@ -73,36 +69,37 @@
 (add-hook 'after-init-hook 'marginalia-mode)
 
 ;;; consult
+(setq consult-line-start-from-top t)
+(setq consult-line-numbers-widen t)
+(setq consult-async-min-input 2)
+(setq consult-async-refresh-delay  0.15)
+(setq consult-async-input-throttle 0.2)
+(setq consult-async-input-debounce 0.1)
+(setq consult-preview-key 'any)
+
 (with-eval-after-load 'consult
-  (setq consult-line-numbers-widen t
-	consult-async-min-input 2
-	consult-async-refresh-delay  0.15
-	consult-async-input-throttle 0.2
-	consult-async-input-debounce 0.1)
-
-  (setq consult-preview-key 'any)
   (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
-
   (defmacro p-no-consult-preview (&rest cmds)
     `(with-eval-after-load 'consult
        (consult-customize ,@cmds :preview-key (kbd "M-v"))))
   (p-no-consult-preview consult-ripgrep
-			consult-git-grep
-			consult-grep
-			consult-bookmark
-			consult-recent-file
-			consult-xref
-			consult--source-bookmark
-			p-consult-rg-at-point-project
-			p-consult-rg-current-dir
-			p-consult-rg-other-dir
-			p-consult-rg-at-point-current-dir)
+                        consult-git-grep
+                        consult-grep
+                        consult-bookmark
+                        consult-recent-file
+                        consult-xref
+                        consult--source-bookmark
+                        p-consult-rg-at-point-project
+                        p-consult-rg-current-dir
+                        p-consult-rg-other-dir
+                        p-consult-rg-at-point-current-dir)
 
   (global-set-key [remap switch-to-buffer] 'consult-buffer)
   (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
   (global-set-key [remap switch-to-buffer-other-frame] 'consult-buffer-other-frame)
   (global-set-key [remap goto-line] 'consult-goto-line)
-  (global-set-key (kbd "C-x l") 'consult-line))
+  (global-set-key (kbd "C-x l") 'consult-line)
+  (define-key minibuffer-local-map (kbd "C-r") 'consult-history))
 
 (autoload 'consult--grep "consult")
 
@@ -169,7 +166,7 @@
   (which-key--hide-popup-ignore-command)
   (let ((embark-indicators
          (remq #'embark-which-key-indicator embark-indicators)))
-      (apply fn args)))
+    (apply fn args)))
 
 (advice-add #'embark-completing-read-prompter :around #'embark-hide-which-key-indicator)
 
@@ -230,6 +227,7 @@
     "s"  '(:ignore t :which-key "search")
     "ss" '(consult-line :which-key "consult line")
     "sS" '(p-consult-at-point-line :which-key "consult at-point line")
+    "sr" '(consult-yank-pop :which-key "consult yank")
     "sm" '(consult-multi-occur :which-key "consult multi occur")
     "sp" '(consult-ripgrep :which-key "consult-rg project")
     "sP" '(p-consult-rg-at-point-project :which-key "consult-rg at-point project")

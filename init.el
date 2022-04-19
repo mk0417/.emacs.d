@@ -6,36 +6,36 @@
 ;;; initial scratch buffer message
 (setq initial-scratch-message
       (concat ";; Hello Peng, welcome to EMACS and happy hacking\n"
-	      (format ";; Emacs version: %s\n" (car (split-string emacs-version)))))
+              (format ";; Emacs version: %s\n" (car (split-string emacs-version)))))
 
 ;;; startup time
 (add-hook 'emacs-startup-hook
-	  (lambda ()
-	    (message "*** Emacs loaded in %s seconds." (emacs-init-time "%.2f"))))
+          (lambda ()
+            (message "*** Emacs loaded in %s seconds." (emacs-init-time "%.2f"))))
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
 ;;; inherit variables from .zshrc
 ;; http://xahlee.info/emacs/emacs/emacs_env_var_paths.html
 (let ((p-env-path
-       '("/Users/ml/anaconda3/bin"
-	 "/Users/ml/anaconda3/bin/jupyter"
-	 "/opt/homebrew/Caskroom/miniforge/base/bin"
-	 "/opt/homebrew/Caskroom/miniforge/base/bin/jupyter"
-	 "/opt/homebrew/bin/"
-	 "/usr/local/bin"
-	 "/usr/local/sbin"
-	 "/usr/bin"
-	 "/bin"
-	 "/usr/sbin"
-	 "/sbin"
-	 "/Applications/Stata/StataMP.app/Contents/MacOS/"
-	 "/Applications/Stata/StataMP.app/Contents/MacOS/stata"
-	 "/Library/TeX/texbin"
-	 "/Users/ml/.emacs.d/bin"
-	 "/Users/ml/.cargo/bin"
-	 "/Applications/Emacs.app/Contents/MacOS/bin")))
-  (setenv "PATH" (mapconcat 'identity p-env-path ":") )
+       (list (expand-file-name "~/anaconda3/bin")
+             (expand-file-name "~/anaconda3/bin/jupyter")
+             (expand-file-name "~/.emacs.d/bin")
+             (expand-file-name "~/.cargo/bin")
+             "/opt/homebrew/Caskroom/miniforge/base/bin"
+             "/opt/homebrew/Caskroom/miniforge/base/bin/jupyter"
+             "/opt/homebrew/bin/"
+             "/usr/local/bin"
+             "/usr/local/sbin"
+             "/usr/bin"
+             "/bin"
+             "/usr/sbin"
+             "/sbin"
+             "/Applications/Stata/StataMP.app/Contents/MacOS/"
+             "/Applications/Stata/StataMP.app/Contents/MacOS/stata"
+             "/Library/TeX/texbin"
+             "/Applications/Emacs.app/Contents/MacOS/bin")))
+  (setenv "PATH" (mapconcat 'identity p-env-path ":"))
   (setq exec-path (append p-env-path (list "." exec-directory))))
 
 ;;; init
