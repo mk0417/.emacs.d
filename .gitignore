@@ -6,6 +6,7 @@
 /auto-save-list
 /anaconda-mode
 .bookmarks.el
+.DS_Store
 company-statistics-cache.el
 custom.el
 recentf
