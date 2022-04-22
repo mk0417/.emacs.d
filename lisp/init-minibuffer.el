@@ -60,9 +60,62 @@
                cand)))
 
 ;;; orderless
+;; https://github.com/minad/consult/wiki#minads-orderless-configuration
+(defvar +orderless-dispatch-alist
+  '((?% . char-fold-to-regexp)
+    (?! . orderless-without-literal)
+    (?`. orderless-initialism)
+    (?= . orderless-literal)
+    (?~ . orderless-flex)))
+
+;; Recognizes the following patterns:
+;; * ~flex flex~
+;; * =literal literal=
+;; * %char-fold char-fold%
+;; * `initialism initialism`
+;; * !without-literal without-literal!
+;; * .ext (file extension)
+;; * regexp$ (regexp matching at end)
+(defun +orderless-dispatch (pattern index _total)
+  (cond
+   ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
+   ((string-suffix-p "$" pattern)
+    '(orderless-regexp . ,(concat (substring pattern 0 -1) "[\x200000-\x300000]*$")))
+   ;; File extensions
+   ((and
+     ;; Completing filename or eshell
+     (or minibuffer-completing-file-name
+         (derived-mode-p 'eshell-mode))
+     ;; File extension
+     (string-match-p "\\`\\.." pattern))
+    '(orderless-regexp . ,(concat "\\." (substring pattern 1) "[\x200000-\x300000]*$")))
+   ;; Ignore single !
+   ((string= "!" pattern) `(orderless-literal . ""))
+   ;; Prefix and suffix
+   ((if-let (x (assq (aref pattern 0) +orderless-dispatch-alist))
+        (cons (cdr x) (substring pattern 1))
+      (when-let (x (assq (aref pattern (1- (length pattern))) +orderless-dispatch-alist))
+        (cons (cdr x) (substring pattern 0 -1)))))))
+
+(autoload 'orderless-define-completion-style "orderless")
+;; Define orderless style with initialism by default
+(orderless-define-completion-style +orderless-with-initialism
+                                   (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
+
 (setq completion-styles '(orderless basic))
 (setq completion-category-defaults nil)
-(setq completion-category-overrides '((file (styles partial-completion))))
+;; Enable partial-completion for files.
+;; Either give orderless precedence or partial-completion.
+;; Note that completion-category-overrides is not really an override,
+;; but rather prepended to the default completion-styles.
+;; completion-category-overrides '((file (styles orderless partial-completion))) ;; orderless is tried first
+(setq completion-category-overrides '((file (styles partial-completion)) ;; partial-completion is tried first
+                                      ;; enable initialism by default for symbols
+                                      (command (styles +orderless-with-initialism))
+                                      (variable (styles +orderless-with-initialism))
+                                      (symbol (styles +orderless-with-initialism))))
+(setq orderless-component-separator #'orderless-escapable-split-on-space) ;; allow escaping space with backslash!
+(setq orderless-style-dispatchers '(+orderless-dispatch))
 
 ;;; marginalia
 (setq marginalia-max-relative-age 0)
