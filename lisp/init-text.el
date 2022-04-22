@@ -116,6 +116,8 @@
     (key-chord-define m ",c" "<=")
     (key-chord-define m ",b" ">=")
     (key-chord-define m ",d" "==")
+    (key-chord-define m ",t" "=>")
+    (key-chord-define m ",l" "->")
     (key-chord-define m ",." "[[]]\C-b\C-b")
     (key-chord-define m ";r" "<-")
     (key-chord-define m ";j" "%>%")
