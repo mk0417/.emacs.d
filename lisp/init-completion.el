@@ -12,6 +12,7 @@
 (setq corfu-auto-delay 0)
 (setq corfu-count 5)
 (setq corfu-scroll-margin 20)
+(setq corfu-quit-no-match t)
 
 (add-hook 'after-init-hook 'corfu-global-mode)
 
@@ -23,6 +24,7 @@
   (define-key corfu-map (kbd "M-j") #'corfu-doc-scroll-down)
   (define-key corfu-map (kbd "M-k") #'corfu-doc-scroll-up)
   (define-key corfu-map (kbd "M-d") #'corfu-doc-toggle)
+  (define-key corfu-map (kbd "M-g") #'corfu-quit)
 
   (custom-set-faces
    '(corfu-border
