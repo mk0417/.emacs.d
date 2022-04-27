@@ -48,6 +48,8 @@
         (p-consult-rg-at-point-current-dir buffer)
         (consult-ripgrep buffer)))
 
+(add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+
 ;; current item indicator
 ;; https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow
 (advice-add #'vertico--format-candidate :around
