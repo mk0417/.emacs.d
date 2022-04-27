@@ -79,6 +79,9 @@
 ;;; lua
 (setq-default lua-indent-level 2)
 
+;;; symbol-overlay
+(setq symbol-overlay-scope t)
+
 ;; eglot
 ;; disable highlight at point
 ;; https://github.com/joaotavora/eglot/issues/334
