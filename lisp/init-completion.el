@@ -14,7 +14,7 @@
 (setq corfu-scroll-margin 20)
 (setq corfu-quit-no-match t)
 
-(add-hook 'after-init-hook 'corfu-global-mode)
+(add-hook 'after-init-hook 'global-corfu-mode)
 
 (with-eval-after-load 'corfu
   (defun no-corfu-in-minibuffer ()
