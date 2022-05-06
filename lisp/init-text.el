@@ -13,7 +13,7 @@
     (progn
       (skip-chars-forward " \n\t")
       (when (re-search-backward "\n[ \t]*\n" nil 1)
-	(goto-char (match-end 0)))
+        (goto-char (match-end 0)))
       (push-mark (point) t t)
       (re-search-forward "\n[ \t]*\n" nil 1)
       (previous-line)
@@ -137,8 +137,8 @@
       (insert "£"))
     (general-imap "y"
       (general-key-dispatch 'self-insert-command
-	:timeout 0.3
-	"b" 'p-insert-pound))))
+        :timeout 0.3
+        "b" 'p-insert-pound))))
 
 ;;; smartparens
 (add-hook 'after-init-hook 'smartparens-global-mode)
@@ -176,9 +176,9 @@
 
 ;;; kill-sexp and insert
 (defun p-kill-sexp-and-insert ()
-    (interactive)
-    (kill-sexp)
-    (evil-insert 0))
+  (interactive)
+  (kill-sexp)
+  (evil-insert 0))
 
 ;;; keybindings
 (with-eval-after-load 'evil

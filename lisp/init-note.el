@@ -37,24 +37,24 @@
 
 (setq logos-outline-regexp-alist
       '((emacs-lisp-mode . "^;;;+ ")
-	(org-mode . "^\\*+ +")
-	(text-mode . "^\\* [0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\},")
-	(t . ,(or outline-regexp logos--page-delimiter))))
+        (org-mode . "^\\*+ +")
+        (text-mode . "^\\* [0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\},")
+        (t . ,(or outline-regexp logos--page-delimiter))))
 
 (setq-default logos-hide-mode-line nil
-	      logos-scroll-lock nil
-	      logos-variable-pitch nil
-	      logos-indicate-buffer-boundaries nil
-	      logos-buffer-read-only nil
-	      logos-olivetti t)
+              logos-scroll-lock nil
+              logos-variable-pitch nil
+              logos-indicate-buffer-boundaries nil
+              logos-buffer-read-only nil
+              logos-olivetti t)
 
 (defun logos--reveal-entry ()
   (cond
    ((and (eq major-mode 'org-mode)
-	 (org-at-heading-p))
+         (org-at-heading-p))
     (org-show-subtree))
    ((or (eq major-mode 'outline-mode)
-	(bound-and-true-p outline-minor-mode))
+        (bound-and-true-p outline-minor-mode))
     (outline-show-subtree))))
 
 (add-hook 'logos-page-motion-hook #'logos--reveal-entry)
@@ -93,8 +93,8 @@
     :states '(normal visual)
     :keymaps 'LaTeX-mode-map)
   (p-latex-leader-def
-   "p"  '(:ignore t :which-key "latex preview")
-   "pp" '(latex-preview-pane-mode :which-key "toggle latex preview pane")))
+    "p"  '(:ignore t :which-key "latex preview")
+    "pp" '(latex-preview-pane-mode :which-key "toggle latex preview pane")))
 
 (provide 'init-note)
 ;;;;; init-note.el ends here

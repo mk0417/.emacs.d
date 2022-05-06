@@ -111,13 +111,13 @@
   (pulsar-pulse-line))
 
 (dolist (command
-	 '(evil-goto-first-line
-	   winum-select-window-1
-	   winum-select-window-2
-	   winum-select-window-3
-	   p-switch-to-scratch
-	   p-switch-to-messages
-	   p-switch-to-previous-buffer))
+         '(evil-goto-first-line
+           winum-select-window-1
+           winum-select-window-2
+           winum-select-window-3
+           p-switch-to-scratch
+           p-switch-to-messages
+           p-switch-to-previous-buffer))
   (advice-add command :after #'p-pulse-line))
 
 (add-hook 'consult-after-jump-hook #'pulsar-recenter-top)
