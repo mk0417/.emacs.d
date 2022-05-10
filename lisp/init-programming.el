@@ -82,7 +82,7 @@
 ;;; symbol-overlay
 (setq symbol-overlay-scope t)
 
-;; eglot
+;;; eglot
 ;; disable highlight at point
 ;; https://github.com/joaotavora/eglot/issues/334
 ;; (setq eglot-ignored-server-capabilites '(:documentHighlightProvider))
