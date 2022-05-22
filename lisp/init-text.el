@@ -73,11 +73,6 @@
   (beginning-of-line)
   (kill-line))
 
-;;; add four spaces
-(defun p-insert-spaces ()
-  (interactive)
-  (insert "    "))
-
 ;;; add my daily log item
 (defun p-insert-log-item ()
   (interactive)
@@ -195,7 +190,6 @@
 
   (define-key evil-insert-state-map (kbd "C-u") 'p-kill-to-begin-of-line)
   (define-key evil-insert-state-map (kbd "C-i") 'p-delete-backward-to-tab)
-  (define-key evil-insert-state-map (kbd "C-.") 'p-insert-spaces)
 
   (general-create-definer p-space-leader-def
     :prefix "SPC"
