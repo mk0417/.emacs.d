@@ -3,6 +3,7 @@
 ;;; package
 (straight-use-package 'which-key)
 (straight-use-package 'diminish)
+(straight-use-package 'stupid-indent-mode)
 
 ;; UTF-8 as default encoding
 (set-language-environment "UTF-8")
@@ -49,6 +50,14 @@
 (setq tab-always-indent 'complete)
 (setq-default tab-width 4)
 (setq-default indent-tabs-mode nil)
+
+;;; stupid-indent-mode
+(require 'stupid-indent-mode)
+(add-hook 'prog-mode-hook 'stupid-indent-mode)
+(add-hook 'python-mode-hook
+          (lambda ()
+            (setq-local stupid-indent-level 4)))
+(diminish 'stupid-indent-mode)
 
 ;;; split new buffer on the right by default
 (setq split-height-threshold nil)
