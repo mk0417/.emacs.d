@@ -1,7 +1,7 @@
 ;;;;; init-completion.el --- Corfu -*- lexical-binding: t -*-
 
 ;;; package
-(straight-use-package 'corfu)
+(straight-use-package '(corfu :files ("*.el" "extensions/*.el")))
 (straight-use-package 'cape)
 (straight-use-package 'corfu-doc)
 
