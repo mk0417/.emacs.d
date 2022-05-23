@@ -140,7 +140,7 @@
     "bD" '(kill-buffer-and-window :which-key "kill buffer and window")
     "br" '(revert-buffer :which-key "revert buffer")
     "bs" '(p-switch-to-scratch :which-key "switch to scratch")
-    "bm" '(p-switch-to-messages :which-key "switch to messages")
+    "ba" '(p-switch-to-messages :which-key "switch to messages")
     "§" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
     "`" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
     "d" '(:ignore t :which-key "dired")

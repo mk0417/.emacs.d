@@ -278,6 +278,7 @@
     "fd" '(consult-dir :which-key "find directory")
     "b"  '(:ignore t :which-key "buffer")
     "bb" '(consult-buffer :which-key "consult switch buffer")
+    "bm" '(consult-bookmark :which-key "consult bookmark")
     "bo" '(consult-buffer-other-window :which-key "open file in another window")
     "s"  '(:ignore t :which-key "search")
     "ss" '(consult-line :which-key "consult line")
