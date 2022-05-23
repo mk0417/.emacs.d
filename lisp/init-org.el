@@ -71,6 +71,17 @@
   (add-to-list 'org-structure-template-alist '("p" . "src elisp")))
 
 ;;; org-modern-mode
+(setq org-modern-label-border 1)
+(setq org-modern-timestamp t)
+(setq org-modern-table t)
+(setq org-modern-table-vertical 1)
+(setq org-modern-table-horizontal 0)
+(setq org-modern-horizontal-rule t)
+(setq org-modern-list
+      '((?+ . "•")
+        (?- . "–")
+        (?* . "◦")))
+
 (add-hook 'org-mode-hook #'org-modern-mode)
 (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 
