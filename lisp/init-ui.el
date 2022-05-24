@@ -72,7 +72,7 @@
 
 (defun p-set-regular-font ()
   (interactive)
-  (set-face-attribute 'default nil :font p-default-font :height 130 :weight 'regular)
+  (set-face-attribute 'default nil :font p-default-font :height 120 :weight 'regular)
   (set-face-attribute 'variable-pitch nil :font p-variable-pitch-font :height 1.05 :weight 'regular))
 
 (defun p-set-large-font ()
