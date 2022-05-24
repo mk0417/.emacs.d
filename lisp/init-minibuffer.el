@@ -50,6 +50,38 @@
 
 (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
 
+;; sort directories first
+(defun sort-directories-first (files)
+  (setq files (vertico-sort-history-length-alpha files))
+  (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
+         (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
+
+(setq vertico-sort-override-function 'sort-directories-first)
+
+;; distinguish directories and files with color
+(defun +completion-category-highlight-files (cand)
+  (let ((len (length cand)))
+    (when (and (> len 0)
+               (eq (aref cand (1- len)) ?/))
+      (add-face-text-property 0 len 'dired-directory 'append cand)))
+  cand)
+
+(defvar +completion-category-hl-func-overrides
+  `((file . ,#'+completion-category-highlight-files)))
+
+(advice-add #'vertico--arrange-candidates :around
+            (defun vertico-format-candidates+ (func)
+              (let ((hl-func (or (alist-get (vertico--metadata-get 'category)
+                                            +completion-category-hl-func-overrides)
+                                 #'identity)))
+                (cl-letf* (((symbol-function 'actual-vertico-format-candidate)
+                            (symbol-function #'vertico--format-candidate))
+                           ((symbol-function #'vertico--format-candidate)
+                            (lambda (cand &rest args)
+                              (apply #'actual-vertico-format-candidate
+                                     (funcall hl-func cand) args))))
+                  (funcall func)))))
+
 ;; current item indicator
 ;; https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow
 (advice-add #'vertico--format-candidate :around
@@ -197,7 +229,7 @@
 (global-set-key (kbd "C-;") 'embark-act)
 (global-set-key (kbd "C-c C-o") 'embark-export)
 
-;;; embark action integration with which-key
+;; embark action integration with which-key
 (defun embark-which-key-indicator ()
   (lambda (&optional keymap targets prefix)
     (if (null keymap)
@@ -225,7 +257,7 @@
 
 (advice-add #'embark-completing-read-prompter :around #'embark-hide-which-key-indicator)
 
-;;; open folder in Finder
+;; open folder in Finder
 ;; https://book.emacs-china.org/#org404700d
 (defun p-open-directory-externally (file)
   (interactive "fOpen externally: ")
@@ -243,7 +275,7 @@
           embark-isearch-highlight-indicator))
   (define-key embark-file-map (kbd "O") #'p-open-directory-externally))
 
-;;; export to do editing
+;; export to do editing
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-funcs.el
 (defun p-embark-export-write ()
   (interactive)
