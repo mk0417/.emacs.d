@@ -52,11 +52,15 @@
 
 ;; sort directories first
 (defun sort-directories-first (files)
-  (setq files (vertico-sort-history-length-alpha files))
+  (setq files (vertico-sort-history-alpha files))
   (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
          (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
 
-(setq vertico-sort-override-function 'sort-directories-first)
+(setq vertico-multiform-categories
+      '((symbol (vertico-sort-function . vertico-sort-alpha))
+        (file (vertico-sort-function . sort-directories-first))))
+
+;; (setq vertico-sort-override-function 'sort-directories-first)
 
 ;; distinguish directories and files with color
 (defun +completion-category-highlight-files (cand)
