@@ -179,6 +179,7 @@
                         consult-bookmark
                         consult-recent-file
                         consult-xref
+                        consult-yank-pop
                         consult--source-bookmark
                         p-consult-rg-at-point-project
                         p-consult-rg-current-dir
@@ -316,6 +317,7 @@
     "bb" '(consult-buffer :which-key "consult switch buffer")
     "bm" '(consult-bookmark :which-key "consult bookmark")
     "bo" '(consult-buffer-other-window :which-key "open file in another window")
+    "bp" '(consult-project-buffer :which-key "enhanced consult switch buffer")
     "s"  '(:ignore t :which-key "search")
     "ss" '(consult-line :which-key "consult line")
     "sS" '(p-consult-at-point-line :which-key "consult at-point line")
