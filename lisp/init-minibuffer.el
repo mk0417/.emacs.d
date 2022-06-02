@@ -60,32 +60,6 @@
       '((symbol (vertico-sort-function . vertico-sort-alpha))
         (file (vertico-sort-function . sort-directories-first))))
 
-;; (setq vertico-sort-override-function 'sort-directories-first)
-
-;; distinguish directories and files with color
-(defun +completion-category-highlight-files (cand)
-  (let ((len (length cand)))
-    (when (and (> len 0)
-               (eq (aref cand (1- len)) ?/))
-      (add-face-text-property 0 len 'dired-directory 'append cand)))
-  cand)
-
-(defvar +completion-category-hl-func-overrides
-  `((file . ,#'+completion-category-highlight-files)))
-
-(advice-add #'vertico--arrange-candidates :around
-            (defun vertico-format-candidates+ (func)
-              (let ((hl-func (or (alist-get (vertico--metadata-get 'category)
-                                            +completion-category-hl-func-overrides)
-                                 #'identity)))
-                (cl-letf* (((symbol-function 'actual-vertico-format-candidate)
-                            (symbol-function #'vertico--format-candidate))
-                           ((symbol-function #'vertico--format-candidate)
-                            (lambda (cand &rest args)
-                              (apply #'actual-vertico-format-candidate
-                                     (funcall hl-func cand) args))))
-                  (funcall func)))))
-
 ;; current item indicator
 ;; https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow
 (advice-add #'vertico--format-candidate :around
