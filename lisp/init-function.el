@@ -190,16 +190,9 @@
 				(throw 'EndReached t)
 			  (forward-char))))))))
 
-;; http://xahlee.info/emacs/emacs/emacs_shrink_whitespace.html
 (defun p-delete-blank-lines ()
   (interactive)
-  (let ($p1 $p2)
-	(skip-chars-backward "\n")
-	(setq $p1 (point))
-	(skip-chars-forward "\n")
-	(setq $p2 (point))
-	(delete-region $p1 $p2))
-  (insert " "))
+  (flush-lines "^$" (region-beginning) (region-end)))
 
 ;; http://xahlee.info/emacs/emacs/elisp_insert-date-time.html
 (defun p-choose-and-insert-date ()
@@ -252,6 +245,7 @@
 
   (define-key evil-visual-state-map (kbd ";a") 'p-beginning-of-line-or-block)
   (define-key evil-visual-state-map (kbd ";e") 'p-end-of-line-or-block)
+  (define-key evil-visual-state-map (kbd ",r") 'p-delete-blank-lines)
   (define-key evil-visual-state-map (kbd "fe") 'p-forward-to-equal)
   (define-key evil-visual-state-map (kbd "fE") 'p-backward-to-equal)
 
@@ -261,7 +255,6 @@
   (p-space-leader-def
     "e"  '(:ignore t :which-key "editing")
 	"eq" '(p-quote-lines :which-key "quote lines")
-	"eb" '(p-delete-blank-lines :which-key "delete blank lines")
 	"el" '(p-choose-and-insert-date :which-key "choose and insert date")
     "f"  '(:ignore t :which-key "file")
     "fp" '(p-find-file-in-config :which-key "find config file")

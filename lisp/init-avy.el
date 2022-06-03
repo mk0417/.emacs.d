@@ -67,6 +67,7 @@
   (define-key evil-normal-state-map (kbd "fk") 'p-avy-goto-bracket-block)
   (define-key evil-normal-state-map (kbd "fS") 'p-avy-goto-space)
   (define-key evil-normal-state-map (kbd "fs") 'p-avy-goto-space-current-line)
+  (define-key evil-visual-state-map (kbd "fl") 'avy-goto-line)
   (define-key evil-visual-state-map (kbd "f.") 'p-avy-goto-word-current-line)
   (define-key evil-visual-state-map (kbd "fk") 'p-avy-goto-bracket-block)
   (define-key evil-visual-state-map (kbd "fs") 'p-avy-goto-space-current-line))
