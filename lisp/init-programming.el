@@ -62,11 +62,11 @@
     :states '(normal visual)
     :keymaps 'ess-mode-map)
   (p-ess-leader-def
-   "r" '(:ignore t :which-key "eval")
-   "ra" 'ess-cycle-assign
-   "rf" 'ess-eval-function
-   "rl" 'ess-eval-line
-   "rr" 'ess-eval-region-or-line-and-step))
+    "r" '(:ignore t :which-key "eval")
+    "ra" 'ess-cycle-assign
+    "rf" 'ess-eval-function
+    "rl" 'ess-eval-line
+    "rr" 'ess-eval-region-or-line-and-step))
 
 ;;; Julia
 (with-eval-after-load 'julia-mode
