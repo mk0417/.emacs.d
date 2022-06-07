@@ -53,6 +53,19 @@
   (avy-with p-avy-goto-space
     (p-avy-goto-space (line-beginning-position) (line-end-position))))
 
+(defun p-avy-goto-equal (&optional BEG END)
+  (interactive)
+  (let ((avy-command this-command))
+    (avy-jump "=" :beg BEG :end END)))
+(add-to-list 'avy-orders-alist '(p-avy-goto-equal . avy-order-closest))
+
+(defun p-avy-goto-equal-block ()
+  (interactive)
+  (let ((block-beginning-position (progn (p-beginning-of-block) (line-beginning-position)))
+        (block-end-position (progn (p-end-of-block) (line-end-position))))
+    (avy-with p-avy-goto-equal
+      (p-avy-goto-equal block-beginning-position block-end-position))))
+
 ;;; keybindings
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd "f") 'nil)
@@ -67,10 +80,12 @@
   (define-key evil-normal-state-map (kbd "fk") 'p-avy-goto-bracket-block)
   (define-key evil-normal-state-map (kbd "fS") 'p-avy-goto-space)
   (define-key evil-normal-state-map (kbd "fs") 'p-avy-goto-space-current-line)
+  (define-key evil-normal-state-map (kbd "fe") 'p-avy-goto-equal-block)
   (define-key evil-visual-state-map (kbd "fl") 'avy-goto-line)
   (define-key evil-visual-state-map (kbd "f.") 'p-avy-goto-word-current-line)
   (define-key evil-visual-state-map (kbd "fk") 'p-avy-goto-bracket-block)
-  (define-key evil-visual-state-map (kbd "fs") 'p-avy-goto-space-current-line))
+  (define-key evil-visual-state-map (kbd "fs") 'p-avy-goto-space-current-line)
+  (define-key evil-visual-state-map (kbd "fe") 'p-avy-goto-equal-block))
 
 (provide 'init-avy)
 ;;;;; init-avy.el ends here
