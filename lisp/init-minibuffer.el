@@ -41,13 +41,6 @@
 (vertico-mode)
 (vertico-multiform-mode)
 
-(setq vertico-multiform-commands
-      '((p-consult-rg-current-dir buffer)
-        (p-consult-rg-at-point-project buffer)
-        (p-consult-rg-other-dir buffer)
-        (p-consult-rg-at-point-current-dir buffer)
-        (consult-ripgrep buffer)))
-
 (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
 
 ;; sort directories first
@@ -56,9 +49,17 @@
   (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
          (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
 
+(setq vertico-multiform-commands
+      '((p-consult-rg-current-dir buffer)
+        (p-consult-rg-at-point-project buffer)
+        (p-consult-rg-other-dir buffer)
+        (p-consult-rg-at-point-current-dir buffer)
+        (consult-ripgrep buffer)))
+
 (setq vertico-multiform-categories
       '((symbol (vertico-sort-function . vertico-sort-alpha))
-        (file (vertico-sort-function . sort-directories-first))))
+        (file (vertico-sort-function . sort-directories-first))
+        (t (vertico-sort-function . vertico-sort-history-alpha))))
 
 ;; current item indicator
 ;; https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow
@@ -112,7 +113,7 @@
 (autoload 'orderless-define-completion-style "orderless")
 ;; Define orderless style with initialism by default
 (orderless-define-completion-style +orderless-with-initialism
-                                   (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
+  (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
 
 (setq completion-styles '(orderless basic))
 (setq completion-category-defaults nil)
