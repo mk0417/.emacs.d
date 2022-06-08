@@ -63,6 +63,8 @@
     :keymaps 'ess-mode-map)
   (p-ess-leader-def
     "r" '(:ignore t :which-key "eval")
+    "rp" 'ess-request-a-process
+    "ri" 'ess-interrupt
     "ra" 'ess-cycle-assign
     "rf" 'ess-eval-function
     "rl" 'ess-eval-line
