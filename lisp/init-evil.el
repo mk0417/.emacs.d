@@ -176,7 +176,8 @@
     "tm" '(toggle-frame-maximized :which-key "maximize window")
     "tt" '(my-modus-themes-toggle :which-key "toggle modus theme")
     "q" '(:ignore t :which-key "quit")
-    "qq" '(kill-emacs :which-key "quit emacs")))
+    "qq" '(kill-emacs :which-key "quit emacs")
+    "qr" '(restart-emacs :which-key "restart emacs")))
 
 (provide 'init-evil)
 ;;;;; init-evil.el ends here
