@@ -34,7 +34,7 @@
                     '(:eval (propertize (format "  %s" buffer-file-truename)))))
 
 ;;; no fringe
-(fringe-mode '(0 . 0))
+(fringe-mode '(5 . 0))
 
 ;;; line number
 (when (fboundp 'display-line-numbers-mode)
