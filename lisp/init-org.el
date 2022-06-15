@@ -4,7 +4,6 @@
 (straight-use-package 'org-modern)
 (straight-use-package 'org-tree-slide)
 (straight-use-package 'olivetti)
-(straight-use-package '(org-modern-indent :type git :host github :repo "jdtsmith/org-modern-indent"))
 ;; (straight-use-package '(org-appear :type git :host github :repo "awth13/org-appear"))
 
 ;;; org
@@ -85,9 +84,6 @@
 
 (add-hook 'org-mode-hook #'org-modern-mode)
 (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
-
-;;; org-modern-mode-indent
-(add-hook 'org-mode-hook #'org-modern-indent-mode)
 
 ;;; org appear
 ;; https://github.com/willbchang/ward-emacs/blob/master/config.org#org-appear
