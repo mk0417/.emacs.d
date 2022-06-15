@@ -174,7 +174,7 @@
     "tw" '(count-words :which-key "count words")
     "tl" '(count-lines-page :which-key "count lines")
     "tm" '(toggle-frame-maximized :which-key "maximize window")
-    "tt" '(my-modus-themes-toggle :which-key "toggle modus theme")
+    "tt" '(modus-themes-toggle :which-key "toggle modus theme")
     "q" '(:ignore t :which-key "quit")
     "qq" '(kill-emacs :which-key "quit emacs")
     "qr" '(restart-emacs :which-key "restart emacs")))
