@@ -68,7 +68,7 @@
 ;;; font
 ;; (defvar p-default-font "Hack")
 (defvar p-default-font "Iosevka Comfy")
-(defvar p-variable-pitch-font "FiraGo")
+(defvar p-variable-pitch-font "Iosevka Comfy Duo")
 
 (defun p-set-regular-font ()
   (interactive)
