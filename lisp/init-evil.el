@@ -1,40 +1,53 @@
-;;;;; init-evil.el --- Evil-mode/Vim -*- lexical-binding: t -*-
+;;;;; init-evil.el --- Evil mode configuration -*- lexical-binding: t -*-
 
-;;; package
+;;; Install packages
 (straight-use-package 'evil)
 (straight-use-package 'general)
+(straight-use-package 'evil-nerd-commenter)
 (straight-use-package 'evil-surround)
 (straight-use-package 'evil-escape)
 (straight-use-package 'evil-matchit)
 (straight-use-package 'evil-goggles)
-(straight-use-package 'winum)
 
-;;; evil
-(setq evil-undo-system 'undo-redo)
-(setq evil-symbol-word-search t)
-(setq evil-respect-visual-line-mode t)
+;;; Turn on undo-tree globally
+(when (< emacs-major-version 28)
+  (rational-package-install-package 'undo-tree)
+  (global-undo-tree-mode))
+
+;;; Set some variables that must be configured before loading the package
+(setq evil-want-C-i-jump nil)
 (setq evil-want-C-u-scroll t)
-(add-hook 'after-init-hook 'evil-mode)
+(setq evil-respect-visual-line-mode t)
+(if (< emacs-major-version 28)
+  (setq evil-undo-system 'undo-tree)
+  (setq evil-undo-system 'undo-redo))
 
-;;; change cursor type and color
+;;; Load Evil and enable it globally
+(require 'evil)
+(evil-mode 1)
+
+;;; Change cursor type and color
 ;; https://github.com/hlissner/doom-emacs/issues/1848
 (setq evil-normal-state-cursor '(box "#cf5a65"))
 (setq evil-insert-state-cursor '(hbar "#00ff00"))
 (setq evil-visual-state-cursor '(hollow "#cf5a65"))
 
-;;; evil surround
+;;; Make evil search more like vim
+(evil-select-search-module 'evil-search-module 'evil-search)
+
+;;; Evil surround
 (global-evil-surround-mode 1)
 
-;;; evil escape
+;;; Evil escape
 (setq-default evil-escape-key-sequence "fd")
 (evil-escape-mode 1)
 (diminish 'evil-escape-mode)
 
-;;; evil-matchit
+;;; Evil-matchit
 (setq evilmi-shortcut "m")
 (global-evil-matchit-mode 1)
 
-;;; evil goggles
+;;; Evil goggles
 (setq evil-goggles-pulse t)
 (setq evil-goggles-duration 0.35)
 (evil-goggles-mode 1)
@@ -45,90 +58,47 @@
  '(evil-goggles-yank-face ((t (:background "#cf5a65")))))
 (diminish 'evil-goggles-mode)
 
-;;; winum
-(add-hook 'after-init-hook 'winum-mode)
+;;; Turn on Evil Nerd Commenter
+(evilnc-default-hotkeys)
 
-;;; set evil normal state for grep mode
+;;; Make C-g revert to normal state
+(define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+
+;;; Rebind `universal-argument' to 'C-M-u' since 'C-u' now scrolls the buffer
+(global-set-key (kbd "C-M-u") 'universal-argument)
+
+;;; Use visual line motions even outside of visual-line-mode buffers
+(evil-global-set-key 'motion "j" 'evil-next-visual-line)
+(evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+;;; Make sure some modes start in Emacs state
+(dolist (mode '(custom-mode eshell-mode term-mode))
+  (add-to-list 'evil-emacs-state-modes mode))
+
+;;; Set evil normal state for grep mode
 (dolist (mode '(grep-mode occur-mode occur-edit-mode))
   (evil-set-initial-state mode 'normal))
 
-(evil-set-initial-state 'dired-mode 'emacs)
+;;; Some functions
+(defun p-switch-to-scratch ()
+  (interactive)
+  (switch-to-buffer "*scratch*"))
 
-;;; keybindings
+(defun p-switch-to-messages ()
+  (interactive)
+  (switch-to-buffer "*Messages*"))
+
+(defun p-switch-to-previous-buffer ()
+  (interactive)
+  (switch-to-buffer nil))
+
+;;; Keybindings
 (with-eval-after-load 'evil
-  ;; ex-evil replace buffer
-  (defun p-ex-evil-buffer-replace ()
-    (interactive)
-    (evil-ex (concat "%s/")))
-
-  ;; ex-evil replace in selected region
-  (defun p-ex-evil-selection-replace ()
-    (interactive)
-    (evil-ex (concat "'<,'>s/")))
-
-  ;; select functions
-  (defun p-select-function ()
-    (interactive)
-	(forward-char)
-    (beginning-of-defun)
-    (evilmi-select-items))
-
-  (defun p-switch-to-scratch ()
-    (interactive)
-    (switch-to-buffer "*scratch*"))
-
-  (defun p-switch-to-messages ()
-    (interactive)
-    (switch-to-buffer "*Messages*"))
-
-  (defun p-switch-to-previous-buffer ()
-    (interactive)
-    (switch-to-buffer nil))
-
-  ;; I prefer to use C-n and C-p in many other places
-  (define-key evil-normal-state-map (kbd "C-n") nil)
-  (define-key evil-normal-state-map (kbd "C-p") nil)
-  (define-key evil-insert-state-map (kbd "C-n") nil)
-  (define-key evil-insert-state-map (kbd "C-p") nil)
-
-  (define-key evil-normal-state-map (kbd ",.") 'p-select-function)
-  (define-key evil-normal-state-map (kbd "gl") 'evil-shift-right)
-  (define-key evil-normal-state-map (kbd "gh") 'evil-shift-left)
-  (define-key evil-normal-state-map (kbd "gcc") 'comment-line)
-  (define-key evil-normal-state-map (kbd "gor") 'p-ex-evil-buffer-replace)
-  (define-key evil-normal-state-map (kbd "gos") 'transpose-sexps)
-  (define-key evil-normal-state-map (kbd ",a") 'beginning-of-defun)
-  (define-key evil-normal-state-map (kbd ",e") 'end-of-defun)
-
-  (define-key evil-visual-state-map (kbd "gcc") 'comment-line)
-  (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
-  (define-key evil-visual-state-map (kbd ",a") 'beginning-of-defun)
-  (define-key evil-visual-state-map (kbd ",e") 'end-of-defun)
-
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-a") 'evil-beginning-of-line)
-  (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
-  (define-key evil-insert-state-map (kbd "C-k") 'delete-backward-char)
-
-  (define-key evil-ex-completion-map (kbd "C-f") 'forward-char)
-  (define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
-  (define-key evil-ex-completion-map (kbd "C-k") 'delete-backward-char)
-
-  (define-key evil-inner-text-objects-map "f" 'evil-inner-bracket)
-  (define-key evil-inner-text-objects-map "h" 'evil-inner-curly)
-  (define-key evil-inner-text-objects-map "d" 'evil-inner-double-quote)
-  (define-key evil-outer-text-objects-map "f" 'evil-a-bracket)
-  (define-key evil-outer-text-objects-map "h" 'evil-a-curly)
-  (define-key evil-outer-text-objects-map "d" 'evil-a-double-quote)
-
   (general-create-definer p-space-leader-def
     :prefix "SPC"
     :states '(normal visual))
   (p-space-leader-def
     "SPC" 'execute-extended-command
-    "1" '(winum-select-window-1 :which-key "select window 1")
-    "2" '(winum-select-window-2 :which-key "select window 2")
-    "3" '(winum-select-window-3 :which-key "select window 3")
     "f" '(:ignore t :which-key "file")
     "ff" '(find-file :which-key "find file")
     "fs" '(save-buffer :which-key "save buffer")
@@ -153,23 +123,10 @@
     "re" '(eval-expression :which-key "eval expression")
     "rl" '(eval-last-sexp :which-key "eval last sexp")
     "rs" '(shell-command :which-key "shell command")
-    "e" '(:ignore t :which-key "editing")
-    "ec" '(whitespace-cleanup :which-key "clear whitespace")
-    "w" '(:ignore t :which-key "window")
-    "wd" '(delete-window :which-key "delete window")
-    "wv" '(evil-window-vsplit :which-key "split window right")
-    "ws" '(evil-window-split :which-key "split window below")
-    "wo" '(delete-other-windows :which-key "delete other windows")
-    "p" '(:ignore t :which-key "projects and packages")
-    "ps" '(straight-pull-package-and-deps :which-key "straight-pull-package-and-deps")
-    "pr" '(straight-remove-unused-repos :which-key "straight-remove-unused-repos")
-    "pU" '(straight-pull-recipe-repositories :which-key "straight-pull-recipe-repositories")
-    "pu" '(straight-pull-all  :which-key "straight update all packages")
     "t" '(:ignore t :which-key "toggle")
     "tf" '(p-set-regular-font :which-key "set regular font")
     "tF" '(p-set-large-font :which-key "set large font")
     "te" '(p-set-extra-large-font :which-key "set extra large font")
-    "tM" '(toggle-frame-fullscreen :which-key "fullscreen")
     "tp" '(variable-pitch-mode :which-key "pitch font mode")
     "tw" '(count-words :which-key "count words")
     "tl" '(count-lines-page :which-key "count lines")

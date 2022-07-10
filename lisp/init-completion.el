@@ -1,43 +1,45 @@
-;;;;; init-completion.el --- Corfu -*- lexical-binding: t -*-
+;;;;; init-completion.el -*- lexical-binding: t -*-
 
-;;; package
+;;; Install packages
 (straight-use-package '(corfu :files ("*.el" "extensions/*.el")))
-(straight-use-package 'cape)
 (straight-use-package 'corfu-doc)
+(straight-use-package 'cape)
 
-;;; corfu
+;;; Corfu
+;; setup corfu for popup like completion
 (setq corfu-cycle t)
 (setq corfu-auto t)
-(setq corfu-auto-prefix 1)
+(setq corfu-auto-prefix 2)
 (setq corfu-auto-delay 0)
-(setq corfu-count 5)
-(setq corfu-scroll-margin 20)
+(setq corfu-echo-documentation 0.25)
 (setq corfu-quit-no-match t)
+(setq corfu-scroll-margin 20)
 
-(add-hook 'after-init-hook 'global-corfu-mode)
+(global-corfu-mode 1)
 
 (with-eval-after-load 'corfu
   (defun no-corfu-in-minibuffer ()
     (corfu-mode -1))
   (add-hook 'minibuffer-setup-hook #'no-corfu-in-minibuffer)
-
-  (define-key corfu-map (kbd "M-j") #'corfu-doc-scroll-down)
-  (define-key corfu-map (kbd "M-k") #'corfu-doc-scroll-up)
+  (define-key corfu-map (kbd "M-p") #'corfu-doc-scroll-down)
+  (define-key corfu-map (kbd "M-n") #'corfu-doc-scroll-up)
   (define-key corfu-map (kbd "M-d") #'corfu-doc-toggle)
   (define-key corfu-map (kbd "M-g") #'corfu-quit)
-
   (custom-set-faces
    '(corfu-border
      ((t (:background "#2fafff"))))))
-
-;;; corfu-doc
 (add-hook 'corfu-mode-hook #'corfu-doc-mode)
 
-;;; cape
-(add-to-list 'completion-at-point-functions #'cape-dabbrev)
-(add-to-list 'completion-at-point-functions #'cape-keyword)
+;;; Cape
+;; setup Cape for better completion-at-point support and more
+(require 'cape)
+;; add useful defaults completion sources from cape
 (add-to-list 'completion-at-point-functions #'cape-file)
-(add-to-list 'completion-at-point-functions #'cape-tex)
+(add-to-list 'completion-at-point-functions #'cape-dabbrev)
+;; silence the pcomplete capf, no errors or messages!
+(advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+;; ensure that pcomplete does not write to the buffer and behaves as a pure `completion-at-point-function'
+(advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify)
 
 (provide 'init-completion)
 ;;;;; init-completion.el ends here

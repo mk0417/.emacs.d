@@ -1,47 +1,21 @@
-;;;;; init-minibuffer.el --- Config for minibuffer completion -*- lexical-binding: t; -*-
+;;;;; init-minibuffer.el --- Minibuffer -*- lexical-binding: t -*-
 
-;;; package
+;;; Install packages
+(straight-use-package '(vertico :files ("*.el" "extensions/*.el")))
 (straight-use-package 'marginalia)
 (straight-use-package 'orderless)
 (straight-use-package 'consult)
 (straight-use-package 'embark)
 (straight-use-package 'embark-consult)
-(straight-use-package 'consult-dir)
-;; (straight-use-package '(mct :type git :host gitlab :repo "protesilaos/mct" :files ("*.el" "extensions/*.el")))
-(straight-use-package '(vertico :files ("*.el" "extensions/*.el")))
 (straight-use-package 'wgrep)
 
-;;; completion
-(setq completion-ignore-case t)
-(setq completion-cycle-threshold 2)
-
-(add-hook 'completion-list-mode-hook (lambda () (setq-local global-hl-line-mode nil)))
-
-;;; mct
-;; https://gitlab.com/protesilaos/mct
-;; (setq mct-live-update-delay 0.5)
-;; (setq mct-live-completion t)
-;; (setq mct-persist-dynamic-completion t)
-;; (setq mct-completion-passlist '(embark-prefix-help-command Info-goto-node Info-index Info-menu vc-retrieve-tag))
-
-;; (mct-minibuffer-mode 1)
-
-;; (dolist (map (list mct-minibuffer-local-completion-map
-;; 		   mct-minibuffer-completion-list-map))
-;;   (define-key map (kbd "C-.") #'mct-avy-choose-completion-exit))
-
-;;; vertico
-;; Prot will not continue to develop mct
-;; https://protesilaos.com/codelog/2022-04-14-emacs-discontinue-mct/
-(setq vertico-count 20)
+;;; Vertico
+(require 'vertico)
+(require 'vertico-directory)
+;; cycle back to top/bottom result when the edge is reached
 (setq vertico-cycle t)
-(setq vertico-resize t)
-(setq vertico-scroll-margin 0)
-
-(vertico-mode)
+(vertico-mode 1)
 (vertico-multiform-mode)
-
-(add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
 
 ;; sort directories first
 (defun sort-directories-first (files)
@@ -49,166 +23,36 @@
   (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
          (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
 
-(setq vertico-multiform-commands
-      '((p-consult-rg-current-dir buffer)
-        (p-consult-rg-at-point-project buffer)
-        (p-consult-rg-other-dir buffer)
-        (p-consult-rg-at-point-current-dir buffer)
-        (consult-ripgrep buffer)))
-
 (setq vertico-multiform-categories
       '((symbol (vertico-sort-function . vertico-sort-alpha))
         (file (vertico-sort-function . sort-directories-first))
         (t (vertico-sort-function . vertico-sort-history-alpha))))
 
-;; current item indicator
-;; https://github.com/minad/vertico/wiki#prefix-current-candidate-with-arrow
-(advice-add #'vertico--format-candidate :around
-            (lambda (orig cand prefix suffix index _start)
-              (setq cand (funcall orig cand prefix suffix index _start))
-              (concat
-               (if (= vertico--index index)
-                   (propertize "» " 'face 'vertico-current)
-                 "  ")
-               cand)))
+(define-key vertico-map (kbd "C-n") 'vertico-next)
+(define-key vertico-map (kbd "C-p") 'vertico-previous)
+(define-key vertico-map (kbd "M-h") 'vertico-directory-up)
 
-;;; orderless
-;; https://github.com/minad/consult/wiki#minads-orderless-configuration
-(defvar +orderless-dispatch-alist
-  '((?% . char-fold-to-regexp)
-    (?! . orderless-without-literal)
-    (?`. orderless-initialism)
-    (?= . orderless-literal)
-    (?~ . orderless-flex)))
+;;; Marginalia
+(require 'marginalia)
+(setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+(marginalia-mode 1)
 
-;; Recognizes the following patterns:
-;; * ~flex flex~
-;; * =literal literal=
-;; * %char-fold char-fold%
-;; * `initialism initialism`
-;; * !without-literal without-literal!
-;; * .ext (file extension)
-;; * regexp$ (regexp matching at end)
-(defun +orderless-dispatch (pattern index _total)
-  (cond
-   ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
-   ((string-suffix-p "$" pattern)
-    '(orderless-regexp . ,(concat (substring pattern 0 -1) "[\x200000-\x300000]*$")))
-   ;; File extensions
-   ((and
-     ;; Completing filename or eshell
-     (or minibuffer-completing-file-name
-         (derived-mode-p 'eshell-mode))
-     ;; File extension
-     (string-match-p "\\`\\.." pattern))
-    '(orderless-regexp . ,(concat "\\." (substring pattern 1) "[\x200000-\x300000]*$")))
-   ;; Ignore single !
-   ((string= "!" pattern) `(orderless-literal . ""))
-   ;; Prefix and suffix
-   ((if-let (x (assq (aref pattern 0) +orderless-dispatch-alist))
-        (cons (cdr x) (substring pattern 1))
-      (when-let (x (assq (aref pattern (1- (length pattern))) +orderless-dispatch-alist))
-        (cons (cdr x) (substring pattern 0 -1)))))))
+;;; Orderless
+;; set up Orderless for better fuzzy matching
+(require 'orderless)
+(setq completion-styles '(orderless))
+(setq completion-category-overrides '((file (styles . (partial-completion)))))
 
-(autoload 'orderless-define-completion-style "orderless")
-;; Define orderless style with initialism by default
-(orderless-define-completion-style +orderless-with-initialism
-  (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
-
-(setq completion-styles '(orderless basic))
-(setq completion-category-defaults nil)
-;; Enable partial-completion for files.
-;; Either give orderless precedence or partial-completion.
-;; Note that completion-category-overrides is not really an override,
-;; but rather prepended to the default completion-styles.
-;; completion-category-overrides '((file (styles orderless partial-completion))) ;; orderless is tried first
-(setq completion-category-overrides '((file (styles partial-completion)) ;; partial-completion is tried first
-                                      ;; enable initialism by default for symbols
-                                      (command (styles +orderless-with-initialism))
-                                      (variable (styles +orderless-with-initialism))
-                                      (symbol (styles +orderless-with-initialism))))
-(setq orderless-component-separator #'orderless-escapable-split-on-space) ;; allow escaping space with backslash!
-(setq orderless-style-dispatchers '(+orderless-dispatch))
-
-;;; marginalia
-(setq marginalia-max-relative-age 0)
-(add-hook 'after-init-hook 'marginalia-mode)
-
-;;; consult
-(setq consult-line-start-from-top t)
-(setq consult-line-numbers-widen t)
-(setq consult-async-min-input 2)
-(setq consult-async-refresh-delay  0.15)
-(setq consult-async-input-throttle 0.2)
-(setq consult-async-input-debounce 0.1)
-(setq consult-preview-key 'any)
-
-(with-eval-after-load 'consult
-  (add-hook 'completion-list-mode-hook #'consult-preview-at-point-mode)
-  (defmacro p-no-consult-preview (&rest cmds)
-    `(with-eval-after-load 'consult
-       (consult-customize ,@cmds :preview-key (kbd "M-v"))))
-  (p-no-consult-preview consult-ripgrep
-                        consult-git-grep
-                        consult-grep
-                        consult-bookmark
-                        consult-recent-file
-                        consult-xref
-                        consult-yank-pop
-                        consult--source-bookmark
-                        p-consult-rg-at-point-project
-                        p-consult-rg-current-dir
-                        p-consult-rg-other-dir
-                        p-consult-rg-at-point-current-dir)
-
-  (global-set-key [remap switch-to-buffer] 'consult-buffer)
-  (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
-  (global-set-key [remap switch-to-buffer-other-frame] 'consult-buffer-other-frame)
-  (global-set-key [remap goto-line] 'consult-goto-line)
-  (global-set-key (kbd "C-x l") 'consult-line)
-  (define-key minibuffer-local-map (kbd "C-r") 'consult-history))
-
-(autoload 'consult--grep "consult")
-
-(defun p-consult-at-point-line (&optional initial)
-  (interactive)
-  (consult-line (thing-at-point 'symbol)))
-
-(defun p-consult-rg-at-point-project (&optional dir)
-  (interactive)
-  (consult--grep "Ripgrep" #'consult--ripgrep-builder dir (thing-at-point 'symbol)))
-
-(defun p-consult-rg-current-dir (&optional initial)
-  (interactive "P")
-  (if (equal buffer-file-name nil)
-      (consult--grep "Ripgrep current dir" #'consult--ripgrep-builder "/Users/ml/" initial)
-    (consult--grep "Ripgrep current dir" #'consult--ripgrep-builder (file-name-directory buffer-file-name) initial)))
-
-(defun p-consult-rg-other-dir (&optional initial)
-  (interactive "P")
-  (consult--grep "Ripgrep current dir" #'consult--ripgrep-builder (read-directory-name "consult-rg directory:") initial))
-
-(defun p-consult-rg-at-point-current-dir ()
-  (interactive)
-  (consult--grep "Ripgrep current dir" #'consult--ripgrep-builder (file-name-directory buffer-file-name) (thing-at-point 'symbol)))
-
-(defun p-consult-fd-local (&optional dir initial)
-  (interactive "P")
-  (if (equal buffer-file-name nil)
-      (consult-find "~/" initial)
-    (consult-find dir initial)))
-
-(defun p-consult-fd-global (&optional initial)
-  (interactive "P")
-  (consult-find (read-directory-name "consult-find directory:") initial))
-
-;;; embark
-(autoload 'embark-act "embark")
-(autoload 'embark-export "embark")
-
+;;; Embark
+(require 'embark)
+(require 'embark-consult)
+(global-set-key [remap describe-bindings] #'embark-bindings)
 (global-set-key (kbd "C-;") 'embark-act)
 (global-set-key (kbd "C-c C-o") 'embark-export)
-
+;; use Embark to show bindings in a key prefix with `C-h`
+(setq prefix-help-command #'embark-prefix-help-command)
+(with-eval-after-load 'embark-consult
+  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 ;; embark action integration with which-key
 (defun embark-which-key-indicator ()
   (lambda (&optional keymap targets prefix)
@@ -229,31 +73,25 @@
        nil nil t (lambda (binding)
                    (not (string-suffix-p "-argument" (cdr binding))))))))
 
-(defun embark-hide-which-key-indicator (fn &rest args)
-  (which-key--hide-popup-ignore-command)
-  (let ((embark-indicators
-         (remq #'embark-which-key-indicator embark-indicators)))
-    (apply fn args)))
+(setq embark-indicators '(embark-which-key-indicator embark-highlight-indicator embark-isearch-highlight-indicator))
 
-(advice-add #'embark-completing-read-prompter :around #'embark-hide-which-key-indicator)
+;;; Consult
+;; set some consult bindings
+(setq completion-in-region-function #'consult-completion-in-region)
 
-;; open folder in Finder
-;; https://book.emacs-china.org/#org404700d
-(defun p-open-directory-externally (file)
-  (interactive "fOpen externally: ")
-  (shell-command-to-string (encode-coding-string (format "open %s" (file-name-directory (expand-file-name file))) 'gbk)))
-
-(with-eval-after-load 'embark
-  (setq embark-keymap-prompter-key ",")
-  (setq embark-indicators '(embark-which-key-indicator embark-highlight-indicator embark-isearch-highlight-indicator))
-  (add-to-list 'embark-indicators #'embark-vertico-indicator)
-  (require 'embark-consult)
-  (add-hook 'embark-collect-mode-hook 'embark-consult-preview-minor-mode)
-  (setq embark-indicators
-        '(embark-which-key-indicator
-          embark-highlight-indicator
-          embark-isearch-highlight-indicator))
-  (define-key embark-file-map (kbd "O") #'p-open-directory-externally))
+(defmacro p-no-consult-preview (&rest cmds)
+  `(with-eval-after-load 'consult
+     (consult-customize ,@cmds :preview-key (kbd "M-v"))))
+(p-no-consult-preview consult-ripgrep
+                      consult-git-grep
+                      consult-grep
+                      consult-bookmark
+                      consult-recent-file
+                      consult-xref
+                      consult-yank-pop
+                      consult--source-bookmark)
+(global-set-key [remap switch-to-buffer] 'consult-buffer)
+(global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
 
 ;; export to do editing
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-funcs.el
@@ -272,14 +110,11 @@
                            (embark-export)))
       (x (user-error "embark category %S doesn't support writable export" x)))))
 
-;;; keystrokes feedback interval
-(setq echo-keystrokes 0.02)
-
-;;; keybindings
-(global-set-key (kbd "C-c C-d") 'consult-dir)
-(global-set-key (kbd "C-c C-j") 'consult-dir-jump-file)
+(global-set-key (kbd "C-s") 'consult-line)
+(define-key minibuffer-local-map (kbd "C-r") 'consult-history)
 (global-set-key (kbd "C-c C-.") 'p-embark-export-write)
 
+;;; Keybindings
 (with-eval-after-load 'evil
   (general-create-definer p-space-leader-def
     :prefix "SPC"
@@ -287,7 +122,6 @@
   (p-space-leader-def
     "f"  '(:ignore t :which-key "file")
     "fr" '(consult-recent-file :which-key "recent file")
-    "fd" '(consult-dir :which-key "find directory")
     "b"  '(:ignore t :which-key "buffer")
     "bb" '(consult-buffer :which-key "consult switch buffer")
     "bm" '(consult-bookmark :which-key "consult bookmark")
@@ -295,20 +129,10 @@
     "bp" '(consult-project-buffer :which-key "enhanced consult switch buffer")
     "s"  '(:ignore t :which-key "search")
     "ss" '(consult-line :which-key "consult line")
-    "sS" '(p-consult-at-point-line :which-key "consult at-point line")
     "sr" '(consult-yank-pop :which-key "consult yank")
-    "sm" '(consult-multi-occur :which-key "consult multi occur")
     "sp" '(consult-ripgrep :which-key "consult-rg project")
-    "sP" '(p-consult-rg-at-point-project :which-key "consult-rg at-point project")
-    "sd" '(p-consult-rg-current-dir :which-key "consult-rg current dir")
-    "sD" '(p-consult-rg-at-point-current-dir :which-key "consult-rg at-point current dir")
-    "so" '(p-consult-rg-other-dir :which-key "consult-rg other dir")
-    "sf" '(p-consult-fd-global :which-key "consult-fd global files")
-    "sF" '(p-consult-fd-local :which-key "consult-fd local files")
     "si" '(consult-imenu :which-key "consult imenu")
-    "sl" '(consult-outline :which-key "consult outline")
-    "t"  '(:ignore t :which-key "toggle")
-    "to" '(p-open-directory-externally :which-key "open directory externally")))
+    "sl" '(consult-outline :which-key "consult outline")))
 
 (provide 'init-minibuffer)
 ;;;;; init-minibuffer.el ends here

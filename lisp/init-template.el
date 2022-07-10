@@ -1,11 +1,11 @@
 ;;;;; init-template.el --- Template -*- lexical-binding: t -*-
 
-;;; package
+;;; Install packages
 (straight-use-package 'tempel)
 
 (setq tempel-path "~/Dropbox/templates")
 
-;;; keybindings
+;;; Keybindings
 (with-eval-after-load 'tempel
   (define-key tempel-map (kbd "M-j") 'tempel-next)
   (define-key tempel-map (kbd "M-k") 'tempel-previous))

@@ -1,17 +1,15 @@
 ;;;;; init-avy.el --- Avy -*- lexical-binding: t -*-
 
-;;; package
+;;; Install packages
 (straight-use-package 'avy)
 
 (require 'avy)
 
-(setq avy-background t
-      avy-style 'at
-      avy-styles-alist '((avy-goto-line . pre)))
-
+(setq avy-background t)
+(setq avy-style 'at)
+(setq avy-styles-alist '((avy-goto-line . pre)))
 (setq avy-dispatch-alist nil)
-
-;;; https://karthinks.com/software/avy-can-do-anything/
+;; https://karthinks.com/software/avy-can-do-anything/
 (setq avy-keys '(?q ?e ?r ?y ?u ?o ?p ?a ?s ?d ?f ?g ?h ?j ?l ?x ?c ?v ?b ?n))
 
 ;;; Avy command
@@ -66,7 +64,7 @@
     (avy-with p-avy-goto-equal
       (p-avy-goto-equal block-beginning-position block-end-position))))
 
-;;; keybindings
+;;; Keybindings
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd "f") 'nil)
   (define-key evil-normal-state-map (kbd "ft") 'avy-goto-char-timer)
