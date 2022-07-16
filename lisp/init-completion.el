@@ -9,7 +9,7 @@
 ;; setup corfu for popup like completion
 (setq corfu-cycle t)
 (setq corfu-auto t)
-(setq corfu-auto-prefix 2)
+(setq corfu-auto-prefix 1)
 (setq corfu-auto-delay 0)
 (setq corfu-echo-documentation 0.25)
 (setq corfu-quit-no-match t)
