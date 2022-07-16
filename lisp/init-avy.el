@@ -22,8 +22,8 @@
 
 (defun p-avy-goto-word-block ()
   (interactive)
-  (let ((block-beginning-position (progn (p-beginning-of-block) (line-beginning-position)))
-        (block-end-position (progn (p-end-of-block) (line-end-position))))
+  (let ((block-beginning-position (progn (region-beginning) (line-beginning-position)))
+        (block-end-position (progn (region-end) (line-end-position))))
     (avy-with avy-goto-word-0
       (avy-goto-word-0 nil block-beginning-position block-end-position))))
 
@@ -35,8 +35,8 @@
 
 (defun p-avy-goto-bracket-block ()
   (interactive)
-  (let ((block-beginning-position (progn (p-beginning-of-block) (line-beginning-position)))
-        (block-end-position (progn (p-end-of-block) (line-end-position))))
+  (let ((block-beginning-position (progn (region-beginning) (line-beginning-position)))
+        (block-end-position (progn (region-end) (line-end-position))))
     (avy-with p-avy-goto-bracket
       (p-avy-goto-bracket block-beginning-position block-end-position))))
 
@@ -59,8 +59,8 @@
 
 (defun p-avy-goto-equal-block ()
   (interactive)
-  (let ((block-beginning-position (progn (p-beginning-of-block) (line-beginning-position)))
-        (block-end-position (progn (p-end-of-block) (line-end-position))))
+  (let ((block-beginning-position (progn (region-beginning) (line-beginning-position)))
+        (block-end-position (progn (region-end) (line-end-position))))
     (avy-with p-avy-goto-equal
       (p-avy-goto-equal block-beginning-position block-end-position))))
 
