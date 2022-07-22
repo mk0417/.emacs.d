@@ -19,7 +19,7 @@
     (key-chord-define mode "uu" "_")
     (key-chord-define mode "jj" "+")
     (key-chord-define mode "ji" "-")
-    (key-chord-define mode "ii" "*")
+    (key-chord-define mode "cj" "*")
     (key-chord-define mode "dh" "=")
     (key-chord-define mode "ww" "?")
     (key-chord-define mode "bb" "~")
