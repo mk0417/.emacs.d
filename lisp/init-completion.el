@@ -14,6 +14,7 @@
 (setq corfu-echo-documentation 0.25)
 (setq corfu-quit-no-match t)
 (setq corfu-scroll-margin 20)
+(setq corfu-preselect-first nil)
 
 (global-corfu-mode 1)
 
