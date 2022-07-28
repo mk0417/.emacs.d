@@ -55,7 +55,6 @@
 ;;; Modus themes
 ;; load in early-init.el to avoid white screen flash
 (setq modus-themes-prompts '(bold background))
-(setq modus-themes-mode-line '(moody))
 (setq x-underline-at-descent-line t)
 (setq modus-themes-hl-line '(intense))
 (setq modus-themes-paren-match '(intense bold underline))
