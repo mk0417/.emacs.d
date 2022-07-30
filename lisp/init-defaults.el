@@ -66,6 +66,13 @@
 (setq-default bidi-inhibit-bpa t)
 (global-so-long-mode 1)
 
+;;; Hide "setting up indent for shell type zsh"
+;; https://emacs.stackexchange.com/questions/52846/how-to-remove-message-indentation-setup-for-shell-type-sh
+(advice-add 'sh-set-shell :around
+            (lambda (orig-fun &rest args)
+              (let ((inhibit-message t))
+                (apply orig-fun args))))
+
 ;;; Which-key
 (setq-default which-key-idle-delay 0.8)
 (which-key-mode)
