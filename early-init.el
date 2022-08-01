@@ -45,12 +45,17 @@
 
   (add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory)))
 
-;;; Remove some unneeded UI elements (the user can turn back on anything they wish)
+;;; Minimal UI
 (setq inhibit-startup-message t)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
-;; no titlebar
+
+;;; No titlebar
 (add-to-list 'default-frame-alist '(undecorated . t))
+
+;;; Consistent color with theme
+;; (when (featurep 'ns)
+;;   (push '(ns-transparent-titlebar . t) default-frame-alist))
 
 ;;; Modus themes
 ;; load in early-init.el to avoid white screen flash
