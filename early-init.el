@@ -68,9 +68,9 @@
 (setq modus-themes-org-blocks 'gray-background)
 (setq modus-themes-markup '(bold intense background))
 (setq modus-themes-headings
-      '((1 . (variable-pitch 1.5))
-        (2 . (variable-pitch 1.3))
-        (3 . (variable-pitch 1.1))
+      '((1 . (variable-pitch 1.3))
+        (2 . (variable-pitch 1.2))
+        (3 . (variable-pitch 1))
         (t . (variable-pitch 1))))
 
 (load-theme 'modus-vivendi t)
