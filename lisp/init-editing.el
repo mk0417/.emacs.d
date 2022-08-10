@@ -4,6 +4,7 @@
 (straight-use-package 'stupid-indent-mode)
 (straight-use-package 'smartparens)
 (straight-use-package 'cycle-at-point)
+(straight-use-package 's)
 
 ;;; Stupid-indent-mode
 (require 'stupid-indent-mode)
@@ -182,6 +183,45 @@
   (beginning-of-line)
   (kill-line))
 
+;; query replace many
+;; https://tony-zorman.com/posts/query-replace/2022-08-06-query-replace-many.html
+(require 's)
+
+(defun p-get-queries (&optional pairs)
+  (-let* (((from to delim arg)
+           (query-replace-read-args
+            (s-join " "
+                    (-non-nil
+                     (list "Query replace many"
+                           (cond ((eq current-prefix-arg '-) "backward")
+                                 (current-prefix-arg "word"))
+                           (when (use-region-p) "in region"))))
+            nil))
+          (from-to (cons (regexp-quote from)
+                         (s-replace "\\" "\\\\" to))))
+    (if (-contains? pairs from-to)
+        (list pairs delim arg)
+      (p-get-queries (push from-to pairs)))))
+
+(defun p-query-replace-many
+    (pairs &optional delimited start end backward region-noncontiguous-p)
+  (interactive
+   (let ((common (p-get-queries)))
+     (list (nth 0 common) (nth 1 common)
+           (if (use-region-p) (region-beginning))
+           (if (use-region-p) (region-end))
+           (nth 2 common)
+           (if (use-region-p) (region-noncontiguous-p)))))
+  (perform-replace
+   (concat "\\(?:" (mapconcat #'car pairs "\\|") "\\)")
+   (cons (lambda (pairs _count)
+           (cl-loop for (from . to) in pairs
+                    when (string-match from (match-string 0))
+                    return to))
+         pairs)
+   :query :regexp
+   delimited nil nil start end backward region-noncontiguous-p))
+
 ;;; Keybindings
 (with-eval-after-load 'evil
   ;; I prefer to use C-n and C-p in many other places
@@ -193,6 +233,7 @@
   (define-key evil-normal-state-map (kbd ",.") 'p-select-function)
   (define-key evil-normal-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-normal-state-map (kbd "gor") 'p-ex-evil-buffer-replace)
+  (define-key evil-normal-state-map (kbd "gom") 'p-query-replace-many)
   (define-key evil-normal-state-map (kbd "gos") 'transpose-sexps)
   (define-key evil-normal-state-map (kbd ",a") 'beginning-of-defun)
   (define-key evil-normal-state-map (kbd ",e") 'end-of-defun)
@@ -206,6 +247,7 @@
 
   (define-key evil-visual-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
+  (define-key evil-visual-state-map (kbd "gom") 'p-query-replace-many)
   (define-key evil-visual-state-map (kbd ",e") 'end-of-defun)
   (define-key evil-visual-state-map (kbd ";a") 'p-beginning-of-line-or-block)
   (define-key evil-visual-state-map (kbd ";e") 'p-end-of-line-or-block)
