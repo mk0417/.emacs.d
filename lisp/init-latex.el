@@ -7,7 +7,7 @@
 (with-eval-after-load 'latex
   (setq TeX-auto-save t)
   (setq TeX-parse-self t)
-  (setq-default TeX-master nil)
+  (setq TeX-master nil)
   (setq TeX-clean-confirm t)
 
   ;; Compile to pdf
