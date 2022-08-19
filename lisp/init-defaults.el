@@ -16,8 +16,10 @@
 
 ;;; Set default coding system
 (set-default-coding-systems 'utf-8)
-(setq ring-bell-function 'ignore)  ; turn off bell sound
-(setq large-file-warning-threshold 100000000) ;; change to ~100 MB
+;; turn off bell sound
+(setq ring-bell-function 'ignore)
+;; change to ~100 MB
+(setq large-file-warning-threshold 100000000)
 
 ;;; Use spaces instead of tabs
 (setq-default indent-tabs-mode nil)
