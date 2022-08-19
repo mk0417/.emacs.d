@@ -2,7 +2,7 @@
 
 ;;; Increase the GC threshold for faster startup
 ;; the default is 800 kilobytes.  Measured in bytes.
-(setq gc-cons-threshold (* 50 1000 1000))
+(setq gc-cons-threshold most-positive-fixnum)
 
 ;;; Don't use package.el, use straight.el instead
 (setq package-enable-at-startup nil)
@@ -45,6 +45,14 @@
 
   (add-to-list 'native-comp-eln-load-path (expand-file-name "eln-cache/" user-emacs-directory)))
 
+;;; Premature redisplays can substantially affect startup times and produce ugly flashes of unstyled Emacs.
+;; https://github.com/doomemacs/doomemacs/blob/master/early-init.el
+(setq-default inhibit-redisplay t)
+(add-hook 'window-setup-hook
+          (lambda ()
+            (setq-default inhibit-redisplay nil)
+            (redisplay)))
+
 ;;; Minimal UI
 (setq inhibit-startup-message t)
 (push '(tool-bar-lines . 0) default-frame-alist)
@@ -80,3 +88,5 @@
 
 ;;; Make the initial buffer load faster by setting its mode to fundamental-mode
 (setq initial-major-mode 'fundamental-mode)
+
+;;;;; early-init.el ends here
