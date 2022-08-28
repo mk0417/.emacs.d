@@ -8,6 +8,9 @@
 (setq package-enable-at-startup nil)
 
 ;;; Setup straight as package manager
+(setq straight-repository-branch "develop")
+(setq straight-vc-git-default-clone-depth 1)
+
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -20,9 +23,6 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
-;; straight configs
-(setq straight-repository-user "develop")
-(setq straight-vc-git-default-clone-depth 1)
 
 ;;; Prefer loading newest compiled .el file
 (setq load-prefer-newer noninteractive)
