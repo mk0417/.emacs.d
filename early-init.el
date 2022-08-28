@@ -21,6 +21,7 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 ;; straight configs
+(setq straight-repository-user "develop")
 (setq straight-vc-git-default-clone-depth 1)
 
 ;;; Prefer loading newest compiled .el file
