@@ -44,7 +44,7 @@
 (diminish 'evil-escape-mode)
 
 ;;; Evil-matchit
-(setq evilmi-shortcut "m")
+;; (setq evilmi-shortcut "m")
 (global-evil-matchit-mode 1)
 
 ;;; Evil goggles
