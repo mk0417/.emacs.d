@@ -5,7 +5,6 @@
 (straight-use-package 'smartparens)
 (straight-use-package 'cycle-at-point)
 (straight-use-package 's)
-(straight-use-package 'expand-region)
 
 ;;; Stupid-indent-mode
 (require 'stupid-indent-mode)
@@ -236,7 +235,6 @@
   (define-key evil-normal-state-map (kbd "gor") 'p-ex-evil-buffer-replace)
   (define-key evil-normal-state-map (kbd "gom") 'p-query-replace-many)
   (define-key evil-normal-state-map (kbd "gos") 'transpose-sexps)
-  (define-key evil-normal-state-map (kbd "goe") 'er/expand-region)
   (define-key evil-normal-state-map (kbd ",a") 'beginning-of-defun)
   (define-key evil-normal-state-map (kbd ",e") 'end-of-defun)
   (define-key evil-normal-state-map (kbd ";a") 'p-beginning-of-line-or-block)
