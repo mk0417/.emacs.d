@@ -59,15 +59,6 @@
                            (buffer-substring (region-beginning) (region-end))
                          (read-string "Search YouTube: "))))))
 
-(defun p-dictionary-search ()
-  (interactive)
-  (browse-url
-   (concat
-    "https://dictionary.cambridge.org/dictionary/english/"
-    (url-hexify-string (if mark-active
-                           (buffer-substring (region-beginning) (region-end))
-                         (read-string "Search Dictionary: "))))))
-
 ;;; Insert date
 ;; http://xahlee.info/emacs/emacs/elisp_insert-date-time.html
 (defun p-choose-and-insert-date ()
@@ -124,7 +115,6 @@
     "s"  '(:ignore t :which-key "search")
     "sg" '(p-google-search :which-key "search on google")
     "sy" '(p-youtube-search :which-key "search on youtube")
-    "sd" '(p-dictionary-search :which-key "search dictionary")
     "t"  '(:ignore t :which-key "toggle")
     "tr" '(p-reveal-file-in-finder :which-key "reveal file in finder")))
 
