@@ -1,5 +1,8 @@
 ;;;;; init-ui.el --- UI -*- lexical-binding: t -*-
 
+;;; Install packages
+(straight-use-package 'fontaine)
+
 ;;; Pixelwise
 (setq frame-resize-pixelwise t)
 
@@ -7,25 +10,53 @@
 (menu-bar-mode -1)
 
 ;;; Font
-(defvar emacs-ui-default-font "Iosevka Comfy")
-(defvar emacs-ui-variable-pitch-font "Iosevka Comfy Duo")
+;; https://gitlab.com/protesilaos/fontaine
+(setq fontaine-presets
+      '((tiny
+         :default-family "Iosevka Comfy Wide Fixed"
+         :default-height 70)
+        (small
+         :default-family "Iosevka Comfy Fixed"
+         :default-height 90)
+        (regular
+         :default-height 120)
+        (medium
+         :default-height 130)
+        (large
+         :default-weight semilight
+         :default-height 150
+         :bold-weight extrabold)
+        (code-demo
+         :default-weight semilight
+         :default-height 170
+         :bold-weight extrabold)
+        (presentation
+         :default-weight semilight
+         :default-height 220
+         :bold-weight extrabold)
+        (t
+         :default-family "Iosevka Comfy"
+         :default-weight regular
+         :default-height 100
+         :fixed-pitch-family nil
+         :fixed-pitch-weight nil
+         :fixed-pitch-height 1.0
+         :fixed-pitch-serif-family nil
+         :fixed-pitch-serif-weight nil
+         :fixed-pitch-serif-height 1.0
+         :variable-pitch-family "Iosevka Comfy Motion Duo"
+         :variable-pitch-weight nil
+         :variable-pitch-height 1.0
+         :bold-family nil
+         :bold-weight bold
+         :italic-family "Iosevka Comfy Motion"
+         :italic-slant italic
+         :line-spacing nil)))
 
-(defun p-set-regular-font ()
-  (interactive)
-  (set-face-attribute 'default nil :font emacs-ui-default-font :height 120 :weight 'regular)
-  (set-face-attribute 'variable-pitch nil :font emacs-ui-variable-pitch-font :height 1.05 :weight 'regular))
-
-(defun p-set-large-font ()
-  (interactive)
-  (set-face-attribute 'default nil :font emacs-ui-default-font :height 160 :weight 'regular)
-  (set-face-attribute 'variable-pitch nil :font emacs-ui-variable-pitch-font :height 1.05 :weight 'regular))
-
-(defun p-set-extra-large-font ()
-  (interactive)
-  (set-face-attribute 'default nil :font emacs-ui-default-font :height 190 :weight 'regular)
-  (set-face-attribute 'variable-pitch nil :font emacs-ui-variable-pitch-font :height 1.05 :weight 'regular))
-
-(add-hook 'after-init-hook 'p-set-regular-font)
+(fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+(add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
+(dolist (hook '(modus-themes-after-load-theme-hook))
+  (add-hook hook #'fontaine-apply-current-preset))
 
 ;; mode-line variable-pitch font
 (defun emacs-ui--set-mode-line-font ()
@@ -62,8 +93,8 @@
   (pulse-momentary-highlight-one-line (point)))
 
 (dolist (command '(evil-goto-line evil-window-right evil-window-left evil-window-up evil-window-down
-                                     scroll-up-command scroll-down-command
-                                     recenter-top-bottom other-window))
+                                  scroll-up-command scroll-down-command
+                                  recenter-top-bottom other-window))
   (advice-add command :after #'emacs-ui--pulse-line))
 
 (provide 'init-ui)
