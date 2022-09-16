@@ -76,7 +76,7 @@
   (add-to-list 'evil-emacs-state-modes mode))
 
 ;;; Set evil normal state for grep mode
-(dolist (mode '(grep-mode occur-mode occur-edit-mode))
+(dolist (mode '(grep-mode occur-mode occur-edit-mode dired-mode-map))
   (evil-set-initial-state mode 'normal))
 
 ;;; Some functions
