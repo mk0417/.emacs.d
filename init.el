@@ -59,6 +59,7 @@
 (require 'init-notes)
 (require 'init-latex)
 (require 'init-dired)
+(require 'init-eglot)
 
 ;;; Make GC pauses faster by decreasing the threshold
 (setq gc-cons-threshold (* 2 1000 1000))
