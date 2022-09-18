@@ -1,4 +1,4 @@
-;;;;; init-editing.el -*- lexical-binding: t -*-
+;;;;; init-editing.el --- Editing -*- lexical-binding: t -*-
 
 ;;; Install packages
 (straight-use-package 'stupid-indent-mode)
