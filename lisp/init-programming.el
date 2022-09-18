@@ -65,18 +65,18 @@
     :states '(normal visual)
     :keymaps '(python-mode-map ess-r-mode-map))
   (p-jupyter-leader-def
-   "j"  '(:ignore t :which-key "jupyter")
-   "jj" 'jupyter-run-repl
-   "jr" 'jupyter-eval-line-or-region
-   "jf" 'jupyter-eval-defun
-   "je" 'p-jupyter-eval-block
-   "jR" 'jupyter-repl-restart-kernel
-   "jK" 'jupyter-repl-clear-cells
-   "jI" 'jupyter-repl-interrupt-kernel
-   "ji" 'jupyter-inspect-at-point
-   "jC" 'jupyter-eval-remove-overlays
-   "jc" 'p-jupyter-remove-line-overlay
-   "jw" 'jupyter-repl-pop-to-buffer))
+    "j"  '(:ignore t :which-key "jupyter")
+    "jj" 'jupyter-run-repl
+    "jr" 'jupyter-eval-line-or-region
+    "jf" 'jupyter-eval-defun
+    "je" 'p-jupyter-eval-block
+    "jR" 'jupyter-repl-restart-kernel
+    "jK" 'jupyter-repl-clear-cells
+    "jI" 'jupyter-repl-interrupt-kernel
+    "ji" 'jupyter-inspect-at-point
+    "jC" 'jupyter-eval-remove-overlays
+    "jc" 'p-jupyter-remove-line-overlay
+    "jw" 'jupyter-repl-pop-to-buffer))
 
 (provide 'init-programming)
 ;;;;; init-programming.el ends here

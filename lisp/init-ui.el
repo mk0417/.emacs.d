@@ -84,7 +84,7 @@
   (setq-default display-fill-column-indicator-column 80)
   (custom-set-faces
    '(fill-column-indicator
-     ((t (:background nil :foreground "grey30"))))))
+     ((t (:background unspecified :foreground "grey30"))))))
 
 ;;; Visual line
 (add-hook 'text-mode-hook 'visual-line-mode)

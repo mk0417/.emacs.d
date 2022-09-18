@@ -10,9 +10,8 @@
 (unless (eq system-type 'gnu/linux) (setq command-line-x-option-alist nil))
 (when (> emacs-major-version 27)
   (setq redisplay-skip-fontification-on-input t))
-
-;;; No end double space
 (setq sentence-end-double-space nil)
+(setq read-process-output-max (* 1024 1024))
 
 ;;; Revert Dired and other buffers
 (setq global-auto-revert-non-file-buffers t)
@@ -98,9 +97,9 @@
 (global-set-key (kbd "C-x K") 'kill-buffer-and-window)
 (global-set-key (kbd "M-i") 'forward-paragraph)
 (global-set-key (kbd "M-o") 'backward-paragraph)
+(global-set-key (kbd "C-h K") #'describe-keymap)
 (define-key minibuffer-local-map (kbd "C-k") 'delete-backward-char)
 (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
-(global-set-key (kbd "C-h K") #'describe-keymap)
 
 (provide 'init-defaults)
 ;;;;; init-defaults.el ends here
