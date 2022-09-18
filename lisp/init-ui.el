@@ -86,10 +86,13 @@
    '(fill-column-indicator
      ((t (:background nil :foreground "grey30"))))))
 
+;;; Visual line
+(add-hook 'text-mode-hook 'visual-line-mode)
+(add-hook 'text-mode-hook 'toggle-word-wrap)
+
 ;;; Add visual pulse when changing focus, like beacon but built-in
 ;; from from https://karthinks.com/software/batteries-included-with-emacs/
 (defun emacs-ui--pulse-line (&rest _)
-  "Pulse the current line."
   (pulse-momentary-highlight-one-line (point)))
 
 (dolist (command '(evil-goto-line evil-window-right evil-window-left evil-window-up evil-window-down
