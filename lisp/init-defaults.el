@@ -4,6 +4,16 @@
 (straight-use-package 'diminish)
 (straight-use-package 'which-key)
 
+;;; Some optimizations
+(setq-default bidi-display-reordering 'left-to-right)
+(setq-default cursor-in-non-selected-windows nil)
+(unless (eq system-type 'gnu/linux) (setq command-line-x-option-alist nil))
+(when (> emacs-major-version 27)
+  (setq redisplay-skip-fontification-on-input t))
+
+;;; No end double space
+(setq sentence-end-double-space nil)
+
 ;;; Revert Dired and other buffers
 (setq global-auto-revert-non-file-buffers t)
 
