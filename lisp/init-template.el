@@ -3,6 +3,7 @@
 ;;; Install packages
 (straight-use-package 'tempel)
 
+;;; Tempel
 (setq tempel-path "~/Dropbox/templates")
 
 ;;; Keybindings
