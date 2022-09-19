@@ -2,6 +2,12 @@
 
 ;;; Install packages
 (straight-use-package 'denote)
+(straight-use-package 'markdown-mode)
+
+;;; Markdown
+(autoload 'markdown-mode "markdown-mode")
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+
 
 ;;; Denote
 (require 'denote)
