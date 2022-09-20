@@ -8,6 +8,7 @@
 (straight-use-package 'evil-escape)
 (straight-use-package 'evil-matchit)
 (straight-use-package 'evil-goggles)
+(straight-use-package 'evil-exchange)
 
 ;;; Turn on undo-tree globally
 (when (< emacs-major-version 28)
@@ -60,6 +61,10 @@
 
 ;;; Turn on Evil Nerd Commenter
 (evilnc-default-hotkeys t)
+
+;;; Evil-exchange
+(setq evil-exchange-key (kbd "gs"))
+(evil-exchange-install)
 
 ;;; Make C-g revert to normal state
 (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
