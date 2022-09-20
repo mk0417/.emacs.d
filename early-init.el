@@ -24,8 +24,14 @@
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
 
+(setq inhibit-startup-echo-area-message user-login-name)
+(setq inhibit-startup-buffer-menu t)
+
 ;;; Prefer loading newest compiled .el file
 (setq load-prefer-newer noninteractive)
+
+;;; Pixelwise
+(setq frame-resize-pixelwise t)
 
 ;;; Inhibit resizing frame
 (setq frame-inhibit-implied-resize t)

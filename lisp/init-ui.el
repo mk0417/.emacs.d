@@ -3,9 +3,6 @@
 ;;; Install packages
 (straight-use-package 'fontaine)
 
-;;; Pixelwise
-(setq frame-resize-pixelwise t)
-
 ;;; Disable menu bar
 (menu-bar-mode -1)
 
