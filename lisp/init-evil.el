@@ -59,7 +59,7 @@
 (diminish 'evil-goggles-mode)
 
 ;;; Turn on Evil Nerd Commenter
-(evilnc-default-hotkeys)
+(evilnc-default-hotkeys t)
 
 ;;; Make C-g revert to normal state
 (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
@@ -104,6 +104,7 @@
     "fs" '(save-buffer :which-key "save buffer")
     "fo" '(find-file-other-window :which-key "open file in another window")
     "fc" '(copy-file :which-key "copy file")
+    "fw" '(write-file :which-key "save file as")
     "b" '(:ignore t :which-key "buffer")
     "bd" '(kill-this-buffer :which-key "kill buffer")
     "bi" '(ibuffer :which-key "ibuffer")
