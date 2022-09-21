@@ -51,7 +51,7 @@
   (require 'init-editing)
   (require 'init-osx)
   (require 'init-minibuffer)
-  (require 'init-completion)
+  ;; (require 'init-completion)
   (require 'init-windows)
   (require 'init-git)
   (require 'init-utils)
@@ -68,7 +68,8 @@
      (require 'init-notes)
      (require 'init-latex)
      (require 'init-dired)
-     (require 'init-eglot)))
+     ;; (require 'init-eglot)
+     (require 'init-lsp-bridge)))
 
 ;;; Make GC pauses faster by decreasing the threshold
 (setq gc-cons-threshold (* 2 1000 1000))
