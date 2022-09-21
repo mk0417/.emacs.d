@@ -3,6 +3,10 @@
 ;;; Produce backtraces when errors occur: can be helpful to diagnose startup issues
 (setq debug-on-error t)
 
+;;; Speed up
+;; https://github.com/seagle0128/.emacs.d/blob/master/init.el
+(setq auto-mode-case-fold nil)
+
 ;;; Initial scratch buffer message
 (setq initial-scratch-message
       (concat ";; Hello Peng, welcome to Emacs and happy hacking\n"
@@ -40,26 +44,31 @@
 ;;; Load config
 (add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
 
-(require 'init-ui)
-(require 'init-defaults)
-(require 'init-evil)
-(require 'init-editing)
-(require 'init-osx)
-(require 'init-minibuffer)
-(require 'init-completion)
-(require 'init-windows)
-(require 'init-git)
-(require 'init-utils)
-(require 'init-keychord)
-(require 'init-programming)
-(require 'init-project)
-(require 'init-avy)
-(require 'init-org)
-(require 'init-template)
-(require 'init-notes)
-(require 'init-latex)
-(require 'init-dired)
-(require 'init-eglot)
+(with-temp-message ""
+  (require 'init-ui)
+  (require 'init-defaults)
+  (require 'init-evil)
+  (require 'init-editing)
+  (require 'init-osx)
+  (require 'init-minibuffer)
+  (require 'init-completion)
+  (require 'init-windows)
+  (require 'init-git)
+  (require 'init-utils)
+  (require 'init-keychord)
+  (require 'init-programming))
+
+(run-with-idle-timer
+ 1 nil
+ #'(lambda ()
+     (require 'init-project)
+     (require 'init-avy)
+     (require 'init-org)
+     (require 'init-template)
+     (require 'init-notes)
+     (require 'init-latex)
+     (require 'init-dired)
+     (require 'init-eglot)))
 
 ;;; Make GC pauses faster by decreasing the threshold
 (setq gc-cons-threshold (* 2 1000 1000))
