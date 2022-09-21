@@ -20,7 +20,7 @@
 (setq evil-want-C-u-scroll t)
 (setq evil-respect-visual-line-mode t)
 (if (< emacs-major-version 28)
-  (setq evil-undo-system 'undo-tree)
+    (setq evil-undo-system 'undo-tree)
   (setq evil-undo-system 'undo-redo))
 
 ;;; Load Evil and enable it globally
@@ -77,7 +77,7 @@
 (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
 ;;; Make sure some modes start in Emacs state
-(dolist (mode '(custom-mode eshell-mode term-mode xref--xref-buffer-mode))
+(dolist (mode '(custom-mode eshell-mode term-mode xref--xref-buffer-mode lsp-bridge-ref-mode))
   (add-to-list 'evil-emacs-state-modes mode))
 
 ;;; Set evil normal state for grep mode
@@ -85,10 +85,6 @@
   (evil-set-initial-state mode 'normal))
 
 ;;; Some functions
-(defun p-switch-to-scratch ()
-  (interactive)
-  (switch-to-buffer "*scratch*"))
-
 (defun p-switch-to-messages ()
   (interactive)
   (switch-to-buffer "*Messages*"))
@@ -115,7 +111,7 @@
     "bi" '(ibuffer :which-key "ibuffer")
     "bD" '(kill-buffer-and-window :which-key "kill buffer and window")
     "br" '(revert-buffer :which-key "revert buffer")
-    "bs" '(p-switch-to-scratch :which-key "switch to scratch")
+    "bs" '(scratch-buffer :which-key "switch to scratch")
     "ba" '(p-switch-to-messages :which-key "switch to messages")
     "§" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
     "`" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
