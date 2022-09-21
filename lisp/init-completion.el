@@ -1,4 +1,4 @@
-;;;;; init-completion.el -*- lexical-binding: t -*-
+;;;;; init-completion.el --- Completion -*- lexical-binding: t -*-
 
 ;;; Install packages
 (straight-use-package '(corfu :files ("*.el" "extensions/*.el")))
