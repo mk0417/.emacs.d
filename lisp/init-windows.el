@@ -4,6 +4,7 @@
 (straight-use-package 'winum)
 
 ;;; winum
+(setq winum-auto-setup-mode-line nil)
 (add-hook 'after-init-hook 'winum-mode)
 
 ;;; Split new buffer on the right by default
