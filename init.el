@@ -50,17 +50,17 @@
   (require 'init-evil)
   (require 'init-editing)
   (require 'init-osx)
+  (require 'init-vertico)
   (require 'init-minibuffer)
-  ;; (require 'init-completion)
-  (require 'init-windows)
-  (require 'init-git)
   (require 'init-utils)
-  (require 'init-keychord)
   (require 'init-programming))
 
 (run-with-idle-timer
  1 nil
  #'(lambda ()
+     (require 'init-keychord)
+     (require 'init-windows)
+     (require 'init-git)
      (require 'init-project)
      (require 'init-avy)
      (require 'init-org)
@@ -68,6 +68,8 @@
      (require 'init-notes)
      (require 'init-latex)
      (require 'init-dired)
+     (require 'init-modeline)
+     ;; (require 'init-completion)
      ;; (require 'init-eglot)
      (require 'init-lsp-bridge)))
 
