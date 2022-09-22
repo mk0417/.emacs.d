@@ -53,13 +53,13 @@
   (require 'init-vertico)
   (require 'init-minibuffer)
   (require 'init-utils)
+  (require 'init-windows)
   (require 'init-programming))
 
 (run-with-idle-timer
  1 nil
  #'(lambda ()
      (require 'init-keychord)
-     (require 'init-windows)
      (require 'init-git)
      (require 'init-project)
      (require 'init-avy)
