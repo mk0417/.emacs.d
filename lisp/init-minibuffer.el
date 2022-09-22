@@ -1,36 +1,12 @@
 ;;;;; init-minibuffer.el --- Minibuffer -*- lexical-binding: t -*-
 
 ;;; Install packages
-(straight-use-package '(vertico :files ("*.el" "extensions/*.el")))
 (straight-use-package 'marginalia)
 (straight-use-package 'orderless)
 (straight-use-package 'consult)
 (straight-use-package 'embark)
 (straight-use-package 'embark-consult)
 (straight-use-package 'wgrep)
-
-;;; Vertico
-(require 'vertico)
-(require 'vertico-directory)
-;; cycle back to top/bottom result when the edge is reached
-(setq vertico-cycle t)
-(vertico-mode 1)
-(vertico-multiform-mode)
-
-;; sort directories first
-(defun sort-directories-first (files)
-  (setq files (vertico-sort-history-alpha files))
-  (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
-         (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
-
-(setq vertico-multiform-categories
-      '((symbol (vertico-sort-function . vertico-sort-alpha))
-        (file (vertico-sort-function . sort-directories-first))
-        (t (vertico-sort-function . vertico-sort-history-alpha))))
-
-(define-key vertico-map (kbd "C-n") 'vertico-next)
-(define-key vertico-map (kbd "C-p") 'vertico-previous)
-(define-key vertico-map (kbd "M-h") 'vertico-directory-up)
 
 ;;; Marginalia
 (require 'marginalia)
