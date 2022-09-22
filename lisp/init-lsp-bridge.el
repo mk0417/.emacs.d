@@ -5,7 +5,6 @@
 (straight-use-package '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge" :files ("*")))
 
 (setq lsp-bridge-enable-diagnostics nil)
-(setq acm-backend-lsp-enable-auto-import nil)
 (setq acm-enable-yas nil)
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
