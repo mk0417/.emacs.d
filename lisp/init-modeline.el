@@ -20,6 +20,7 @@
                 "  "
                 (vc-mode vc-mode)
                 "  "
+                mode-line-misc-info
                 mode-line-end-spaces))
 
 (provide 'init-modeline)

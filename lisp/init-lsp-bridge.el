@@ -6,6 +6,7 @@
 
 (setq lsp-bridge-enable-diagnostics nil)
 (setq acm-enable-yas nil)
+(setq lsp-bridge--mode-line-format "lsp-bridge")
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
         emacs-lisp-mode-hook))
