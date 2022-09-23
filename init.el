@@ -69,6 +69,7 @@
      (require 'init-latex)
      (require 'init-dired)
      (require 'init-modeline)
+     (require 'init-xah)
      ;; (require 'init-completion)
      ;; (require 'init-eglot)
      (require 'init-lsp-bridge)))

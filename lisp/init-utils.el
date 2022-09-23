@@ -59,55 +59,12 @@
                            (buffer-substring (region-beginning) (region-end))
                          (read-string "Search YouTube: "))))))
 
-;;; Insert date
-;; http://xahlee.info/emacs/emacs/elisp_insert-date-time.html
-(defun p-choose-and-insert-date ()
-  (interactive)
-  (let (($style
-         (string-to-number
-          (substring
-           (completing-read
-            "Style:"
-            '("1 → yyyy-mm-dd"
-              "2 → yyyy-mm-dd, A"
-              "3 → dd-mm-yyyy"
-              "4 → dd-mm-yyyy, A"
-              "5 → yyyymmddHHMMSS"
-              "6 → yyyy-mm-ddTHH:MM:SS"
-              "7 → yyyy-mm-dd HH:MM:SS"
-              "8 → A, dd B yyyy"
-              "9 → dd B yyyy"
-              )) 0 1))))
-    (when (use-region-p) (delete-region (region-beginning) (region-end)))
-    (insert
-     (cond
-      ((= $style 1)
-       (format-time-string "%Y-%m-%d"))
-      ((= $style 2)
-       (format-time-string "%Y-%m-%d, %A"))
-      ((= $style 3)
-       (format-time-string "%d-%m-%Y"))
-      ((= $style 4)
-       (format-time-string "%d-%m-%Y, %A"))
-      ((= $style 5)
-       (replace-regexp-in-string ":" "" (format-time-string "%Y%m%d%T")))
-      ((= $style 6)
-       (format-time-string "%Y-%m-%dT%T"))
-      ((= $style 7)
-       (format-time-string "%Y-%m-%d %T"))
-      ((= $style 8)
-       (format-time-string "%A, %d %B %Y"))
-      ((= $style 9)
-       (format-time-string "%d %B %Y"))))))
-
 ;;; Keybindings
 (with-eval-after-load 'evil
   (general-create-definer p-space-leader-def
     :prefix "SPC"
     :states '(normal visual))
   (p-space-leader-def
-    "e"  '(:ignore t :which-key "editing")
-    "el" '(p-choose-and-insert-date :which-key "choose and insert date")
     "f"  '(:ignore t :which-key "file")
     "fp" '(p-find-file-in-config :which-key "find config file")
     "fl" '(p-find-file-in-log :which-key "find log file")
