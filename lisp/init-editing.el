@@ -279,7 +279,6 @@
     "en" '(p-insert-num-list :which-key "insert number sequence")
     "ec" '(whitespace-cleanup :which-key "clear whitespace")
     "eb" '(p-delete-blank-lines :which-key "delete blank lines")
-    "ei" '(p-insert-log-item :which-key "insert log item")
     "ed" '(p-insert-date :which-key "insert date")
     "eD" '(p-insert-date-alt :which-key "insert date alt")
     "eu" '(p-insert-uk-date :which-key "insert UK date"))
