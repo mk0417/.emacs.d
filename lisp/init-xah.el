@@ -28,6 +28,67 @@
       (while (re-search-forward ",\\b" nil t)
         (replace-match ", ")))))
 
+;; Tweak: only delete blank lines without joining them
+(defun xah-delete-blank-lines ()
+  (interactive)
+  (let ($p3 $p4)
+    (skip-chars-backward "\n")
+    (setq $p3 (point))
+    (skip-chars-forward "\n")
+    (previous-line)
+    (setq $p4 (point))
+    (delete-region $p3 $p4)))
+
+(defun xah-space-to-newline ()
+  (interactive)
+  (let* (($bds (xah-get-bounds-of-block-or-region))
+         ($p1 (car $bds))
+         ($p2 (cdr $bds)))
+    (save-restriction
+      (narrow-to-region $p1 $p2)
+      (goto-char (point-min))
+      (while (re-search-forward " +" nil t)
+        (replace-match "\n")))))
+
+(defun xah-cycle-hyphen-lowline-space (&optional Begin End)
+  (interactive)
+  (let* ($p1
+         $p2
+         ($charArray ["-" "_" " "])
+         ($n (length $charArray))
+         ($regionWasActive-p (region-active-p))
+         ($nowState (if (eq last-command this-command) (get 'xah-cycle-hyphen-lowline-space 'state) 0))
+         ($changeTo (elt $charArray $nowState)))
+    (if (and Begin End)
+        (setq $p1 Begin $p2 End)
+      (if (region-active-p)
+          (setq $p1 (region-beginning) $p2 (region-end))
+        (let (($skipChars "^\"<>(){}[]“”‘’‹›«»「」『』【】〖〗《》〈〉〔〕（）"))
+          (skip-chars-backward $skipChars (line-beginning-position))
+          (setq $p1 (point))
+          (skip-chars-forward $skipChars (line-end-position))
+          (setq $p2 (point))
+          (set-mark $p1))))
+    (save-excursion
+      (save-restriction
+        (narrow-to-region $p1 $p2)
+        (goto-char (point-min))
+        (while (re-search-forward (elt $charArray (% (+ $nowState 2) $n)) (point-max) 1)
+          (replace-match $changeTo t t))))
+    (when (or (string-equal $changeTo " ") $regionWasActive-p)
+      (goto-char $p2)
+      (set-mark $p1)
+      (setq deactivate-mark nil))
+    (put 'xah-cycle-hyphen-lowline-space 'state (% (+ $nowState 1) $n)))
+  (set-transient-map (let (($kmap (make-sparse-keymap))) (define-key $kmap (kbd "-") this-command) $kmap)))
+
+(defun xah-new-empty-buffer ()
+  (interactive)
+  (let (($buf (generate-new-buffer "untitled")))
+    (switch-to-buffer $buf)
+    (funcall initial-major-mode)
+    $buf))
+
 ;; http://xahlee.info/emacs/emacs/elisp_insert-date-time.html
 (defun xah-choose-and-insert-date ()
   (interactive)
@@ -76,7 +137,11 @@
   (p-space-leader-def
     "x"  '(:ignore t :which-key "xah editing")
     "xd" '(xah-choose-and-insert-date :which-key "choose and insert date")
-    "xs" '(xah-add-space-after-comma :which-key "add space after comma")))
+    "xl" '(xah-delete-blank-lines :which-key "deletle blank lies")
+    "xn" '(xah-space-to-newline :which-key "from space to newline")
+    "xc" '(xah-cycle-hyphen-lowline-space :which-key "cycle hyphen lowline")
+    "xb" '(xah-new-empty-buffer :which-key "new empty buffer")
+    "xa" '(xah-add-space-after-comma :which-key "add space after comma")))
 
 (provide 'init-xah)
 ;;;;; init-xah.el ends here
