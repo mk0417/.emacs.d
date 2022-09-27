@@ -281,7 +281,9 @@
     "eb" '(p-delete-blank-lines :which-key "delete blank lines")
     "ed" '(p-insert-date :which-key "insert date")
     "eD" '(p-insert-date-alt :which-key "insert date alt")
-    "eu" '(p-insert-uk-date :which-key "insert UK date"))
+    "eu" '(p-insert-uk-date :which-key "insert UK date")
+    "es" '(ispell-buffer :which-key "spell check in buffer")
+    "er" '(ispell-region :which-key "spell check in region"))
 
   (general-create-definer p-comma-leader-def
     :prefix ","
