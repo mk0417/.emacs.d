@@ -2,7 +2,7 @@
 
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-emacs-modules/prot-emacs-modeline.el
 (setq mode-line-percent-position '(-3 "%p"))
-(setq mode-line-position-column-line-format '(" %l,%c"))
+;; (setq mode-line-position-column-line-format '(" %l,%c"))
 (setq mode-line-defining-kbd-macro (propertize " Macro" 'face 'mode-line-emphasis))
 
 (setq-default mode-line-format
