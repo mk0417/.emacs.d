@@ -32,13 +32,22 @@
   (setq LaTeX-electric-left-right-brace t)
   (setq TeX-electric-math (cons "$" "$"))
 
+  (defun p-latex-enable-modes ()
+    (setq fill-column 100)
+    (setq reftex-plug-into-AUCTeX t)
+    (auto-fill-mode)
+    (turn-on-reftex)
+    (LaTeX-math-mode))
+
+  (add-hook 'LaTeX-mode-hook #'p-latex-enable-modes)
+
   ;; Open all buffers with the math mode and auto-fill mode
-  (add-hook 'LaTeX-mode-hook #'auto-fill-mode)
-  (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
+  ;; (add-hook 'LaTeX-mode-hook #'auto-fill-mode)
+  ;; (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
 
   ;; Add support for references
-  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-  (setq reftex-plug-into-AUCTeX t)
+  ;; (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  ;; (setq reftex-plug-into-AUCTeX t)
 
   ;; To have the buffer refresh after compilation
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
