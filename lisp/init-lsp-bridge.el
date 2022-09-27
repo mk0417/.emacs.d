@@ -9,7 +9,8 @@
 (setq lsp-bridge--mode-line-format "lsp-bridge")
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
-        emacs-lisp-mode-hook))
+        emacs-lisp-mode-hook
+        text-mode-hook))
 
 (global-lsp-bridge-mode)
 (diminish 'lsp-bridge-mode)
