@@ -7,6 +7,10 @@
 (require 'vertico-directory)
 ;; cycle back to top/bottom result when the edge is reached
 (setq vertico-cycle t)
+
+(setq vertico-scroll-margin 0)
+(setq vertico-resize nil)
+
 (vertico-mode 1)
 (vertico-multiform-mode)
 

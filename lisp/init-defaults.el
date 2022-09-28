@@ -77,6 +77,9 @@
 (setq-default bidi-inhibit-bpa t)
 (global-so-long-mode 1)
 
+;;; Keep small kill ring
+(setq kill-ring-max 60)
+
 ;;; Hide "setting up indent for shell type zsh"
 ;; https://emacs.stackexchange.com/questions/52846/how-to-remove-message-indentation-setup-for-shell-type-sh
 (advice-add 'sh-set-shell :around

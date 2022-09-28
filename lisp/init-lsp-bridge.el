@@ -17,7 +17,7 @@
 
 (with-eval-after-load 'evil
   (define-key evil-normal-state-map (kbd "gof") 'lsp-bridge-find-def)
-  (define-key evil-normal-state-map (kbd "gog") 'lsp-bridge-find-references))
+  (define-key evil-normal-state-map (kbd "gob") 'lsp-bridge-return-from-def))
 
 (provide 'init-lsp-bridge)
 ;;;;; init-lsp-bridge.el ends here
