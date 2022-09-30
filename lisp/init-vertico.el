@@ -4,10 +4,9 @@
 (straight-use-package '(vertico :files ("*.el" "extensions/*.el")))
 
 (require 'vertico)
-(require 'vertico-directory)
-;; cycle back to top/bottom result when the edge is reached
-(setq vertico-cycle t)
+;; (require 'vertico-directory)
 
+(setq vertico-cycle t)
 (setq vertico-scroll-margin 0)
 (setq vertico-resize nil)
 
