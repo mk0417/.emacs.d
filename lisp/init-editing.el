@@ -183,6 +183,21 @@
   (beginning-of-line)
   (kill-line))
 
+;; add whitespaces surrounding current character
+(defun p-add-whitespaces ()
+  (interactive)
+  (insert " ")
+  (forward-char 1)
+  (insert " "))
+
+;; delete surrounding spaces on current character
+(defun p-delete-surrounding-whitespace ()
+  (interactive)
+  (delete-char -1)
+  (forward-char 1)
+  (delete-char 1))
+
+;; a=b
 ;; query replace many
 ;; https://tony-zorman.com/posts/query-replace/2022-08-06-query-replace-many.html
 (require 's)
@@ -295,7 +310,9 @@
     "f" '(p-add-bracket :which-key "p-add-bracket")
     "h" '(p-add-curly :which-key "p-add-curly")
     "s" '(p-add-single-quote :which-key "p-add-single-quote")
-    "d" '(p-add-double-quote :which-key "p-add-double-quote")))
+    "d" '(p-add-double-quote :which-key "p-add-double-quote")
+    "w" '(p-add-whitespaces :which-key "p-add-whitespaces")
+    "x" '(p-delete-surrounding-whitespace :which-key "p-delete-whitespaces")))
 
 (provide 'init-editing)
 ;;;;; init-editing.el ends here
