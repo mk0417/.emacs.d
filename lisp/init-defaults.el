@@ -80,6 +80,9 @@
 ;;; Keep small kill ring
 (setq kill-ring-max 60)
 
+;;; Enable repeat-mode
+(repeat-mode 1)
+
 ;;; Hide "setting up indent for shell type zsh"
 ;; https://emacs.stackexchange.com/questions/52846/how-to-remove-message-indentation-setup-for-shell-type-sh
 (advice-add 'sh-set-shell :around
