@@ -28,7 +28,8 @@
     "wd" '(delete-window :which-key "delete window")
     "wv" '(evil-window-vsplit :which-key "split window right")
     "ws" '(evil-window-split :which-key "split window below")
-    "wo" '(delete-other-windows :which-key "delete other windows")))
+    "wo" '(delete-other-windows :which-key "delete other windows")
+    "wb" '(balance-windows :which-key "balance windows")))
 
 (provide 'init-windows)
 ;;;;; init-windows.el ends here
