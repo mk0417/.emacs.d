@@ -3,7 +3,7 @@
 ;;; Install packages
 (straight-use-package 'stupid-indent-mode)
 (straight-use-package 'smartparens)
-(straight-use-package 'cycle-at-point)
+(straight-use-package 'grugru)
 (straight-use-package 's)
 
 ;;; Stupid-indent-mode
@@ -53,6 +53,20 @@
   (interactive)
   (kill-sexp)
   (evil-insert 0))
+
+;;; grugru
+(grugru-define-multiple
+ (emacs-lisp-mode
+  (word "t" "nil"))
+ (python-mode
+  (word "apply" "transform"))
+ (word "yes" "no")
+ (word "Yes" "No")
+ (word "true" "false")
+ (word "True" "False")
+ (word "TRUE" "FALSE")
+ (word "mean" "median")
+ (word "min" "max"))
 
 ;;; Show whitespace and delete on saving
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-basic.el
@@ -197,7 +211,6 @@
   (forward-char 1)
   (delete-char 1))
 
-;; a=b
 ;; query replace many
 ;; https://tony-zorman.com/posts/query-replace/2022-08-06-query-replace-many.html
 (require 's)
@@ -258,7 +271,7 @@
   (define-key evil-normal-state-map (kbd "goc") 'p-clear-line)
   (define-key evil-normal-state-map (kbd "god") 'kill-sexp)
   (define-key evil-normal-state-map (kbd "goi") 'p-kill-sexp-and-insert)
-  (define-key evil-normal-state-map (kbd ";c") 'cycle-at-point)
+  (define-key evil-normal-state-map (kbd ";c") 'grugru)
 
   (define-key evil-visual-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
