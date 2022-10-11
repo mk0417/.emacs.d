@@ -3,6 +3,7 @@
 ;;; Install package
 (straight-use-package 'jupyter)
 (straight-use-package 'ess)
+(straight-use-package 'symbol-overlay)
 
 ;;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -60,6 +61,15 @@
 
 ;;; Keybindings
 (with-eval-after-load 'evil
+  (general-create-definer p-space-leader-def
+    :prefix "SPC"
+    :states '(normal visual))
+  (p-space-leader-def
+    "o" '(:ignore t :which-key "symbol-overlay")
+    "oo" '(symbol-overlay-put :which-key "symbol-overlay-put")
+    "on" '(symbol-overlay-switch-forward :which-key "symbol-overlay-switch-forward")
+    "op" '(symbol-overlay-switch-backward :which-key "symbol-overlay-switch-backward")
+    "oc" '(symbol-overlay-remove-all :which-key "symbol-overlay-remove-all"))
   (general-create-definer p-jupyter-leader-def
     :prefix ";"
     :states '(normal visual)
