@@ -2,6 +2,7 @@
 
 ;;; Install packages
 (straight-use-package 'posframe)
+(straight-use-package 'yasnippet)
 (straight-use-package '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge" :files ("*")))
 
 (setq lsp-bridge-enable-diagnostics nil)
