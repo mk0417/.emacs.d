@@ -6,6 +6,9 @@
 ;;; Disable menu bar
 (menu-bar-mode -1)
 
+;;; Left fringe only
+(fringe-mode '(4 . 0))
+
 ;;; Font
 ;; https://gitlab.com/protesilaos/fontaine
 (setq fontaine-presets
