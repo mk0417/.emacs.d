@@ -9,6 +9,7 @@
 (setq acm-enable-yas nil)
 (setq lsp-bridge--mode-line-format "lsp-bridge")
 (setq acm-enable-tempel nil)
+(setq acm-enable-tabnine nil)
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
         ess-r-mode-hook
