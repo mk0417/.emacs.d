@@ -5,6 +5,7 @@
 (straight-use-package 'smartparens)
 (straight-use-package 'grugru)
 (straight-use-package 's)
+(straight-use-package '(thing-edit :type git :host github :repo "manateelazycat/thing-edit"))
 
 ;;; Stupid-indent-mode
 (require 'stupid-indent-mode)
@@ -272,6 +273,7 @@
   (define-key evil-normal-state-map (kbd "god") 'kill-sexp)
   (define-key evil-normal-state-map (kbd "goi") 'p-kill-sexp-and-insert)
   (define-key evil-normal-state-map (kbd ";c") 'grugru)
+  (define-key evil-normal-state-map (kbd "gcs") 'thing-replace-symbol)
 
   (define-key evil-visual-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
