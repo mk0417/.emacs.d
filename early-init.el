@@ -1,7 +1,7 @@
 ;;;;; early-init.el -*- lexical-binding: t -*-
 
 ;;; Increase the GC threshold for faster startup
-;; the default is 800 kilobytes.  Measured in bytes.
+;; The default is 800 kilobytes (measured in bytes)
 (setq gc-cons-threshold most-positive-fixnum)
 
 ;;; Don't use package.el, use straight.el instead
