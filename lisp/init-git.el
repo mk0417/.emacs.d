@@ -19,7 +19,7 @@
 
 (dolist (hook '(prog-mode-hook conf-mode-hook markdown-mode-hook))
   (add-hook hook (lambda ()
-                   ;; (diff-hl-margin-mode)
+                   (diff-hl-margin-mode)
                    (diff-hl-mode))))
 
 ;;; Git-messenger
