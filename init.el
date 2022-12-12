@@ -72,7 +72,8 @@
      (require 'init-xah)
      ;; (require 'init-completion)
      ;; (require 'init-eglot)
-     (require 'init-lsp-bridge)))
+     (require 'init-lsp-bridge)
+     (require 'init-vterm)))
 
 ;;; Make GC pauses faster by decreasing the threshold
 (setq gc-cons-threshold (* 2 1000 1000))
