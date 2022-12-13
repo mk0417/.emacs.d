@@ -13,6 +13,10 @@
 (setq sentence-end-double-space nil)
 (setq read-process-output-max (* 1024 1024))
 
+;;; No box
+(setq use-dialog-box nil)
+(setq use-file-dialog nil)
+
 ;;; Revert Dired and other buffers
 (setq global-auto-revert-non-file-buffers t)
 

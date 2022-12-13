@@ -32,6 +32,7 @@
 
 ;;; Pixelwise
 (setq frame-resize-pixelwise t)
+(setq window-resize-pixelwise t)
 
 ;;; Inhibit resizing frame
 (setq frame-inhibit-implied-resize t)
