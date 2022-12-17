@@ -22,8 +22,6 @@
 (setq gc-cons-threshold most-positive-fixnum)
 (setq gc-cons-percentage 0.6)
 
-(setq read-process-output-max (* 1024 1024))
-
 ;;; Setup straight as package manager
 (setq straight-repository-branch "develop")
 (setq straight-vc-git-default-clone-depth 1)
@@ -63,7 +61,7 @@
 (setq modus-themes-org-blocks 'tinted-background)
 (setq modus-themes-completions
       '((matches . (extrabold background intense))
-        (selection . (semibold accented intense))))
+        (selection . (semibold intense))))
 (setq modus-themes-headings
       '((1 . (variable-pitch 1.3))
         (2 . (variable-pitch 1.2))
