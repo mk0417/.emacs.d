@@ -10,18 +10,11 @@
 (straight-use-package 'evil-goggles)
 (straight-use-package 'evil-exchange)
 
-;;; Turn on undo-tree globally
-(when (< emacs-major-version 28)
-  (rational-package-install-package 'undo-tree)
-  (global-undo-tree-mode))
-
 ;;; Set some variables that must be configured before loading the package
 (setq evil-want-C-i-jump nil)
 (setq evil-want-C-u-scroll t)
 (setq evil-respect-visual-line-mode t)
-(if (< emacs-major-version 28)
-    (setq evil-undo-system 'undo-tree)
-  (setq evil-undo-system 'undo-redo))
+(setq evil-undo-system 'undo-redo)
 
 ;;; Load Evil and enable it globally
 (require 'evil)
@@ -59,7 +52,7 @@
  '(evil-goggles-yank-face ((t (:background "#cf5a65")))))
 (diminish 'evil-goggles-mode)
 
-;;; Turn on Evil Nerd Commenter
+;;; Turn on evil nerd commenter
 (evilnc-default-hotkeys t)
 
 ;;; Evil-exchange

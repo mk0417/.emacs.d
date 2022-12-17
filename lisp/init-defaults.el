@@ -1,8 +1,12 @@
-;;;;; init-defaults.el -*- lexical-binding: t -*-
+;;;;; init-defaults.el --- Emacs better defaults -*- lexical-binding: t -*-
 
 ;;; Install packages
 (straight-use-package 'diminish)
 (straight-use-package 'which-key)
+
+;;; Pixelwise
+(setq frame-resize-pixelwise t)
+(setq window-resize-pixelwise t)
 
 ;;; Some optimizations
 (setq-default bidi-display-reordering 'left-to-right)
@@ -29,9 +33,11 @@
 
 ;;; Set default coding system
 (set-default-coding-systems 'utf-8)
-;; turn off bell sound
+
+;;; Turn off bell sound
 (setq ring-bell-function 'ignore)
-;; change to ~100 MB
+
+;;; Change to ~100 MB
 (setq large-file-warning-threshold 100000000)
 
 ;;; Use spaces instead of tabs
@@ -83,9 +89,6 @@
 
 ;;; Keep small kill ring
 (setq kill-ring-max 60)
-
-;;; Enable repeat-mode
-;; (repeat-mode 1)
 
 ;;; Hide "setting up indent for shell type zsh"
 ;; https://emacs.stackexchange.com/questions/52846/how-to-remove-message-indentation-setup-for-shell-type-sh

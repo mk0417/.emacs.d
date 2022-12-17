@@ -8,7 +8,6 @@
 (autoload 'markdown-mode "markdown-mode")
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
-
 ;;; Denote
 (require 'denote)
 

@@ -1,4 +1,4 @@
-;;;;; init.el -*- lexical-binding: t -*-
+;;;;; init.el --- Init file -*- lexical-binding: t -*-
 
 ;;; Produce backtraces when errors occur: can be helpful to diagnose startup issues
 (setq debug-on-error t)
@@ -44,38 +44,34 @@
 ;;; Load config
 (add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory) t)
 
-(with-temp-message ""
-  (require 'init-ui)
-  (require 'init-defaults)
-  (require 'init-evil)
-  (require 'init-editing)
-  (require 'init-osx)
-  (require 'init-vertico)
-  (require 'init-minibuffer)
-  (require 'init-utils)
-  (require 'init-windows)
-  (require 'init-programming))
-
-(run-with-idle-timer
- 1 nil
- #'(lambda ()
-     (require 'init-keychord)
-     (require 'init-git)
-     (require 'init-project)
-     (require 'init-avy)
-     (require 'init-org)
-     (require 'init-template)
-     (require 'init-notes)
-     (require 'init-latex)
-     (require 'init-dired)
-     (require 'init-modeline)
-     (require 'init-xah)
-     ;; (require 'init-completion)
-     ;; (require 'init-eglot)
-     (require 'init-lsp-bridge)
-     (require 'init-vterm)))
+(require 'init-ui)
+(require 'init-defaults)
+(require 'init-evil)
+(require 'init-editing)
+(require 'init-osx)
+(require 'init-vertico)
+(require 'init-minibuffer)
+(require 'init-utils)
+(require 'init-windows)
+(require 'init-programming)
+(require 'init-keychord)
+(require 'init-git)
+(require 'init-project)
+(require 'init-avy)
+(require 'init-org)
+(require 'init-template)
+(require 'init-notes)
+(require 'init-latex)
+(require 'init-dired)
+(require 'init-modeline)
+(require 'init-xah)
+;; (require 'init-completion)
+;; (require 'init-eglot)
+(require 'init-lsp-bridge)
+(require 'init-vterm)
 
 ;;; Make GC pauses faster by decreasing the threshold
-(setq gc-cons-threshold (* 2 1000 1000))
+(setq gc-cons-threshold (* 8 1024 1024))
+(setq gc-cons-percentage 0.1)
 
 ;;;;; init.el ends here
