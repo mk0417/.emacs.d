@@ -84,7 +84,7 @@
 (dolist (mode '(grep-mode occur-mode occur-edit-mode dired-mode-map))
   (evil-set-initial-state mode 'normal))
 
-;;; Some functions
+;;; Functions to switch buffers
 (defun p-switch-to-messages ()
   (interactive)
   (switch-to-buffer "*Messages*"))
