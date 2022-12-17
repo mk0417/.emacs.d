@@ -6,6 +6,7 @@
 /auto-save-list
 /anaconda-mode
 /eshell
+/elpa
 .bookmarks.el
 .DS_Store
 company-statistics-cache.el
