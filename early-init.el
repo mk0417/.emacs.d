@@ -48,8 +48,7 @@
   (setq  compilation-scroll-output t))
 
 ;;; Modus themes
-;; load in early-init.el to avoid white screen flash
-;; (setq modus-themes-org-blocks 'gray-background)
+;; Load in early-init.el to avoid white screen flash
 (setq x-underline-at-descent-line t)
 (setq modus-themes-prompts '(bold background))
 (setq modus-themes-hl-line '(intense))
@@ -58,7 +57,9 @@
 (setq modus-themes-markup '(bold intense background))
 (setq modus-themes-region '(no-extend accented))
 (setq modus-themes-mixed-fonts t)
-(setq modus-themes-org-blocks 'tinted-background)
+(setq modus-themes-variable-pitch-ui t)
+(setq modus-themes-bold-constructs t)
+(setq modus-themes-org-blocks 'gray-background)
 (setq modus-themes-completions
       '((matches . (extrabold background intense))
         (selection . (semibold intense))))

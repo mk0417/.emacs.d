@@ -62,8 +62,8 @@
 ;;; Make C-g revert to normal state
 (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
 
-;;; Rebind `universal-argument' to 'C-M-u' since 'C-u' now scrolls the buffer
-(global-set-key (kbd "C-M-u") 'universal-argument)
+;;; Rebind `universal-argument' to 'M-s-u' since 'C-u' now scrolls the buffer
+(global-set-key (kbd "M-s-u") 'universal-argument)
 
 ;;; Use visual line motions even outside of visual-line-mode buffers
 (evil-global-set-key 'motion "j" 'evil-next-visual-line)
@@ -100,6 +100,7 @@
     "fc" '(copy-file :which-key "copy file")
     "fw" '(write-file :which-key "save file as")
     "b" '(:ignore t :which-key "buffer")
+    "bw" '(mark-whole-buffer :which-key "Select whole buffer")
     "bd" '(kill-this-buffer :which-key "kill buffer")
     "bi" '(ibuffer :which-key "ibuffer")
     "bD" '(kill-buffer-and-window :which-key "kill buffer and window")
