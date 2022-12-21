@@ -22,6 +22,9 @@
 (setq gc-cons-threshold most-positive-fixnum)
 (setq gc-cons-percentage 0.6)
 
+;;; Do not compact font cache
+(setq inhibit-compacting-font-caches t)
+
 ;;; Setup straight as package manager
 (setq straight-repository-branch "develop")
 (setq straight-vc-git-default-clone-depth 1)
