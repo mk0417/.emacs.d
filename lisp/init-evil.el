@@ -62,7 +62,7 @@
 ;;; Make C-g revert to normal state
 (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
 
-;;; Rebind `universal-argument' to 'M-s-u' since 'C-u' now scrolls the buffer
+;;; Rebind `universal-argument' to `M-s-u' since `C-u' now scrolls the buffer
 (global-set-key (kbd "M-s-u") 'universal-argument)
 
 ;;; Use visual line motions even outside of visual-line-mode buffers
@@ -88,6 +88,9 @@
 
 ;;; Keybindings
 (with-eval-after-load 'evil
+  (define-key evil-normal-state-map (kbd "goo") 'evil-indent-line)
+  (define-key evil-visual-state-map (kbd "goo") 'evil-indent)
+
   (general-create-definer p-space-leader-def
     :prefix "SPC"
     :states '(normal visual))

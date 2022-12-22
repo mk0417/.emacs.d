@@ -1,5 +1,7 @@
 ;;;;; init-dired.el --- Dired -*- lexical-binding: t -*-
 
+(setq dired-kill-when-opening-new-dired-buffer t)
+
 (with-eval-after-load 'evil
   (evil-define-key 'normal dired-mode-map
     (kbd "M-RET") 'dired-display-file

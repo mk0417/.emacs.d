@@ -25,10 +25,16 @@
 (global-set-key [remap describe-bindings] #'embark-bindings)
 (global-set-key (kbd "C-;") 'embark-act)
 (global-set-key (kbd "C-c C-o") 'embark-export)
+
 ;; use Embark to show bindings in a key prefix with `C-h`
 (setq prefix-help-command #'embark-prefix-help-command)
+
 (with-eval-after-load 'embark-consult
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
+
+(define-key embark-symbol-map "l" #'consult-line)
+(define-key embark-symbol-map "r" #'consult-ripgrep)
+
 ;; embark action integration with which-key
 (defun embark-which-key-indicator ()
   (lambda (&optional keymap targets prefix)
@@ -69,6 +75,10 @@
 (global-set-key [remap switch-to-buffer] 'consult-buffer)
 (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
 
+(defun p-consult-ripgrep-dir ()
+  (interactive)
+  (consult-ripgrep (universal-argument)))
+
 ;; export to do editing
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-funcs.el
 (defun p-embark-export-write ()
@@ -105,8 +115,9 @@
     "bp" '(consult-project-buffer :which-key "enhanced consult switch buffer")
     "s"  '(:ignore t :which-key "search")
     "ss" '(consult-line :which-key "consult line")
-    "sr" '(consult-yank-pop :which-key "consult yank")
+    "sk" '(consult-yank-pop :which-key "consult yank")
     "sp" '(consult-ripgrep :which-key "consult-rg project")
+    "sr" '(p-consult-ripgrep-dir :which-key "consult-rg dir")
     "si" '(consult-imenu :which-key "consult imenu")
     "sl" '(consult-outline :which-key "consult outline")))
 

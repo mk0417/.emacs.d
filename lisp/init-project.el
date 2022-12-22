@@ -12,7 +12,7 @@
     (magit-list-repositories)))
 
 ;;; Grep project
-(defun p-project-find-regexp ()
+(defun p-project-find-xref ()
   (interactive)
   (defvar xref-show-xrefs-function)
   (let ((xref-show-xrefs-function #'consult-xref))
@@ -60,7 +60,7 @@ search starting from the current directory with `rgrep'."
     "pu" '(straight-pull-all  :which-key "straight update all packages")
     "pS" '(p-list-installed-packages :which-key "list installed packages")
     "s"  '(:ignore t :which-key "search")
-    "sd" '(p-project-find-regexp :which-key "project find regexp")
+    "sx" '(p-project-find-xref :which-key "project find xref")
     "s." '(p-project-search-grep :which-key "grep search")))
 
 (provide 'init-project)
