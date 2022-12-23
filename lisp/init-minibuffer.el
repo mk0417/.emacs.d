@@ -32,9 +32,6 @@
 (with-eval-after-load 'embark-consult
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
-(define-key embark-symbol-map "l" #'consult-line)
-(define-key embark-symbol-map "r" #'consult-ripgrep)
-
 ;; embark action integration with which-key
 (defun embark-which-key-indicator ()
   (lambda (&optional keymap targets prefix)
@@ -61,10 +58,23 @@
 ;; set some consult bindings
 (setq completion-in-region-function #'consult-completion-in-region)
 
+(defun p-consult-line-at-point ()
+  (interactive)
+  (consult-line (thing-at-point 'symbol)))
+
+(defun p-consult-ripgrep-at-point ()
+  (interactive)
+  (consult-ripgrep nil (thing-at-point 'symbol)))
+
+(defun p-consult-ripgrep-dir ()
+  (interactive)
+  (consult-ripgrep (universal-argument)))
+
 (defmacro p-no-consult-preview (&rest cmds)
   `(with-eval-after-load 'consult
      (consult-customize ,@cmds :preview-key (kbd "M-v"))))
 (p-no-consult-preview consult-ripgrep
+                      p-consult-ripgrep-at-point
                       consult-git-grep
                       consult-grep
                       consult-bookmark
@@ -74,10 +84,6 @@
                       consult--source-bookmark)
 (global-set-key [remap switch-to-buffer] 'consult-buffer)
 (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
-
-(defun p-consult-ripgrep-dir ()
-  (interactive)
-  (consult-ripgrep (universal-argument)))
 
 ;; export to do editing
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-funcs.el
@@ -115,8 +121,10 @@
     "bp" '(consult-project-buffer :which-key "enhanced consult switch buffer")
     "s"  '(:ignore t :which-key "search")
     "ss" '(consult-line :which-key "consult line")
+    "sb" '(p-consult-line-at-point :which-key "consult line at point")
     "sk" '(consult-yank-pop :which-key "consult yank")
     "sp" '(consult-ripgrep :which-key "consult-rg project")
+    "sd" '(p-consult-ripgrep-at-point :which-key "consult-rg at point")
     "sr" '(p-consult-ripgrep-dir :which-key "consult-rg dir")
     "si" '(consult-imenu :which-key "consult imenu")
     "sl" '(consult-outline :which-key "consult outline")))
