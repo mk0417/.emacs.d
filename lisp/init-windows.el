@@ -16,7 +16,6 @@
     :prefix "SPC"
     :states '(normal visual))
   (p-space-leader-def
-    "SPC" 'execute-extended-command
     "1" '(winum-select-window-1 :which-key "select window 1")
     "2" '(winum-select-window-2 :which-key "select window 2")
     "3" '(winum-select-window-3 :which-key "select window 3")

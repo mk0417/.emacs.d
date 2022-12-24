@@ -45,7 +45,6 @@
     :prefix "SPC"
     :states '(normal visual))
   (p-space-leader-def
-    "SPC" 'execute-extended-command
     "n" '(:ignore t :which-key "notes")
     "nn" '(denote :which-key "denote")
     "nj" '(denote-subdirectory :which-key "denote subdirectory")

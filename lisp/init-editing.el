@@ -158,7 +158,12 @@
       (previous-line)
       (end-of-line))))
 
-; insert date
+(defun p-select-bottom-block ()
+  (interactive)
+  (save-excursion
+    (mark-paragraph)))
+
+;; insert date
 (defun p-insert-uk-date ()
   (interactive)
   (insert (format-time-string "%d-%m-%Y")))
@@ -260,6 +265,7 @@
   (define-key evil-insert-state-map (kbd "C-p") nil)
 
   (define-key evil-normal-state-map (kbd ",.") 'p-select-function)
+  (define-key evil-normal-state-map (kbd ",b") 'p-select-bottom-block)
   (define-key evil-normal-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-normal-state-map (kbd "gor") 'p-ex-evil-buffer-replace)
   (define-key evil-normal-state-map (kbd "gom") 'p-query-replace-many)

@@ -62,5 +62,15 @@
 (setq TeX-view-program-list '(("Skim" "open -a Skim.app %o")))
 (setq TeX-view-program-selection '((output-pdf "Skim")))
 
+(with-eval-after-load 'evil
+  (general-create-definer p-space-leader-def
+    :prefix "SPC"
+    :states '(normal visual))
+  (p-space-leader-def
+    "n" '(:ignore t :which-key "notes")
+    "ni" '(LaTeX-fill-buffer :which-key "latex fill buffer")
+    "nr" '(TeX-command-master :which-key "run tex")
+    "np" '(TeX-view :which-key "view latex pdf")))
+
 (provide 'init-latex)
 ;;;;; init-latex.el ends here
