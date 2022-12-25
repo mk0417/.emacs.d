@@ -82,15 +82,6 @@
 ;; turn on paren match highlighting
 (show-paren-mode 1)
 
-;;; Vim style replace
-(defun p-ex-evil-buffer-replace ()
-  (interactive)
-  (evil-ex (concat "%s/")))
-
-(defun p-ex-evil-selection-replace ()
-  (interactive)
-  (evil-ex (concat "'<,'>s/")))
-
 ;;; Useful functions
 (defun p-select-function ()
   (interactive)
@@ -162,6 +153,25 @@
   (interactive)
   (save-excursion
     (mark-paragraph)))
+
+;; vim style replace
+(defun p-ex-evil-buffer-replace ()
+  (interactive)
+  (evil-ex (concat "%s/")))
+
+(defun p-ex-evil-selection-replace ()
+  (interactive)
+  (evil-ex (concat "'<,'>s/")))
+
+(defun p-ex-evil-replace-yank ()
+  (interactive)
+  (kill-new (thing-at-point 'symbol))
+  (p-select-block)
+  (evil-ex (concat "'<,'>s/" (substring-no-properties (car kill-ring)))))
+
+(defun p-ex-evil-selection-replace-yank ()
+  (interactive)
+  (evil-ex (concat "'<,'>s/" (substring-no-properties (car kill-ring)))))
 
 ;; insert date
 (defun p-insert-uk-date ()
@@ -268,6 +278,7 @@
   (define-key evil-normal-state-map (kbd ",b") 'p-select-bottom-block)
   (define-key evil-normal-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-normal-state-map (kbd "gor") 'p-ex-evil-buffer-replace)
+  (define-key evil-normal-state-map (kbd "goa") 'p-ex-evil-replace-yank)
   (define-key evil-normal-state-map (kbd "gom") 'p-query-replace-many)
   (define-key evil-normal-state-map (kbd "gos") 'transpose-sexps)
   (define-key evil-normal-state-map (kbd ",a") 'beginning-of-defun)
@@ -284,6 +295,7 @@
 
   (define-key evil-visual-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
+  (define-key evil-visual-state-map (kbd "goa") 'p-ex-evil-selection-replace-yank)
   (define-key evil-visual-state-map (kbd "gom") 'p-query-replace-many)
   (define-key evil-visual-state-map (kbd ",e") 'end-of-defun)
   (define-key evil-visual-state-map (kbd ";a") 'p-beginning-of-line-or-block)
