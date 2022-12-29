@@ -35,6 +35,8 @@
   (add-hook 'python-mode-hook 'display-fill-column-indicator-mode))
 
 ;;; R
+(setq-default inferior-R-args "--no-save ")
+
 (with-eval-after-load 'ess
   ;; disable flymake
   (add-hook 'ess-r-mode-hook (lambda () (flymake-mode -1)))

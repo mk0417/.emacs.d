@@ -93,6 +93,9 @@
 ;;; Keep small kill ring
 (setq kill-ring-max 60)
 
+;;; Wrap long lines in text mode
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+
 ;;; Hide "setting up indent for shell type zsh"
 ;; https://emacs.stackexchange.com/questions/52846/how-to-remove-message-indentation-setup-for-shell-type-sh
 (advice-add 'sh-set-shell :around
