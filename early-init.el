@@ -53,23 +53,28 @@
 ;;; Modus themes
 ;; Load in early-init.el to avoid white screen flash
 (setq x-underline-at-descent-line t)
-(setq modus-themes-prompts '(bold background))
-(setq modus-themes-hl-line '(intense))
-(setq modus-themes-paren-match '(intense bold underline))
-(setq modus-themes-intense-markup t)
-(setq modus-themes-markup '(bold intense background))
-(setq modus-themes-region '(no-extend accented))
+
 (setq modus-themes-mixed-fonts t)
 (setq modus-themes-variable-pitch-ui t)
 (setq modus-themes-bold-constructs t)
-(setq modus-themes-org-blocks 'gray-background)
+(setq modus-themes-common-palette-overrides
+      '((fg-completion-match-0 fg-main)
+        (fg-completion-match-1 fg-main)
+        (fg-completion-match-2 fg-main)
+        (bg-completion-match-0 bg-cyan-intense)
+        (bg-completion-match-1 bg-green-intense)
+        (bg-completion-match-2 bg-red-intense)
+        (bg-completion bg-blue-nuanced)))
 (setq modus-themes-completions
-      '((matches . (extrabold background intense))
-        (selection . (semibold intense))))
+      '((selection . (extrabold))))
+
+(setq modus-themes-org-blocks 'gray-background)
 (setq modus-themes-headings
-      '((1 . (variable-pitch 1.3))
-        (2 . (variable-pitch 1.2))
-        (t . (variable-pitch 1))))
+      '((0 . (variable-pitch light 1.7))
+        (1 . (variable-pitch light 1.6))
+        (2 . (variable-pitch regular 1.4))
+        (3 . (variable-pitch regular 1.2))
+        (t . (variable-pitch 1.0))))
 
 (load-theme 'modus-vivendi t)
 

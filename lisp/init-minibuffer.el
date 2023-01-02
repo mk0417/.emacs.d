@@ -14,7 +14,7 @@
 (marginalia-mode 1)
 
 ;;; Orderless
-;; set up Orderless for better fuzzy matching
+;; Set up orderless for better matching
 (require 'orderless)
 (setq completion-styles '(orderless))
 (setq completion-category-overrides '((file (styles . (partial-completion)))))
@@ -26,36 +26,24 @@
 (global-set-key (kbd "C-;") 'embark-act)
 (global-set-key (kbd "C-c C-o") 'embark-export)
 
-;; use Embark to show bindings in a key prefix with `C-h`
+;; Use Embark to show bindings in a key prefix with `C-h`
 (setq prefix-help-command #'embark-prefix-help-command)
 
 (with-eval-after-load 'embark-consult
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
-;; embark action integration with which-key
-(defun embark-which-key-indicator ()
-  (lambda (&optional keymap targets prefix)
-    (if (null keymap)
-        (which-key--hide-popup-ignore-command)
-      (which-key--show-keymap
-       (if (eq (plist-get (car targets) :type) 'embark-become)
-           "Become"
-         (format "Act on %s '%s'%s"
-                 (plist-get (car targets) :type)
-                 (embark--truncate-target (plist-get (car targets) :target))
-                 (if (cdr targets) "…" "")))
-       (if prefix
-           (pcase (lookup-key keymap prefix 'accept-default)
-             ((and (pred keymapp) km) km)
-             (_ (key-binding prefix 'accept-default)))
-         keymap)
-       nil nil t (lambda (binding)
-                   (not (string-suffix-p "-argument" (cdr binding))))))))
+(setq embark-verbose-indicator-display-action
+      '((display-buffer-at-bottom)
+        ;; (window-parameters (mode-line-format . none))
+        ;; (window-height 10)
+        ))
 
-(setq embark-indicators '(embark-which-key-indicator embark-highlight-indicator embark-isearch-highlight-indicator))
+(define-key embark-identifier-map "R" #'consult-ripgrep)
+(define-key embark-identifier-map "J" #'consult-line)
 
 ;;; Consult
-;; set some consult bindings
+(setq consult-line-start-from-top t)
+
 (setq completion-in-region-function #'consult-completion-in-region)
 
 (defun p-consult-line-at-point ()
@@ -85,7 +73,7 @@
 (global-set-key [remap switch-to-buffer] 'consult-buffer)
 (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
 
-;; export to do editing
+;; Export to do editing
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-funcs.el
 (defun p-embark-export-write ()
   (interactive)

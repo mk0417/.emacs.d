@@ -24,6 +24,8 @@
         (file (vertico-sort-function . sort-directories-first))
         (t (vertico-sort-function . vertico-sort-history-alpha))))
 
+(add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+
 (define-key vertico-map (kbd "C-n") 'vertico-next)
 (define-key vertico-map (kbd "C-p") 'vertico-previous)
 (define-key vertico-map (kbd "M-h") 'vertico-directory-up)
