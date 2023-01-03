@@ -19,6 +19,14 @@
 (setq completion-styles '(orderless))
 (setq completion-category-overrides '((file (styles . (partial-completion)))))
 
+(defun without-if-bang (pattern _index _total)
+  (cond
+   ((equal "!" pattern)
+    '(orderless-literal . ""))
+   ((string-prefix-p "!" pattern)
+    `(orderless-without-literal . ,(substring pattern 1)))))
+(add-to-list 'orderless-style-dispatchers #'without-if-bang)
+
 ;;; Embark
 (require 'embark)
 (require 'embark-consult)
@@ -33,16 +41,15 @@
   (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
 (setq embark-verbose-indicator-display-action
-      '((display-buffer-at-bottom)
-        ;; (window-parameters (mode-line-format . none))
-        ;; (window-height 10)
-        ))
+      '((display-buffer-at-bottom)))
 
 (define-key embark-identifier-map "R" #'consult-ripgrep)
 (define-key embark-identifier-map "J" #'consult-line)
 
 ;;; Consult
 (setq consult-line-start-from-top t)
+(setq consult-async-input-debounce 0.5)
+(setq consult-async-input-throttle 0.8)
 
 (setq completion-in-region-function #'consult-completion-in-region)
 
