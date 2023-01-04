@@ -6,7 +6,7 @@
 ;;; Disable menu bar
 (menu-bar-mode -1)
 
-;;; Left fringe only
+;;; No fringe
 (fringe-mode '(0 . 0))
 
 ;;; Font
