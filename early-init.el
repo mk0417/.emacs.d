@@ -2,9 +2,10 @@
 
 ;;; Don't use package.el, use straight.el instead
 (setq package-enable-at-startup nil)
+(advice-add #'package--ensure-init-file :override #'ignore)
 
 ;;; Prefer loading newest compiled .el file
-(setq load-prefer-newer noninteractive)
+(setq load-prefer-newer t)
 
 ;;; Inhibit resizing frame
 (setq frame-inhibit-implied-resize t)

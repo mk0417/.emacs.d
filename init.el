@@ -52,23 +52,46 @@
 (require 'init-vertico)
 (require 'init-minibuffer)
 (require 'init-utils)
-(require 'init-windows)
-(require 'init-programming)
-(require 'init-keychord)
-(require 'init-git)
-(require 'init-project)
-(require 'init-avy)
-(require 'init-org)
-(require 'init-template)
-(require 'init-notes)
-(require 'init-latex)
-(require 'init-dired)
-(require 'init-modeline)
-(require 'init-xah)
+;; (require 'init-windows)
+;; (require 'init-programming)
+;; (require 'init-keychord)
+;; (require 'init-git)
+;; (require 'init-project)
+;; (require 'init-avy)
+;; (require 'init-org)
+;; (require 'init-template)
+;; (require 'init-notes)
+;; (require 'init-latex)
+;; (require 'init-dired)
+;; (require 'init-modeline)
+;; (require 'init-xah)
+;; (require 'init-lsp-bridge)
+;; (require 'init-vterm)
+
+;;; Disable corfu and eglot to favor lsp-bridge
 ;; (require 'init-completion)
 ;; (require 'init-eglot)
-(require 'init-lsp-bridge)
-(require 'init-vterm)
+
+(defun p-config-after-startup ()
+  (cl-dolist (mod (list
+                   'init-windows
+                   'init-programming
+                   'init-keychord
+                   'init-git
+                   'init-project
+                   'init-avy
+                   'init-org
+                   'init-template
+                   'init-notes
+                   'init-latex
+                   'init-dired
+                   'init-modeline
+                   'init-xah
+                   'init-lsp-bridge
+                   'init-vterm))
+    (require mod nil t)))
+
+(add-hook 'emacs-startup-hook #'p-config-after-startup)
 
 ;;; Make GC pauses faster by decreasing the threshold
 (setq gc-cons-threshold (* 8 1024 1024))
