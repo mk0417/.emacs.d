@@ -10,7 +10,7 @@
 ;; do not download zmq module from released version that contains .so file
 ;; Emacs 28 needs .dylib
 ;; answer No when first installation and build it to have .dylib file
-(require 'jupyter)
+;; (require 'jupyter)
 
 (setq jupyter-eval-use-overlays t)
 
@@ -21,12 +21,15 @@
   (evil-escape)
   (previous-line))
 
+;;;###autoload
 (defun p-jupyter-eval-block ()
   (interactive)
   (p-select-block)
   (let (beg end)
     (setq beg (region-beginning) end (region-end))
     (jupyter-eval-region beg end)))
+
+(autoload 'p-jupyter-eval-block "jupyter")
 
 ;;; Python
 (with-eval-after-load 'python
