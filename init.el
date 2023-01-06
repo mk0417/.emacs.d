@@ -52,7 +52,7 @@
 (require 'init-vertico)
 (require 'init-minibuffer)
 (require 'init-utils)
-;; (require 'init-windows)
+(require 'init-windows)
 ;; (require 'init-programming)
 ;; (require 'init-keychord)
 ;; (require 'init-git)
@@ -74,7 +74,6 @@
 
 (defun p-config-after-startup ()
   (cl-dolist (mod (list
-                   'init-windows
                    'init-programming
                    'init-keychord
                    'init-git
