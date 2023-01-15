@@ -77,19 +77,42 @@
 (dolist (mode '(grep-mode occur-mode occur-edit-mode dired-mode-map))
   (evil-set-initial-state mode 'normal))
 
-;;; Functions to switch buffers
-(defun p-switch-to-messages ()
-  (interactive)
-  (switch-to-buffer "*Messages*"))
-
-(defun p-switch-to-previous-buffer ()
-  (interactive)
-  (switch-to-buffer nil))
-
 ;;; Keybindings
 (with-eval-after-load 'evil
+  ;; I prefer to use C-n and C-p in many other places
+  (define-key evil-normal-state-map (kbd "C-n") nil)
+  (define-key evil-normal-state-map (kbd "C-p") nil)
+  (define-key evil-insert-state-map (kbd "C-n") nil)
+  (define-key evil-insert-state-map (kbd "C-p") nil)
+
+  (define-key evil-inner-text-objects-map "f" 'evil-inner-bracket)
+  (define-key evil-inner-text-objects-map "h" 'evil-inner-curly)
+  (define-key evil-inner-text-objects-map "d" 'evil-inner-double-quote)
+  (define-key evil-inner-text-objects-map "s" 'evil-inner-single-quote)
+  (define-key evil-outer-text-objects-map "f" 'evil-a-bracket)
+  (define-key evil-outer-text-objects-map "h" 'evil-a-curly)
+  (define-key evil-outer-text-objects-map "d" 'evil-a-double-quote)
+  (define-key evil-outer-text-objects-map "s" 'evil-a-single-quote)
+
+  (define-key evil-normal-state-map (kbd "god") 'kill-sexp)
+  (define-key evil-normal-state-map (kbd "gos") 'transpose-sexps)
+  (define-key evil-normal-state-map (kbd ",a") 'beginning-of-defun)
+  (define-key evil-normal-state-map (kbd ",e") 'end-of-defun)
   (define-key evil-normal-state-map (kbd "goo") 'evil-indent-line)
+  (define-key evil-normal-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
+
+  (define-key evil-visual-state-map (kbd ",a") 'beginning-of-defun)
+  (define-key evil-visual-state-map (kbd ",e") 'end-of-defun)
   (define-key evil-visual-state-map (kbd "goo") 'evil-indent)
+  (define-key evil-visual-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
+
+  (define-key evil-insert-state-map (kbd "C-a") 'evil-beginning-of-line)
+  (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
+  (define-key evil-insert-state-map (kbd "C-k") 'delete-backward-char)
+
+  (define-key evil-ex-completion-map (kbd "C-f") 'forward-char)
+  (define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
+  (define-key evil-ex-completion-map (kbd "C-k") 'delete-backward-char)
 
   (general-create-definer p-space-leader-def
     :prefix "SPC"
@@ -109,9 +132,6 @@
     "bD" '(kill-buffer-and-window :which-key "kill buffer and window")
     "br" '(revert-buffer :which-key "revert buffer")
     "bs" '(scratch-buffer :which-key "switch to scratch")
-    "ba" '(p-switch-to-messages :which-key "switch to messages")
-    "§" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
-    "`" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
     "d" '(:ignore t :which-key "dired")
     "dd" '(dired :which-key "dired directory")
     "dj" '(dired-jump :which-key "dired jump")

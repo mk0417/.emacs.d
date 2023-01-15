@@ -26,6 +26,15 @@
   (let ((default-directory (file-truename (file-name-directory (expand-file-name "~/Dropbox/peng_log/")))))
     (call-interactively 'find-file)))
 
+;;; Functions to switch buffers
+(defun p-switch-to-messages ()
+  (interactive)
+  (switch-to-buffer "*Messages*"))
+
+(defun p-switch-to-previous-buffer ()
+  (interactive)
+  (switch-to-buffer nil))
+
 ;;; Query replace many
 ;; https://tony-zorman.com/posts/query-replace/2022-08-06-query-replace-many.html
 (autoload 's-join "s")
@@ -111,6 +120,10 @@
     "fp" '(p-find-file-in-config :which-key "find config file")
     "fl" '(p-find-file-in-log :which-key "find log file")
     "fR" '(p-rename-this-file-and-buffer :which-key "rename file")
+    "b" '(:ignore t :which-key "buffer")
+    "ba" '(p-switch-to-messages :which-key "switch to messages")
+    "§" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
+    "`" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
     "s"  '(:ignore t :which-key "search")
     "sg" '(p-google-search :which-key "search on google")
     "sy" '(p-youtube-search :which-key "search on youtube")

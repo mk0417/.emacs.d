@@ -14,10 +14,11 @@
                    "*Trash Error Buffer*")))
 
 ;;; Keybindings
-(global-set-key (kbd "s-W") 'delete-frame) ; ⌘-W = Close window
-
+;; ⌘-W = Close window
+(global-set-key (kbd "s-W") 'delete-frame)
+;; ⌘-Z = Redo
 (unless (< emacs-major-version 28)
-  (global-set-key (kbd "s-Z") 'undo-redo)) ; ⌘-Z = Redo
+  (global-set-key (kbd "s-Z") 'undo-redo))
 
 (provide 'init-osx)
 ;;;;; init-osx.el ends here

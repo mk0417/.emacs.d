@@ -12,12 +12,6 @@
       (concat ";; Hello Peng, welcome to Emacs and happy hacking\n"
               (format ";; Emacs version: %s\n" (car (split-string emacs-version)))))
 
-;;; Profile emacs startup
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (message "*** Emacs loaded in %s seconds."
-                     (emacs-init-time "%.2f"))))
-
 ;;; Inherit variables from .zshrc
 ;; http://xahlee.info/emacs/emacs/emacs_env_var_paths.html
 (let ((emacs-init-env-path
@@ -91,6 +85,12 @@
     (require mod nil t)))
 
 (add-hook 'emacs-startup-hook #'p-config-after-startup)
+
+;;; Profile emacs startup
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (message "*** Emacs loaded in %s seconds."
+                     (emacs-init-time "%.2f"))))
 
 ;;; Make GC pauses faster by decreasing the threshold
 (setq gc-cons-threshold (* 8 1024 1024))

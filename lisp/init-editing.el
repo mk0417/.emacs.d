@@ -154,25 +154,6 @@
   (save-excursion
     (mark-paragraph)))
 
-;; vim style replace
-(defun p-ex-evil-buffer-replace ()
-  (interactive)
-  (evil-ex (concat "%s/")))
-
-(defun p-ex-evil-selection-replace ()
-  (interactive)
-  (evil-ex (concat "'<,'>s/")))
-
-(defun p-ex-evil-replace-yank ()
-  (interactive)
-  (kill-new (thing-at-point 'symbol))
-  (p-select-block)
-  (evil-ex (concat "'<,'>s/" (substring-no-properties (car kill-ring)))))
-
-(defun p-ex-evil-selection-replace-yank ()
-  (interactive)
-  (evil-ex (concat "'<,'>s/" (substring-no-properties (car kill-ring)))))
-
 ;; insert date
 (defun p-insert-uk-date ()
   (interactive)
@@ -186,10 +167,15 @@
   (interactive)
   (insert (format-time-string "%Y-%m-%d, %A")))
 
-;; insert current buffer name
-(defun p-insert-file-name ()
+;; copy current file path
+(defun p-copy-file-path ()
   (interactive)
-  (insert (buffer-file-name)))
+  (kill-new (buffer-file-name)))
+
+;; copy current file name
+(defun p-copy-file-name ()
+  (interactive)
+  (kill-new (buffer-name)))
 
 ;; backward kill to the beginning of line
 (defun p-kill-to-begin-of-line ()
@@ -227,62 +213,57 @@
   (forward-char 1)
   (delete-char 1))
 
+;;; Vim style replace
+(defun p-ex-evil-buffer-replace ()
+  (interactive)
+  (evil-ex (concat "%s/")))
+
+(defun p-ex-evil-selection-replace ()
+  (interactive)
+  (evil-ex (concat "'<,'>s/")))
+
+(defun p-ex-evil-selection-replace-yank ()
+  (interactive)
+  (evil-ex (concat "'<,'>s/" (substring-no-properties (car kill-ring)) "/")))
+
+(defun p-ex-evil-replace-yank ()
+  (interactive)
+  (kill-new (thing-at-point 'symbol))
+  (p-select-block)
+  ;; make sure to run evil ex after above functions
+  ;; https://emacs.stackexchange.com/questions/11003/run-a-function-after-control-returns-to-the-command-loop
+  (run-with-timer 0 nil 'p-ex-evil-selection-replace-yank))
+
 ;;; Keybindings
 (with-eval-after-load 'evil
-  ;; I prefer to use C-n and C-p in many other places
-  (define-key evil-normal-state-map (kbd "C-n") nil)
-  (define-key evil-normal-state-map (kbd "C-p") nil)
-  (define-key evil-insert-state-map (kbd "C-n") nil)
-  (define-key evil-insert-state-map (kbd "C-p") nil)
-
-  (define-key evil-normal-state-map (kbd ",.") 'p-select-function)
-  (define-key evil-normal-state-map (kbd ",b") 'p-select-bottom-block)
-  (define-key evil-normal-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-normal-state-map (kbd "gor") 'p-ex-evil-buffer-replace)
   (define-key evil-normal-state-map (kbd "goa") 'p-ex-evil-replace-yank)
-  (define-key evil-normal-state-map (kbd "gos") 'transpose-sexps)
-  (define-key evil-normal-state-map (kbd ",a") 'beginning-of-defun)
-  (define-key evil-normal-state-map (kbd ",e") 'end-of-defun)
+  (define-key evil-normal-state-map (kbd ",.") 'p-select-function)
+  (define-key evil-normal-state-map (kbd ",b") 'p-select-bottom-block)
   (define-key evil-normal-state-map (kbd ";a") 'p-beginning-of-line-or-block)
   (define-key evil-normal-state-map (kbd ";e") 'p-end-of-line-or-block)
   (define-key evil-normal-state-map (kbd "C-i") 'p-delete-backward-to-tab)
   (define-key evil-normal-state-map (kbd "goc") 'p-clear-line)
-  (define-key evil-normal-state-map (kbd "god") 'kill-sexp)
   (define-key evil-normal-state-map (kbd "goi") 'p-kill-sexp-and-insert)
   (define-key evil-normal-state-map (kbd ";c") 'grugru)
   (define-key evil-normal-state-map (kbd "gcr") 'thing-replace-symbol)
   (define-key evil-normal-state-map (kbd "gce") 'thing-copy-to-line-end)
 
-  (define-key evil-visual-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
   (define-key evil-visual-state-map (kbd "goa") 'p-ex-evil-selection-replace-yank)
-  (define-key evil-visual-state-map (kbd ",e") 'end-of-defun)
   (define-key evil-visual-state-map (kbd ";a") 'p-beginning-of-line-or-block)
   (define-key evil-visual-state-map (kbd ";e") 'p-end-of-line-or-block)
 
-  (define-key evil-insert-state-map (kbd "C-a") 'evil-beginning-of-line)
-  (define-key evil-insert-state-map (kbd "C-e") 'end-of-line)
-  (define-key evil-insert-state-map (kbd "C-k") 'delete-backward-char)
   (define-key evil-insert-state-map (kbd "C-u") 'p-kill-to-begin-of-line)
   (define-key evil-insert-state-map (kbd "C-i") 'p-delete-backward-to-tab)
-
-  (define-key evil-ex-completion-map (kbd "C-f") 'forward-char)
-  (define-key evil-ex-completion-map (kbd "C-b") 'backward-char)
-  (define-key evil-ex-completion-map (kbd "C-k") 'delete-backward-char)
-
-  (define-key evil-inner-text-objects-map "f" 'evil-inner-bracket)
-  (define-key evil-inner-text-objects-map "h" 'evil-inner-curly)
-  (define-key evil-inner-text-objects-map "d" 'evil-inner-double-quote)
-  (define-key evil-outer-text-objects-map "f" 'evil-a-bracket)
-  (define-key evil-outer-text-objects-map "h" 'evil-a-curly)
-  (define-key evil-outer-text-objects-map "d" 'evil-a-double-quote)
 
   (general-create-definer p-space-leader-def
     :prefix "SPC"
     :states '(normal visual))
   (p-space-leader-def
     "f"  '(:ignore t :which-key "file")
-    "fi" '(p-insert-file-name :which-key "insert file path and name")
+    "fI" '(p-copy-file-path :which-key "copy file path")
+    "fi" '(p-copy-file-name :which-key "copy file name")
     "e" '(:ignore t :which-key "editing")
     "en" '(p-insert-num-list :which-key "insert number sequence")
     "ec" '(whitespace-cleanup :which-key "clear whitespace")
