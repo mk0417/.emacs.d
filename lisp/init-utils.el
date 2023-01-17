@@ -14,6 +14,16 @@
       (set-visited-file-name new-name)
       (rename-buffer new-name))))
 
+;;; Copy current file path
+(defun p-copy-file-path ()
+  (interactive)
+  (kill-new (buffer-file-name)))
+
+;;; Copy current file name
+(defun p-copy-file-name ()
+  (interactive)
+  (kill-new (buffer-name)))
+
 ;;; Find file in my config
 (defun p-find-file-in-config ()
   (interactive)
@@ -120,6 +130,8 @@
     "fp" '(p-find-file-in-config :which-key "find config file")
     "fl" '(p-find-file-in-log :which-key "find log file")
     "fR" '(p-rename-this-file-and-buffer :which-key "rename file")
+    "fI" '(p-copy-file-path :which-key "copy file path")
+    "fi" '(p-copy-file-name :which-key "copy file name")
     "b" '(:ignore t :which-key "buffer")
     "ba" '(p-switch-to-messages :which-key "switch to messages")
     "§" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")

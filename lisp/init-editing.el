@@ -167,16 +167,6 @@
   (interactive)
   (insert (format-time-string "%Y-%m-%d, %A")))
 
-;; copy current file path
-(defun p-copy-file-path ()
-  (interactive)
-  (kill-new (buffer-file-name)))
-
-;; copy current file name
-(defun p-copy-file-name ()
-  (interactive)
-  (kill-new (buffer-name)))
-
 ;; backward kill to the beginning of line
 (defun p-kill-to-begin-of-line ()
   (interactive)
@@ -261,9 +251,6 @@
     :prefix "SPC"
     :states '(normal visual))
   (p-space-leader-def
-    "f"  '(:ignore t :which-key "file")
-    "fI" '(p-copy-file-path :which-key "copy file path")
-    "fi" '(p-copy-file-name :which-key "copy file name")
     "e" '(:ignore t :which-key "editing")
     "en" '(p-insert-num-list :which-key "insert number sequence")
     "ec" '(whitespace-cleanup :which-key "clear whitespace")
