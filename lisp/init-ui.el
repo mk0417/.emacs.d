@@ -11,36 +11,35 @@
 
 ;;; Font
 ;; https://gitlab.com/protesilaos/fontaine
+(setq x-underline-at-descent-line nil)
+(setq-default text-scale-remap-header-line t)
+
 (setq fontaine-presets
-      '((tiny
+      '((small
          :default-family "Iosevka Comfy Wide Fixed"
-         :default-height 70)
-        (small
-         :default-family "Iosevka Comfy Fixed"
-         :default-height 100)
+         :default-height 100
+         :variable-pitch-family "Iosevka Comfy Wide Duo")
         (regular
          :default-height 130)
-        (medium
-         :default-height 150)
         (large
          :default-weight semilight
          :default-height 170
          :bold-weight extrabold)
         (code-demo
+         :default-family "Iosevka Comfy Fixed"
          :default-weight semilight
          :default-height 170
+         :variable-pitch-family "Iosevka Comfy Duo"
          :bold-weight extrabold)
         (presentation
-         :default-weight semilight
-         :default-height 220
-         :bold-weight extrabold)
+         :inherit code-demo
+         :default-height 220)
         (t
          :default-family "Iosevka Comfy"
          :default-weight regular
          :default-height 100
          :fixed-pitch-family nil
          :fixed-pitch-weight nil
-         :fixed-pitch-height 1.0
          :fixed-pitch-serif-family nil
          :fixed-pitch-serif-weight nil
          :fixed-pitch-serif-height 1.0
@@ -49,7 +48,7 @@
          :variable-pitch-height 1.0
          :bold-family nil
          :bold-weight bold
-         :italic-family "Iosevka Comfy Motion"
+         :italic-family nil
          :italic-slant italic
          :line-spacing nil)))
 
@@ -59,9 +58,21 @@
   (add-hook hook #'fontaine-apply-current-preset))
 
 ;; mode-line variable-pitch font
-(defun emacs-ui--set-mode-line-font ()
-  (set-face-attribute 'mode-line nil :inherit 'variable-pitch :height 1))
-(add-hook 'after-init-hook 'emacs-ui--set-mode-line-font)
+;; (defun emacs-ui--set-mode-line-font ()
+;;   (set-face-attribute 'mode-line nil :inherit 'variable-pitch :height 1))
+;; (add-hook 'after-init-hook 'emacs-ui--set-mode-line-font)
+
+(defun p-enable-variable-pitch ()
+  (unless (or (derived-mode-p 'mhtml-mode 'nxml-mode 'yaml-mode)
+              (member (buffer-name) '("*Colors*" "*Faces*" "*Quick Help*")))
+    (variable-pitch-mode 1)))
+
+(defvar p-enable-variable-pitch-in-hooks
+  '(text-mode-hook
+    help-mode-hook))
+
+(dolist (hook p-enable-variable-pitch-in-hooks)
+  (add-hook hook #'p-enable-variable-pitch))
 
 ;;; Highlight current line
 (global-hl-line-mode 1)

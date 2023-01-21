@@ -53,8 +53,6 @@
 
 ;;; Modus themes
 ;; Load in early-init.el to avoid white screen flash
-(setq x-underline-at-descent-line t)
-
 (setq modus-themes-mixed-fonts t)
 (setq modus-themes-variable-pitch-ui t)
 (setq modus-themes-bold-constructs t)
