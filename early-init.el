@@ -69,10 +69,10 @@
 
 (setq modus-themes-org-blocks 'gray-background)
 (setq modus-themes-headings
-      '((0 . (variable-pitch light 1.7))
-        (1 . (variable-pitch light 1.6))
-        (2 . (variable-pitch regular 1.4))
-        (3 . (variable-pitch regular 1.2))
+      '((0 . (variable-pitch light 1.6))
+        (1 . (variable-pitch light 1.5))
+        (2 . (variable-pitch regular 1.3))
+        (3 . (variable-pitch regular 1.1))
         (t . (variable-pitch 1.0))))
 
 (load-theme 'modus-vivendi t)
