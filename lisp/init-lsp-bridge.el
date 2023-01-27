@@ -12,11 +12,15 @@
 (setq acm-enable-telega nil)
 (setq lsp-bridge--mode-line-format "lsp-bridge")
 (setq lsp-bridge-python-lsp-server "pyright")
+
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
         ess-r-mode-hook
         emacs-lisp-mode-hook
         text-mode-hook))
+
+(setq lsp-bridge-multi-lang-server-mode-list
+      '(((python-mode python-ts-mode) . nil)))
 
 (global-lsp-bridge-mode)
 (diminish 'lsp-bridge-mode)
