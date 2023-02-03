@@ -28,7 +28,8 @@
 
 ;;; Setup straight as package manager
 (setq straight-repository-branch "develop")
-(setq straight-vc-git-default-clone-depth 1)
+;; (setq straight-vc-git-default-clone-depth 1)
+(setq straight-vc-git-default-clone-depth '(1 single-branch))
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
