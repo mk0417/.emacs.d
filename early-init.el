@@ -30,6 +30,9 @@
 (setq straight-repository-branch "develop")
 ;; (setq straight-vc-git-default-clone-depth 1)
 (setq straight-vc-git-default-clone-depth '(1 single-branch))
+;; quickier init time
+;; https://emacs.stackexchange.com/questions/71302/reducing-straight-el-bloat
+(setq straight-check-for-modifications '(check-on-save find-when-checking))
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
