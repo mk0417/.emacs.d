@@ -1,7 +1,10 @@
 ;;;;; init-programming.el --- Programming -*- lexical-binding: t -*-
 
 ;;; Install package
-(straight-use-package 'jupyter)
+;; Use my fork due to issue of current upstream
+;; https://github.com/nnicandro/emacs-jupyter/issues/433
+(straight-use-package '(jupyter :type git :host github :repo "mk0417/emacs-jupyter" :branch "patch-1"))
+;; (straight-use-package 'jupyter)
 (straight-use-package 'ess)
 
 ;;; Jupyter
