@@ -65,18 +65,18 @@
   (interactive)
   (consult-ripgrep (universal-argument)))
 
-(defmacro p-no-consult-preview (&rest cmds)
-  `(with-eval-after-load 'consult
-     (consult-customize ,@cmds :preview-key (kbd "M-v"))))
-(p-no-consult-preview consult-ripgrep
-                      p-consult-ripgrep-at-point
-                      consult-git-grep
-                      consult-grep
-                      consult-bookmark
-                      consult-recent-file
-                      consult-xref
-                      consult-yank-pop
-                      consult--source-bookmark)
+(consult-customize
+ consult-ripgrep
+ p-consult-ripgrep-at-point
+ consult-git-grep
+ consult-grep
+ consult-bookmark
+ consult-recent-file
+ consult-xref
+ consult-yank-pop
+ consult--source-bookmark
+ :preview-key "M-v")
+
 (global-set-key [remap switch-to-buffer] 'consult-buffer)
 (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
 
