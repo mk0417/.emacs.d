@@ -17,7 +17,8 @@
       '(python-mode-hook
         ess-r-mode-hook
         emacs-lisp-mode-hook
-        text-mode-hook))
+        LaTeX-mode-hook
+        markdown-mode-hook))
 
 (setq lsp-bridge-multi-lang-server-mode-list
       '(((python-mode python-ts-mode) . nil)))
