@@ -10,7 +10,7 @@
 (setq acm-enable-tempel nil)
 (setq acm-enable-tabnine nil)
 (setq acm-enable-telega nil)
-(setq lsp-bridge--mode-line-format "lsp-bridge")
+;; (setq lsp-bridge--mode-line-format "lsp-bridge")
 (setq lsp-bridge-python-lsp-server "pyright")
 
 (setq lsp-bridge-default-mode-hooks
