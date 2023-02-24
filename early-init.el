@@ -27,6 +27,8 @@
 (setq inhibit-compacting-font-caches t)
 
 ;;; Setup straight as package manager
+;; https://github.com/doomemacs/doomemacs/issues/5682
+(defvar native-comp-deferred-compilation-deny-list nil)
 (setq straight-repository-branch "develop")
 ;; (setq straight-vc-git-default-clone-depth 1)
 (setq straight-vc-git-default-clone-depth '(1 single-branch))
@@ -53,7 +55,7 @@
   (setq native-comp-async-report-warnings-errors nil)
   ;; Make native compilation happens asynchronously
   (setq native-comp-deferred-compilation t)
-  (setq  compilation-scroll-output t))
+  (setq compilation-scroll-output t))
 
 ;;; Modus themes
 ;; Load in early-init.el to avoid white screen flash
