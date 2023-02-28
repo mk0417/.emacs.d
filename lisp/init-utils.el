@@ -46,43 +46,6 @@
   (switch-to-buffer nil))
 
 ;;; Query replace many
-;; https://tony-zorman.com/posts/query-replace/2022-08-06-query-replace-many.html
-(autoload 's-join "s")
-
-(defun p-get-queries (&optional pairs)
-  (-let* (((from to delim arg)
-           (query-replace-read-args
-            (s-join " "
-                    (-non-nil
-                     (list "Query replace many"
-                           (cond ((eq current-prefix-arg '-) "backward")
-                                 (current-prefix-arg "word"))
-                           (when (use-region-p) "in region"))))
-            nil))
-          (from-to (cons (regexp-quote from)
-                         (s-replace "\\" "\\\\" to))))
-    (if (-contains? pairs from-to)
-        (list pairs delim arg)
-      (p-get-queries (push from-to pairs)))))
-
-(defun p-query-replace-many
-    (pairs &optional delimited start end backward region-noncontiguous-p)
-  (interactive
-   (let ((common (p-get-queries)))
-     (list (nth 0 common) (nth 1 common)
-           (if (use-region-p) (region-beginning))
-           (if (use-region-p) (region-end))
-           (nth 2 common)
-           (if (use-region-p) (region-noncontiguous-p)))))
-  (perform-replace
-   (concat "\\(?:" (mapconcat #'car pairs "\\|") "\\)")
-   (cons (lambda (pairs _count)
-           (cl-loop for (from . to) in pairs
-                    when (string-match from (match-string 0))
-                    return to))
-         pairs)
-   :query :regexp
-   delimited nil nil start end backward region-noncontiguous-p))
 
 ;;; Reveal file in Finder
 ;; https://github.com/xuchunyang/emacs.d/blob/master/lisp/chunyang-mac.el
@@ -119,9 +82,6 @@
 
 ;;; Keybindings
 (with-eval-after-load 'evil
-  (define-key evil-normal-state-map (kbd "gom") 'p-query-replace-many)
-  (define-key evil-visual-state-map (kbd "gom") 'p-query-replace-many)
-
   (general-create-definer p-space-leader-def
     :prefix "SPC"
     :states '(normal visual))

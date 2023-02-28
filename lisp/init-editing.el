@@ -4,7 +4,7 @@
 (straight-use-package 'stupid-indent-mode)
 (straight-use-package 'smartparens)
 (straight-use-package 'grugru)
-(straight-use-package 's)
+(straight-use-package '(query-replace-many :type git :host github :repo "slotThe/query-replace-many"))
 (straight-use-package '(thing-edit :type git :host github :repo "manateelazycat/thing-edit"))
 
 ;;; Stupid-indent-mode
@@ -81,6 +81,9 @@
 ;;; Parentheses
 ;; turn on paren match highlighting
 (show-paren-mode 1)
+
+;;; query-replace-many
+(autoload 'query-replace-many "query-replace-many")
 
 ;;; Useful functions
 (defun p-select-function ()
@@ -238,11 +241,13 @@
   (define-key evil-normal-state-map (kbd ";c") 'grugru)
   (define-key evil-normal-state-map (kbd "gcr") 'thing-replace-symbol)
   (define-key evil-normal-state-map (kbd "gce") 'thing-copy-to-line-end)
+  (define-key evil-normal-state-map (kbd "gom") 'query-replace-many)
 
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
   (define-key evil-visual-state-map (kbd "goa") 'p-ex-evil-selection-replace-yank)
   (define-key evil-visual-state-map (kbd ";a") 'p-beginning-of-line-or-block)
   (define-key evil-visual-state-map (kbd ";e") 'p-end-of-line-or-block)
+  (define-key evil-visual-state-map (kbd "gom") 'query-replace-many)
 
   (define-key evil-insert-state-map (kbd "C-u") 'p-kill-to-begin-of-line)
   (define-key evil-insert-state-map (kbd "C-i") 'p-delete-backward-to-tab)
