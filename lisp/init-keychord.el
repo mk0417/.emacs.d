@@ -49,17 +49,17 @@
     (interactive)
     (insert "£"))
   (general-imap "y"
-                (general-key-dispatch 'self-insert-command
-                  :timeout 0.2
-                  "b" 'p-insert-pound))
+    (general-key-dispatch 'self-insert-command
+      :timeout 0.2
+      "b" 'p-insert-pound))
   ;; double equal
   (defun p-insert-double-equal ()
     (interactive)
     (insert "=="))
   (general-imap ","
-                (general-key-dispatch 'self-insert-command
-                  :timeout 0.2
-                  "d" 'p-insert-double-equal)))
+    (general-key-dispatch 'self-insert-command
+      :timeout 0.2
+      "d" 'p-insert-double-equal)))
 
 (provide 'init-keychord)
 ;;;;; init-keychord.el ends here
