@@ -8,6 +8,8 @@
 (autoload 'markdown-mode "markdown-mode")
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
+(setq markdown-enable-math t)
+
 ;;; Denote
 (require 'denote)
 
