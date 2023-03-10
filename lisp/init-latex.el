@@ -2,35 +2,40 @@
 
 ;;; Install packages
 (straight-use-package 'auctex)
+(straight-use-package 'evil-tex)
 
 ;;; Latex
-(with-eval-after-load 'latex
-  (setq TeX-auto-save t)
-  (setq TeX-parse-self t)
-  (setq-default TeX-master nil)
-  (setq TeX-clean-confirm t)
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+;; Do not prompt for a master file.
+(setq-default TeX-master t)
+(setq TeX-clean-confirm t)
+;; Electric pairs in auctex
+(setq TeX-electric-sub-and-superscript t)
+(setq LaTeX-electric-left-right-brace t)
+(setq TeX-electric-math (cons "$" "$"))
+;; Correlate the source and the output
+(setq TeX-source-correlate-mode t)
+(setq TeX-source-correlate-method 'synctex)
+(setq TeX-source-correlate-start-server nil)
+(setq TeX-electric-sub-and-superscript t)
+(setq TeX-save-query nil)
+(setq LaTeX-fill-break-at-separators nil)
+(setq LaTeX-item-indent 0)
+(setq LaTeX-indent-level 4)
 
+(with-eval-after-load 'latex
   ;; Compile to pdf
   (tex-pdf-mode)
-
-  ;; Correlate the source and the output
-  (TeX-source-correlate-mode)
-
   ;; Set a correct indentation in a few additional environments
   (add-to-list 'LaTeX-indent-environment-list '("lstlisting" current-indentation))
   (add-to-list 'LaTeX-indent-environment-list '("tikzcd" LaTeX-indent-tabular))
   (add-to-list 'LaTeX-indent-environment-list '("tikzpicture" current-indentation))
-
   ;; Add a few macros and environment as verbatim
   (add-to-list 'LaTeX-verbatim-environments "lstlisting")
   (add-to-list 'LaTeX-verbatim-environments "Verbatim")
   (add-to-list 'LaTeX-verbatim-macros-with-braces "lstinline")
   (add-to-list 'LaTeX-verbatim-macros-with-delims "lstinline")
-
-  ;; Electric pairs in auctex
-  (setq TeX-electric-sub-and-superscript t)
-  (setq LaTeX-electric-left-right-brace t)
-  (setq TeX-electric-math (cons "$" "$"))
 
   (defun p-latex-enable-modes ()
     (setq fill-column 100)
@@ -40,6 +45,8 @@
     (LaTeX-math-mode))
 
   (add-hook 'LaTeX-mode-hook #'p-latex-enable-modes)
+  (add-hook 'LaTeX-mode-hook #'evil-tex-mode)
+  (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)
 
   ;; Open all buffers with the math mode and auto-fill mode
   ;; (add-hook 'LaTeX-mode-hook #'auto-fill-mode)
@@ -52,16 +59,13 @@
   ;; To have the buffer refresh after compilation
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
-;; Message the user if the latex executable is not found
-(add-hook 'tex-mode-hook
-          (lambda () (unless crafted-latex-latexp (message "latex executable not found"))))
-
 (dolist (dir '("/Applications/Skim.app/Contents/SharedSupport"))
   (add-to-list 'exec-path dir))
 
 (setq TeX-view-program-list '(("Skim" "open -a Skim.app %o")))
 (setq TeX-view-program-selection '((output-pdf "Skim")))
 
+;;; Keybindings
 (with-eval-after-load 'evil
   (general-create-definer p-space-leader-def
     :prefix "SPC"

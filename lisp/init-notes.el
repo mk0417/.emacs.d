@@ -3,6 +3,7 @@
 ;;; Install packages
 (straight-use-package 'denote)
 (straight-use-package 'markdown-mode)
+(straight-use-package 'adaptive-wrap)
 
 ;;; Markdown
 (autoload 'markdown-mode "markdown-mode")
@@ -40,6 +41,9 @@
   (denote
    (denote--title-prompt)
    '("journal")))
+
+;;; Adaptive-wrap
+(setq-default adaptive-wrap-extra-indent 0)
 
 ;;; Keybindings
 (with-eval-after-load 'evil
