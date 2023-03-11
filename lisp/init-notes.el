@@ -15,17 +15,21 @@
 (require 'denote)
 
 (setq denote-directory (expand-file-name "~/Dropbox/peng_notes/"))
-(setq denote-known-keywords '("emacs" "python"))
 (setq denote-infer-keywords t)
 (setq denote-sort-keywords t)
 (setq denote-file-type nil)
-(setq denote-prompts '(title subdirectory))
+(setq denote-prompts '(title keywords subdirectory))
 (setq denote-allow-multi-word-keywords t)
 (setq denote-date-format nil)
 (setq denote-link-fontify-backlinks t)
+(setq denote-org-front-matter
+      "#+title: %s
+#+date: %s
+#+filetags: %s
+#+identifier: %s
+\n")
 
-;; (require 'denote-retrieve)
-;; (require 'denote-link)
+(add-hook 'dired-mode-hook #'denote-dired-mode)
 
 ;; If you use Markdown or plain text files (Org renders links as buttons right away)
 (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
