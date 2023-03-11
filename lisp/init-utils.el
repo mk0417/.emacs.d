@@ -45,8 +45,6 @@
   (interactive)
   (switch-to-buffer nil))
 
-;;; Query replace many
-
 ;;; Reveal file in Finder
 ;; https://github.com/xuchunyang/emacs.d/blob/master/lisp/chunyang-mac.el
 (defun p-reveal-file-in-finder (file)
