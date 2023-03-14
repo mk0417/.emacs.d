@@ -74,7 +74,7 @@
                    'init-project
                    'init-avy
                    'init-org
-                   'init-template
+                   'init-snippet
                    'init-notes
                    'init-latex
                    'init-dired
