@@ -1,6 +1,20 @@
 ;;;;; init-project.el --- Project -*- lexical-binding: t -*-
 
+;;; Project
 (setq project-list-file (expand-file-name "projects" user-emacs-directory))
+
+;; https://github.com/karthink/.emacs.d/blob/master/lisp/setup-project.el
+(setq project-switch-commands
+      '((?f "Find file" project-find-file)
+        (?g "Find regexp" consult-ripgrep)
+        (?d "Dired" project-dired)
+        (?b "Buffer" project-switch-to-buffer)
+        (?v "magit" project-magit-status)
+        (?k "Kill buffers" project-kill-buffers)))
+
+(defun project-magit-status ()
+  (interactive)
+  (magit-status-setup-buffer (project-root (project-current t))))
 
 ;;; List all installed package
 ;; https://github.com/raxod502/straight.el/issues/262
