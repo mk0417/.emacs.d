@@ -56,8 +56,11 @@
 (add-hook 'after-init-hook #'recentf-mode)
 (setq-default recentf-max-saved-items 50)
 (setq-default recentf-exclude `("/Applications/Emacs.app/Contents/Resources/lisp/"
-                                "/tmp/"
-                                "/ssh:"
+                                ".gz" ".xz" ".zip" ".gpg" ".asc"
+                                "/tmp/" "/etc" "/usr" "/tmp"
+                                "/ssh:" "/sudo:"
+                                "~/.local" "~/.config" "~/.cache"
+                                "~/Downloads" "~/Pictures"
                                 "~/.emacs.d/straight/"))
 
 ;;; Don't create .# files

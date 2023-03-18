@@ -9,6 +9,7 @@
 (setq acm-enable-tempel nil)
 (setq acm-enable-tabnine nil)
 (setq acm-enable-telega nil)
+(setq acm-backend-lsp-enable-auto-import nil)
 ;; (setq lsp-bridge--mode-line-format "lsp-bridge")
 (setq lsp-bridge-python-lsp-server "pyright")
 
