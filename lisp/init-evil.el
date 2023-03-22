@@ -23,7 +23,7 @@
 ;;; Change cursor type and color
 ;; https://github.com/hlissner/doom-emacs/issues/1848
 (setq evil-normal-state-cursor '(box "#cf5a65"))
-(setq evil-insert-state-cursor '(hbar "#00ff00"))
+(setq evil-insert-state-cursor '(hbar "#cf5a65"))
 (setq evil-visual-state-cursor '(hollow "#cf5a65"))
 
 ;;; Make evil search more like vim
