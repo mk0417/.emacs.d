@@ -10,8 +10,9 @@
 (setq acm-enable-tabnine nil)
 (setq acm-enable-telega nil)
 (setq acm-backend-lsp-enable-auto-import nil)
-;; (setq lsp-bridge--mode-line-format "lsp-bridge")
+(setq acm-candidate-match-function 'orderless-flex)
 (setq lsp-bridge-python-lsp-server "pyright")
+(setq lsp-bridge-symbols-enable-which-func t)
 
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
