@@ -33,7 +33,7 @@
     (key-chord-define mode ";a" "<-")
     (key-chord-define mode ";j" "%>%")
     (key-chord-define mode ";m" "%*%")
-    (key-chord-define mode ";p" "%%")
+    (key-chord-define mode ";p" "%%\C-b")
     (key-chord-define mode ";f" "5")
     (key-chord-define mode ";i" "6")
     (key-chord-define mode ";s" "7")
