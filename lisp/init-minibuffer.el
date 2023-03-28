@@ -1,12 +1,17 @@
 ;;;;; init-minibuffer.el --- Minibuffer -*- lexical-binding: t -*-
 
 ;;; Install packages
+(straight-use-package '(mct :type git :host gitlab :repo "protesilaos/mct"))
 (straight-use-package 'marginalia)
 (straight-use-package 'orderless)
 (straight-use-package 'consult)
 (straight-use-package 'embark)
 (straight-use-package 'embark-consult)
 (straight-use-package 'wgrep)
+
+;;; MCT
+(mct-minibuffer-mode 1)
+(setq mct-live-update-delay 0.5)
 
 ;;; Marginalia
 (require 'marginalia)
