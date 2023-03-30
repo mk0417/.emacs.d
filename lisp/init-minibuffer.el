@@ -10,7 +10,7 @@
 (straight-use-package 'wgrep)
 
 ;;; MCT
-(mct-minibuffer-mode 1)
+(mct-mode 1)
 (setq mct-live-update-delay 0.5)
 
 ;;; Marginalia
