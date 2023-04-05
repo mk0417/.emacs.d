@@ -84,7 +84,7 @@
 (show-paren-mode 1)
 
 ;;; expand-region
-(autoload 'er/mark-defun "er/expand-region")
+(autoload 'er/mark-defun "expand-region")
 
 ;;; query-replace-many
 (autoload 'query-replace-many "query-replace-many")

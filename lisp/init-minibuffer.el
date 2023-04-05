@@ -9,6 +9,10 @@
 (straight-use-package 'embark-consult)
 (straight-use-package 'wgrep)
 
+(setq completions-detailed t)
+(setq enable-recursive-minibuffers t)
+(minibuffer-depth-indicate-mode 1)
+
 ;;; MCT
 (mct-mode 1)
 (setq mct-live-update-delay 0.5)
