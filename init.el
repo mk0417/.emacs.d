@@ -43,7 +43,7 @@
 (require 'init-evil)
 (require 'init-editing)
 (require 'init-osx)
-;; (require 'init-vertico)
+(require 'init-vertico)
 (require 'init-minibuffer)
 (require 'init-utils)
 (require 'init-windows)

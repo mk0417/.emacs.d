@@ -16,7 +16,7 @@
     (key-chord-define mode "aa" "&")
     (key-chord-define mode "qq" "@")
     (key-chord-define mode "vv" "#")
-    (key-chord-define mode "ii" "!")
+    (key-chord-define mode "gt" "!")
     (key-chord-define mode "zz" "$")
     (key-chord-define mode "zl" "|")
     (key-chord-define mode "fh" "%")
