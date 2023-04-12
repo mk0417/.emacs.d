@@ -59,7 +59,7 @@
                                 ".gz" ".xz" ".zip" ".gpg" ".asc"
                                 "/tmp/" "/etc" "/usr" "/tmp"
                                 "/ssh:" "/sudo:"
-                                "~/.local" "~/.config" "~/.cache"
+                                "~/.local" "~/.cache"
                                 "~/Downloads" "~/Pictures"
                                 "~/.emacs.d/straight/"))
 
