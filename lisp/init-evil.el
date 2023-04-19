@@ -77,6 +77,16 @@
 (dolist (mode '(grep-mode occur-mode occur-edit-mode dired-mode-map))
   (evil-set-initial-state mode 'normal))
 
+;;; Cycle beginning and end of line
+;; https://emacs-china.org/t/evil/24251
+(defun p-cycle-line-beginning-end ()
+  (interactive)
+  (cl-block 'my-return
+    (when (and (looking-at "[^\s]") (looking-back "^\s*")) (evil-end-of-line) (cl-return-from 'my-return))
+    (when (looking-at (if evil-move-beyond-eol "$" ".$")) (evil-beginning-of-line) (cl-return-from 'my-return))
+    (when (bolp) (evil-first-non-blank) (cl-return-from 'my-return))
+    (evil-first-non-blank)))
+
 ;;; Keybindings
 (with-eval-after-load 'evil
   ;; I prefer to use C-n and C-p in many other places
@@ -100,6 +110,7 @@
   (define-key evil-normal-state-map (kbd ",e") 'end-of-defun)
   (define-key evil-normal-state-map (kbd "goo") 'evil-indent-line)
   (define-key evil-normal-state-map (kbd "gcc") 'evilnc-comment-or-uncomment-lines)
+  (define-key evil-normal-state-map (kbd "gog") 'p-cycle-line-beginning-end)
 
   (define-key evil-visual-state-map (kbd ",a") 'beginning-of-defun)
   (define-key evil-visual-state-map (kbd ",e") 'end-of-defun)
