@@ -21,6 +21,8 @@
              (expand-file-name "~/.cargo/bin")
              "/opt/homebrew/Caskroom/miniforge/base/bin"
              "/opt/homebrew/Caskroom/miniforge/base/bin/jupyter"
+             "/opt/homebrew/Caskroom/mambaforge/base/bin"
+             "/opt/homebrew/Caskroom/mambaforge/base/bin/jupyter"
              "/opt/homebrew/bin/"
              "/usr/local/bin"
              "/usr/local/sbin"
@@ -80,8 +82,7 @@
                    'init-dired
                    'init-modeline
                    'init-xah
-                   'init-lsp-bridge
-                   'init-vterm))
+                   'init-lsp-bridge))
     (require mod nil t)))
 
 (add-hook 'emacs-startup-hook #'p-config-after-startup)
