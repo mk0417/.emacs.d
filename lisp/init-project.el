@@ -58,6 +58,12 @@ search starting from the current directory with `rgrep'."
     (lgrep regexp "*" default-directory)
     (add-to-history 'p-search--grep-hist regexp)))
 
+;; https://macowners.club/posts/custom-functions-5-navigation/
+(defun p-project-switch-project (dir)
+  (interactive (list (project-prompt-project-dir)))
+  (let ((project-current-directory-override dir))
+    (project-find-file)))
+
 ;;; Keybindings
 (with-eval-after-load 'evil
   (general-create-definer p-space-leader-def
@@ -65,7 +71,8 @@ search starting from the current directory with `rgrep'."
     :states '(normal))
   (p-space-leader-def
     "p"  '(:ignore t :which-key "projects and packages")
-    "pp" '(project-switch-project :which-key "switch project")
+    "pP" '(project-switch-project :which-key "switch project")
+    "pp" '(p-project-switch-project :which-key "dwim switch project")
     "pb" '(project-switch-to-buffer :which-key "switch buffer in project")
     "pf" '(project-find-file :which-key "project find file")
     "ps" '(straight-pull-package-and-deps :which-key "straight-pull-package-and-deps")
