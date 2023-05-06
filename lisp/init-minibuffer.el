@@ -1,7 +1,6 @@
 ;;;;; init-minibuffer.el --- Minibuffer -*- lexical-binding: t -*-
 
 ;;; Install packages
-;; (straight-use-package '(mct :type git :host gitlab :repo "protesilaos/mct"))
 (straight-use-package 'marginalia)
 (straight-use-package 'orderless)
 (straight-use-package 'consult)
@@ -10,12 +9,14 @@
 (straight-use-package 'wgrep)
 
 (setq completions-detailed t)
+(setq completion-show-help nil)
+(setq completion-auto-help nil)
+(setq completion-auto-select nil)
+(setq completions-format 'one-column)
+(setq completion-show-inline-help nil)
 (setq enable-recursive-minibuffers t)
-(minibuffer-depth-indicate-mode 1)
 
-;;; MCT
-;; (mct-mode 1)
-;; (setq mct-live-update-delay 0.5)
+(minibuffer-depth-indicate-mode 1)
 
 ;;; Marginalia
 (require 'marginalia)
