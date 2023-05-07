@@ -16,34 +16,32 @@
 
 (setq fontaine-presets
       '((small
-         :default-family "Iosevka Comfy Wide Fixed"
+         :default-family "Iosevka Comfy Wide"
          :default-height 100
          :variable-pitch-family "Iosevka Comfy Wide Duo")
-        (regular
-         :default-height 130)
+        (regular)
         (large
+         :default-family "Iosevka Comfy Motion"
          :default-weight semilight
-         :default-height 170
-         :bold-weight extrabold)
-        (code-demo
-         :default-family "Iosevka Comfy Fixed"
-         :default-weight semilight
-         :default-height 170
-         :variable-pitch-family "Iosevka Comfy Duo"
-         :bold-weight extrabold)
+         :default-height 150
+         :bold-weight extrabold
+         :variable-pitch-family "Iosevka Comfy Motion Duo")
         (presentation
-         :inherit code-demo
-         :default-height 220)
+         :default-family "Iosevka Comfy Wide Motion"
+         :default-weight light
+         :default-height 180
+         :variable-pitch-family "Iosevka Comfy Wide Motion Duo")
         (t
          :default-family "Iosevka Comfy"
          :default-weight regular
-         :default-height 100
+         :default-height 120
          :fixed-pitch-family nil
          :fixed-pitch-weight nil
+         :fixed-pitch-height 1.0
          :fixed-pitch-serif-family nil
          :fixed-pitch-serif-weight nil
          :fixed-pitch-serif-height 1.0
-         :variable-pitch-family "Iosevka Comfy Motion Duo"
+         :variable-pitch-family "Iosevka Comfy Duo"
          :variable-pitch-weight nil
          :variable-pitch-height 1.0
          :bold-family nil
@@ -76,11 +74,6 @@
 
 ;;; Highlight current line
 (global-hl-line-mode 1)
-
-;;; Full path in mode-line
-(setq-default mode-line-buffer-identification
-              (list 'buffer-file-name
-                    '(:eval (propertize (format "  %s" buffer-file-truename)))))
 
 ;;; Line number
 (when (fboundp 'display-line-numbers-mode)
