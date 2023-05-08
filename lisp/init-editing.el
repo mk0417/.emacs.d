@@ -72,12 +72,12 @@
 
 ;;; Show whitespace and delete on saving
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-basic.el
-(defun emacs-editing--enable-trailing-whitespace ()
+(defun p-emacs-editing-enable-trailing-whitespace ()
   (setq show-trailing-whitespace t)
   (add-hook 'before-save-hook #'delete-trailing-whitespace nil t))
 
 (dolist (hook '(prog-mode-hook markdown-mode-hook org-mode-hook conf-mode-hook text-mode-hook))
-  (add-hook hook 'emacs-editing--enable-trailing-whitespace))
+  (add-hook hook 'p-emacs-editing-enable-trailing-whitespace))
 
 ;;; Parentheses
 ;; turn on paren match highlighting
@@ -214,6 +214,15 @@
     (when (bolp) (evil-first-non-blank) (cl-return-from 'my-return))
     (evil-first-non-blank)))
 
+;;; Replace with last kill
+;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/prot-simple.el
+(defun p-simple-yank-replace-line-or-region ()
+  (interactive)
+  (if (use-region-p)
+      (delete-region (region-beginning) (region-end))
+    (delete-region (line-beginning-position) (line-end-position)))
+  (yank))
+
 ;;; Vim style replace
 (defun p-ex-evil-buffer-replace ()
   (interactive)
@@ -252,6 +261,7 @@
   (define-key evil-normal-state-map (kbd ",.") 'er/mark-defun)
   (define-key evil-normal-state-map (kbd ",,") 'p-select-block)
   (define-key evil-normal-state-map (kbd ",b") 'p-select-bottom-block)
+  (define-key evil-normal-state-map (kbd "gcy") 'p-simple-yank-replace-line-or-region)
 
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
   (define-key evil-visual-state-map (kbd "goa") 'p-ex-evil-selection-replace-yank)
