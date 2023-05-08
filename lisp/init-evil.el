@@ -25,6 +25,11 @@
 (setq evil-normal-state-cursor '(box "#cf5a65"))
 (setq evil-insert-state-cursor '(hbar "#cf5a65"))
 (setq evil-visual-state-cursor '(hollow "#cf5a65"))
+;; curosr in minibuffer
+(add-hook 'minibuffer-setup-hook
+          (lambda ()
+            (setq-local cursor-type 'hbar)
+            (set-face-attribute 'cursor nil :background "#cf5a65")))
 
 ;;; Make evil search more like vim
 (evil-select-search-module 'evil-search-module 'evil-search)
@@ -77,16 +82,6 @@
 (dolist (mode '(grep-mode occur-mode occur-edit-mode dired-mode-map))
   (evil-set-initial-state mode 'normal))
 
-;;; Cycle beginning and end of line
-;; https://emacs-china.org/t/evil/24251
-(defun p-cycle-line-beginning-end ()
-  (interactive)
-  (cl-block 'my-return
-    (when (and (looking-at "[^\s]") (looking-back "^\s*")) (evil-end-of-line) (cl-return-from 'my-return))
-    (when (looking-at (if evil-move-beyond-eol "$" ".$")) (evil-beginning-of-line) (cl-return-from 'my-return))
-    (when (bolp) (evil-first-non-blank) (cl-return-from 'my-return))
-    (evil-first-non-blank)))
-
 ;;; Keybindings
 (with-eval-after-load 'evil
   ;; I prefer to use C-n and C-p in many other places
@@ -95,16 +90,18 @@
   (define-key evil-insert-state-map (kbd "C-n") nil)
   (define-key evil-insert-state-map (kbd "C-p") nil)
 
+  (define-key evil-inner-text-objects-map "k" 'evil-inner-paren)
   (define-key evil-inner-text-objects-map "f" 'evil-inner-bracket)
   (define-key evil-inner-text-objects-map "h" 'evil-inner-curly)
   (define-key evil-inner-text-objects-map "d" 'evil-inner-double-quote)
   (define-key evil-inner-text-objects-map "s" 'evil-inner-single-quote)
+  (define-key evil-outer-text-objects-map "k" 'evil-a-paren)
   (define-key evil-outer-text-objects-map "f" 'evil-a-bracket)
   (define-key evil-outer-text-objects-map "h" 'evil-a-curly)
   (define-key evil-outer-text-objects-map "d" 'evil-a-double-quote)
   (define-key evil-outer-text-objects-map "s" 'evil-a-single-quote)
 
-  (define-key evil-normal-state-map (kbd "god") 'kill-sexp)
+  (define-key evil-normal-state-map (kbd "gcd") 'kill-sexp)
   (define-key evil-normal-state-map (kbd "gos") 'transpose-sexps)
   (define-key evil-normal-state-map (kbd ",a") 'beginning-of-defun)
   (define-key evil-normal-state-map (kbd ",e") 'end-of-defun)

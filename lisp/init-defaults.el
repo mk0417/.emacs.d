@@ -112,7 +112,7 @@
 (diminish 'which-key-mode)
 
 ;;; Eldoc
-;; (diminish 'eldoc-mode)
+(diminish 'eldoc-mode)
 
 ;;; Keybindings
 (global-set-key (kbd "C-x k") 'kill-this-buffer)

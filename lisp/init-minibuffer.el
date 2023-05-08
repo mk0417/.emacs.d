@@ -16,6 +16,7 @@
 (setq completion-show-inline-help nil)
 (setq enable-recursive-minibuffers t)
 
+(file-name-shadow-mode 1)
 (minibuffer-depth-indicate-mode 1)
 
 ;;; Marginalia
@@ -46,12 +47,17 @@
 
 ;; Use Embark to show bindings in a key prefix with `C-h`
 (setq prefix-help-command #'embark-prefix-help-command)
+(setq embark-confirm-act-all nil)
+(setq embark-mixed-indicator-both nil)
+(setq embark-mixed-indicator-delay 1.0)
+(setq embark-verbose-indicator-nested nil)
+(setq embark-indicators '(embark-mixed-indicator embark-highlight-indicator))
+(setq embark-verbose-indicator-buffer-sections '(bindings))
+(setq embark-verbose-indicator-excluded-actions '(embark-cycle embark-act-all embark-collect embark-export embark-insert))
+(setq embark-verbose-indicator-display-action '((display-buffer-at-bottom)))
 
-(with-eval-after-load 'embark-consult
-  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
-
-(setq embark-verbose-indicator-display-action
-      '((display-buffer-at-bottom)))
+(defun p-embark-no-minimal-indicator ())
+(advice-add #'embark-minimal-indicator :override #'p-embark-no-minimal-indicator)
 
 (define-key embark-identifier-map "R" #'consult-ripgrep)
 (define-key embark-identifier-map "J" #'consult-line)
@@ -110,6 +116,10 @@
 (global-set-key (kbd "C-s") 'consult-line)
 (define-key minibuffer-local-map (kbd "C-r") 'consult-history)
 (global-set-key (kbd "C-c C-.") 'p-embark-export-write)
+
+;;; Embark-consult
+(with-eval-after-load 'embark-consult
+  (add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))
 
 ;;; Keybindings
 (with-eval-after-load 'evil

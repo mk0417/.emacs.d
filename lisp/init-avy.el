@@ -66,7 +66,7 @@
 
 ;;; Keybindings
 (with-eval-after-load 'evil
-  (define-key evil-normal-state-map (kbd "f") 'nil)
+  (define-key evil-normal-state-map (kbd "f") nil)
   (define-key evil-normal-state-map (kbd "ft") 'avy-goto-char-timer)
   (define-key evil-normal-state-map (kbd "fw") 'avy-goto-word-0)
   (define-key evil-normal-state-map (kbd "fl") 'avy-goto-line)
@@ -78,12 +78,7 @@
   (define-key evil-normal-state-map (kbd "fk") 'p-avy-goto-bracket-block)
   (define-key evil-normal-state-map (kbd "fS") 'p-avy-goto-space)
   (define-key evil-normal-state-map (kbd "fs") 'p-avy-goto-space-current-line)
-  (define-key evil-normal-state-map (kbd "fe") 'p-avy-goto-equal-block)
-  (define-key evil-visual-state-map (kbd "fl") 'avy-goto-line)
-  (define-key evil-visual-state-map (kbd "f.") 'p-avy-goto-word-current-line)
-  (define-key evil-visual-state-map (kbd "fk") 'p-avy-goto-bracket-block)
-  (define-key evil-visual-state-map (kbd "fs") 'p-avy-goto-space-current-line)
-  (define-key evil-visual-state-map (kbd "fe") 'p-avy-goto-equal-block))
+  (define-key evil-normal-state-map (kbd "fe") 'p-avy-goto-equal-block))
 
 (provide 'init-avy)
 ;;;;; init-avy.el ends here

@@ -204,6 +204,16 @@
   (forward-char 1)
   (delete-char 1))
 
+;;; Cycle beginning and end of line
+;; https://emacs-china.org/t/evil/24251
+(defun p-cycle-line-beginning-end ()
+  (interactive)
+  (cl-block 'my-return
+    (when (and (looking-at "[^\s]") (looking-back "^\s*")) (evil-end-of-line) (cl-return-from 'my-return))
+    (when (looking-at (if evil-move-beyond-eol "$" ".$")) (evil-beginning-of-line) (cl-return-from 'my-return))
+    (when (bolp) (evil-first-non-blank) (cl-return-from 'my-return))
+    (evil-first-non-blank)))
+
 ;;; Vim style replace
 (defun p-ex-evil-buffer-replace ()
   (interactive)
@@ -233,10 +243,10 @@
   (define-key evil-normal-state-map (kbd ";e") 'p-end-of-line-or-block)
   (define-key evil-normal-state-map (kbd "C-i") 'p-delete-backward-to-tab)
   (define-key evil-normal-state-map (kbd "goc") 'p-clear-line)
-  (define-key evil-normal-state-map (kbd "goi") 'p-kill-sexp-and-insert)
+  (define-key evil-normal-state-map (kbd "gci") 'p-kill-sexp-and-insert)
+  (define-key evil-normal-state-map (kbd "gce") 'thing-copy-to-line-end)
   (define-key evil-normal-state-map (kbd ";c") 'grugru)
   (define-key evil-normal-state-map (kbd "gcr") 'thing-replace-symbol)
-  (define-key evil-normal-state-map (kbd "gce") 'thing-copy-to-line-end)
   (define-key evil-normal-state-map (kbd "gom") 'query-replace-many)
   (define-key evil-normal-state-map (kbd ";ii") 'er/expand-region)
   (define-key evil-normal-state-map (kbd ",.") 'er/mark-defun)
