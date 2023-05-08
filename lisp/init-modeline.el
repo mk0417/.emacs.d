@@ -2,10 +2,6 @@
 
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/prot-modeline.el
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-emacs-modules/prot-emacs-modeline.el
-(defface p-modeline-intense
-  '((t :inherit (bold highlight)))
-  "Face for intense mode line constructs.")
-
 (defvar p-modeline-modes
   (list (propertize "%[" 'face 'error)
         `(:propertize ("" mode-name)
@@ -51,6 +47,7 @@ Specific to the current window's mode line.")
                 mode-line-buffer-identification
                 "  "
                 mode-line-position
+                "  "
                 p-modeline-modes
                 " "
                 (vc-mode vc-mode)
@@ -58,7 +55,14 @@ Specific to the current window's mode line.")
                 p-modeline-align-right
                 p-modeline-misc-info))
 
+(dolist (construct '(p-modeline-modes p-modeline-align-right p-modeline-misc-info))
+  (put construct 'risky-local-variable t))
+
 (add-hook 'after-init-hook #'column-number-mode)
+
+;; 3D effect
+;; (custom-set-faces
+;;  '(mode-line ((t :box (:style released-button)))))
 
 (provide 'init-modeline)
 ;;;;; init-modeline.el ends here

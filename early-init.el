@@ -57,6 +57,27 @@
   (setq native-comp-deferred-compilation t)
   (setq compilation-scroll-output t))
 
+;;; No titlebar
+(add-to-list 'default-frame-alist '(undecorated . t))
+
+;;; Maximize frame at startup
+(setq initial-frame-alist (quote ((fullscreen . maximized))))
+
+;;; Premature redisplays can substantially affect startup times and produce ugly flashes of unstyled Emacs
+;; https://github.com/doomemacs/doomemacs/blob/master/early-init.el
+(setq-default inhibit-redisplay t)
+(add-hook 'window-setup-hook
+          (lambda ()
+            (setq-default inhibit-redisplay nil)
+            (redisplay)))
+
+;;; Minimal UI
+(setq inhibit-startup-message t)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(vertical-scroll-bars) default-frame-alist)
+(push '(horizontal-scroll-bars) default-frame-alist)
+(setq inhibit-startup-buffer-menu t)
+
 ;;; Modus themes
 ;; Load in early-init.el to avoid white screen flash
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-emacs-modules/prot-emacs-modus-themes.el
@@ -66,7 +87,6 @@
 (setq modus-themes-bold-constructs t)
 (setq modus-themes-completions '((selection . (extrabold))))
 (setq modus-themes-org-blocks 'gray-background)
-
 (setq modus-themes-headings
       '((agenda-structure . (variable-pitch light 2.2))
         (agenda-date . (variable-pitch regular 1.3))
@@ -128,32 +148,7 @@
         (identifier magenta-faint)
         (keybind magenta-cooler)))
 
-;; 3D effect
-(custom-set-faces
- '(mode-line ((t :box (:style released-button)))))
-
 (load-theme 'modus-vivendi t)
-
-;;; No titlebar
-(add-to-list 'default-frame-alist '(undecorated . t))
-
-;;; Maximize frame at startup
-(setq initial-frame-alist (quote ((fullscreen . maximized))))
-
-;;; Premature redisplays can substantially affect startup times and produce ugly flashes of unstyled Emacs
-;; https://github.com/doomemacs/doomemacs/blob/master/early-init.el
-(setq-default inhibit-redisplay t)
-(add-hook 'window-setup-hook
-          (lambda ()
-            (setq-default inhibit-redisplay nil)
-            (redisplay)))
-
-;;; Minimal UI
-(setq inhibit-startup-message t)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-(push '(horizontal-scroll-bars) default-frame-alist)
-(setq inhibit-startup-buffer-menu t)
 
 ;;; Consistent color with theme
 ;; (when (featurep 'ns)
