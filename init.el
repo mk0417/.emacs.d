@@ -37,6 +37,10 @@
   (setenv "PATH" (mapconcat 'identity emacs-init-env-path ":"))
   (setq exec-path (append emacs-init-env-path (list "." exec-directory))))
 
+;;; Fix emacs-jupyter issue for Python 3.11.*
+;; https://github.com/nnicandro/emacs-jupyter/issues/439
+(setenv "PYDEVD_DISABLE_FILE_VALIDATION" "1")
+
 ;;; Load config
 (add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory) t)
 
