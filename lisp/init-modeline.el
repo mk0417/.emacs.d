@@ -2,16 +2,6 @@
 
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/prot-modeline.el
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-emacs-modules/prot-emacs-modeline.el
-(defvar p-modeline-modes
-  (list (propertize "%[" 'face 'error)
-        `(:propertize ("" mode-name)
-                      mouse-face mode-line-highlight
-                      local-map ,mode-line-major-mode-keymap)
-        '("" mode-line-process)
-        (propertize "%]" 'face 'error)
-        " ")
-  "Mode line construct for displaying major modes.")
-
 (defvar p-modeline-align-right
   '(:eval (propertize
            " " 'display
@@ -28,14 +18,19 @@
   "Mode line construct displaying `mode-line-misc-info'.
 Specific to the current window's mode line.")
 
-;;; Full path in mode-line
+(setq mode-line-percent-position '(-3 "%p"))
+(setq mode-line-position-column-line-format '("%l,%c"))
+(setq mode-line-compact nil)
+
+;; Full path in mode-line
 (setq-default mode-line-buffer-identification
               (list 'buffer-file-name
                     '(:eval (propertize (format "  %s" buffer-file-truename)))))
 
-(setq mode-line-percent-position '(-3 "%p"))
-(setq mode-line-position-column-line-format '("%l,%c"))
-(setq mode-line-compact nil)
+(setq-default mode-line-modes
+              (seq-filter
+               (lambda (s) (not (and (stringp s) (string-match-p "^\\(%\\[\\|%\\]\\)$" s))))
+               mode-line-modes))
 
 (setq-default mode-line-format
               '("%e"
@@ -48,14 +43,15 @@ Specific to the current window's mode line.")
                 "  "
                 mode-line-position
                 "  "
-                p-modeline-modes
+                mode-line-modes
                 " "
                 (vc-mode vc-mode)
                 " "
                 p-modeline-align-right
-                p-modeline-misc-info))
+                p-modeline-misc-info
+                mode-line-end-spaces))
 
-(dolist (construct '(p-modeline-modes p-modeline-align-right p-modeline-misc-info))
+(dolist (construct '(p-modeline-align-right p-modeline-misc-info))
   (put construct 'risky-local-variable t))
 
 (add-hook 'after-init-hook #'column-number-mode)
