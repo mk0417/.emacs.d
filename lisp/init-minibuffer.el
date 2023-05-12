@@ -96,6 +96,8 @@
 (global-set-key [remap switch-to-buffer] 'consult-buffer)
 (global-set-key [remap switch-to-buffer-other-window] 'consult-buffer-other-window)
 
+(define-key minibuffer-local-map (kbd "C-s") #'consult-history)
+
 ;; Export to do editing
 ;; https://github.com/zilongshanren/emacs.d/blob/develop/lisp/init-funcs.el
 (defun p-embark-export-write ()
