@@ -223,6 +223,37 @@
     (delete-region (line-beginning-position) (line-end-position)))
   (yank))
 
+;;; Remove extra spaces
+(defun p-remove-extra-spaces-in-region (start end)
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (while (re-search-forward "\\s-+" nil t)
+        (replace-match " " nil nil))
+      (goto-char (point-max))
+      (while (looking-back "\\s-+")
+        (delete-char (- (match-end 0) (match-beginning 0)))))))
+
+(defun p-remove-extra-spaces-in-line ()
+  (save-excursion
+    (beginning-of-line)
+    (let ((start (point))
+          (end (line-end-position)))
+      (narrow-to-region start end)
+      (while (re-search-forward "\\s-+" nil t)
+        (replace-match " " nil nil))
+      (goto-char (point-max))
+      (while (looking-back "\\s-+")
+        (delete-char (- (match-end 0) (match-beginning 0))))
+      (widen))))
+
+(defun p-remove-extra-spaces ()
+  (interactive)
+  (if (use-region-p)
+      (p-remove-extra-spaces-in-region (region-beginning) (region-end))
+    (p-remove-extra-spaces-in-line)))
+
 ;;; Vim style replace
 (defun p-ex-evil-buffer-replace ()
   (interactive)
@@ -262,6 +293,7 @@
   (define-key evil-normal-state-map (kbd ",,") 'p-select-block)
   (define-key evil-normal-state-map (kbd ",b") 'p-select-bottom-block)
   (define-key evil-normal-state-map (kbd "gcy") 'p-simple-yank-replace-line-or-region)
+  (define-key evil-normal-state-map (kbd "gcs") 'p-remove-extra-spaces)
 
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
   (define-key evil-visual-state-map (kbd "goa") 'p-ex-evil-selection-replace-yank)
@@ -270,6 +302,7 @@
   (define-key evil-visual-state-map (kbd "gom") 'query-replace-many)
   (define-key evil-visual-state-map (kbd ";ii") 'er/expand-region)
   (define-key evil-visual-state-map (kbd ",,") 'p-select-block)
+  (define-key evil-visual-state-map (kbd "gcs") 'p-remove-extra-spaces)
 
   (define-key evil-insert-state-map (kbd "C-u") 'p-kill-to-begin-of-line)
   (define-key evil-insert-state-map (kbd "C-i") 'p-delete-backward-to-tab)
