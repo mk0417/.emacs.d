@@ -45,6 +45,27 @@
   (interactive)
   (switch-to-buffer nil))
 
+;;; Make backup copy
+;; http://xahlee.info/emacs/emacs/elisp_make-backup.html
+(defun p-make-backup ()
+  (interactive)
+  (let ((xfname buffer-file-name)
+        (xdateTimeFormat "%Y-%m-%d-%H%M%S"))
+    (if xfname
+        (let ((xbackupName
+               (concat xfname "_" (format-time-string xdateTimeFormat))))
+          (copy-file xfname xbackupName t)
+          (message (concat "Backup saved at: " xbackupName)))
+      (if (eq major-mode 'dired-mode)
+          (progn
+            (mapc (lambda (xx)
+                    (let ((xbackupName
+                           (concat xx "_" (format-time-string xdateTimeFormat))))
+                      (copy-file xx xbackupName t)))
+                  (dired-get-marked-files))
+            (revert-buffer))
+        (user-error "%s: buffer not file nor dired" real-this-command)))))
+
 ;;; Reveal file in Finder
 ;; https://github.com/xuchunyang/emacs.d/blob/master/lisp/chunyang-mac.el
 (defun p-reveal-file-in-finder (file)
@@ -90,6 +111,7 @@
     "fR" '(p-rename-this-file-and-buffer :which-key "rename file")
     "fI" '(p-copy-file-path :which-key "copy file path")
     "fi" '(p-copy-file-name :which-key "copy file name")
+    "fb" '(p-make-backup :which-key "make backup file")
     "b" '(:ignore t :which-key "buffer")
     "ba" '(p-switch-to-messages :which-key "switch to messages")
     "§" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
