@@ -67,14 +67,18 @@
 
 ;;; Keybindings
 (with-eval-after-load 'evil
-  (general-create-definer p-space-leader-def
-    :prefix "SPC"
-    :states '(normal visual))
-  (p-space-leader-def
-    "n" '(:ignore t :which-key "notes")
-    "ni" '(LaTeX-fill-buffer :which-key "latex fill buffer")
-    "nr" '(TeX-command-master :which-key "run tex")
-    "np" '(TeX-view :which-key "view latex pdf")))
+  (general-create-definer p-latex-leader-def
+    :prefix ";"
+    :states '(normal visual)
+    :keymaps '(TeX-mode-map))
+  (p-latex-leader-def
+    "j"  '(:ignore t :which-key "latex")
+    "jm" '(TeX-insert-macro :which-key "insert latex macro")
+    "je" '(LaTeX-environment :which-key "insert latex environment")
+    "jf" '(LaTeX-fill-buffer :which-key "format latex file")
+    "jr" '(TeX-command-master :which-key "run tex")
+    "ja" '(TeX-command-run-all :which-key "run all")
+    "jv" '(TeX-view :which-key "view pdf")))
 
 (provide 'init-latex)
 ;;;;; init-latex.el ends here

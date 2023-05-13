@@ -124,7 +124,8 @@
 
   (general-create-definer p-space-leader-def
     :prefix "SPC"
-    :states '(normal visual))
+    :keymaps 'override
+    :states '(normal visual motion))
   (p-space-leader-def
     "SPC" 'execute-extended-command
     "f" '(:ignore t :which-key "file")
