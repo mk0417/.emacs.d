@@ -65,6 +65,16 @@
 (setq TeX-view-program-list '(("Skim" "open -a Skim.app %o")))
 (setq TeX-view-program-selection '((output-pdf "Skim")))
 
+;;; Clear temp files
+(defun p-clear-latex-temp-files ()
+  (interactive)
+  (shell-command "rm -rf *.aux *.log *.gz auto"))
+
+(defun p-run-latex ()
+  (interactive)
+  (TeX-save-document (TeX-master-file))
+  (TeX-command "LaTeX" 'TeX-master-file))
+
 ;;; Keybindings
 (with-eval-after-load 'evil
   (general-create-definer p-latex-leader-def
@@ -76,8 +86,9 @@
     "jm" '(TeX-insert-macro :which-key "insert latex macro")
     "je" '(LaTeX-environment :which-key "insert latex environment")
     "jf" '(LaTeX-fill-buffer :which-key "format latex file")
-    "jr" '(TeX-command-master :which-key "run tex")
+    "jr" '(p-run-latex :which-key "run tex")
     "ja" '(TeX-command-run-all :which-key "run all")
+    "jc" '(p-clear-latex-temp-files :which-key "clear temp files")
     "jv" '(TeX-view :which-key "view pdf")))
 
 (provide 'init-latex)
