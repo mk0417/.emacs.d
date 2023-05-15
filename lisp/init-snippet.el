@@ -32,7 +32,8 @@
     :states '(normal visual))
   (p-space-leader-def
     "e" '(:ignore t :which-key "editing")
-    "ey" '(yas-new-snippet :which-key "create new snippet")))
+    "ey" '(yas-new-snippet :which-key "create new snippet")
+    "ei" '(yas-insert-snippet :which-key "insert snippet")))
 
 (provide 'init-snippet)
 ;;;;; init-snippet.el ends here
