@@ -68,7 +68,7 @@
 ;;; Clear temp files
 (defun p-clear-latex-temp-files ()
   (interactive)
-  (shell-command "rm -rf *.aux *.log *.gz auto"))
+  (shell-command "rm -rf *.aux *.log *.gz *.out *.fls *.nav *.snm *.toc *.fdb_latexmk auto"))
 
 (defun p-run-latex ()
   (interactive)
