@@ -104,5 +104,13 @@
                                   recenter-top-bottom other-window))
   (advice-add command :after #'emacs-ui--pulse-line))
 
+;;; Time
+(setq display-time-format "  %a %e %b, %H:%M ")
+(setq display-time-24hr-format t)
+(setq display-time-interval 60)
+(setq display-time-default-load-average nil)
+
+(add-hook 'after-init-hook #'display-time-mode)
+
 (provide 'init-ui)
 ;;;;; init-ui.el ends here
