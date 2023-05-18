@@ -83,6 +83,34 @@
   (evil-set-initial-state mode 'normal))
 
 ;;; Keybindings
+;; https://blog.binchen.org/
+(defun p-evil-paren-range (count beg end type inclusive)
+  (let* ((parens '("()" "[]" "{}" "<>"))
+         range
+         found-range)
+    (dolist (p parens)
+      (condition-case nil
+          (setq range (evil-select-paren (aref p 0) (aref p 1) beg end type count inclusive))
+        (error nil))
+      (when range
+        (cond
+         (found-range
+          (when (< (- (nth 1 range) (nth 0 range))
+                   (- (nth 1 found-range) (nth 0 found-range)))
+            (setf (nth 0 found-range) (nth 0 range))
+            (setf (nth 1 found-range) (nth 1 range))))
+         (t
+          (setq found-range range)))))
+    found-range))
+
+(evil-define-text-object p-evil-a-paren (count &optional beg end type)
+  :extend-selection t
+  (p-evil-paren-range count beg end type t))
+
+(evil-define-text-object p-evil-inner-paren (count &optional beg end type)
+  :extend-selection nil
+  (p-evil-paren-range count beg end type nil))
+
 (with-eval-after-load 'evil
   ;; I prefer to use C-n and C-p in many other places
   (define-key evil-normal-state-map (kbd "C-n") nil)
@@ -90,14 +118,10 @@
   (define-key evil-insert-state-map (kbd "C-n") nil)
   (define-key evil-insert-state-map (kbd "C-p") nil)
 
-  (define-key evil-inner-text-objects-map "k" 'evil-inner-paren)
-  (define-key evil-inner-text-objects-map "f" 'evil-inner-bracket)
-  (define-key evil-inner-text-objects-map "h" 'evil-inner-curly)
+  (define-key evil-inner-text-objects-map "g" #'p-evil-inner-paren)
   (define-key evil-inner-text-objects-map "d" 'evil-inner-double-quote)
   (define-key evil-inner-text-objects-map "s" 'evil-inner-single-quote)
-  (define-key evil-outer-text-objects-map "k" 'evil-a-paren)
-  (define-key evil-outer-text-objects-map "f" 'evil-a-bracket)
-  (define-key evil-outer-text-objects-map "h" 'evil-a-curly)
+  (define-key evil-outer-text-objects-map "g" #'p-evil-a-paren)
   (define-key evil-outer-text-objects-map "d" 'evil-a-double-quote)
   (define-key evil-outer-text-objects-map "s" 'evil-a-single-quote)
 
