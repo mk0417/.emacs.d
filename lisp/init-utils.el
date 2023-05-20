@@ -118,7 +118,7 @@
     "`" '(p-switch-to-previous-buffer :which-key "switch to previous buffer")
     "s"  '(:ignore t :which-key "search")
     "sg" '(p-google-search :which-key "search on google")
-    "sy" '(p-youtube-search :which-key "search on youtube")
+    "st" '(p-youtube-search :which-key "search on youtube")
     "t"  '(:ignore t :which-key "toggle")
     "tr" '(p-reveal-file-in-finder :which-key "reveal file in finder")))
 

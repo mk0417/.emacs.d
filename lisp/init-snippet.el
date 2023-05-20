@@ -3,6 +3,7 @@
 ;;; Install packages
 (straight-use-package 'tempel)
 (straight-use-package 'yasnippet)
+(straight-use-package 'consult-yasnippet)
 
 ;;; Tempel
 (setq tempel-path "~/Dropbox/templates")
@@ -31,6 +32,8 @@
     :prefix "SPC"
     :states '(normal visual))
   (p-space-leader-def
+    "s"  '(:ignore t :which-key "search")
+    "sy" '(consult-yasnippet :which-key "consult yasnippet")
     "e" '(:ignore t :which-key "editing")
     "ey" '(yas-new-snippet :which-key "create new snippet")
     "ei" '(yas-insert-snippet :which-key "insert snippet")))
