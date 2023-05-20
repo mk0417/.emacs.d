@@ -78,7 +78,8 @@
   (define-key evil-normal-state-map (kbd "fk") 'p-avy-goto-bracket-block)
   (define-key evil-normal-state-map (kbd "fS") 'p-avy-goto-space)
   (define-key evil-normal-state-map (kbd "fs") 'p-avy-goto-space-current-line)
-  (define-key evil-normal-state-map (kbd "fe") 'p-avy-goto-equal-block))
+  (define-key evil-normal-state-map (kbd "fe") 'p-avy-goto-equal-block)
+  (define-key evil-visual-state-map (kbd "fk") 'p-avy-goto-bracket-block))
 
 (provide 'init-avy)
 ;;;;; init-avy.el ends here
