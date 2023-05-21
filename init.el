@@ -87,6 +87,7 @@
                    'init-dired
                    'init-modeline
                    'init-xah
+                   'init-abbrev
                    'init-lsp-bridge))
     (require mod nil t)))
 
