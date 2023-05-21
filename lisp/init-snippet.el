@@ -27,6 +27,7 @@
 
 (global-set-key (kbd "M-;") 'yas-expand)
 
+;;; Keybindings
 (with-eval-after-load 'evil
   (general-create-definer p-space-leader-def
     :prefix "SPC"

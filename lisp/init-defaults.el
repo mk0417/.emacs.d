@@ -114,6 +114,9 @@
 ;;; Eldoc
 (diminish 'eldoc-mode)
 
+;;; Themes
+(setq custom-safe-themes t)
+
 ;;; Keybindings
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
 (global-set-key (kbd "C-x K") 'kill-buffer-and-window)
