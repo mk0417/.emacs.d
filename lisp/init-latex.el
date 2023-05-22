@@ -68,7 +68,10 @@
 ;;; Clear temp files
 (defun p-clear-latex-temp-files ()
   (interactive)
-  (shell-command "rm -rf *.aux *.log *.gz *.out *.fls *.nav *.snm *.toc *.fdb_latexmk auto"))
+  (let ((default-directory default-directory)
+        (command "find . -maxdepth 1 \\( -name \"*.aux\" -o -name \"*.log\" -o -name \"*.gz\" -o -name \"*.out\" -o -name \"*.fls\" -o -name \"*.nav\" -o -name \"*.snm\" -o -name \"*.toc\" -o -name \"*.fdb_latexmk\" -o -name \"auto\" \\) -exec rm -rf {} +"))
+    (shell-command command)
+    (message "Files and directory deleted.")))
 
 (defun p-run-latex ()
   (interactive)
