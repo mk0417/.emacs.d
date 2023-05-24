@@ -68,6 +68,7 @@
    "rr" 'ess-eval-region-or-line-and-step))
 
 ;;; dumb-jump
+(setq xref-show-definitions-function #'xref-show-definitions-completing-read)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 
 ;;; Keybindings
