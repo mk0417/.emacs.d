@@ -18,19 +18,18 @@
       '((small
          :default-family "Iosevka Comfy Wide"
          :default-height 100
-         :variable-pitch-family "Iosevka Comfy Wide Duo")
+         :variable-pitch-family "Iosevka Comfy Wide Motion Duo")
         (regular)
         (large
-         :default-family "Iosevka Comfy Motion"
+         :default-family "Iosevka Comfy"
          :default-weight semilight
          :default-height 150
          :bold-weight extrabold
          :variable-pitch-family "Iosevka Comfy Motion Duo")
         (presentation
-         :default-family "Iosevka Comfy Wide Motion"
+         :inherit large
          :default-weight light
-         :default-height 180
-         :variable-pitch-family "Iosevka Comfy Wide Motion Duo")
+         :default-height 180)
         (t
          :default-family "Iosevka Comfy"
          :default-weight regular
