@@ -69,7 +69,10 @@
 (defun p-clear-latex-temp-files ()
   (interactive)
   (let ((default-directory default-directory)
-        (command "find . -maxdepth 1 \\( -name \"*.aux\" -o -name \"*.log\" -o -name \"*.gz\" -o -name \"*.out\" -o -name \"*.fls\" -o -name \"*.nav\" -o -name \"*.snm\" -o -name \"*.toc\" -o -name \"*.fdb_latexmk\" -o -name \"auto\" \\) -exec rm -rf {} +"))
+        (command
+         (concat "find . -maxdepth 1 \\( -name \"*.aux\" -o -name \"*.log\" -o -name \"*.gz\""
+                 " -o -name \"*.out\" -o -name \"*.fls\" -o -name \"*.nav\" -o -name \"*.snm\""
+                 " -o -name \"*.toc\" -o -name \"*.fdb_latexmk\" -o -name \"auto\" \\) -exec rm -rf {} +")))
     (shell-command command)
     (message "Files and directory deleted.")))
 
