@@ -159,7 +159,7 @@
     "fc" '(copy-file :which-key "copy file")
     "fw" '(write-file :which-key "save file as")
     "b" '(:ignore t :which-key "buffer")
-    "bw" '(mark-whole-buffer :which-key "Select whole buffer")
+    "bw" '(mark-whole-buffer :which-key "select whole buffer")
     "bd" '(kill-this-buffer :which-key "kill buffer")
     "bi" '(ibuffer :which-key "ibuffer")
     "bD" '(kill-buffer-and-window :which-key "kill buffer and window")
