@@ -2,14 +2,7 @@
 
 ;;; Install packages
 (straight-use-package 'diff-hl)
-(straight-use-package 'magit)
 (straight-use-package 'git-messenger)
-
-;;; Magit
-(setq-default magit-diff-refine-hunk t)
-(autoload 'magit-status "magit")
-(autoload 'magit-diff "magit")
-(autoload 'magit-blame "magit")
 
 ;;; Diff-hl
 (setq diff-hl-draw-borders nil)
@@ -39,16 +32,18 @@
   (define-key evil-normal-state-map (kbd "gp") 'diff-hl-previous-hunk)
   (define-key evil-normal-state-map (kbd "gP") 'diff-hl-diff-goto-hunk))
 
+(with-eval-after-load 'vc-dir
+  (define-key vc-dir-mode-map (kbd "a") 'vc-diff))
+
 (with-eval-after-load 'evil
   (general-create-definer p-space-leader-def
     :prefix "SPC"
     :states 'normal)
   (p-space-leader-def
     "g"  '(:ignore t :which-key "git")
-    "gg" '(magit :which-key "magit")
-    "gm" '(magit-dispatch :which-key "magit dispatch")
-    "gs" '(magit-show-commit :which-key "magit show commit")
-    "gp" '(git-messenger:popup-message :which-key "git message")))
+    "gg" '(vc-dir :which-key "vc-dir")
+    "gp" '(project-vc-dir :which-key "project-vc-dir")
+    "gm" '(git-messenger:popup-message :which-key "git message")))
 
 (provide 'init-git)
 ;;;;; init-git.el ends here
