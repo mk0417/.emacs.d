@@ -115,7 +115,7 @@
                            (embark-export)))
       (x (user-error "embark category %S doesn't support writable export" x)))))
 
-(global-set-key (kbd "C-s") 'consult-line)
+(global-set-key (kbd "C-x s") 'consult-line)
 (define-key minibuffer-local-map (kbd "C-r") 'consult-history)
 (global-set-key (kbd "C-c C-.") 'p-embark-export-write)
 
