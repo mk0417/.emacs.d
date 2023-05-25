@@ -44,9 +44,7 @@
     (dolist (entry applications hash)
       (let ((file (cdr entry)))
         (let ((name (file-name-nondirectory file)))
-          (puthash name
-                   (list (cons 'file file))
-                   hash))))))
+          (puthash name (list (cons 'file file)) hash))))))
 
 (defun app-launcher-list-apps ()
   "Return list of all macOS applications."
@@ -91,29 +89,81 @@
            nil t nil 'app-launcher nil nil)))
     (funcall app-launcher--action-function result)))
 
-;; Emacs as the app launcher
-;; System Preferences > Privacy & Security > Accessibility: allow Emacs to control computer
-;; emacsclient -e "(emacs-run-launcher)"
-;; Bind key for the above script using karabiner
-(defun emacs-run-launcher ()
+(defun dir-launcher-run-dir ()
   (interactive)
-  (with-selected-frame
-      (make-frame
-       '((name . "emacs-run-launcher")
-         (minibuffer . only)
-         ;; (border-width . 5)
-         (auto-raise . t)
-         (fullscreen . 0)
-         (undecorated . t)
-         (tool-bar-lines . 0)
-         (menu-bar-lines . 0)
-         (internal-border-width . 5)
-         (width . 80)
-         (height . 10)
-         (background-color . "steel blue")))
+  (let ((dir (read-directory-name "Select directory: ")))
+    (do-applescript
+     (format "tell application \"Finder\"
+                set theFolder to POSIX file \"%s\" as alias
+                activate
+                open theFolder
+              end tell" (expand-file-name dir)))))
+
+(defcustom selector-web-page-alist '()
+  "Alist used by `selector-browse-bookmark' to associate
+   web-links with their names. Needs to be an alist of the
+   form (name . link) with both properties being
+   strings. Initialised as an empty list as there is no point in
+   predefining anything in it."
+  :type 'alist)
+
+(defun url-launcher-run-url ()
+  (interactive)
+  (browse-url
+   (cdr (assoc (completing-read "Web-Page: " selector-web-page-alist) selector-web-page-alist))))
+
+(defun emacs-launcher-font-bold-hook (beginning end _)
+  (when (region-active-p)
+    (let ((font-lock-unfontify-region-function #'ignore)
+          (font-lock-fontify-region-function #'ignore))
+      (font-lock-unfontify-region beginning end)
+      (put-text-property beginning end 'face 'bold))))
+
+;; Emacs as launcher
+;; System Preferences > Privacy & Security > Accessibility: allow Emacs to control computer
+;; https://github.com/Vidianos-Giannitsis/Dotfiles/tree/master/emacs/.emacs.d#emacs-launchers
+(defun emacs-run-launcher (name width height function)
+  (let* ((current-app (do-applescript "tell application \"System Events\" to get name of first application process whose frontmost is true"))
+         (frame
+          (make-frame
+           `((name . ,name)
+             (minibuffer . only)
+             (width . ,width)
+             (height . ,height)
+             (auto-raise . t)
+             (fullscreen . 0)
+             ;; (undecorated . t)
+             (tool-bar-lines . 0)
+             (menu-bar-lines . 0)
+             (internal-border-width . 3)
+             (vertical-scroll-bars . nil)
+             (background-color . "steel blue")))))
+    (select-frame-set-input-focus frame)
     (unwind-protect
-        (app-launcher-run-app)
-      (delete-frame))))
+        (progn
+          (add-hook 'after-change-functions 'emacs-launcher-font-bold-hook nil t)
+          (funcall function))
+      (select-frame-set-input-focus (selected-frame))
+      (do-applescript (format "tell application \"%s\" to activate" current-app))
+      (run-at-time "0.1" nil #'delete-frame frame))))
+
+(defun emacs-app-launcher ()
+  (interactive)
+  (emacs-run-launcher "emacs-app-launcher" 100 11 'app-launcher-run-app))
+
+(defun emacs-dir-launcher ()
+  (interactive)
+  (emacs-run-launcher "emacs-dir-launcher" 100 11 'dir-launcher-run-dir))
+
+(defun emacs-url-launcher ()
+  (interactive)
+  (emacs-run-launcher "emacs-web-page-launcher" 100 11 'url-launcher-run-url))
+
+(setq selector-web-page-alist
+      '(("Github" . "https://github.com/mk0417")
+        ("Youtube" . "https://www.youtube.com/")
+        ("Hex Color Codes" . "https://www.color-hex.com/")
+        ("Detexify" . "https://detexify.kirelabs.org/classify.html")))
 
 ;;; Keybindings
 (with-eval-after-load 'evil
@@ -123,7 +173,9 @@
     :states '(normal visual))
   (p-space-leader-def
     "t"  '(:ignore t :which-key "toggle")
-    "ta" 'app-launcher-run-app))
+    "ta" '(app-launcher-run-app :which-key "app-launcher-run-app")
+    "td" '(dir-launcher-run-dir :which-key "dir-launcher-run-dir")
+    "tu" '(url-launcher-run-url :which-key "url-launcher-run-url")))
 
 (provide 'init-launcher)
 ;;;;; init-launcher.el ends here
