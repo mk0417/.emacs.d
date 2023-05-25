@@ -7,6 +7,7 @@
 (straight-use-package '(query-replace-many :type git :host github :repo "slotThe/query-replace-many"))
 (straight-use-package '(thing-edit :type git :host github :repo "manateelazycat/thing-edit"))
 (straight-use-package 'expand-region)
+(straight-use-package 'emacs-everywhere)
 
 ;;; Stupid-indent-mode
 (require 'stupid-indent-mode)
