@@ -9,8 +9,6 @@
 
 (autoload 'diff-hl-mode "diff-hl")
 
-(add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
 (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
 (dolist (hook '(prog-mode-hook conf-mode-hook markdown-mode-hook))
   (add-hook hook (lambda ()
@@ -21,7 +19,6 @@
 
 ;;; Git-messenger
 (setq git-messenger:show-detail t)
-(setq git-messenger:use-magit-popup t)
 
 ;;; Keybindings
 (with-eval-after-load 'git-messenger
