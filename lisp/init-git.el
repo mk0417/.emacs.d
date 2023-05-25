@@ -12,10 +12,8 @@
 (add-hook 'dired-mode-hook 'diff-hl-dired-mode)
 (dolist (hook '(prog-mode-hook conf-mode-hook markdown-mode-hook))
   (add-hook hook (lambda ()
-                   (diff-hl-margin-mode)
-                   (diff-hl-mode))))
-
-(setq diff-hl-flydiff-mode t)
+                   (diff-hl-mode)
+                   (diff-hl-flydiff-mode))))
 
 ;;; Git-messenger
 (setq git-messenger:show-detail t)

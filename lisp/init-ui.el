@@ -7,7 +7,7 @@
 (menu-bar-mode -1)
 
 ;;; No fringe
-(fringe-mode '(0 . 0))
+(fringe-mode '(3 . 0))
 
 ;;; Font
 ;; https://gitlab.com/protesilaos/fontaine
