@@ -6,7 +6,6 @@
 ;; (straight-use-package '(jupyter :type git :host github :repo "mk0417/emacs-jupyter" :branch "patch-1"))
 (straight-use-package 'jupyter)
 (straight-use-package 'ess)
-(straight-use-package 'dumb-jump)
 
 ;;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -66,10 +65,6 @@
    "rf" 'ess-eval-function
    "rl" 'ess-eval-line
    "rr" 'ess-eval-region-or-line-and-step))
-
-;;; dumb-jump
-(setq xref-show-definitions-function #'xref-show-definitions-completing-read)
-(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 
 ;;; Keybindings
 (with-eval-after-load 'evil

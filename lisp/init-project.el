@@ -1,5 +1,38 @@
 ;;;;; init-project.el --- Project -*- lexical-binding: t -*-
 
+;;; Install package
+(straight-use-package 'dumb-jump)
+(straight-use-package 'rg)
+
+;;; dumb-jump
+(setq xref-show-definitions-function #'xref-show-definitions-completing-read)
+(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+
+;;; rg
+(with-eval-after-load 'rg
+  (rg-define-search p-grep-vc-or-dir
+    :query ask
+    :format regexp
+    :files "everything"
+    :dir (let ((vc (vc-root-dir)))
+           (if vc
+               vc
+             default-directory))
+    :confirm prefix
+    :flags ("--hidden -g !.git"))
+
+  (define-key rg-mode-map (kbd "M-n") 'rg-next-file)
+  (define-key rg-mode-map (kbd "M-p") 'rg-prev-file)
+
+  (advice-add 'wgrep-change-to-wgrep-mode :after #'evil-normal-state)
+  (advice-add 'wgrep-to-original-mode :after #'evil-motion-state)
+  (defvar rg-mode-map)
+  (add-to-list 'evil-motion-state-modes 'rg-mode)
+  (evil-add-hjkl-bindings rg-mode-map 'motion
+    "e" #'wgrep-change-to-wgrep-mode
+    "R" #'rg-recompile
+    "t" #'rg-rerun-change-literal))
+
 ;;; Project
 (setq project-list-file (expand-file-name "projects" user-emacs-directory))
 
@@ -9,54 +42,7 @@
         (?g "Find regexp" consult-ripgrep)
         (?d "Dired" project-dired)
         (?b "Buffer" project-switch-to-buffer)
-        (?v "magit" project-magit-status)
         (?k "Kill buffers" project-kill-buffers)))
-
-(defun project-magit-status ()
-  (interactive)
-  (magit-status-setup-buffer (project-root (project-current t))))
-
-;;; List all installed package
-;; https://github.com/raxod502/straight.el/issues/262
-(defun p-list-installed-packages ()
-  (interactive)
-  (require 'magit)
-  (let ((magit-repository-directories
-         (list (cons (straight--repos-dir) 1))))
-    (magit-list-repositories)))
-
-;;; Grep project
-(defun p-project-find-xref ()
-  (interactive)
-  (defvar xref-show-xrefs-function)
-  (let ((xref-show-xrefs-function #'consult-xref))
-    (if-let ((tap (thing-at-point 'symbol)))
-        (project-find-regexp tap)
-      (call-interactively #'project-find-regexp))))
-
-;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/prot-search.el
-(defvar p-project-search--grep-hist '()
-  "Input history of grep searches.")
-
-(defun p-project-search-grep (regexp &optional recursive)
-  "Run grep for REGEXP.
-Search in the current directory using `lgrep'.  With optional
-prefix argument (\\[universal-argument]) for RECURSIVE, run a
-search starting from the current directory with `rgrep'."
-  (interactive
-   (list
-    (read-from-minibuffer (concat (if current-prefix-arg
-                                      (propertize "Recursive" 'face 'warning)
-                                    "Local")
-                                  " grep for PATTERN: ")
-                          nil nil nil 'p-search--grep-hist)
-    current-prefix-arg))
-  (unless grep-command
-    (grep-compute-defaults))
-  (if recursive
-      (rgrep regexp "*" default-directory)
-    (lgrep regexp "*" default-directory)
-    (add-to-history 'p-search--grep-hist regexp)))
 
 ;; https://macowners.club/posts/custom-functions-5-navigation/
 (defun p-project-switch-project (dir)
@@ -79,10 +65,9 @@ search starting from the current directory with `rgrep'."
     "pr" '(straight-remove-unused-repos :which-key "straight-remove-unused-repos")
     "pU" '(straight-pull-recipe-repositories :which-key "straight-pull-recipe-repositories")
     "pu" '(straight-pull-all  :which-key "straight update all packages")
-    "pS" '(p-list-installed-packages :which-key "list installed packages")
     "s"  '(:ignore t :which-key "search")
-    "sx" '(p-project-find-xref :which-key "project find xref")
-    "s." '(p-project-search-grep :which-key "grep search")))
+    "s," '(p-grep-vc-or-dir :which-key "p-grep-vc-or-dir")
+    "s." '(rg  :which-key "rg")))
 
 (provide 'init-project)
 ;;;;; init-project.el ends here
