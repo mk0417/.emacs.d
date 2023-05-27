@@ -6,7 +6,10 @@
 ;;; Keychord
 (require 'key-chord)
 (key-chord-mode 1)
-(setq key-chord-two-keys-delay 0.2)
+
+(setq key-chord-two-keys-delay 0.3)
+(setq key-chord-safety-interval-forward 0.1)
+(setq key-chord-safety-interval-backward 0.3)
 
 (with-eval-after-load 'evil
   (dolist (mode (list evil-insert-state-map evil-ex-completion-map minibuffer-local-map))
@@ -43,7 +46,6 @@
 
 (with-eval-after-load 'general
   (general-evil-setup t)
-
   ;; british pound
   (defun p-insert-pound ()
     (interactive)
