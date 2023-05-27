@@ -36,8 +36,8 @@
     :states 'normal)
   (p-space-leader-def
     "g"  '(:ignore t :which-key "git")
-    "gg" '(vc-dir :which-key "vc-dir")
-    "gp" '(project-vc-dir :which-key "project-vc-dir")
+    "gp" '(vc-dir :which-key "vc-dir")
+    "gg" '(project-vc-dir :which-key "project-vc-dir")
     "gm" '(git-messenger:popup-message :which-key "git message")))
 
 (provide 'init-git)
