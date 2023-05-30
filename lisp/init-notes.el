@@ -4,6 +4,7 @@
 (straight-use-package 'denote)
 (straight-use-package 'markdown-mode)
 (straight-use-package 'adaptive-wrap)
+(straight-use-package 'quarto-mode)
 
 ;;; Markdown
 (autoload 'markdown-mode "markdown-mode")
@@ -66,12 +67,13 @@
     "f" '(:ignore t :which-key "file")
     "fn" '(p-find-file-in-notes :which-key "find notes"))
 
-  (general-create-definer p-quarto-leader-def
+  (general-create-definer p-markdown-leader-def
     :prefix ";"
     :states '(normal visual)
     :keymaps '(markdown-mode-map))
-  (p-quarto-leader-def
+  (p-markdown-leader-def
     "j"  '(:ignore t :which-key "markdown")
+    "jj" 'quarto-preview
     "jc" 'markdown-cycle))
 
 (provide 'init-notes)

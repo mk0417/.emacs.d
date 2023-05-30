@@ -6,7 +6,6 @@
 ;; (straight-use-package '(jupyter :type git :host github :repo "mk0417/emacs-jupyter" :branch "patch-1"))
 (straight-use-package 'jupyter)
 (straight-use-package 'ess)
-(straight-use-package 'quarto-mode)
 
 ;;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -51,20 +50,7 @@
   (setq ess-ask-for-ess-directory nil)
   ;; fix: Error running timer 'ess--idle-timer-function': (wrong-type-argument stringp nil)
   ;; https://github.com/emacs-ess/ESS/issues/1102
-  (setq ess-can-eval-in-background nil)
-
-  (general-create-definer p-ess-leader-def
-    :prefix ";"
-    :states '(normal visual)
-    :keymaps 'ess-mode-map)
-  (p-ess-leader-def
-    "r" '(:ignore t :which-key "eval")
-    "rp" 'ess-request-a-process
-    "ri" 'ess-interrupt
-    "ra" 'ess-cycle-assign
-    "rf" 'ess-eval-function
-    "rl" 'ess-eval-line
-    "rr" 'ess-eval-region-or-line-and-step))
+  (setq ess-can-eval-in-background nil))
 
 ;;; Keybindings
 (with-eval-after-load 'evil
@@ -86,13 +72,18 @@
     "jc" 'p-jupyter-remove-line-overlay
     "jw" 'jupyter-repl-pop-to-buffer)
 
-  (general-create-definer p-markdown-leader-def
+  (general-create-definer p-ess-leader-def
     :prefix ";"
     :states '(normal visual)
-    :keymaps '(markdown-mode-map))
-  (p-markdown-leader-def
-    "j"  '(:ignore t :which-key "markdown")
-    "jj" 'quarto-preview))
+    :keymaps '(ess-mode-map))
+  (p-ess-leader-def
+    "r" '(:ignore t :which-key "ess")
+    "rp" 'ess-request-a-process
+    "ri" 'ess-interrupt
+    "ra" 'ess-cycle-assign
+    "rf" 'ess-eval-function
+    "rl" 'ess-eval-line
+    "rr" 'ess-eval-region-or-line-and-step))
 
 (provide 'init-programming)
 ;;;;; init-programming.el ends here
