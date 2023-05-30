@@ -92,8 +92,8 @@
     :states '(normal visual)
     :keymaps '(markdown-mode-map))
   (p-quarto-leader-def
-   "j"  '(:ignore t :which-key "quarto")
-   "jj" 'quarto-preview))
+    "j"  '(:ignore t :which-key "quarto")
+    "jj" 'quarto-preview))
 
 (provide 'init-programming)
 ;;;;; init-programming.el ends here
