@@ -97,7 +97,7 @@
 (setq kill-ring-max 60)
 
 ;;; Wrap long lines in text mode
-(setq fill-column 120)
+(setq-default fill-column 120)
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 ;;; Hide "setting up indent for shell type zsh"
