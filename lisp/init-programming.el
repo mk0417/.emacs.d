@@ -6,6 +6,7 @@
 ;; (straight-use-package '(jupyter :type git :host github :repo "mk0417/emacs-jupyter" :branch "patch-1"))
 (straight-use-package 'jupyter)
 (straight-use-package 'ess)
+(straight-use-package 'quarto-mode)
 
 ;;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -84,7 +85,15 @@
     "ji" 'jupyter-inspect-at-point
     "jC" 'jupyter-eval-remove-overlays
     "jc" 'p-jupyter-remove-line-overlay
-    "jw" 'jupyter-repl-pop-to-buffer))
+    "jw" 'jupyter-repl-pop-to-buffer)
+
+  (general-create-definer p-quarto-leader-def
+    :prefix ";"
+    :states '(normal visual)
+    :keymaps '(markdown-mode-map))
+  (p-quarto-leader-def
+   "j"  '(:ignore t :which-key "quarto")
+   "jj" 'quarto-preview))
 
 (provide 'init-programming)
 ;;;;; init-programming.el ends here
