@@ -51,21 +51,20 @@
   (setq ess-ask-for-ess-directory nil)
   ;; fix: Error running timer 'ess--idle-timer-function': (wrong-type-argument stringp nil)
   ;; https://github.com/emacs-ess/ESS/issues/1102
-  (setq ess-can-eval-in-background nil))
+  (setq ess-can-eval-in-background nil)
 
-(with-eval-after-load 'ess
   (general-create-definer p-ess-leader-def
     :prefix ";"
     :states '(normal visual)
     :keymaps 'ess-mode-map)
   (p-ess-leader-def
-   "r" '(:ignore t :which-key "eval")
-   "rp" 'ess-request-a-process
-   "ri" 'ess-interrupt
-   "ra" 'ess-cycle-assign
-   "rf" 'ess-eval-function
-   "rl" 'ess-eval-line
-   "rr" 'ess-eval-region-or-line-and-step))
+    "r" '(:ignore t :which-key "eval")
+    "rp" 'ess-request-a-process
+    "ri" 'ess-interrupt
+    "ra" 'ess-cycle-assign
+    "rf" 'ess-eval-function
+    "rl" 'ess-eval-line
+    "rr" 'ess-eval-region-or-line-and-step))
 
 ;;; Keybindings
 (with-eval-after-load 'evil
@@ -87,12 +86,12 @@
     "jc" 'p-jupyter-remove-line-overlay
     "jw" 'jupyter-repl-pop-to-buffer)
 
-  (general-create-definer p-quarto-leader-def
+  (general-create-definer p-markdown-leader-def
     :prefix ";"
     :states '(normal visual)
     :keymaps '(markdown-mode-map))
-  (p-quarto-leader-def
-    "j"  '(:ignore t :which-key "quarto")
+  (p-markdown-leader-def
+    "j"  '(:ignore t :which-key "markdown")
     "jj" 'quarto-preview))
 
 (provide 'init-programming)

@@ -64,7 +64,15 @@
     "ns" '(denote-link-backlinks :which-key "denote backlinks")
     "no" '(p-denote-journal :which-key "denote journal")
     "f" '(:ignore t :which-key "file")
-    "fn" '(p-find-file-in-notes :which-key "find notes")))
+    "fn" '(p-find-file-in-notes :which-key "find notes"))
+
+  (general-create-definer p-quarto-leader-def
+    :prefix ";"
+    :states '(normal visual)
+    :keymaps '(markdown-mode-map))
+  (p-quarto-leader-def
+    "j"  '(:ignore t :which-key "markdown")
+    "jc" 'markdown-cycle))
 
 (provide 'init-notes)
 ;;;;; init-notes.el ends here
