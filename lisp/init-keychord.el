@@ -33,6 +33,7 @@
     (key-chord-define mode ";c" "^")
     (key-chord-define mode ";x" "<")
     (key-chord-define mode ";d" ">")
+    (key-chord-define mode ";h" "<>\C-b")
     (key-chord-define mode ";a" "<-")
     (key-chord-define mode ";j" "%>%")
     (key-chord-define mode ";m" "%*%")
