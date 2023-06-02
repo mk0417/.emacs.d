@@ -23,6 +23,7 @@
 (setq LaTeX-fill-break-at-separators nil)
 (setq LaTeX-item-indent 0)
 (setq LaTeX-indent-level 4)
+(setq TeX-command-extra-options "-shell-escape")
 
 (with-eval-after-load 'latex
   ;; Compile to pdf
@@ -38,7 +39,6 @@
   (add-to-list 'LaTeX-verbatim-macros-with-delims "lstinline")
 
   (defun p-latex-enable-modes ()
-    (setq fill-column 100)
     (setq reftex-plug-into-AUCTeX t)
     (auto-fill-mode)
     (turn-on-reftex)
@@ -59,6 +59,15 @@
   ;; To have the buffer refresh after compilation
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
 
+(defun p-diminish-reftex-mode ()
+  (diminish 'reftex-mode))
+
+(defun p-diminish-buffer-face-mode ()
+  (diminish 'buffer-face-mode))
+
+(add-hook 'LaTeX-mode-hook #'p-diminish-reftex-mode)
+(add-hook 'LaTeX-mode-hook #'p-diminish-buffer-face-mode)
+
 (dolist (dir '("/Applications/Skim.app/Contents/SharedSupport"))
   (add-to-list 'exec-path dir))
 
@@ -70,9 +79,9 @@
   (interactive)
   (let ((default-directory default-directory)
         (command
-         (concat "find . -maxdepth 1 \\( -name \"*.aux\" -o -name \"*.log\" -o -name \"*.gz\""
-                 " -o -name \"*.out\" -o -name \"*.fls\" -o -name \"*.nav\" -o -name \"*.snm\""
-                 " -o -name \"*.toc\" -o -name \"*.fdb_latexmk\" -o -name \"auto\" \\) -exec rm -rf {} +")))
+         (concat "find . -maxdepth 1 \\( -name \"*.aux\" -o -name \"*.log\" -o -name \"*.gz\" -o -name \"*.listing\""
+                 " -o -name \"*.out\" -o -name \"*.fls\" -o -name \"*.nav\" -o -name \"*.snm\" -o -name \"*.vrb\""
+                 " -o -name \"*.toc\" -o -name \"*.fdb_latexmk\" -o -name \"auto\" -o -name \"_minted-lecture01\" \\) -exec rm -rf {} +")))
     (shell-command command)
     (message "Files and directory deleted.")))
 
