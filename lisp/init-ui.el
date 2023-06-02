@@ -21,11 +21,9 @@
          :variable-pitch-family "Iosevka Comfy Wide Motion Duo")
         (regular)
         (large
-         :default-family "Iosevka Comfy"
          :default-weight semilight
          :default-height 150
-         :bold-weight extrabold
-         :variable-pitch-family "Iosevka Comfy Motion Duo")
+         :bold-weight extrabold)
         (presentation
          :inherit large
          :default-weight light
@@ -40,7 +38,7 @@
          :fixed-pitch-serif-family nil
          :fixed-pitch-serif-weight nil
          :fixed-pitch-serif-height 1.0
-         :variable-pitch-family "Iosevka Comfy Duo"
+         :variable-pitch-family "Iosevka Comfy Motion Duo"
          :variable-pitch-weight nil
          :variable-pitch-height 1.0
          :bold-family nil
