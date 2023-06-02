@@ -45,6 +45,10 @@
   (interactive)
   (switch-to-buffer nil))
 
+(defun p-format-indent-in-buffer ()
+  (interactive)
+  (indent-region (point-min) (point-max)))
+
 ;;; Make backup copy
 ;; http://xahlee.info/emacs/emacs/elisp_make-backup.html
 (defun p-make-backup ()
@@ -101,6 +105,8 @@
 
 ;;; Keybindings
 (with-eval-after-load 'evil
+  (define-key evil-normal-state-map (kbd "goi") 'p-format-indent-in-buffer)
+
   (general-create-definer p-space-leader-def
     :prefix "SPC"
     :states '(normal visual))
