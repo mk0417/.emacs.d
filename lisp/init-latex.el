@@ -81,9 +81,10 @@
         (command
          (concat "find . -maxdepth 1 \\( -name \"*.aux\" -o -name \"*.log\" -o -name \"*.gz\" -o -name \"*.listing\""
                  " -o -name \"*.out\" -o -name \"*.fls\" -o -name \"*.nav\" -o -name \"*.snm\" -o -name \"*.vrb\""
-                 " -o -name \"*.toc\" -o -name \"*.fdb_latexmk\" -o -name \"auto\" -o -name \"_minted-lecture01\" \\) -exec rm -rf {} +")))
+                 " -o -name \"*.toc\" -o -name \"*.fdb_latexmk\" -o -name \"auto\""
+                 " -o -name \"_minted-*\" -type d \\) -exec rm -rf {} +")))
     (shell-command command)
-    (message "Files and directory deleted.")))
+    (message "Files and directories deleted.")))
 
 (defun p-run-latex ()
   (interactive)
