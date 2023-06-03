@@ -2,36 +2,17 @@
 
 ;;; Install package
 (straight-use-package 'dumb-jump)
-(straight-use-package 'rg)
+(straight-use-package '(color-rg :type git :host github :repo "manateelazycat/color-rg"))
 
 ;;; dumb-jump
 (setq xref-show-definitions-function #'xref-show-definitions-completing-read)
 (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 
-;;; rg
-(with-eval-after-load 'rg
-  (rg-define-search p-grep-vc-or-dir
-    :query ask
-    :format regexp
-    :files "everything"
-    :dir (let ((vc (vc-root-dir)))
-           (if vc
-               vc
-             default-directory))
-    :confirm prefix
-    :flags ("--hidden -g !.git"))
+;;; color-rg
+(setq color-rg-mac-load-path-from-shell nil)
+(require 'color-rg)
 
-  (define-key rg-mode-map (kbd "M-n") 'rg-next-file)
-  (define-key rg-mode-map (kbd "M-p") 'rg-prev-file)
-
-  (advice-add 'wgrep-change-to-wgrep-mode :after #'evil-normal-state)
-  (advice-add 'wgrep-to-original-mode :after #'evil-motion-state)
-  (defvar rg-mode-map)
-  (add-to-list 'evil-motion-state-modes 'rg-mode)
-  (evil-add-hjkl-bindings rg-mode-map 'motion
-    "e" #'wgrep-change-to-wgrep-mode
-    "R" #'rg-recompile
-    "t" #'rg-rerun-change-literal))
+(define-key isearch-mode-map (kbd "M-s M-s") 'isearch-toggle-color-rg)
 
 ;;; Project
 (setq project-list-file (expand-file-name "projects" user-emacs-directory))
@@ -56,7 +37,7 @@
     :prefix "SPC"
     :states '(normal))
   (p-space-leader-def
-    "p"  '(:ignore t :which-key "projects and packages")
+    "p" '(:ignore t :which-key "projects and packages")
     "pP" '(project-switch-project :which-key "switch project")
     "pp" '(p-project-switch-project :which-key "dwim switch project")
     "pb" '(project-switch-to-buffer :which-key "switch buffer in project")
@@ -65,9 +46,15 @@
     "pr" '(straight-remove-unused-repos :which-key "straight-remove-unused-repos")
     "pU" '(straight-pull-recipe-repositories :which-key "straight-pull-recipe-repositories")
     "pu" '(straight-pull-all  :which-key "straight update all packages")
-    "s"  '(:ignore t :which-key "search")
-    "s," '(p-grep-vc-or-dir :which-key "p-grep-vc-or-dir")
-    "s." '(rg  :which-key "rg")))
+    "g" '(:ignore t :which-key "git")
+    "gd" '(color-rg-search-input :which-key "color-rg-search-input")
+    "gD" '(color-rg-search-symbol :which-key "color-rg-search-symbol")
+    "gf" '(color-rg-search-input-in-current-file :which-key "color-rg-search-input-in-current-file")
+    "gF" '(color-rg-search-symbol-in-current-file :which-key "color-rg-search-symbol-in-current-file")
+    "gp" '(color-rg-search-input-in-project :which-key "color-rg-search-input-in-project")
+    "gP" '(color-rg-search-symbol-in-project :which-key "color-rg-search-symbol-in-project")
+    "gt" '(color-rg-search-project-with-type :which-key "color-rg-search-project-with-type")
+    "gT" '(color-rg-search-symbol-with-type :which-key "color-rg-search-symbol-with-type")))
 
 (provide 'init-project)
 ;;;;; init-project.el ends here

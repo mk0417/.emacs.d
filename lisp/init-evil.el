@@ -75,7 +75,7 @@
 (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
 
 ;;; Make sure some modes start in Emacs state
-(dolist (mode '(custom-mode eshell-mode term-mode xref--xref-buffer-mode lsp-bridge-ref-mode))
+(dolist (mode '(custom-mode eshell-mode term-mode xref--xref-buffer-mode lsp-bridge-ref-mode color-rg-mode))
   (add-to-list 'evil-emacs-state-modes mode))
 
 ;;; Set evil normal state for grep mode
