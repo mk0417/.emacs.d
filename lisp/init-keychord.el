@@ -9,7 +9,7 @@
 
 (setq key-chord-two-keys-delay 0.3)
 (setq key-chord-safety-interval-forward 0.1)
-(setq key-chord-safety-interval-backward 0.3)
+(setq key-chord-safety-interval-backward 0.1)
 
 (with-eval-after-load 'evil
   (dolist (mode (list evil-insert-state-map evil-ex-completion-map minibuffer-local-map))
