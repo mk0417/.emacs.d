@@ -49,7 +49,6 @@
 (setq prefix-help-command #'embark-prefix-help-command)
 (setq embark-confirm-act-all nil)
 (setq embark-mixed-indicator-both nil)
-(setq embark-mixed-indicator-delay 1.0)
 (setq embark-verbose-indicator-nested nil)
 (setq embark-indicators '(embark-mixed-indicator embark-highlight-indicator))
 (setq embark-verbose-indicator-buffer-sections '(bindings))
@@ -61,6 +60,63 @@
 
 (define-key embark-identifier-map "R" #'consult-ripgrep)
 (define-key embark-identifier-map "J" #'consult-line)
+
+;; embark keybindings
+;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion-common.el
+(seq-do
+ (lambda (cell)
+   (let* ((keymap (cdr-safe cell))
+          (map (if (listp keymap) (car keymap) keymap)))
+     (set map (make-sparse-keymap))))
+ embark-keymap-alist)
+
+(define-key embark-general-map "i" #'embark-insert)
+(define-key embark-general-map "w" #'embark-copy-as-kill)
+(define-key embark-general-map "d" #'delete-region)
+(define-key embark-general-map "E" #'embark-export)
+(define-key embark-general-map "S" #'embark-collect)
+
+(define-key embark-url-map "d" #'delete-region)
+(define-key embark-url-map "S" #'browse-url)
+
+(define-key embark-file-map "f" #'find-file)
+(define-key embark-file-map "j" #'embark-dired-jump)
+(define-key embark-file-map "c" #'copy-file)
+(define-key embark-file-map "e" #'ediff-files)
+
+(define-key embark-command-map "h" #'describe-command)
+(define-key embark-command-map "." #'embark-find-definition)
+
+(define-key embark-function-map "h" #'describe-function)
+(define-key embark-function-map "." #'embark-find-definition)
+
+(define-key embark-symbol-map "h" #'describe-symbol)
+(define-key embark-symbol-map "." #'embark-find-definition)
+
+(define-key embark-variable-map "h" #'describe-variable)
+(define-key embark-variable-map "." #'embark-find-definition)
+
+(define-key embark-region-map "a" #'align-regexp)
+(define-key embark-region-map "d" #'delete-region)
+(define-key embark-region-map "f" #'flush-lines)
+(define-key embark-region-map "r" #'repunctuate-sentences)
+(define-key embark-region-map "s" #'sort-lines)
+(define-key embark-region-map "u" #'untabify)
+(define-key embark-region-map "D" #'delete-duplicate-lines)
+
+(set-keymap-parent embark-defun-map embark-expression-map)
+(dolist (map
+         '( embark-url-map embark-buffer-map embark-file-map
+            embark-identifier-map embark-command-map embark-expression-map
+            embark-function-map embark-package-map embark-symbol-map
+            embark-variable-map embark-region-map))
+  (set-keymap-parent (symbol-value map) embark-general-map))
+
+(add-hook 'embark-collect-post-revert-hook
+          (defun resize-embark-collect-window (&rest _)
+            (when (memq embark-collect--kind '(:live :completions))
+              (fit-window-to-buffer (get-buffer-window)
+                                    (floor (frame-height) 2) 1))))
 
 ;;; Consult
 (setq consult-line-start-from-top t)
