@@ -254,6 +254,21 @@
       (p-remove-extra-spaces-in-region (region-beginning) (region-end))
     (p-remove-extra-spaces-in-line)))
 
+;;; Deletes text between commas
+(defun p-delete-between-commas ()
+  (interactive)
+  (let ((start (progn (search-backward "," nil t) (forward-char) (skip-chars-forward " \t") (point)))
+        (end (progn (search-forward "," nil t) (backward-char) (skip-chars-backward " \t") (point))))
+    (delete-region start end)))
+
+;;; Select text between commas
+(defun p-select-between-commas ()
+  (interactive)
+  (let ((start (progn (search-backward "," nil t) (forward-char) (skip-chars-forward " \t") (point)))
+        (end (progn (search-forward "," nil t) (backward-char) (skip-chars-backward " \t") (point))))
+    (set-mark start)
+    (goto-char (- end 1))))
+
 ;;; Vim style replace
 (defun p-ex-evil-buffer-replace ()
   (interactive)
@@ -294,6 +309,8 @@
   (define-key evil-normal-state-map (kbd ",b") 'p-select-bottom-block)
   (define-key evil-normal-state-map (kbd "gcy") 'p-simple-yank-replace-line-or-region)
   (define-key evil-normal-state-map (kbd "gcs") 'p-remove-extra-spaces)
+  (define-key evil-normal-state-map (kbd "gcl") 'p-delete-between-commas)
+  (define-key evil-normal-state-map (kbd "gcm") 'p-select-between-commas)
 
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
   (define-key evil-visual-state-map (kbd "goa") 'p-ex-evil-selection-replace-yank)
