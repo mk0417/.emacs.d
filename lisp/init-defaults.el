@@ -112,8 +112,11 @@
                 (apply orig-fun args))))
 
 ;;; Which-key
-(setq-default which-key-idle-delay 0.8)
+(setq which-key-idle-delay 0.8)
+(setq which-key-add-column-padding 1)
+(setq which-key-min-display-lines 5)
 (which-key-mode)
+
 (diminish 'which-key-mode)
 
 ;;; Eldoc
