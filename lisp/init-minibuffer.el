@@ -58,9 +58,6 @@
 (defun p-embark-no-minimal-indicator ())
 (advice-add #'embark-minimal-indicator :override #'p-embark-no-minimal-indicator)
 
-(define-key embark-identifier-map "R" #'consult-ripgrep)
-(define-key embark-identifier-map "J" #'consult-line)
-
 ;; embark keybindings
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-emacs-modules/prot-emacs-completion-common.el
 (seq-do
@@ -96,6 +93,9 @@
 (define-key embark-variable-map "h" #'describe-variable)
 (define-key embark-variable-map "." #'embark-find-definition)
 
+(define-key embark-identifier-map "R" #'consult-ripgrep)
+(define-key embark-identifier-map "J" #'consult-line)
+
 (define-key embark-region-map "a" #'align-regexp)
 (define-key embark-region-map "d" #'delete-region)
 (define-key embark-region-map "f" #'flush-lines)
@@ -111,12 +111,6 @@
             embark-function-map embark-package-map embark-symbol-map
             embark-variable-map embark-region-map))
   (set-keymap-parent (symbol-value map) embark-general-map))
-
-(add-hook 'embark-collect-post-revert-hook
-          (defun resize-embark-collect-window (&rest _)
-            (when (memq embark-collect--kind '(:live :completions))
-              (fit-window-to-buffer (get-buffer-window)
-                                    (floor (frame-height) 2) 1))))
 
 ;;; Consult
 (setq consult-line-start-from-top t)
