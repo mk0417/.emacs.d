@@ -74,6 +74,14 @@
 (setq TeX-view-program-list '(("Skim" "open -a Skim.app %o")))
 (setq TeX-view-program-selection '((output-pdf "Skim")))
 
+;; Select beamer frame block
+(defun p-select-beamer-frame ()
+  (interactive)
+  (search-backward "\\begin{frame}")
+  (set-mark (line-beginning-position))
+  (search-forward "\\end{frame}")
+  (end-of-line))
+
 ;;; Clear temp files
 (defun p-clear-latex-temp-files ()
   (interactive)
@@ -101,9 +109,10 @@
     "j"  '(:ignore t :which-key "latex")
     "jm" '(TeX-insert-macro :which-key "insert latex macro")
     "je" '(LaTeX-environment :which-key "insert latex environment")
-    "jf" '(LaTeX-fill-buffer :which-key "format latex file")
+    "jF" '(LaTeX-fill-buffer :which-key "format latex file")
     "jr" '(p-run-latex :which-key "run tex")
     "ja" '(TeX-command-run-all :which-key "run all")
+    "jf" '(p-select-beamer-frame :which-key "select beamer frame block")
     "jc" '(p-clear-latex-temp-files :which-key "clear temp files")
     "jv" '(TeX-view :which-key "view pdf")))
 
