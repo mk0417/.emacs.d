@@ -214,6 +214,14 @@
     (when (bolp) (evil-first-non-blank) (cl-return-from 'my-return))
     (evil-first-non-blank)))
 
+;;; Select line (from first char to last char in a line)
+(defun p-select-line-range ()
+  (interactive)
+  (let ((start (progn (back-to-indentation) (point)))
+        (end (progn (end-of-line) (skip-chars-backward " \t") (point))))
+    (goto-char start)
+    (set-mark end)))
+
 ;;; Replace with last kill
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-lisp/prot-simple.el
 (defun p-simple-yank-replace-line-or-region ()
@@ -309,8 +317,9 @@
   (define-key evil-normal-state-map (kbd ",b") 'p-select-bottom-block)
   (define-key evil-normal-state-map (kbd "gcy") 'p-simple-yank-replace-line-or-region)
   (define-key evil-normal-state-map (kbd "gcs") 'p-remove-extra-spaces)
-  (define-key evil-normal-state-map (kbd "gcl") 'p-delete-between-commas)
+  (define-key evil-normal-state-map (kbd "gcj") 'p-delete-between-commas)
   (define-key evil-normal-state-map (kbd "gcm") 'p-select-between-commas)
+  (define-key evil-normal-state-map (kbd "gcl") 'p-select-line-range)
 
   (define-key evil-visual-state-map (kbd "gor") 'p-ex-evil-selection-replace)
   (define-key evil-visual-state-map (kbd "goa") 'p-ex-evil-selection-replace-yank)
