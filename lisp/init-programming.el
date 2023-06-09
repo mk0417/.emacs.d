@@ -25,12 +25,17 @@
   (previous-line))
 
 ;;;###autoload
+;; After new commits of emacs-jupyter upstream,
+;; jupyter-eval-region has three arguments
+;; (jupyter-eval-region INSERT BEG END)
+;; if INSERT is t, the output will replace code
+;; and I prefer to nil
 (defun p-jupyter-eval-block ()
   (interactive)
   (p-select-block)
   (let (beg end)
     (setq beg (region-beginning) end (region-end))
-    (jupyter-eval-region beg end)))
+    (jupyter-eval-region nil beg end)))
 
 (autoload 'p-jupyter-eval-block "jupyter")
 
