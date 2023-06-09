@@ -1,7 +1,7 @@
 ;;;;; init-lsp-bridge.el --- LSP-bridge -*- lexical-binding: t -*-
 
 ;;; Install packages
-(straight-use-package 'posframe)
+;; (straight-use-package 'posframe)
 (straight-use-package '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge" :files ("*")))
 
 (setq lsp-bridge-enable-diagnostics nil)
@@ -13,6 +13,9 @@
 (setq acm-candidate-match-function 'orderless-flex)
 (setq lsp-bridge-python-lsp-server "pyright")
 (setq lsp-bridge-symbols-enable-which-func t)
+(setq acm-backend-search-file-words-candidate-min-length 3)
+(setq acm-backend-elisp-candidate-min-length 2)
+(setq acm-backend-lsp-candidate-min-length 2)
 
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
