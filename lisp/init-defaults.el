@@ -128,12 +128,24 @@
 ;;; Emacs server
 (server-start)
 
+;;; isearch
+(setq isearch-lazy-count t)
+(setq lazy-count-prefix-format "(%s/%s) ")
+(setq search-whitespace-regexp ".*?")
+
 ;;; Keybindings
 (global-set-key (kbd "C-x k") 'kill-this-buffer)
 (global-set-key (kbd "C-x K") 'kill-buffer-and-window)
 (global-set-key (kbd "M-i") 'forward-paragraph)
 (global-set-key (kbd "M-o") 'backward-paragraph)
 (global-set-key (kbd "C-h K") #'describe-keymap)
+(global-set-key (kbd "M-s s") #'isearch-forward)
+(global-set-key (kbd "M-s r") #'isearch-backward)
+(global-set-key (kbd "M-s M-s") #'isearch-forward-regexp)
+(global-set-key (kbd "M-s M-r") #'isearch-backward-regexp)
+(global-set-key (kbd "M-s a") #'query-replace)
+(global-set-key (kbd "M-s M-a") #'query-replace-regexp)
+(global-set-key (kbd "M-s e") #'occur-edit-mode)
 (define-key minibuffer-local-map (kbd "C-k") 'delete-backward-char)
 (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
 
