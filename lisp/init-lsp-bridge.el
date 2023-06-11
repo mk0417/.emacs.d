@@ -14,8 +14,8 @@
 (setq lsp-bridge-python-lsp-server "pyright")
 (setq lsp-bridge-symbols-enable-which-func t)
 (setq acm-backend-search-file-words-candidate-min-length 3)
-(setq acm-backend-elisp-candidate-min-length 2)
-(setq acm-backend-lsp-candidate-min-length 2)
+(setq acm-backend-elisp-candidate-min-length 3)
+(setq acm-backend-lsp-candidate-min-length 3)
 
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
