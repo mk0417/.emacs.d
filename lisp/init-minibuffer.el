@@ -21,12 +21,14 @@
 
 ;;; Marginalia
 (require 'marginalia)
+
 (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
 (marginalia-mode 1)
 
 ;;; Orderless
 ;; Set up orderless for better matching
 (require 'orderless)
+
 (setq completion-styles '(orderless))
 (setq completion-category-overrides '((file (styles . (partial-completion)))))
 
@@ -41,6 +43,7 @@
 ;;; Embark
 (require 'embark)
 (require 'embark-consult)
+
 (global-set-key [remap describe-bindings] #'embark-bindings)
 (global-set-key (kbd "C-;") 'embark-act)
 (global-set-key (kbd "C-c C-o") 'embark-export)

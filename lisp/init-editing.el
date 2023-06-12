@@ -10,6 +10,7 @@
 
 ;;; Stupid-indent-mode
 (require 'stupid-indent-mode)
+
 (add-hook 'prog-mode-hook 'stupid-indent-mode)
 (add-hook 'python-mode-hook
           (lambda ()
