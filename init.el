@@ -12,80 +12,78 @@
       (concat ";; Hello Peng, welcome to Emacs and happy hacking\n"
               (format ";; Emacs version: %s\n" (car (split-string emacs-version)))))
 
-;;; Inherit variables from .zshrc
-;; http://xahlee.info/emacs/emacs/emacs_env_var_paths.html
-(let ((emacs-init-env-path
-       (list (expand-file-name "~/anaconda3/bin")
-             (expand-file-name "~/anaconda3/bin/jupyter")
-             (expand-file-name "~/.emacs.d/bin")
-             (expand-file-name "~/.cargo/bin")
-             "/opt/homebrew/Caskroom/miniforge/base/bin"
-             "/opt/homebrew/Caskroom/miniforge/base/bin/jupyter"
-             "/opt/homebrew/Caskroom/mambaforge/base/bin"
-             "/opt/homebrew/Caskroom/mambaforge/base/bin/jupyter"
-             "/opt/homebrew/bin/"
-             "/usr/local/bin"
-             "/usr/local/sbin"
-             "/usr/bin"
-             "/bin"
-             "/usr/sbin"
-             "/sbin"
-             "/Applications/Stata/StataMP.app/Contents/MacOS/"
-             "/Applications/Stata/StataMP.app/Contents/MacOS/stata"
-             "/Library/TeX/texbin"
-             "/Applications/Emacs.app/Contents/MacOS/bin")))
-  (setenv "PATH" (mapconcat 'identity emacs-init-env-path ":"))
-  (setq exec-path (append emacs-init-env-path (list "." exec-directory))))
+;;; Setup straight as package manager
+;; https://github.com/doomemacs/doomemacs/issues/5682
+(defvar native-comp-deferred-compilation-deny-list nil)
+(setq straight-repository-branch "develop")
+;; (setq straight-vc-git-default-clone-depth 1)
+(setq straight-vc-git-default-clone-depth '(1 single-branch))
+;; quickier init time
+;; https://emacs.stackexchange.com/questions/71302/reducing-straight-el-bloat
+(setq straight-check-for-modifications '(check-on-save find-when-checking))
 
-;;; Fix emacs-jupyter issue for Python 3.11.*
-;; https://github.com/nnicandro/emacs-jupyter/issues/439
-(setenv "PYDEVD_DISABLE_FILE_VALIDATION" "1")
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 6))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
-;;; Load config
-(add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory) t)
+(defmacro prot-emacs-keybind (keymap &rest definitions)
+  "Expand key binding DEFINITIONS for the given KEYMAP.
+DEFINITIONS is a sequence of string and command pairs."
+  (declare (indent 1))
+  (unless (zerop (% (length definitions) 2))
+    (error "Uneven number of key+command pairs"))
+  (let ((keys (seq-filter #'stringp definitions))
+        ;; We do accept nil as a definition: it unsets the given key.
+        (commands (seq-remove #'stringp definitions)))
+    `(when-let (((keymapp ,keymap))
+                (map ,keymap))
+       ,@(mapcar
+          (lambda (pair)
+            (unless (and (null (car pair))
+                         (null (cdr pair)))
+              `(define-key map (kbd ,(car pair)) ,(cdr pair))))
+          (cl-mapcar #'cons keys commands)))))
 
-(require 'init-ui)
+;; Load path
+(dolist (path '("lisp" "prot-lisp" "prot-emacs-modules"))
+  (add-to-list 'load-path (locate-user-emacs-file path)))
+
+(require 'init-env)
+(require 'init-theme)
+(require 'prot-emacs-font)
+(require 'init-modeline)
 (require 'init-defaults)
 (require 'init-evil)
-(require 'init-editing)
-(require 'init-osx)
-(require 'init-minibuffer)
-(require 'init-vertico)
-;; (require 'init-mct)
-(require 'init-utils)
+(require 'init-completion)
 (require 'init-windows)
-;; (require 'init-programming)
-;; (require 'init-keychord)
-;; (require 'init-git)
-;; (require 'init-project)
-;; (require 'init-avy)
-;; (require 'init-org)
-;; (require 'init-template)
-;; (require 'init-notes)
-;; (require 'init-latex)
-;; (require 'init-dired)
-;; (require 'init-modeline)
-;; (require 'init-xah)
-;; (require 'init-lsp-bridge)
-;; (require 'init-vterm)
-
-;;; Disable corfu and eglot to favor lsp-bridge
-;; (require 'init-completion)
-;; (require 'init-eglot)
+(require 'init-func)
+(require 'init-keybindings)
 
 (defun p-config-after-startup ()
   (cl-dolist (mod (list
+                   'prot-emacs-search
+                   'prot-emacs-langs
+                   'prot-emacs-dired
+                   'prot-emacs-window
+                   'prot-emacs-write
+                   'prot-emacs-org
+                   'prot-emacs-git
+                   'prot-emacs-theme-extras
                    'init-programming
                    'init-keychord
                    'init-git
-                   'init-project
                    'init-avy
-                   'init-org
                    'init-snippet
-                   'init-notes
                    'init-latex
-                   'init-dired
-                   'init-modeline
                    'init-xah
                    'init-launcher
                    'init-lsp-bridge))
@@ -98,9 +96,5 @@
           (lambda ()
             (message "*** Emacs loaded in %s seconds."
                      (emacs-init-time "%.2f"))))
-
-;;; Make GC pauses faster by decreasing the threshold
-(setq gc-cons-threshold (* 8 1024 1024))
-(setq gc-cons-percentage 0.1)
 
 ;;;;; init.el ends here

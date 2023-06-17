@@ -1,8 +1,26 @@
 ;;;;; init-git.el --- Git -*- lexical-binding: t -*-
 
 ;;; Install packages
+(straight-use-package '(color-rg :type git :host github :repo "manateelazycat/color-rg"))
 (straight-use-package 'diff-hl)
 (straight-use-package 'git-messenger)
+
+;;; Color-rg
+(setq color-rg-mac-load-path-from-shell nil)
+(require 'color-rg)
+
+(define-key isearch-mode-map (kbd "M-s M-s") 'isearch-toggle-color-rg)
+
+;;; Project
+(require 'project)
+
+(setq project-list-file (expand-file-name "projects" user-emacs-directory))
+
+;; https://macowners.club/posts/custom-functions-5-navigation/
+(defun p-project-switch-project (dir)
+  (interactive (list (project-prompt-project-dir)))
+  (let ((project-current-directory-override dir))
+    (project-find-file)))
 
 ;;; Diff-hl
 (setq diff-hl-draw-borders nil)
@@ -27,18 +45,8 @@
   (define-key evil-normal-state-map (kbd "gp") 'diff-hl-previous-hunk)
   (define-key evil-normal-state-map (kbd "gP") 'diff-hl-diff-goto-hunk))
 
-(with-eval-after-load 'vc-dir
-  (define-key vc-dir-mode-map (kbd "a") 'vc-diff))
-
-(with-eval-after-load 'evil
-  (general-create-definer p-space-leader-def
-    :prefix "SPC"
-    :states 'normal)
-  (p-space-leader-def
-    "g"  '(:ignore t :which-key "git")
-    "gr" '(vc-dir :which-key "vc-dir")
-    "gg" '(project-vc-dir :which-key "project-vc-dir")
-    "gm" '(git-messenger:popup-message :which-key "git message")))
+;; (with-eval-after-load 'vc-dir
+;;   (define-key vc-dir-mode-map (kbd "a") 'vc-diff))
 
 (provide 'init-git)
 ;;;;; init-git.el ends here

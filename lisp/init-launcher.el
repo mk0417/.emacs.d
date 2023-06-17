@@ -133,11 +133,11 @@
              (auto-raise . t)
              (fullscreen . 0)
              ;; (undecorated . t)
+             ;; (background-color . "steel blue")
              (tool-bar-lines . 0)
              (menu-bar-lines . 0)
              (internal-border-width . 3)
-             (vertical-scroll-bars . nil)
-             (background-color . "steel blue")))))
+             (vertical-scroll-bars . nil)))))
     (select-frame-set-input-focus frame)
     (unwind-protect
         (progn
@@ -164,18 +164,6 @@
         ("Youtube" . "https://www.youtube.com/")
         ("Hex Color Codes" . "https://www.color-hex.com/")
         ("Detexify" . "https://detexify.kirelabs.org/classify.html")))
-
-;;; Keybindings
-(with-eval-after-load 'evil
-  (general-create-definer p-space-leader-def
-    :prefix "SPC"
-    :keymaps 'override
-    :states '(normal visual))
-  (p-space-leader-def
-    "t"  '(:ignore t :which-key "toggle")
-    "ta" '(app-launcher-run-app :which-key "app-launcher-run-app")
-    "td" '(dir-launcher-run-dir :which-key "dir-launcher-run-dir")
-    "tu" '(url-launcher-run-url :which-key "url-launcher-run-url")))
 
 (provide 'init-launcher)
 ;;;;; init-launcher.el ends here

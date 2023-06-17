@@ -19,7 +19,6 @@
 
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
-        ess-r-mode-hook
         emacs-lisp-mode-hook
         LaTeX-mode-hook
         markdown-mode-hook))
@@ -28,13 +27,6 @@
       '(((python-mode python-ts-mode) . nil)))
 
 (global-lsp-bridge-mode)
-(diminish 'lsp-bridge-mode)
-
-(with-eval-after-load 'evil
-  (define-key evil-normal-state-map (kbd "gow") 'lsp-bridge-workspace-list-symbols)
-  (define-key evil-normal-state-map (kbd "gof") 'lsp-bridge-find-def)
-  (define-key evil-normal-state-map (kbd "gon") 'lsp-bridge-rename)
-  (define-key evil-normal-state-map (kbd "gob") 'lsp-bridge-find-def-return))
 
 (provide 'init-lsp-bridge)
 ;;;;; init-lsp-bridge.el ends here

@@ -11,13 +11,11 @@
 (setq yas-triggers-in-field t)
 
 (yas-global-mode 1)
-(diminish 'yas-minor-mode)
 
 (global-set-key (kbd "M-;") 'yas-expand)
 
 ;;; Abbrev
 (set-default 'abbrev-mode t)
-(diminish 'abbrev-mode)
 
 (setq abbrev-file-name "~/Dropbox/abbrev_defs")
 (read-abbrev-file abbrev-file-name t)
@@ -51,19 +49,7 @@
   (interactive)
   (insert (p-emacs-completing-read "Select: " (p-global-abbrev-table-completions))))
 
-(global-set-key (kbd "C-,") #'p-insert-global-abbrev)
-
-;;; Keybindings
-(with-eval-after-load 'evil
-  (general-create-definer p-space-leader-def
-    :prefix "SPC"
-    :states '(normal visual))
-  (p-space-leader-def
-    "s"  '(:ignore t :which-key "search")
-    "sy" '(consult-yasnippet :which-key "consult yasnippet")
-    "e" '(:ignore t :which-key "editing")
-    "ey" '(yas-new-snippet :which-key "create new snippet")
-    "ei" '(yas-insert-snippet :which-key "insert snippet")))
+(global-set-key (kbd "M-s-i") #'p-insert-global-abbrev)
 
 (provide 'init-snippet)
 ;;;;; init-snippet.el ends here

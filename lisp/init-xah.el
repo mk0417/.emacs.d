@@ -129,19 +129,5 @@
       ((= $style 9)
        (format-time-string "%d %B %Y"))))))
 
-;;; Keybindings
-(with-eval-after-load 'evil
-  (general-create-definer p-space-leader-def
-    :prefix "SPC"
-    :states '(normal visual))
-  (p-space-leader-def
-    "x"  '(:ignore t :which-key "xah editing")
-    "xd" '(xah-choose-and-insert-date :which-key "choose and insert date")
-    "xl" '(xah-delete-blank-lines :which-key "deletle blank lies")
-    "xn" '(xah-space-to-newline :which-key "from space to newline")
-    "xc" '(xah-cycle-hyphen-lowline-space :which-key "cycle hyphen lowline")
-    "xb" '(xah-new-empty-buffer :which-key "new empty buffer")
-    "xa" '(xah-add-space-after-comma :which-key "add space after comma")))
-
 (provide 'init-xah)
 ;;;;; init-xah.el ends here

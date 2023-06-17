@@ -46,7 +46,7 @@
 
   (add-hook 'LaTeX-mode-hook #'p-latex-enable-modes)
   (add-hook 'LaTeX-mode-hook #'evil-tex-mode)
-  (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)
+  ;; (add-hook 'LaTeX-mode-hook #'adaptive-wrap-prefix-mode)
 
   ;; Open all buffers with the math mode and auto-fill mode
   ;; (add-hook 'LaTeX-mode-hook #'auto-fill-mode)
@@ -58,15 +58,6 @@
 
   ;; To have the buffer refresh after compilation
   (add-hook 'TeX-after-compilation-finished-functions #'TeX-revert-document-buffer))
-
-(defun p-diminish-reftex-mode ()
-  (diminish 'reftex-mode))
-
-(defun p-diminish-buffer-face-mode ()
-  (diminish 'buffer-face-mode))
-
-(add-hook 'LaTeX-mode-hook #'p-diminish-reftex-mode)
-(add-hook 'LaTeX-mode-hook #'p-diminish-buffer-face-mode)
 
 (dolist (dir '("/Applications/Skim.app/Contents/SharedSupport"))
   (add-to-list 'exec-path dir))
@@ -98,23 +89,6 @@
   (interactive)
   (TeX-save-document (TeX-master-file))
   (TeX-command "LaTeX" 'TeX-master-file))
-
-;;; Keybindings
-(with-eval-after-load 'evil
-  (general-create-definer p-latex-leader-def
-    :prefix ";"
-    :states '(normal visual)
-    :keymaps '(TeX-mode-map))
-  (p-latex-leader-def
-    "j"  '(:ignore t :which-key "latex")
-    "jm" '(TeX-insert-macro :which-key "insert latex macro")
-    "je" '(LaTeX-environment :which-key "insert latex environment")
-    "jF" '(LaTeX-fill-buffer :which-key "format latex file")
-    "jr" '(p-run-latex :which-key "run tex")
-    "ja" '(TeX-command-run-all :which-key "run all")
-    "jf" '(p-select-beamer-frame :which-key "select beamer frame block")
-    "jc" '(p-clear-latex-temp-files :which-key "clear temp files")
-    "jv" '(TeX-view :which-key "view pdf")))
 
 (provide 'init-latex)
 ;;;;; init-latex.el ends here
