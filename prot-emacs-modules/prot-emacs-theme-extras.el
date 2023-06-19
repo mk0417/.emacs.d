@@ -10,7 +10,7 @@
 (dolist (cmd '( narrow-to-page narrow-to-defun
                 evil-goto-line evil-window-right evil-window-left
                 evil-window-up evil-window-down
-                evil-yank
+                evil-yank evil-delete
                 scroll-up-command scroll-down-command
                 recenter-top-bottom other-window
                 narrow-to-region widen))
