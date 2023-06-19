@@ -53,6 +53,14 @@
   (interactive)
   (prot-simple-insert-pair "{ Curly brackets"))
 
+(defun p-insert-surround-single-quote ()
+  (interactive)
+  (prot-simple-insert-pair "' Single quote"))
+
+(defun p-insert-surround-double-quotes ()
+  (interactive)
+  (prot-simple-insert-pair "\" Double quotes"))
+
 ;; Find file in my config
 (defun p-find-file-in-config ()
   (interactive)
@@ -153,6 +161,32 @@
   (interactive)
   (kill-sexp)
   (evil-insert 0))
+
+;; Create a scratch file
+(defun p-create-scratch-file ()
+  "Prompts to create or open a scratch file based on chosen file type."
+  (interactive)
+  (let* ((file-types '(("py" . "scratch.py")
+                       ("txt" . "scratch.txt")))
+         (chosen-type (completing-read "Choose file type: " (mapcar #'car file-types))))
+    (if (string-empty-p chosen-type)
+        (setq chosen-type (read-string "Enter file extension: ")))
+    (let* ((default-directory (expand-file-name "~/Desktop/"))
+           (file-name (cond ((assoc chosen-type file-types)
+                             (cdr (assoc chosen-type file-types)))
+                            ((not (string-empty-p chosen-type))
+                             (concat "scratch." chosen-type))
+                            (t nil)))
+           (full-path (and file-name (concat default-directory file-name))))
+      (when full-path
+        (if (file-exists-p full-path)
+            (find-file full-path)
+          (progn
+            (write-region "" nil full-path)
+            (find-file full-path)
+            (message "Created file '%s'." file-name)))
+        (unless file-name
+          (message "Invalid file type: '%s'. No file created." chosen-type))))))
 
 ;; Reveal file in Finder
 ;; https://github.com/xuchunyang/emacs.d/blob/master/lisp/chunyang-mac.el
