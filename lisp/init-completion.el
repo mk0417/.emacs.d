@@ -7,7 +7,6 @@
 (straight-use-package 'embark)
 (straight-use-package 'embark-consult)
 (straight-use-package 'marginalia)
-;; (straight-use-package 'wgrep)
 
 ;;; Vertico
 (require 'vertico)

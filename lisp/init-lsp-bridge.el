@@ -1,7 +1,6 @@
 ;;;;; init-lsp-bridge.el --- LSP-bridge -*- lexical-binding: t -*-
 
 ;;; Install packages
-;; (straight-use-package 'posframe)
 (straight-use-package '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge" :files ("*")))
 
 (setq lsp-bridge-enable-diagnostics nil)
