@@ -35,6 +35,7 @@
   (previous-line))
 
 ;;; Python
+(setq python-indent-offset 4)
 (setq python-indent-guess-indent-offset-verbose nil)
 (setq python-indent-guess-indent-offset t)
 (add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
