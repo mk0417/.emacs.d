@@ -8,9 +8,7 @@
 (setq auto-mode-case-fold nil)
 
 ;;; Initial scratch buffer message
-(setq initial-scratch-message
-      (concat ";; Hello Peng, welcome to Emacs and happy hacking\n"
-              (format ";; Emacs version: %s\n" (car (split-string emacs-version)))))
+(setq initial-scratch-message "")
 
 ;;; Setup straight as package manager
 ;; https://github.com/doomemacs/doomemacs/issues/5682
