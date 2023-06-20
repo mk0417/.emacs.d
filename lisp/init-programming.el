@@ -40,5 +40,13 @@
 (setq python-indent-guess-indent-offset t)
 (add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
 
+(defun p-python-indent-key ()
+  (define-key evil-normal-state-map (kbd "god") 'python-indent-shift-right)
+  (define-key evil-normal-state-map (kbd "gou") 'python-indent-shift-left)
+  (define-key evil-visual-state-map (kbd "god") 'python-indent-shift-right)
+  (define-key evil-visual-state-map (kbd "gou") 'python-indent-shift-left))
+
+(add-hook 'python-mode-hook 'p-python-indent-key)
+
 (provide 'init-programming)
 ;;;;; init-programming.el ends here
