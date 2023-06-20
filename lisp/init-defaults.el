@@ -10,6 +10,9 @@
 (setq remote-file-name-inhibit-auto-save t)
 (setq save-interprogram-paste-before-kill t)
 (setq mode-require-final-newline 'visit-save)
+(setq mouse-yank-at-point t)
+(setq confirm-kill-processes nil)
+(setq process-adaptive-read-buffering nil)
 
 ;; Enable those
 (dolist (c '( narrow-to-region narrow-to-page upcase-region downcase-region))
@@ -65,6 +68,17 @@
   (setq redisplay-skip-fontification-on-input t))
 (setq sentence-end-double-space nil)
 (setq read-process-output-max (* 1024 1024))
+
+;; Disable garbage collection when entering commands
+;; https://github.com/manateelazycat/lazycat-emacs/blob/master/site-lisp/config/init-performance.el
+(defun max-gc-limit ()
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun reset-gc-limit ()
+  (setq gc-cons-threshold 800000))
+
+(add-hook 'minibuffer-setup-hook #'max-gc-limit)
+(add-hook 'minibuffer-exit-hook #'reset-gc-limit)
 
 ;;; No box
 (setq use-dialog-box nil)
@@ -130,7 +144,8 @@
 
 ;;; Make scrolling less stuttered
 (setq-default scroll-preserve-screen-position t
-              scroll-conservatively 101
+              scroll-conservatively 10000
+              scroll-step 1
               scroll-margin 0
               next-screen-context-lines 0)
 
@@ -217,6 +232,10 @@
 
 (autoload #'tooltip-mode "tooltip")
 (tooltip-mode 1)
+
+;;; Electric pair
+(add-hook 'prog-mode-hook (lambda () (electric-pair-mode 1)))
+(add-hook 'text-mode-hook (lambda () (electric-pair-mode 1)))
 
 ;;; Emacs server
 (server-start)
