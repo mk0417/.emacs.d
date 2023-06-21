@@ -14,12 +14,13 @@
 (setq confirm-kill-processes nil)
 (setq process-adaptive-read-buffering nil)
 
-;; Enable those
-(dolist (c '( narrow-to-region narrow-to-page upcase-region downcase-region))
+;; Enable these
+(dolist (c '(narrow-to-region narrow-to-page upcase-region downcase-region))
   (put c 'disabled nil))
 
-;; And disable this
-(put 'overwrite-mode 'disabled t)
+;; And disable these
+(dolist (c '(eshell project-eshell overwrite-mode iconify-frame diary))
+  (put c 'disabled t))
 
 ;;; Disable menu bar
 ;; Not working if place it in early-init
@@ -238,6 +239,7 @@
 (add-hook 'text-mode-hook (lambda () (electric-pair-mode 1)))
 
 ;;; Emacs server
+(setq server-client-instructions nil)
 (server-start)
 
 (provide 'init-defaults)

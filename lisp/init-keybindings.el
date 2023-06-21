@@ -4,6 +4,7 @@
 (straight-use-package 'general)
 
 (require 'prot-prefix)
+(require 'prot-scratch)
 
 ;;; Which-key
 (setq which-key-sort-order #'which-key-key-order-alpha
@@ -33,7 +34,7 @@
 ;;; General
 (general-evil-setup)
 
-;; Fix leader key in Message buffe
+;; Fix leader key in Message buffer
 ;; https://github.com/noctuid/general.el/issues/493
 ;; https://github.com/noctuid/general.el/issues/493#issuecomment-913168833
 (general-add-hook
@@ -72,7 +73,7 @@
   "bD" '(kill-buffer-and-window :wk "kill buffer and delete window")
   "br" '(revert-buffer :wk "reload buffer")
   "bh" '(mark-whole-buffer :wk "select whole buffer")
-  "bn" '(prot-simple-scratch-buffer :wk "create new scratch")
+  "bn" '(prot-scratch-buffer :wk "create new scratch")
   ;; Windows
   "wd" '(delete-window :wk "delete window")
   "wo" '(delete-other-windows :wk "delete other windows")

@@ -31,10 +31,18 @@
 ;; changes help shave off about half a second of startup time.
 ;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/early-init.el
 (defvar p-emacs--gc-cons-threshold gc-cons-threshold)
+
 (setq gc-cons-threshold most-positive-fixnum)
+
+;; Same idea as above for the `file-name-handler-alist'
+(defvar p-emacs--file-name-handler-alist file-name-handler-alist)
+
+(setq file-name-handler-alist nil)
+
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (setq gc-cons-threshold p-emacs--gc-cons-threshold)))
+            (setq gc-cons-threshold p-emacs--gc-cons-threshold
+                  file-name-handler-alist p-emacs--file-name-handler-alist)))
 
 ;;; Native compilation settings
 (when (featurep 'native-compile)
