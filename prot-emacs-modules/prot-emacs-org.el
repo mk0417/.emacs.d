@@ -129,7 +129,7 @@
                   "%i %l")
          :empty-lines-after 1)
         ("m" "Meeting note" entry
-         (file+headline "meeting_note.org" "Tasks to be reviewed")
+         (file+headline "meeting_note.org" "Meeting notes")
          ,(concat "* Meeting with %^{Person}\n"
                   ":PROPERTIES:\n"
                   ":CAPTURED: %U\n"
