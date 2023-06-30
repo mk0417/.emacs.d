@@ -34,18 +34,37 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl-lib))
 (require 'prot-common)
+(require 'dired)
+(require 'dired-aux)
 
 (defgroup prot-dired ()
   "Extensions for Dired."
   :group 'dired)
 
 ;;;; General commands
+;; NOTE 2023-06-27: This user option is quick-and-dirty.  I prefer not
+;; to have an option at all and simply do the right thing based on
+;; `dired-guess-shell-alist-user'.
+(defcustom prot-dired-always-external-regexp
+  "\\(mkv\\|mp4\\|mp4\\|ogg\\|m4a\\|webm\\)"
+  "Regular expression of file extensions to open externally.
+The test is performed by `prot-dired-open-dwim', which then
+defers to the `dired-guess-shell-alist-user'."
+  :group 'prot-dired
+  :type 'string)
 
-(autoload 'dired-mark-files-regexp "dired")
-(autoload 'dired-toggle-marks "dired")
-(autoload 'dired-do-kill-lines "dired-aux")
+;; NOTE 2023-06-27: This is a proof-of-concept.  See the previous
+;; note.
+(defun prot-dired-open-dwim (files)
+  "Open FILES using the appropriate program."
+  (interactive (list (dired-get-marked-files)))
+  (if-let* ((extension (file-name-extension (car files)))
+            ((string-match-p extension prot-dired-always-external-regexp))
+            (guess (dired-guess-default files))
+            (program (if (listp guess) (car guess) guess)))
+      (dired-do-async-shell-command program nil files)
+    (find-file (car files))))
 
 (defvar prot-dired--limit-hist '()
   "Minibuffer history for `prot-dired-limit-regexp'.")
@@ -160,7 +179,7 @@ For more on such headings, read `dired-maybe-insert-subdir'."
   (while (and (prot-dired-subdirectory-previous)
               (not (equal (dired-current-directory)
                           (expand-file-name default-directory))))
-      (dired-kill-subdir)))
+    (dired-kill-subdir)))
 
 (autoload 'cl-remove-if-not "cl-seq")
 

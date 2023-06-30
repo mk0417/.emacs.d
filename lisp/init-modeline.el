@@ -26,23 +26,23 @@
                     " ")))
 
 (setq-default mode-line-format
-                '("%e"
-                  prot-modeline-kbd-macro
-                  " "
-                  mode-line-mule-info
-                  mode-line-modified
-                  mode-line-remote
-                  " "
-                  mode-line-buffer-identification
-                  "  "
-                  mode-line-position
-                  "  "
-                  prot-modeline-modes
-                  " "
-                  (vc-mode vc-mode)
-                  " "
-                  prot-modeline-align-right
-                  prot-modeline-misc-info))
+              '("%e"
+                prot-modeline-kbd-macro
+                " "
+                mode-line-mule-info
+                mode-line-modified
+                mode-line-remote
+                " "
+                mode-line-buffer-identification
+                "  "
+                prot-modeline-modes
+                "  "
+                prot-modeline-position
+                "  "
+                prot-modeline-vc-branch
+                "  "
+                prot-modeline-align-right
+                prot-modeline-misc-info))
 
 (add-hook 'after-init-hook #'column-number-mode)
 

@@ -25,9 +25,7 @@
          (slot . 0)
          (window-parameters . ((mode-line-format . none))))
         ;; bottom buffer (NOT side window)
-        ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
-                (derived-mode . flymake-project-diagnostics-mode)
-                (derived-mode . messages-buffer-mode)
+        ((or . ((derived-mode . messages-buffer-mode)
                 (derived-mode . backtrace-mode)
                 "\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*"
                 ,world-clock-buffer-name))
@@ -80,14 +78,14 @@
          (window-height . fit-window-to-buffer))
         ;; same window
 
-          ;; NOTE 2023-02-17: `man' does not fully obey the
-          ;; `display-buffer-alist'.  It works for new frames and for
-          ;; `display-buffer-below-selected', but otherwise is
-          ;; unpredictable.  See `Man-notify-method'.
-          ((or . ((derived-mode . Man-mode)
-                  (derived-mode . woman-mode)
-                  "\\*\\(Man\\|woman\\).*"))
-           (display-buffer-same-window))))
+        ;; NOTE 2023-02-17: `man' does not fully obey the
+        ;; `display-buffer-alist'.  It works for new frames and for
+        ;; `display-buffer-below-selected', but otherwise is
+        ;; unpredictable.  See `Man-notify-method'.
+        ((or . ((derived-mode . Man-mode)
+                (derived-mode . woman-mode)
+                "\\*\\(Man\\|woman\\).*"))
+         (display-buffer-same-window))))
 
 (setq window-combination-resize t)
 (setq even-window-sizes 'height-only)

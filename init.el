@@ -10,6 +10,9 @@
 ;;; Initial scratch buffer message
 (setq initial-scratch-message "")
 
+(setq package-quickstart t)
+(setq package-vc-register-as-project nil) ; Emacs 30
+
 ;;; Setup straight as package manager
 ;; https://github.com/doomemacs/doomemacs/issues/5682
 (defvar native-comp-deferred-compilation-deny-list nil)
