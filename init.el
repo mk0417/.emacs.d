@@ -10,7 +10,6 @@
 ;;; Initial scratch buffer message
 (setq initial-scratch-message "")
 
-(setq package-quickstart t)
 (setq package-vc-register-as-project nil) ; Emacs 30
 
 ;;; Setup straight as package manager
@@ -75,8 +74,8 @@ DEFINITIONS is a sequence of string and command pairs."
                    'prot-emacs-langs
                    'prot-emacs-dired
                    'prot-emacs-window
-                   'prot-emacs-write
                    'prot-emacs-org
+                   'prot-emacs-write
                    'prot-emacs-git
                    'prot-emacs-theme-extras
                    'init-programming
