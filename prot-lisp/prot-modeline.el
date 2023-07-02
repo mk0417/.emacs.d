@@ -43,121 +43,161 @@
 (setq mode-line-defining-kbd-macro
       (propertize " KMacro " 'face 'prot-modeline-intense))
 
-(defvar prot-modeline-buffer-identification
-  '(:eval
-    (propertize "%b"
-		        'face (when (mode-line-window-selected-p) 'mode-line-buffer-id)
-		        'mouse-face 'mode-line-highlight))
+(defvar-local prot-modeline-input-method
+    '(:eval
+      (when current-input-method-title
+        (propertize (format " %s" current-input-method-title)
+                    'mouse-face 'mode-line-highlight)))
+  "Mode line construct to report the multilingual environment.")
+
+(defvar-local prot-modeline-buffer-status
+    '(:eval
+      (when (file-remote-p default-directory)
+        (propertize "@" 'mouse-face 'mode-line-highlight)))
+  "Mode line construct for showing remote file name.")
+
+(defun prot-modeline-buffer-identification-face ()
+  "Return appropriate face or face list for `prot-modeline-buffer-identification'."
+  (let ((file (buffer-file-name)))
+    (cond
+     ((and (mode-line-window-selected-p)
+           file
+           (buffer-modified-p))
+      '(italic mode-line-buffer-id))
+     ((and file (buffer-modified-p))
+      'italic)
+     ((mode-line-window-selected-p)
+      'mode-line-buffer-id))))
+
+(defun prot-modeline--buffer-name ()
+  "Return `buffer-name', truncating it if necessary.
+The name is truncated if the width of the window is smaller than
+`split-width-threshold'."
+  (let ((name (buffer-name)))
+    (if (< (window-width) split-width-threshold)
+        (concat (substring name 0 9) "...")
+      name)))
+
+(defun prot-modeline-buffer-name ()
+  "Return buffer name, with read-only indicator if relevant."
+  (let ((name (prot-modeline--buffer-name)))
+    (if buffer-read-only
+        (format "%s %s" (char-to-string #xE0A2) name)
+      name)))
+
+(defvar-local prot-modeline-buffer-identification
+    '(:eval
+      (propertize (prot-modeline-buffer-name)
+                  'face (prot-modeline-buffer-identification-face)
+                  'mouse-face 'mode-line-highlight))
   "Mode line construct for identifying the buffer being displayed.
 Propertize the current buffer with the `mode-line-buffer-id'
 face.  Let other buffers have no face.")
 
-(defvar prot-modeline--line-and-column
-  `((line-number-mode
-     (column-number-mode
-      (column-number-indicator-zero-based
-       (:propertize
-        mode-line-position-column-line-format
-        ,@mode-line-position--column-line-properties)
-       (:propertize
-        (:eval (string-replace
-                "%c" "%C" (car mode-line-position-column-line-format)))
-        ,@mode-line-position--column-line-properties))
-      (:propertize
-	   mode-line-position-line-format
-       ,@mode-line-position--column-line-properties))
-     (column-number-mode
-      (:propertize
-       mode-line-position-column-format
-       ,@mode-line-position--column-line-properties)
-      (:propertize
-       (:eval (string-replace
-               "%c" "%C" (car mode-line-position-column-format)))
-       ,@mode-line-position--column-line-properties)))
-    " "
-    (:propertize
-     ("" mode-line-percent-position)
-     mouse-face mode-line-highlight)
-    " ")
-  "Mode line construct for formatting `prot-modeline-position'.")
+(defun prot-modeline-major-mode-symbol ()
+  "Return appropriate propertized mode line indicator for the major mode."
+  (let ((indicator (cond
+                    ((derived-mode-p 'text-mode) "§")
+                    ((derived-mode-p 'prog-mode) "λ")
+                    ((derived-mode-p 'comint-mode) ">_")
+                    (t "◦"))))
+    (propertize indicator 'face 'shadow)))
 
-(defvar prot-modeline-position
-  '(:eval
-    (when (mode-line-window-selected-p)
-      prot-modeline--line-and-column))
-  "Mode line construct for the buffer position.")
-
-(defvar prot-modeline-major-mode
-  (list (propertize "%[" 'face 'error)
-        '(:eval
-          (concat
-           ;; P-NOTE 2023-07-01: I change the unicode symbol
-           (propertize (char-to-string #x1F11C) 'face 'shadow)
-           " "
-           (propertize
-            (capitalize
-             (string-replace
-              "-mode"
-              ""
-              (symbol-name major-mode)))
-            'mouse-face 'mode-line-highlight))
-          '("" mode-line-process)
-          (propertize "%]" 'face 'error)
-          " "))
+(defvar-local prot-modeline-major-mode
+    (list
+     (propertize "%[" 'face 'error)
+     '(:eval
+       (concat
+        (prot-modeline-major-mode-symbol)
+        " "
+        (propertize
+         (capitalize
+          (string-replace
+           "-mode"
+           ""
+           (symbol-name major-mode)))
+         'mouse-face 'mode-line-highlight)))
+     '(:eval
+       (when mode-line-process
+         (concat " " mode-line-process)))
+     (propertize "%]" 'face 'error))
   "Mode line construct for displaying major modes.")
 
-(defvar prot-modeline-align-right
-  '(:eval (propertize
-           " " 'display
-           `((space :align-to
-                    (- (+ right right-fringe right-margin)
-                       ,(string-width
-                         (format-mode-line mode-line-misc-info)))))))
+(defvar-local prot-modeline-align-right
+    '(:eval
+      (propertize
+       " " 'display
+       `((space :align-to
+                (- (+ right right-fringe right-margin)
+                   ,(string-width
+                     (format-mode-line mode-line-misc-info)))))))
   "Mode line construct to align following elements to the right.
 Read Info node `(elisp) Pixel Specification'.")
 
-(defvar prot-modeline-kbd-macro
-  '(:eval
-    (when (and defining-kbd-macro (mode-line-window-selected-p))
-      mode-line-defining-kbd-macro))
+(defvar-local prot-modeline-kbd-macro
+    '(:eval
+      (when (and defining-kbd-macro (mode-line-window-selected-p))
+        mode-line-defining-kbd-macro))
   "Mode line construct displaying `mode-line-defining-kbd-macro'.
 Specific to the current window's mode line.")
 
-(defvar prot-modeline-misc-info
-  '(:eval
-    (when (mode-line-window-selected-p)
-      mode-line-misc-info))
+(defvar-local prot-modeline-misc-info
+    '(:eval
+      (when (mode-line-window-selected-p)
+        mode-line-misc-info))
   "Mode line construct displaying `mode-line-misc-info'.
 Specific to the current window's mode line.")
 
-(defvar prot-modeline-vc-branch
-  '(:eval
-    (when-let* (((mode-line-window-selected-p))
-                (branches (vc-git-branches))
-                (branch (car branches))
-                (state (vc-state (buffer-file-name) 'Git))
-                (face (pcase state
-                        ('added 'vc-locally-added-state)
-                        ('edited 'vc-edited-state)
-                        ('removed 'vc-removed-state)
-                        ('missing 'vc-missing-state)
-                        ('conflict 'vc-conflict-state)
-                        ('locked 'vc-locked-state)
-                        (_ 'vc-up-to-date-state))))
-      (concat
-       (propertize (char-to-string #xE0A0) 'face 'shadow)
-       " "
-       (propertize (capitalize branch)
-                   'face face
-                   'mouse-face 'highlight))))
+(defun prot-modeline-diffstat (file)
+  "Return shortened Git diff numstat for FILE."
+  (when-let* ((output (shell-command-to-string (format "git diff --numstat %s" file)))
+              (stats (split-string output "[\s\t]" :omit-nulls "[\s\f\t\n\r\v]+"))
+              (added (nth 0 stats))
+              (deleted (nth 1 stats)))
+    (cond
+     ((and (equal added "0") (equal deleted "0"))
+      "")
+     ((and (not (equal added "0")) (equal deleted "0"))
+      (propertize (format "+%s" added) 'face 'shadow))
+     ((and (equal added "0") (not (equal deleted "0")))
+      (propertize (format "-%s" deleted) 'face 'shadow))
+     (t
+      (propertize (format "+%s -%s" added deleted) 'face 'shadow)))))
+
+(defvar-local prot-modeline-vc-branch
+    '(:eval
+      (when-let* (((mode-line-window-selected-p))
+                  (file (buffer-file-name))
+                  ((vc-git-registered file))
+                  (branches (vc-git-branches))
+                  (branch (car branches))
+                  (state (vc-state file 'Git))
+                  ;; (face (pcase state
+                  ;;         ('added 'vc-locally-added-state)
+                  ;;         ('edited 'vc-edited-state)
+                  ;;         ('removed 'vc-removed-state)
+                  ;;         ('missing 'vc-missing-state)
+                  ;;         ('conflict 'vc-conflict-state)
+                  ;;         ('locked 'vc-locked-state)
+                  ;;         (_ 'vc-up-to-date-state)))
+                  )
+        (concat
+         (propertize (char-to-string #xE0A0) 'face 'shadow)
+         " "
+         (propertize (capitalize branch)
+                     ;; 'face face
+                     'mouse-face 'highlight
+                     'help-echo (vc-git-working-revision file))
+         " "
+         (prot-modeline-diffstat file))))
   "Mode line construct to return propertized VC branch.")
 
 ;; NOTE 2023-04-28: The `risky-local-variable' is critical, as those
 ;; variables will not work without it.
 (dolist (construct '( prot-modeline-major-mode prot-modeline-align-right
-                      prot-modeline-kbd-macro prot-modeline-vc-branch
-                      prot-modeline-misc-info prot-modeline-buffer-identification
-                      prot-modeline-position))
+                      prot-modeline-kbd-macro prot-modeline-vc-branch prot-modeline-misc-info
+                      prot-modeline-buffer-identification prot-modeline-buffer-status
+                      prot-modeline-input-method))
   (put construct 'risky-local-variable t))
 
 (provide 'prot-modeline)
