@@ -34,6 +34,8 @@
 
 ;;; Code:
 
+(require 'prot-common)
+
 (defvar prot-window-window-sizes
   '( :max-height (lambda () (floor (frame-height) 3))
      :min-height 10
@@ -66,6 +68,29 @@ and width, per `prot-window-window-sizes'."
    (prot-window--get-window-size :min-height)
    (prot-window--get-window-size :max-width)
    (prot-window--get-window-size :max-width)))
+
+(defun prot-window--get-display-buffer-below-or-pop ()
+  "Return list of functions for `prot-window-display-buffer-below-or-pop'."
+  (list
+   #'display-buffer-reuse-mode-window
+   (if (prot-common-window-small-p)
+       #'display-buffer-below-selected
+     #'display-buffer-pop-up-window)))
+
+(defun prot-window-display-buffer-below-or-pop (&rest args)
+  "Display buffer below current window or pop a new window.
+The criterion for choosing to display the buffer below the
+current one is a non-nil return value for
+`prot-common-window-small-p'.
+
+Apply ARGS expected by the underlying `display-buffer' functions.
+
+This as the action function in a `display-buffer-alist' entry."
+  (let ((functions (prot-window--get-display-buffer-below-or-pop)))
+    (catch 'success
+      (dolist (fn functions)
+        (when (apply fn args)
+          (throw 'success fn))))))
 
 (defun prot-window-shell-or-term-p (buffer &rest _)
   "Check if BUFFER is a shell or terminal.

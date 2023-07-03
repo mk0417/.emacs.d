@@ -10,6 +10,7 @@
 (setq remote-file-name-inhibit-auto-save t)
 (setq save-interprogram-paste-before-kill t)
 (setq mode-require-final-newline 'visit-save)
+(setq-default truncate-partial-width-windows nil)
 (setq mouse-yank-at-point t)
 (setq confirm-kill-processes nil)
 (setq process-adaptive-read-buffering nil)

@@ -17,6 +17,13 @@
       `(;; no window
         ("\\`\\*Async Shell Command\\*\\'"
          (display-buffer-no-window))
+        ;; left side window
+        (,world-clock-buffer-name
+         (display-buffer-in-side-window)
+         (side . left)
+         (slot . 0)
+         (dedicated . t)
+         (window-width . 0.2))
         ;; bottom side window
         ("\\*Org Select\\*" ; the `org-capture' key selection
          (display-buffer-in-side-window)
@@ -25,10 +32,11 @@
          (slot . 0)
          (window-parameters . ((mode-line-format . none))))
         ;; bottom buffer (NOT side window)
-        ((or . ((derived-mode . messages-buffer-mode)
+        ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
+                (derived-mode . flymake-project-diagnostics-mode)
+                (derived-mode . messages-buffer-mode)
                 (derived-mode . backtrace-mode)
-                "\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*"
-                ,world-clock-buffer-name))
+                "\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*"))
          (display-buffer-reuse-mode-window display-buffer-at-bottom)
          (window-height . 0.3)
          (dedicated . t)
@@ -41,16 +49,9 @@
         ("\\*\\(Output\\|Register Preview\\).*"
          (display-buffer-reuse-mode-window display-buffer-at-bottom))
         ;; below current window
-        ((derived-mode . help-mode) ; See the hooks for `visual-line-mode'
-         (display-buffer-reuse-mode-window display-buffer-below-selected))
         ("\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
          (display-buffer-reuse-mode-window display-buffer-below-selected)
          (window-height . 0.1)
-         (dedicated . t)
-         (preserve-size . (t . t)))
-        ((derived-mode . log-view-mode)
-         (display-buffer-reuse-mode-window display-buffer-below-selected)
-         (window-height . 0.3)
          (dedicated . t)
          (preserve-size . (t . t)))
         ((derived-mode . reb-mode) ; M-x re-builder
@@ -60,12 +61,15 @@
          (preserve-size . (t . t)))
         ((or . ((derived-mode . occur-mode)
                 (derived-mode . Buffer-menu-mode)
-                "\\*\\(|Buffer List\\|Occur\\).*"
+                (derived-mode . log-view-mode)
+                (derived-mode . embark-collect-mode)
+                (derived-mode . help-mode) ; See the hooks for `visual-line-mode'
+                "\\*\\(|Buffer List\\|Occur\\|vc-change-log\\|Embark Collect\\).*"
                 prot-window-shell-or-term-p))
-         (display-buffer-reuse-mode-window display-buffer-below-selected)
+         (prot-window-display-buffer-below-or-pop)
          (dedicated . t)
          (body-function . prot-window-select-fit-size))
-        ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\|Embark Collect\\).*"
+        ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
          (display-buffer-reuse-mode-window display-buffer-below-selected)
          (dedicated . t)
          (window-height . fit-window-to-buffer))
@@ -91,9 +95,13 @@
 (setq even-window-sizes 'height-only)
 (setq window-sides-vertical nil)
 (setq switch-to-buffer-in-dedicated-window 'pop)
+(setq split-height-threshold 80)
+(setq split-width-threshold 100)
 
 (dolist (hook '(epa-info-mode-hook help-mode-hook custom-mode-hook))
   (add-hook hook #'visual-line-mode))
+
+(add-hook 'world-clock-mode-hook #'prot-common-truncate-lines-silently)
 
 ;; NOTE 2022-09-17: Also see `prot-simple-swap-window-buffers'.
 (prot-emacs-keybind global-map
