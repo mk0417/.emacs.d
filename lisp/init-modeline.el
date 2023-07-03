@@ -28,7 +28,8 @@
                              "-mode"
                              ""
                              (symbol-name major-mode)))
-                           'mouse-face 'mode-line-highlight)))
+                           'mouse-face 'mode-line-highlight
+                           'help-echo (prot-modeline-major-mode-help-echo))))
                        '(:eval
                          (when mode-line-process
                            (concat " " mode-line-process)))
@@ -38,10 +39,10 @@
 (setq-default mode-line-format
               '("%e"
                 prot-modeline-kbd-macro
-                " "
-                mode-line-mule-info
                 mode-line-modified
-                mode-line-remote
+                prot-modeline-narrow
+                prot-modeline-input-method
+                prot-modeline-buffer-status
                 " "
                 prot-modeline-buffer-identification
                 "  "

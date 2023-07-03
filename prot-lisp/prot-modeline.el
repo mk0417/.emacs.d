@@ -38,10 +38,30 @@
     (((class color) (min-colors 88) (background dark))
      :background "#77aaff" :foreground "#000000")
     (t :inverse-video t))
-  "Face for intense mode line constructs.")
+  "Face for intense mode line constructs, unlike `prot-modeline-subtle'.")
 
-(setq mode-line-defining-kbd-macro
-      (propertize " KMacro " 'face 'prot-modeline-intense))
+(defface prot-modeline-subtle
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :background "#4444aa" :foreground "#ffffff")
+    (((class color) (min-colors 88) (background dark))
+     :background "#aaccff" :foreground "#000000")
+    (t :inverse-video t))
+  "Face for subtle mode line constructs, unlike `prot-modeline-intense'.")
+
+(defvar-local prot-modeline-kbd-macro
+    '(:eval
+      (when (and defining-kbd-macro (mode-line-window-selected-p))
+        (propertize " KMacro " 'face 'prot-modeline-intense)))
+  "Mode line construct displaying `mode-line-defining-kbd-macro'.
+Specific to the current window's mode line.")
+
+(defvar-local prot-modeline-narrow
+    '(:eval
+      (when (and (buffer-narrowed-p)
+                 (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
+        (propertize " Narrow " 'face 'prot-modeline-subtle)))
+  "Mode line construct to report the multilingual environment.")
 
 (defvar-local prot-modeline-input-method
     '(:eval
@@ -85,11 +105,18 @@ The name is truncated if the width of the window is smaller than
         (format "%s %s" (char-to-string #xE0A2) name)
       name)))
 
+(defun prot-modeline-buffer-name-help-echo ()
+  "Return `help-echo' value for `prot-modeline-buffer-identification'."
+  (concat
+   (or (buffer-file-name)
+       (format "No underlying file.\nDirectory is: %s" default-directory))))
+
 (defvar-local prot-modeline-buffer-identification
     '(:eval
       (propertize (prot-modeline-buffer-name)
                   'face (prot-modeline-buffer-identification-face)
-                  'mouse-face 'mode-line-highlight))
+                  'mouse-face 'mode-line-highlight
+                  'help-echo (prot-modeline-buffer-name-help-echo)))
   "Mode line construct for identifying the buffer being displayed.
 Propertize the current buffer with the `mode-line-buffer-id'
 face.  Let other buffers have no face.")
@@ -102,6 +129,11 @@ face.  Let other buffers have no face.")
                     ((derived-mode-p 'comint-mode) ">_")
                     (t "◦"))))
     (propertize indicator 'face 'shadow)))
+
+(defun prot-modeline-major-mode-help-echo ()
+  "Return `help-echo' value for `prot-modeline-major-mode'."
+  (format "Symbol: `%s'.  Derived from: `%s'"
+          major-mode (get major-mode 'derived-mode-parent)))
 
 (defvar-local prot-modeline-major-mode
     (list
@@ -116,37 +148,13 @@ face.  Let other buffers have no face.")
            "-mode"
            ""
            (symbol-name major-mode)))
-         'mouse-face 'mode-line-highlight)))
+         'mouse-face 'mode-line-highlight
+         'help-echo (prot-modeline-major-mode-help-echo))))
      '(:eval
        (when mode-line-process
          (concat " " mode-line-process)))
      (propertize "%]" 'face 'error))
   "Mode line construct for displaying major modes.")
-
-(defvar-local prot-modeline-align-right
-    '(:eval
-      (propertize
-       " " 'display
-       `((space :align-to
-                (- (+ right right-fringe right-margin)
-                   ,(string-width
-                     (format-mode-line mode-line-misc-info)))))))
-  "Mode line construct to align following elements to the right.
-Read Info node `(elisp) Pixel Specification'.")
-
-(defvar-local prot-modeline-kbd-macro
-    '(:eval
-      (when (and defining-kbd-macro (mode-line-window-selected-p))
-        mode-line-defining-kbd-macro))
-  "Mode line construct displaying `mode-line-defining-kbd-macro'.
-Specific to the current window's mode line.")
-
-(defvar-local prot-modeline-misc-info
-    '(:eval
-      (when (mode-line-window-selected-p)
-        mode-line-misc-info))
-  "Mode line construct displaying `mode-line-misc-info'.
-Specific to the current window's mode line.")
 
 (defun prot-modeline-diffstat (file)
   "Return shortened Git diff numstat for FILE."
@@ -163,6 +171,29 @@ Specific to the current window's mode line.")
       (propertize (format "-%s" deleted) 'face 'shadow))
      (t
       (propertize (format "+%s -%s" added deleted) 'face 'shadow)))))
+
+(declare-function vc-git-working-revision "vc-git" (file))
+
+(defun prot-modeline--vc-text (file branch)
+  "Prepare text for Git controlled FILE, given BRANCH."
+  (concat
+   (propertize (char-to-string #xE0A0) 'face 'shadow)
+   " "
+   (propertize (capitalize branch)
+               ;; 'face face
+               'mouse-face 'highlight
+               'help-echo (vc-git-working-revision file))
+   " "
+   (prot-modeline-diffstat file)))
+
+(defun prot-modeline--vc-details (file branch)
+  "Return Git BRANCH details for FILE, truncating it if necessary.
+The string is truncated if the width of the window is smaller
+than `split-width-threshold'."
+  (let ((text (prot-modeline--vc-text file branch)))
+    (if (< (window-width) split-width-threshold)
+        (concat (substring text 0 9) "...")
+      text)))
 
 (defvar-local prot-modeline-vc-branch
     '(:eval
@@ -181,23 +212,38 @@ Specific to the current window's mode line.")
                   ;;         ('locked 'vc-locked-state)
                   ;;         (_ 'vc-up-to-date-state)))
                   )
-        (concat
-         (propertize (char-to-string #xE0A0) 'face 'shadow)
-         " "
-         (propertize (capitalize branch)
-                     ;; 'face face
-                     'mouse-face 'highlight
-                     'help-echo (vc-git-working-revision file))
-         " "
-         (prot-modeline-diffstat file))))
+        (prot-modeline--vc-details file branch)))
   "Mode line construct to return propertized VC branch.")
+
+(defvar-local prot-modeline-align-right
+    '(:eval
+      (propertize
+       " " 'display
+       `((space :align-to
+                (- (+ right right-fringe right-margin)
+                   ,(string-width
+                     (format-mode-line mode-line-misc-info)))))))
+  "Mode line construct to align following elements to the right.
+Read Info node `(elisp) Pixel Specification'.")
+
+(defvar-local prot-modeline-misc-info
+    '(:eval
+      (when (mode-line-window-selected-p)
+        mode-line-misc-info))
+  "Mode line construct displaying `mode-line-misc-info'.
+Specific to the current window's mode line.")
 
 ;; NOTE 2023-04-28: The `risky-local-variable' is critical, as those
 ;; variables will not work without it.
-(dolist (construct '( prot-modeline-major-mode prot-modeline-align-right
-                      prot-modeline-kbd-macro prot-modeline-vc-branch prot-modeline-misc-info
-                      prot-modeline-buffer-identification prot-modeline-buffer-status
-                      prot-modeline-input-method))
+(dolist (construct '(prot-modeline-kbd-macro
+                     prot-modeline-narrow
+                     prot-modeline-input-method
+                     prot-modeline-buffer-status
+                     prot-modeline-buffer-identification
+                     prot-modeline-major-mode
+                     prot-modeline-vc-branch
+                     prot-modeline-align-right
+                     prot-modeline-misc-info))
   (put construct 'risky-local-variable t))
 
 (provide 'prot-modeline)
