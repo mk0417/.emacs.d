@@ -51,6 +51,7 @@
       ;; `orderless' kicks in as soon as I input a space or one of its
       ;; style dispatcher characters.
       '((file (styles . (basic partial-completion orderless)))
+        (project-file (styles . (orderless)))
         (bookmark (styles . (basic substring)))
         (library (styles . (basic substring)))
         (embark-keybinding (styles . (basic substring)))
@@ -128,7 +129,10 @@
 (setq consult-narrow-key nil)
 (setq register-preview-delay 0.8
       register-preview-function #'consult-register-format)
-(setq consult-find-args "find . -not ( -path */.git* -prune )")
+(setq consult-find-args
+      (concat "find . -not ( "
+              "-path */.git* -prune "
+              "-or -path */.cache* -prune )"))
 (setq consult-preview-key "M-v")
 
 (add-to-list 'consult-mode-histories '(vc-git-log-edit-mode . log-edit-comment-ring))
