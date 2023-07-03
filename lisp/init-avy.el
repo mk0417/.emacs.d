@@ -50,6 +50,13 @@
     (avy-jump "=" :beg BEG :end END)))
 (add-to-list 'avy-orders-alist '(p-avy-goto-equal . avy-order-closest))
 
+(defun p-avy-goto-equal-block ()
+  (interactive)
+  (let ((block-beginning-position (progn (region-beginning) (line-beginning-position)))
+        (block-end-position (progn (region-end) (line-end-position))))
+    (avy-with p-avy-goto-equal
+      (p-avy-goto-equal block-beginning-position block-end-position))))
+
 (define-key evil-normal-state-map (kbd "f") nil)
 (define-key evil-normal-state-map (kbd "fl") 'avy-goto-line)
 (define-key evil-normal-state-map (kbd "f.") 'p-avy-goto-word-current-line)
