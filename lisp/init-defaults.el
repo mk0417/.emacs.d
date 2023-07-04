@@ -228,7 +228,7 @@
       x-gtk-use-system-tooltips nil
       tooltip-frame-parameters
       '((name . "tooltip")
-        (internal-border-width . 6)
+        (internal-border-width . 10)
         (border-width . 0)
         (no-special-glyphs . t)))
 

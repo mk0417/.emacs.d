@@ -39,7 +39,7 @@
 ;; NOTE 2023-06-16: I changed regular font size to 120
 (setq fontaine-presets
       '((small
-         :default-family "Iosevka Comfy Wide"
+         :default-family "Iosevka Comfy"
          :default-height 70
          :variable-pitch-family "Iosevka Comfy Wide Motion Duo")
         (regular) ; like this it uses all the fallback values and is named `regular'
