@@ -73,7 +73,8 @@ and width, per `prot-window-window-sizes'."
   "Return list of functions for `prot-window-display-buffer-below-or-pop'."
   (list
    #'display-buffer-reuse-mode-window
-   (if (prot-common-window-small-p)
+   (if (or (prot-common-window-small-p)
+           (prot-common-three-or-more-windows-p))
        #'display-buffer-below-selected
      #'display-buffer-pop-up-window)))
 

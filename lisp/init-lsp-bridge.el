@@ -15,6 +15,7 @@
 (setq acm-backend-search-file-words-candidate-min-length 3)
 (setq acm-backend-elisp-candidate-min-length 3)
 (setq acm-backend-lsp-candidate-min-length 3)
+(setq lsp-bridge-enable-mode-line nil)
 
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook

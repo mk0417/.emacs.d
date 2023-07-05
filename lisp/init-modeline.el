@@ -7,9 +7,9 @@
 (setq mode-line-compact nil)
 
 ;; Full path in mode-line
-(setq-default prot-modeline-buffer-identification
-              (list 'buffer-file-name
-                    '(:eval (propertize (format "  %s" buffer-file-truename)))))
+;; (setq-default prot-modeline-buffer-identification
+;;               (list 'buffer-file-name
+;;                     '(:eval (propertize (format "  %s" buffer-file-truename)))))
 
 (defun get-jupyter-repl-interaction-indicator ()
   "Get the indicator for Jupyter-Repl-Interaction mode."
@@ -20,14 +20,11 @@
                        (propertize "%[" 'face 'error)
                        '(:eval
                          (concat
-                          (prot-modeline-major-mode-symbol)
+                          (prot-modeline-major-mode-indicator)
                           " "
                           (propertize
-                           (capitalize
-                            (string-replace
-                             "-mode"
-                             ""
-                             (symbol-name major-mode)))
+                           (prot-modeline-string-truncate
+                            (prot-modeline-major-mode-name))
                            'mouse-face 'mode-line-highlight
                            'help-echo (prot-modeline-major-mode-help-echo))))
                        '(:eval
@@ -54,8 +51,6 @@
                 "  "
                 prot-modeline-align-right
                 prot-modeline-misc-info))
-
-(add-hook 'after-init-hook #'column-number-mode)
 
 (provide 'init-modeline)
 ;;;;; init-modeline.el ends here

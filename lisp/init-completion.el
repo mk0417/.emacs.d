@@ -53,6 +53,12 @@ automatically.")
     (vertico-resize . t))
   "List of configurations for maximal Vertico multiform.")
 
+;; Sort directories before files.  From the Consult documentation.
+(defun contrib/sort-directories-first (files)
+  (setq files (vertico-sort-history-length-alpha files))
+  (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
+         (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
+
 (setq vertico-multiform-categories
       `(;; Maximal
         (embark-keybinding ,@prot-vertico-maximal)
@@ -61,7 +67,9 @@ automatically.")
         (imenu ,@prot-vertico-maximal)
         (unicode-name ,@prot-vertico-maximal)
         ;; Minimal
-        (file ,@prot-vertico-minimal (vertico-preselect . prompt))
+        (file ,@prot-vertico-minimal
+              (vertico-preselect . prompt)
+              (vertico-sort-function . contrib/sort-directories-first))
         (t ,@prot-vertico-minimal)))
 
 (vertico-multiform-mode 1)
@@ -86,7 +94,18 @@ This is done to accommodate `prot-vertico-minimal'."
         (vertico-previous 1))
     (vertico-previous 1)))
 
+(defun prot-vertico-private-complete ()
+  "Expand contents and show remaining candidates, if needed.
+This is done to accommodate `prot-vertico-minimal'."
+  (interactive)
+  (if (and vertico-unobtrusive-mode (> vertico--total 1))
+      (progn
+        (minibuffer-complete)
+        (vertico-multiform-vertical))
+    (vertico-insert)))
+
 (prot-emacs-keybind vertico-map
+  "TAB" #'prot-vertico-private-complete
   "DEL" #'vertico-directory-delete-char
   "M-DEL" #'vertico-directory-delete-word
   "M-," #'vertico-quick-insert

@@ -31,6 +31,16 @@
 
 ;;; Code:
 
+(defgroup prot-modeline nil
+  "Custom modeline that is stylistically close to the default."
+  :group 'mode-line)
+
+(defcustom prot-modeline-string-truncate-length 9
+  "String length after which truncation should be done in small windows."
+  :type 'natnum)
+
+;;;; Faces
+
 (defface prot-modeline-intense
   '((default :inherit bold)
     (((class color) (min-colors 88) (background light))
@@ -49,19 +59,39 @@
     (t :inverse-video t))
   "Face for subtle mode line constructs, unlike `prot-modeline-intense'.")
 
+;;;; Common helper functions
+
+(defun prot-modeline--string-truncate-p (str)
+  "Return non-nil if STR should be truncated."
+  (and (< (window-total-width) split-width-threshold)
+       (> (length str) prot-modeline-string-truncate-length)))
+
+(defun prot-modeline-string-truncate (str)
+  "Return truncated STR, if appropriate, else return STR."
+  (if (prot-modeline--string-truncate-p str)
+      (concat (substring str 0 prot-modeline-string-truncate-length) "...")
+    str))
+
+;;;; Keyboard macro indicator
+
 (defvar-local prot-modeline-kbd-macro
     '(:eval
-      (when (and defining-kbd-macro (mode-line-window-selected-p))
+      (when (and (mode-line-window-selected-p) defining-kbd-macro)
         (propertize " KMacro " 'face 'prot-modeline-intense)))
   "Mode line construct displaying `mode-line-defining-kbd-macro'.
 Specific to the current window's mode line.")
 
+;;;; Narrow indicator
+
 (defvar-local prot-modeline-narrow
     '(:eval
-      (when (and (buffer-narrowed-p)
+      (when (and (mode-line-window-selected-p)
+                 (buffer-narrowed-p)
                  (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
         (propertize " Narrow " 'face 'prot-modeline-subtle)))
   "Mode line construct to report the multilingual environment.")
+
+;;;; Input method
 
 (defvar-local prot-modeline-input-method
     '(:eval
@@ -70,11 +100,17 @@ Specific to the current window's mode line.")
                     'mouse-face 'mode-line-highlight)))
   "Mode line construct to report the multilingual environment.")
 
+;;;; Buffer status
+
+;; TODO 2023-07-05: What else is there beside remote files?  If
+;; nothing, this must be renamed accordingly.
 (defvar-local prot-modeline-buffer-status
     '(:eval
       (when (file-remote-p default-directory)
         (propertize "@" 'mouse-face 'mode-line-highlight)))
   "Mode line construct for showing remote file name.")
+
+;;;; Buffer name and modified status
 
 (defun prot-modeline-buffer-identification-face ()
   "Return appropriate face or face list for `prot-modeline-buffer-identification'."
@@ -93,10 +129,8 @@ Specific to the current window's mode line.")
   "Return `buffer-name', truncating it if necessary.
 The name is truncated if the width of the window is smaller than
 `split-width-threshold'."
-  (let ((name (buffer-name)))
-    (if (< (window-width) split-width-threshold)
-        (concat (substring name 0 9) "...")
-      name)))
+  (when-let ((name (buffer-name)))
+    (prot-modeline-string-truncate name)))
 
 (defun prot-modeline-buffer-name ()
   "Return buffer name, with read-only indicator if relevant."
@@ -121,7 +155,9 @@ The name is truncated if the width of the window is smaller than
 Propertize the current buffer with the `mode-line-buffer-id'
 face.  Let other buffers have no face.")
 
-(defun prot-modeline-major-mode-symbol ()
+;;;; Major mode
+
+(defun prot-modeline-major-mode-indicator ()
   "Return appropriate propertized mode line indicator for the major mode."
   (let ((indicator (cond
                     ((derived-mode-p 'text-mode) "§")
@@ -129,6 +165,10 @@ face.  Let other buffers have no face.")
                     ((derived-mode-p 'comint-mode) ">_")
                     (t "◦"))))
     (propertize indicator 'face 'shadow)))
+
+(defun prot-modeline-major-mode-name ()
+  "Return capitalized `major-mode' without the -mode suffix."
+  (capitalize (string-replace "-mode" "" (symbol-name major-mode))))
 
 (defun prot-modeline-major-mode-help-echo ()
   "Return `help-echo' value for `prot-modeline-major-mode'."
@@ -140,14 +180,11 @@ face.  Let other buffers have no face.")
      (propertize "%[" 'face 'error)
      '(:eval
        (concat
-        (prot-modeline-major-mode-symbol)
+        (prot-modeline-major-mode-indicator)
         " "
         (propertize
-         (capitalize
-          (string-replace
-           "-mode"
-           ""
-           (symbol-name major-mode)))
+         (prot-modeline-string-truncate
+          (prot-modeline-major-mode-name))
          'mouse-face 'mode-line-highlight
          'help-echo (prot-modeline-major-mode-help-echo))))
      '(:eval
@@ -155,6 +192,8 @@ face.  Let other buffers have no face.")
          (concat " " mode-line-process)))
      (propertize "%]" 'face 'error))
   "Mode line construct for displaying major modes.")
+
+;;;; Git branch and diffstat
 
 (defun prot-modeline-diffstat (file)
   "Return shortened Git diff numstat for FILE."
@@ -174,26 +213,25 @@ face.  Let other buffers have no face.")
 
 (declare-function vc-git-working-revision "vc-git" (file))
 
-(defun prot-modeline--vc-text (file branch)
-  "Prepare text for Git controlled FILE, given BRANCH."
+(defun prot-modeline--vc-text (file branch &optional face)
+  "Prepare text for Git controlled FILE, given BRANCH.
+With optional FACE, use it to propertize the BRANCH."
   (concat
    (propertize (char-to-string #xE0A0) 'face 'shadow)
    " "
    (propertize (capitalize branch)
-               ;; 'face face
+               'face face
                'mouse-face 'highlight
                'help-echo (vc-git-working-revision file))
    " "
    (prot-modeline-diffstat file)))
 
-(defun prot-modeline--vc-details (file branch)
+(defun prot-modeline--vc-details (file branch &optional face)
   "Return Git BRANCH details for FILE, truncating it if necessary.
 The string is truncated if the width of the window is smaller
 than `split-width-threshold'."
-  (let ((text (prot-modeline--vc-text file branch)))
-    (if (< (window-width) split-width-threshold)
-        (concat (substring text 0 9) "...")
-      text)))
+  (let ((text (prot-modeline--vc-text file branch face)))
+    (prot-modeline-string-truncate text)))
 
 (defvar-local prot-modeline-vc-branch
     '(:eval
@@ -203,28 +241,66 @@ than `split-width-threshold'."
                   (branches (vc-git-branches))
                   (branch (car branches))
                   (state (vc-state file 'Git))
-                  ;; (face (pcase state
-                  ;;         ('added 'vc-locally-added-state)
-                  ;;         ('edited 'vc-edited-state)
-                  ;;         ('removed 'vc-removed-state)
-                  ;;         ('missing 'vc-missing-state)
-                  ;;         ('conflict 'vc-conflict-state)
-                  ;;         ('locked 'vc-locked-state)
-                  ;;         (_ 'vc-up-to-date-state)))
-                  )
-        (prot-modeline--vc-details file branch)))
+                  (face (pcase state
+                          ('added 'vc-locally-added-state)
+                          ('edited 'vc-edited-state)
+                          ('removed 'vc-removed-state)
+                          ('missing 'vc-missing-state)
+                          ('conflict 'vc-conflict-state)
+                          ('locked 'vc-locked-state)
+                          (_ 'vc-up-to-date-state))))
+        (prot-modeline--vc-details file branch face)))
   "Mode line construct to return propertized VC branch.")
+
+;;;; Right side alignment
+
+;; (defvar-local prot-modeline-align-right
+;;     '(:eval
+;;       (propertize
+;;        " " 'display
+;;        `((space :align-to
+;;                 (- (+ right right-fringe right-margin)
+;;                    ,(string-width
+;;                      (format-mode-line mode-line-misc-info)))))))
+;;   "Mode line construct to align following elements to the right.
+;; Read Info node `(elisp) Pixel Specification'.")
 
 (defvar-local prot-modeline-align-right
     '(:eval
       (propertize
-       " " 'display
-       `((space :align-to
-                (- (+ right right-fringe right-margin)
-                   ,(string-width
-                     (format-mode-line mode-line-misc-info)))))))
+       " "
+       'display
+       `(space
+         :align-to
+         (- right
+            ,(ceiling
+              ;; FIXME 2023-07-03: The `format-mode-line' assumes that
+              ;; I will only ever right align `mode-line-misc-info'.
+              ;; A better approach would be to have a variable that
+              ;; specifies "right side elements" and includes the
+              ;; likes of `mode-line-misc-info'.
+              (string-pixel-width (format-mode-line mode-line-misc-info))
+              ;; A column is equal to this in pixels.  We check if "m"
+              ;; (a wide glyph in proportionately spaced fonts) is at
+              ;; its natural width.  This cover the possibility of
+              ;; `mode-line' being set to a variable pitch font or to
+              ;; inherit from `variable-pitch'.
+              (string-pixel-width (propertize "m" 'face 'mode-line)))
+            ,(ceiling
+              (string-pixel-width (propertize "m" 'face 'mode-line))
+              ;; Find the height of the `mode-line' font, falling back
+              ;; to `default'.  Then get the "magic" number out of it.
+              ;; I am not sure why this works, but it does with all
+              ;; font sizes I tried, using my Iosevka Comfy fonts.
+              ;; The spacing is off by 2(?) pixels when I try FiraGO,
+              ;; though only at small point sizes...
+              (floor
+               (/ (face-attribute 'mode-line :height nil 'default) 10)
+               3.5))))))
   "Mode line construct to align following elements to the right.
 Read Info node `(elisp) Pixel Specification'.")
+
+;;;; Miscellaneous
 
 (defvar-local prot-modeline-misc-info
     '(:eval
@@ -232,6 +308,8 @@ Read Info node `(elisp) Pixel Specification'.")
         mode-line-misc-info))
   "Mode line construct displaying `mode-line-misc-info'.
 Specific to the current window's mode line.")
+
+;;;; Risky local variables
 
 ;; NOTE 2023-04-28: The `risky-local-variable' is critical, as those
 ;; variables will not work without it.
