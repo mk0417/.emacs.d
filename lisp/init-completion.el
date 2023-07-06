@@ -18,17 +18,6 @@
 
 (vertico-mode 1)
 
-;; sort directories first
-;; (defun sort-directories-first (files)
-;;   (setq files (vertico-sort-history-alpha files))
-;;   (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
-;;          (seq-remove (lambda (x) (string-suffix-p "/" x)) files)))
-
-;; (setq vertico-multiform-categories
-;;       '((symbol (vertico-sort-function . vertico-sort-alpha))
-;;         (file (vertico-sort-function . sort-directories-first))
-;;         (t (vertico-sort-function . vertico-sort-history-alpha))))
-
 (defvar prot-vertico-minimal
   '(unobtrusive
     (vertico-flat-format . ( :multiple  ""
@@ -53,7 +42,7 @@ automatically.")
     (vertico-resize . t))
   "List of configurations for maximal Vertico multiform.")
 
-;; Sort directories before files.  From the Consult documentation.
+;; Sort directories before files.  From the Vertico documentation.
 (defun contrib/sort-directories-first (files)
   (setq files (vertico-sort-history-length-alpha files))
   (nconc (seq-filter (lambda (x) (string-suffix-p "/" x)) files)
