@@ -40,7 +40,7 @@
 (setq fontaine-presets
       '((small
          :default-family "Iosevka Comfy"
-         :default-height 70
+         :default-height 80
          :variable-pitch-family "Iosevka Comfy Wide Motion Duo")
         (regular) ; like this it uses all the fallback values and is named `regular'
         (medium
