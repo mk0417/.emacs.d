@@ -35,29 +35,135 @@
   "Custom modeline that is stylistically close to the default."
   :group 'mode-line)
 
+(defgroup prot-modeline-faces nil
+  "Faces for my custom modeline."
+  :group 'prot-modeline)
+
 (defcustom prot-modeline-string-truncate-length 9
   "String length after which truncation should be done in small windows."
   :type 'natnum)
 
 ;;;; Faces
 
-(defface prot-modeline-intense
+(defface prot-modeline-indicator-red
   '((default :inherit bold)
     (((class color) (min-colors 88) (background light))
-     :background "#0000aa" :foreground "#ffffff")
+     :foreground "#880000")
     (((class color) (min-colors 88) (background dark))
-     :background "#77aaff" :foreground "#000000")
-    (t :inverse-video t))
-  "Face for intense mode line constructs, unlike `prot-modeline-subtle'.")
+     :foreground "#ff9f9f")
+    (t :foreground "red"))
+  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  :group 'prot-modeline-faces)
 
-(defface prot-modeline-subtle
+(defface prot-modeline-indicator-red-bg
   '((default :inherit bold)
     (((class color) (min-colors 88) (background light))
-     :background "#4444aa" :foreground "#ffffff")
+     :background "#aa1111" :foreground "white")
     (((class color) (min-colors 88) (background dark))
-     :background "#aaccff" :foreground "#000000")
-    (t :inverse-video t))
-  "Face for subtle mode line constructs, unlike `prot-modeline-intense'.")
+     :background "#ff9090" :foreground "black")
+    (t :background "red" :foreground "black"))
+  "Face for modeline indicators with a background."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-green
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :foreground "#005f00")
+    (((class color) (min-colors 88) (background dark))
+     :foreground "#73fa7f")
+    (t :foreground "green"))
+  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-green-bg
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :background "#207b20" :foreground "white")
+    (((class color) (min-colors 88) (background dark))
+     :background "#77d077" :foreground "black")
+    (t :background "green" :foreground "black"))
+  "Face for modeline indicators with a background."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-yellow
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :foreground "#6f4000")
+    (((class color) (min-colors 88) (background dark))
+     :foreground "#f0c526")
+    (t :foreground "yellow"))
+  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-yellow-bg
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :background "#805000" :foreground "white")
+    (((class color) (min-colors 88) (background dark))
+     :background "#ffc800" :foreground "black")
+    (t :background "yellow" :foreground "black"))
+  "Face for modeline indicators with a background."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-blue
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :foreground "#00228a")
+    (((class color) (min-colors 88) (background dark))
+     :foreground "#88bfff")
+    (t :foreground "blue"))
+  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-blue-bg
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :background "#0000aa" :foreground "white")
+    (((class color) (min-colors 88) (background dark))
+     :background "#77aaff" :foreground "black")
+    (t :background "blue" :foreground "black"))
+  "Face for modeline indicators with a background."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-magenta
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :foreground "#6a1aaf")
+    (((class color) (min-colors 88) (background dark))
+     :foreground "#e0a0ff")
+    (t :foreground "magenta"))
+  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-magenta-bg
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :background "#6f0f9f" :foreground "white")
+    (((class color) (min-colors 88) (background dark))
+     :background "#e3a2ff" :foreground "black")
+    (t :background "magenta" :foreground "black"))
+  "Face for modeline indicators with a background."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-cyan
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :foreground "#004060")
+    (((class color) (min-colors 88) (background dark))
+     :foreground "#30bbd0")
+    (t :foreground "cyan"))
+  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-cyan-bg
+  '((default :inherit bold)
+    (((class color) (min-colors 88) (background light))
+     :background "#006080" :foreground "white")
+    (((class color) (min-colors 88) (background dark))
+     :background "#40c0e0" :foreground "black")
+    (t :background "cyan" :foreground "black"))
+  "Face for modeline indicators with a background."
+  :group 'prot-modeline-faces)
 
 ;;;; Common helper functions
 
@@ -68,7 +174,8 @@
        (not (one-window-p :no-minibuffer))))
 
 (defun prot-modeline-string-truncate (str)
-  "Return truncated STR, if appropriate, else return STR."
+  "Return truncated STR, if appropriate, else return STR.
+Truncation is done up to `prot-modeline-string-truncate-length'."
   (if (prot-modeline--string-truncate-p str)
       (concat (substring str 0 prot-modeline-string-truncate-length) "...")
     str))
@@ -78,7 +185,7 @@
 (defvar-local prot-modeline-kbd-macro
     '(:eval
       (when (and (mode-line-window-selected-p) defining-kbd-macro)
-        (propertize " KMacro " 'face 'prot-modeline-intense)))
+        (propertize " KMacro " 'face 'prot-modeline-indicator-blue-bg)))
   "Mode line construct displaying `mode-line-defining-kbd-macro'.
 Specific to the current window's mode line.")
 
@@ -89,7 +196,7 @@ Specific to the current window's mode line.")
       (when (and (mode-line-window-selected-p)
                  (buffer-narrowed-p)
                  (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
-        (propertize " Narrow " 'face 'prot-modeline-subtle)))
+        (propertize " Narrow " 'face 'prot-modeline-indicator-cyan-bg)))
   "Mode line construct to report the multilingual environment.")
 
 ;;;; Input method
@@ -128,8 +235,7 @@ Specific to the current window's mode line.")
 
 (defun prot-modeline--buffer-name ()
   "Return `buffer-name', truncating it if necessary.
-The name is truncated if the width of the window is smaller than
-`split-width-threshold'."
+See `prot-modeline-string-truncate'."
   (when-let ((name (buffer-name)))
     (prot-modeline-string-truncate name)))
 
@@ -178,7 +284,7 @@ face.  Let other buffers have no face.")
 
 (defvar-local prot-modeline-major-mode
     (list
-     (propertize "%[" 'face 'error)
+     (propertize "%[" 'face 'prot-modeline-indicator-red)
      '(:eval
        (concat
         (prot-modeline-major-mode-indicator)
@@ -191,7 +297,7 @@ face.  Let other buffers have no face.")
      '(:eval
        (when mode-line-process
          (concat " " mode-line-process)))
-     (propertize "%]" 'face 'error))
+     (propertize "%]" 'face 'prot-modeline-indicator-red))
   "Mode line construct for displaying major modes.")
 
 ;;;; Git branch and diffstat
@@ -266,43 +372,46 @@ than `split-width-threshold'."
 ;;   "Mode line construct to align following elements to the right.
 ;; Read Info node `(elisp) Pixel Specification'.")
 
+(defun prot-modeline--right-align-rest ()
+  "Return string if everything after `prot-modeline-align-right'."
+  (format-mode-line
+   `(""
+     ,@(cdr (memq 'prot-modeline-align-right mode-line-format)))))
+
+(defun prot-modeline--right-align-width ()
+  "Return pixel width of `prot-modeline--right-align-rest'."
+  (string-pixel-width (prot-modeline--right-align-rest)))
+
+(defun prot-modeline--right-align-width-no-space ()
+  "Return pixel width of `prot-modeline--right-align-rest' minus spaces."
+  (string-pixel-width
+   (replace-regexp-in-string
+    "[\s\t]"
+    ""
+    (prot-modeline--right-align-rest))))
+
+(defun prot-modeline--box-p ()
+  "Return non-nil if the `mode-line' has a box attribute."
+  (and (face-attribute 'mode-line :box)
+       (null (eq (face-attribute 'mode-line :box) 'unspecified))))
+
 (defvar-local prot-modeline-align-right
     '(:eval
-      (let* ((rest (cdr (memq 'prot-modeline-align-right mode-line-format)))
-             (rest-string (format-mode-line `("" ,@rest)))
-             ;; A column is equal to this in pixels.  We check if "m"
-             ;; (a wide glyph in proportionately spaced fonts) is at
-             ;; its natural width.  This covers the possibility of
-             ;; `mode-line' being set to a variable pitch font or to
-             ;; inherit from `variable-pitch'.
-             (m-width (string-pixel-width (propertize "m" 'face 'mode-line))))
-        (propertize
-         " "
-         'display
-         `(space
-           :align-to
-           (+
-            (- right
-               ,(ceiling (string-pixel-width rest-string) m-width)
-               ,(ceiling
-                 m-width
-                 ;; Find the height of the `mode-line' font, falling
-                 ;; back to `default'.  Then get the "magic" number
-                 ;; out of it.  I am not sure why this works, but it
-                 ;; does with all font sizes I tried, using my Iosevka
-                 ;; Comfy fonts (mono and quasi-proportional
-                 ;; variants).
-                 ;;
-                 ;; The spacing is off when I try FiraGO, with and
-                 ;; without my `notmuch-indicator'.  I suspect that is
-                 ;; due to the pixel width of the added spaces.
-                 (floor
-                  (/ (face-attribute 'mode-line :height nil 'default) 10)
-                  4)))
-            ,(if-let* ((modeline-box (face-attribute 'mode-line :box))
-                       ((not (eq (face-attribute 'mode-line :box) 'unspecified))))
-                 (floor (string-pixel-width (propertize "i" 'face 'mode-line)) 10)
-               (string-pixel-width (propertize "i" 'face 'mode-line))))))))
+      (propertize
+       " "
+       'display
+       `(space
+         :align-to
+         (- right
+            right-fringe
+            right-margin
+            ,(round
+              (prot-modeline--right-align-width-no-space)
+              (string-pixel-width (propertize "m" 'face 'mode-line)))
+            ,(round
+              (face-attribute 'mode-line :height nil 'default)
+              (string-pixel-width
+               (propertize (if (prot-modeline--box-p) "." "—") 'face 'mode-line)))))))
   "Mode line construct to align following elements to the right.
 Read Info node `(elisp) Pixel Specification'.")
 

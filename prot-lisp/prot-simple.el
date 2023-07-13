@@ -409,28 +409,9 @@ line."
 
 ;;;###autoload
 (defun prot-simple-transpose-words (arg)
-  "Transpose ARG words.
-
-If region is active, swap the word at mark (region beginning)
-with the one at point (region end).
-
-Otherwise, and while inside a sentence, this behaves as the
-built-in `transpose-words', dragging forward the word behind the
-point.  The difference lies in its behaviour at the end or
-beginning of a line, where it will always transpose the word at
-point with the one behind or ahead of it (effectively the
-last/first two words)."
-  (interactive "p")
-  (cond
-   ((use-region-p)
-    (transpose-words 0))
-   ((eq (point) (line-end-position))
-    (transpose-words -1))
-   ((eq (point) (line-beginning-position))
-    (forward-word 1)
-    (transpose-words 1))
-   (t
-    (transpose-words arg))))
+  "Like `transpose-words' but treat ARG as 0 when the region is active."
+  (interactive "*p")
+  (transpose-words (if (region-active-p) 0 arg)))
 
 ;;;; Commands for marking syntactic constructs
 
@@ -641,15 +622,15 @@ END, representing the point and mark."
               e end)
       (setq b (point-min)
             e (point-max)))
-  (widen)
-  (flush-lines (format "%s$" page-delimiter) b e)
-  (setq this-command 'flush-lines)))
+    (widen)
+    (flush-lines (format "%s$" page-delimiter) b e)
+    (setq this-command 'flush-lines)))
 
 ;;;; Commands for buffers
 
 ;;;###autoload
 (defun prot-simple-kill-buffer (buffer)
-  "Kill current BUFFER.
+  "Kill current BUFFER without confirmation.
 When called interactively, prompt for BUFFER."
   (interactive (list (read-buffer "Select buffer: ")))
   (let ((kill-buffer-query-functions nil))
@@ -659,10 +640,13 @@ When called interactively, prompt for BUFFER."
 (defun prot-simple-kill-buffer-current (&optional arg)
   "Kill current buffer.
 With optional prefix ARG (\\[universal-argument]) delete the
-buffer's window as well."
+buffer's window as well.  Kill the window regardless of ARG if it
+satisfies `prot-common-window-small-p' and it has no previous
+buffers in its history."
   (interactive "P")
   (let ((kill-buffer-query-functions nil))
-    (if (or (prot-common-window-small-p)
+    (if (or (and (prot-common-window-small-p)
+                 (null (window-prev-buffers)))
             (and arg (not (one-window-p))))
         (kill-buffer-and-window)
       (kill-buffer))))

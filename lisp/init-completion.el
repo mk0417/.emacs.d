@@ -11,6 +11,10 @@
 ;;; Vertico
 (require 'vertico)
 
+;; Those are the default values, but check the user option
+;; `vertico-multiform-categories' for per-category tweaks.  That
+;; variable is in the file vertico-multiform.el and will work once
+;; `vertico-multiform-mode' is enabled.
 (setq vertico-scroll-margin 0)
 (setq vertico-count 5)
 (setq vertico-resize nil)
@@ -87,13 +91,18 @@ This is done to accommodate `prot-vertico-minimal'."
   "Expand contents and show remaining candidates, if needed.
 This is done to accommodate `prot-vertico-minimal'."
   (interactive)
-  (if (and vertico-unobtrusive-mode (> vertico--total 1))
-      (progn
-        (minibuffer-complete)
-        (vertico-multiform-vertical))
-    (vertico-insert)))
+  (cond
+   ((and vertico-unobtrusive-mode (> vertico--total 1))
+    (minibuffer-complete)
+    (vertico-multiform-vertical))
+   ((and vertico-unobtrusive-mode (= vertico--total 1))
+    (minibuffer-force-complete-and-exit))
+   (t
+    (vertico-insert))))
 
 (prot-emacs-keybind vertico-map
+  "<left>" #'backward-char
+  "<right>" #'forward-char
   "TAB" #'prot-vertico-private-complete
   "DEL" #'vertico-directory-delete-char
   "M-DEL" #'vertico-directory-delete-word
@@ -132,7 +141,6 @@ This is done to accommodate `prot-vertico-minimal'."
       ;; `orderless' kicks in as soon as I input a space or one of its
       ;; style dispatcher characters.
       '((file (styles . (basic partial-completion orderless)))
-        (project-file (styles . (orderless)))
         (bookmark (styles . (basic substring)))
         (library (styles . (basic substring)))
         (embark-keybinding (styles . (basic substring)))

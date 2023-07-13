@@ -17,7 +17,7 @@
 
 (setq-default prot-modeline-major-mode
               (append (list
-                       (propertize "%[" 'face 'error)
+                       (propertize "%[" 'face 'prot-modeline-indicator-red)
                        '(:eval
                          (concat
                           (prot-modeline-major-mode-indicator)
@@ -30,7 +30,7 @@
                        '(:eval
                          (when mode-line-process
                            (concat " " mode-line-process)))
-                       (propertize "%]" 'face 'error)
+                       (propertize "%]" 'face 'prot-modeline-indicator-red)
                        '(" " (:eval (get-jupyter-repl-interaction-indicator))))))
 
 (setq-default mode-line-format
