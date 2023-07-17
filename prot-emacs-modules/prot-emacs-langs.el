@@ -11,20 +11,7 @@
               tab-width 4
               indent-tabs-mode nil)
 
-;;;; Configure 'electric' behaviour
-(setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
-(setq electric-pair-preserve-balance t)
-(setq electric-pair-pairs
-      '((8216 . 8217)
-        (8220 . 8221)
-        (171 . 187)))
-(setq electric-pair-skip-self 'electric-pair-default-skip-self)
-(setq electric-pair-skip-whitespace nil)
-(setq electric-pair-skip-whitespace-chars '(9 10 32))
-(setq electric-quote-context-sensitive t)
-(setq electric-quote-paragraph t)
-(setq electric-quote-string nil)
-(setq electric-quote-replace-double t)
+;;;; Disable "electric" behaviour
 (electric-pair-mode -1)
 (electric-quote-mode -1)
 ;; I don't like auto indents in Org and related.  They are okay for
@@ -50,15 +37,18 @@
 
 (add-to-list 'auto-mode-alist '("\\(README\\|CHANGELOG\\|COPYING\\|LICENSE\\)\\'" . text-mode))
 
-;;;; Shell scripts (sh-mode)
+;;;; Arch Linux and AUR package scripts (sh-mode)
 (add-to-list 'auto-mode-alist '("PKGBUILD" . sh-mode))
 
+;;;; SystemD files (conf-mode)
+(add-to-list 'auto-mode-alist '("\\.\\(service\\|timer\\)\\'" . conf-mode))
+
 ;;;; Eldoc (elisp live documentation feedback)
+(setq eldoc-message-function #'message) ; don't use mode line for M-x eval-expression, etc.
 (global-eldoc-mode 1)
 
 ;;; Markdown (markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-(setq markdown-enable-math t)
 (setq markdown-fontify-code-blocks-natively t)
 
 ;;; Comments (newcomment.el and prot-comment.el)
