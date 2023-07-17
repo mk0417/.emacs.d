@@ -64,6 +64,7 @@ DEFINITIONS is a sequence of string and command pairs."
 (require 'init-defaults)
 (require 'init-evil)
 (require 'init-completion)
+(require 'prot-emacs-completion-vertico)
 (require 'init-windows)
 (require 'init-func)
 (require 'init-keybindings)
