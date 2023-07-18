@@ -30,6 +30,7 @@
 ;; what it does.
 
 ;;; Code:
+
 (require 'bookmark)
 
 (defun prot-marginalia-truncate (string)
@@ -40,7 +41,7 @@
 
 (defun prot-marginalia-display (string)
   "Propertize the display of STRING for completion annotation purposes."
-  (when string
+  (when (stringp string)
     (format "%s%s"
             (propertize " " 'display `(space :align-to 40))
             (propertize (prot-marginalia-truncate string)
@@ -58,20 +59,18 @@
       (prot-marginalia-display (abbreviate-file-name name))
     (prot-marginalia-display (format "%s" (buffer-local-value 'major-mode (get-buffer buffer))))))
 
-(defun prot-marginalia--get-documentation (symbol)
+(defun prot-marginalia--get-symbol-doc (symbol)
   "Return documentation string according to SYMBOL type."
   (cond
    ((or (functionp symbol) (macrop symbol))
     (documentation symbol))
    (t
-    (documentation-property symbol 'variable-documentation))))
+    (get symbol 'variable-documentation))))
 
 (defun prot-marginalia--first-line-documentation (symbol)
   "Return first line of SYMBOL documentation string."
-  (car
-   (split-string
-    (prot-marginalia--get-documentation symbol)
-    "[?!.\n]")))
+  (when-let ((doc-string (prot-marginalia--get-symbol-doc symbol)))
+    (car (split-string doc-string "[?!.\n]"))))
 
 (defun prot-marginalia-symbol (symbol)
   "Annotate SYMBOL with its documentation string."
