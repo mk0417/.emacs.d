@@ -182,6 +182,7 @@
 (define-key evil-normal-state-map (kbd "C-i") 'p-delete-backward-to-tab)
 (define-key evil-normal-state-map (kbd "C-f") 'prot-simple-multi-line-next)
 (define-key evil-normal-state-map (kbd "C-b") 'prot-simple-multi-line-prev)
+(define-key evil-normal-state-map (kbd "m") 'evil-jump-item)
 (define-key evil-normal-state-map (kbd "U") 'undo-redo)
 (define-key evil-normal-state-map (kbd ";a") 'evil-first-non-blank)
 (define-key evil-normal-state-map (kbd ";e") 'evil-last-non-blank)
