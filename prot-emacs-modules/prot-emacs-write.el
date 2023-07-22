@@ -4,14 +4,14 @@
 (straight-use-package 'denote)
 (straight-use-package 'olivetti)
 
-(require 'denote)
-
-;;;; `outline' (`outline-mode' and `outline-minor-mode')
 (setq outline-minor-mode-highlight nil) ; emacs28
 (setq outline-minor-mode-cycle t)             ; emacs28
 (setq outline-minor-mode-use-buttons nil) ; emacs29---bless you for the nil option!
 (setq outline-minor-mode-use-margins nil) ; as above
 (define-key global-map (kbd "<f10>") #'outline-minor-mode)
+
+;;;; `docview' (simple PDF viewer)
+(setq doc-view-resolution 300) ; (doc-view-clear-cache)
 
 ;;;; `dictionary'
 (setq dictionary-server "dict.org"
@@ -35,6 +35,8 @@
 ;; By default, we fontify backlinks in their bespoke buffer.
 (setq denote-link-fontify-backlinks t)
 
+(denote-rename-buffer-mode 1)
+
 ;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
 ;; advanced.
 
@@ -42,12 +44,6 @@
 ;; existing buttons upon visiting the file (Org renders links as
 ;; buttons right away).
 (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
-
-;; We use different ways to specify a path for demo purposes.
-;; (setq denote-dired-directories
-;;       (list denote-directory
-;;             (thread-last denote-directory (expand-file-name "attachments"))
-;;             (expand-file-name "~/Documents/books")))
 
 ;; Generic (great if you rename files Denote-style in lots of places):
 (add-hook 'dired-mode-hook #'denote-dired-mode)

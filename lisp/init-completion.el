@@ -293,7 +293,7 @@
         (command marginalia-annotate-command)
         (function prot-marginalia-symbol)
         (symbol prot-marginalia-symbol)
-        (variable marginalia-annotate-variable)
+        (variable prot-marginalia-symbol)
         (face marginalia-annotate-face)
         (imenu marginalia-annotate-imenu)
         (unicode-name marginalia-annotate-char)))

@@ -1,7 +1,5 @@
 ;;; General window and buffer configurations
 
-(require 'prot-sideline)
-
 ;;;; `uniquify' (unique names for buffers)
 (setq uniquify-buffer-name-style 'forward)
 (setq uniquify-strip-common-suffix t)
@@ -17,13 +15,9 @@
       `(;; no window
         ("\\`\\*Async Shell Command\\*\\'"
          (display-buffer-no-window))
-        ;; left side window
-        (,world-clock-buffer-name
-         (display-buffer-in-side-window)
-         (side . left)
-         (slot . 0)
-         (dedicated . t)
-         (window-width . 0.2))
+        ("\\`\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*\\'"
+         (display-buffer-no-window)
+         (allow-no-window . t))
         ;; bottom side window
         ("\\*Org Select\\*" ; the `org-capture' key selection
          (display-buffer-in-side-window)
@@ -32,15 +26,16 @@
          (slot . 0)
          (window-parameters . ((mode-line-format . none))))
         ;; bottom buffer (NOT side window)
-        ((or . ((derived-mode . messages-buffer-mode)
-                (derived-mode . backtrace-mode)
-                "\\*\\(Warnings\\|Compile-Log\\|Org Links\\)\\*"))
+        ((or . ((derived-mode . flymake-diagnostics-buffer-mode)
+                (derived-mode . flymake-project-diagnostics-mode)
+                (derived-mode . messages-buffer-mode)
+                (derived-mode . backtrace-mode)))
          (display-buffer-reuse-mode-window display-buffer-at-bottom)
          (window-height . 0.3)
          (dedicated . t)
          (preserve-size . (t . t)))
         ("\\*Embark Actions\\*"
-         (display-buffer-reuse-mode-window display-buffer-at-bottom)
+         (display-buffer-reuse-mode-window display-buffer-below-selected)
          (window-height . fit-window-to-buffer)
          (window-parameters . ((no-other-window . t)
                                (mode-line-format . none))))
@@ -60,13 +55,15 @@
         ((or . ((derived-mode . occur-mode)
                 (derived-mode . Buffer-menu-mode)
                 (derived-mode . log-view-mode)
-                (derived-mode . embark-collect-mode)
                 (derived-mode . help-mode) ; See the hooks for `visual-line-mode'
-                "\\*\\(|Buffer List\\|Occur\\|vc-change-log\\|Embark Collect\\).*"
-                prot-window-shell-or-term-p))
+                "\\*\\(|Buffer List\\|Occur\\|vc-change-log\\).*"
+                prot-window-shell-or-term-p
+                ,world-clock-buffer-name))
          (prot-window-display-buffer-below-or-pop)
          (dedicated . t)
          (body-function . prot-window-select-fit-size))
+        ((derived-mode . embark-collect-mode)
+         (prot-window-display-buffer-below-or-pop))
         ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
          (display-buffer-reuse-mode-window display-buffer-below-selected)
          (dedicated . t)
@@ -121,6 +118,7 @@
   ">" #'enlarge-window-horizontally
   "<" #'shrink-window-horizontally)
 
+(require 'prot-sideline)
 ;;; Line numbers and relevant indicators (prot-sideline.el)
 (require 'display-line-numbers)
 ;; Set absolute line numbers.  A value of "relative" is also useful.

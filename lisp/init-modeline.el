@@ -27,11 +27,7 @@
                             (prot-modeline-major-mode-name))
                            'mouse-face 'mode-line-highlight
                            'help-echo (prot-modeline-major-mode-help-echo))))
-                       '(:eval
-                         (when mode-line-process
-                           (concat " " mode-line-process)))
-                       (propertize "%]" 'face 'prot-modeline-indicator-red)
-                       '(" " (:eval (get-jupyter-repl-interaction-indicator))))))
+                       (propertize "%]" 'face 'prot-modeline-indicator-red))))
 
 (setq-default mode-line-format
               '("%e"
@@ -46,6 +42,7 @@
                 mode-line-position
                 "  "
                 prot-modeline-major-mode
+                prot-modeline-process
                 "  "
                 prot-modeline-vc-branch
                 "  "
