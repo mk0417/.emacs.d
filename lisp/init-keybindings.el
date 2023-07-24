@@ -63,7 +63,7 @@
   "fn" '(p-find-file-in-notes :wk "find note file")
   "fo" '(p-find-file-in-org :wk "find org file")
   "fR" '(prot-simple-rename-file-and-buffer :wk "rename file")
-  "fj" '(p-create-scratch-file :wk "rename file")
+  "fj" '(p-create-scratch-file :wk "scratch file")
   ;; Buffer
   "b" '(:ignore t :wk "buffer")
   "bb" '(consult-buffer :wk "switch buffer")
@@ -180,8 +180,8 @@
 
 (define-key evil-normal-state-map (kbd "C-'") 'prot-simple-kill-line-backward)
 (define-key evil-normal-state-map (kbd "C-i") 'p-delete-backward-to-tab)
-(define-key evil-normal-state-map (kbd "C-f") 'prot-simple-multi-line-next)
-(define-key evil-normal-state-map (kbd "C-b") 'prot-simple-multi-line-prev)
+(define-key evil-normal-state-map (kbd "C-f") 'prot-simple-multi-line-below)
+(define-key evil-normal-state-map (kbd "C-b") 'prot-simple-multi-line-above)
 (define-key evil-normal-state-map (kbd "m") 'evil-jump-item)
 (define-key evil-normal-state-map (kbd "U") 'undo-redo)
 (define-key evil-normal-state-map (kbd ";a") 'evil-first-non-blank)

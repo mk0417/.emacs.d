@@ -74,18 +74,10 @@ Used by `prot-simple-inset-date'."
   :type 'string
   :group 'prot-simple)
 
-(defcustom prot-simple-focusable-help-commands
-  '( describe-symbol describe-function
-     describe-variable describe-key
-     view-lossage)
-  "Commands whose buffers should be focused when displayed.
-This makes it easier to dismiss them at once.
-
-Also see `prot-simple-focus-help-buffers'."
-  :type '(repeat symbol)
-  :group 'prot-simple)
-
 ;;; Commands
+
+;; NOTE 2023-06-21: The code I had for scratch buffers per major mode
+;; is now part of prot-scratch.el.
 
 ;;;; General commands
 
@@ -192,16 +184,18 @@ This command can then be followed by the standard
   (yank))
 
 ;;;###autoload
-(defun prot-simple-multi-line-next ()
-  "Move point 15 lines down."
+(defun prot-simple-multi-line-below ()
+  "Move half a screen below."
   (interactive)
-  (forward-line 15))
+  (forward-line (floor (window-height) 2))
+  (setq this-command 'scroll-up-command))
 
 ;;;###autoload
-(defun prot-simple-multi-line-prev ()
-  "Move point 15 lines up."
+(defun prot-simple-multi-line-above ()
+  "Move half a screen above."
   (interactive)
-  (forward-line -15))
+  (forward-line (- (floor (window-height) 2)))
+  (setq this-command 'scroll-down-command))
 
 ;;;###autoload
 (defun prot-simple-kill-line-backward ()
@@ -362,6 +356,71 @@ CHAR."
 
 ;;;; Commands for object transposition
 
+;; The "move" functions all the way to `prot-simple-move-below-dwim'
+;; are courtesy of Bruno Boal: <https://git.sr.ht/~bboal>.  With minor
+;; tweaks by me.
+(defun prot-simple--move-line (count dir)
+  "Move line or region COUNTth times in DIR direction."
+  (let* ((start (pos-bol))
+         (end (pos-eol))
+         diff-eol-point
+         diff-eol-mark)
+    (when-let (((use-region-p))
+               (pos (point))
+               (mrk (mark))
+               (line-diff-mark-point (1+ (- (line-number-at-pos mrk)
+                                            (line-number-at-pos pos)))))
+      (if (> pos mrk)
+          (setq start (pos-bol line-diff-mark-point)) ; pos-bol of where the mark is
+        (setq end (pos-eol line-diff-mark-point)))    ; pos-eol of the line where the mark is
+      (setq diff-eol-mark (1+ (- end mrk))))          ; 1+ to get the \n
+    ;; this is valid for region or a single line
+    (setq diff-eol-point (1+ (- end (point))))
+    (let* ((max (point-max))
+           (end (1+ end))
+           (end (if (> end max) max end))
+           (deactivate-mark)
+           (lines (delete-and-extract-region start end)))
+      (forward-line (* count dir))
+      ;; Handle the special case when there isn't a newline as the eob.
+      (when (and (eq (point) max)
+                 (/= (current-column) 0))
+        (insert "\n"))
+      (insert lines)
+      ;; if user provided a region
+      (when diff-eol-mark
+        (set-mark (- (point) diff-eol-mark)))
+      ;; either way go to same point location reference initial motion
+      (goto-char (- (point) diff-eol-point)))))
+
+(defun prot-simple--move-line-user-error (boundary)
+  "Return `user-error' with message accounting for BOUNDARY.
+BOUNDARY is a buffer position, expected to be `point-min' or `point-max'."
+  (when-let ((bound (line-number-at-pos boundary))
+             (scope (cond
+                     ((and (use-region-p)
+                           (or (= (line-number-at-pos (point)) bound)
+                               (= (line-number-at-pos (mark)) bound)))
+                      "region is ")
+                     ((= (line-number-at-pos (point)) bound)
+                      "")
+                     (t nil))))
+    (user-error (format "Warning: %salready in the last line!" scope))))
+
+(defun prot-simple-move-above-dwim (arg)
+  "Move line or region ARGth times up.
+If ARG is nil, do it one time."
+  (interactive "p")
+  (unless (prot-simple--move-line-user-error (point-min))
+    (prot-simple--move-line arg -1)))
+
+(defun prot-simple-move-below-dwim (arg)
+  "Move line or region ARGth times down.
+If ARG is nil, do it one time."
+  (interactive "p")
+  (unless (prot-simple--move-line-user-error (point-max))
+    (prot-simple--move-line arg 1)))
+
 (defmacro prot-simple-transpose (name scope &optional doc)
   "Macro to produce transposition functions.
 NAME is the function's symbol.  SCOPE is the text object to
@@ -519,7 +578,7 @@ specified."
 With optional ARG, move that many times in the given
 direction (negative is forward due to this being a
 backward-facing command)."
-  (interactive "P")
+  (interactive "p")
   (backward-up-list (or (- arg) -1)))
 
 ;;;; Commands for paragraphs
@@ -625,6 +684,27 @@ END, representing the point and mark."
     (widen)
     (flush-lines (format "%s$" page-delimiter) b e)
     (setq this-command 'flush-lines)))
+
+;; NOTE 2023-06-18: The idea of narrowing to a defun in an indirect
+;; buffer is still experimental.
+(defun prot-simple-narrow--guess-defun-symbol ()
+  "Try to return symbol of current defun as a string."
+  (save-excursion
+    (beginning-of-defun)
+    (search-forward " ")
+    (thing-at-point 'symbol :no-properties)))
+
+;;;###autoload
+(defun prot-simple-narrow-to-cloned-buffer ()
+  "Narrow to defun in cloned buffer.
+Name the buffer after the defun's symbol."
+  (interactive)
+  (clone-indirect-buffer-other-window
+   (format "%s -- %s"
+           (buffer-name)
+           (prot-simple-narrow--guess-defun-symbol))
+   :display)
+  (narrow-to-defun))
 
 ;;;; Commands for buffers
 

@@ -120,7 +120,27 @@ If ARGS is nil, call NAME as a function."
             `(progn ,@args)
           `(funcall ',name)))))
 
-(prot-window-with-full-frame shell)
+(defun prot-window--collect-shell-buffers ()
+  "Return list of `shell' buffers."
+  (seq-filter
+   (lambda (buffer)
+     (with-current-buffer buffer
+       (derived-mode-p 'shell-mode)))
+   (buffer-list)))
+
+(defun prot-window--get-new-shell-buffer ()
+  "Return buffer name for `shell' buffers."
+  (if-let ((buffers (prot-window--collect-shell-buffers))
+           (buffers-length (length buffers))
+           ((>= buffers-length 1)))
+      (format "*shell*<%s>" (1+ buffers-length))
+    "*shell*"))
+
+;;;###autoload (autoload 'prot-window-shell "prot-window")
+(prot-window-with-full-frame shell
+  (let ((name (prot-window--get-new-shell-buffer)))
+    (shell name)
+    (set-frame-name name)))
 
 ;; REVIEW 2023-06-25: Does this merit a user option?  I don't think I
 ;; will ever set it to the left.  It feels awkward there.
