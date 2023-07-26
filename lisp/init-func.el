@@ -162,6 +162,22 @@
   (kill-sexp)
   (evil-insert 0))
 
+;; http://yummymelon.com/devnull/moving-text-elegantly-in-emacs.html
+(defun p-move-sexp-forward ()
+  "Move balanced expression (sexp) to the right of point forward one sexp.
+Point must be at the beginning of balanced expression (sexp)."
+  (interactive)
+  (forward-sexp 1)
+  (transpose-sexps 1)
+  (forward-sexp -1))
+
+(defun p-move-sexp-backward ()
+  "Move balanced expression (sexp) to the right of point backward one sexp.
+Point must be at the beginning of balanced expression (sexp)."
+  (interactive)
+  (transpose-sexps 1)
+  (forward-sexp -2))
+
 ;; Create a scratch file
 (defun p-create-scratch-file ()
   "Prompts to create or open a scratch file based on chosen file type."

@@ -4,18 +4,18 @@
 (straight-use-package '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge" :files ("*")))
 
 (setq lsp-bridge-enable-diagnostics nil)
+(setq lsp-bridge-python-lsp-server "pyright")
+(setq lsp-bridge-symbols-enable-which-func t)
+(setq lsp-bridge-enable-mode-line nil)
 (setq acm-enable-yas nil)
 (setq acm-enable-tempel nil)
 (setq acm-enable-tabnine nil)
 (setq acm-enable-telega nil)
+;; (setq acm-candidate-match-function 'orderless-flex)
 (setq acm-backend-lsp-enable-auto-import nil)
-(setq acm-candidate-match-function 'orderless-flex)
-(setq lsp-bridge-python-lsp-server "pyright")
-(setq lsp-bridge-symbols-enable-which-func t)
 (setq acm-backend-search-file-words-candidate-min-length 3)
-(setq acm-backend-elisp-candidate-min-length 3)
-(setq acm-backend-lsp-candidate-min-length 3)
-(setq lsp-bridge-enable-mode-line nil)
+(setq acm-backend-elisp-candidate-min-length 2)
+(setq acm-backend-lsp-candidate-min-length 2)
 
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook

@@ -188,6 +188,8 @@
 (define-key evil-normal-state-map (kbd ";e") 'evil-last-non-blank)
 (define-key evil-normal-state-map (kbd ";r") 'prot-simple-yank-replace-line-or-region)
 (define-key evil-normal-state-map (kbd ";m") 'prot-simple-mark-construct-dwim)
+(define-key evil-normal-state-map (kbd ";f") 'p-move-sexp-forward)
+(define-key evil-normal-state-map (kbd ";b") 'p-move-sexp-backward)
 (define-key evil-normal-state-map (kbd ",,") 'p-mark-paragraph)
 (define-key evil-normal-state-map (kbd ",.") 'p-mark-defun)
 (define-key evil-normal-state-map (kbd ",b") 'p-mark-paragraph-below)
