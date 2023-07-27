@@ -50,5 +50,7 @@
                 prot-modeline-align-right
                 prot-modeline-misc-info))
 
+(prot-modeline-subtle-mode 1)
+
 (provide 'init-modeline)
 ;;;;; init-modeline.el ends here
