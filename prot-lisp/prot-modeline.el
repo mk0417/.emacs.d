@@ -215,7 +215,9 @@ Specific to the current window's mode line.")
 (defvar-local prot-modeline-buffer-status
     '(:eval
       (when (file-remote-p default-directory)
-        (propertize "@" 'mouse-face 'mode-line-highlight)))
+        (propertize " @ "
+                    'face 'prot-modeline-indicator-red-bg
+                    'mouse-face 'mode-line-highlight)))
   "Mode line construct for showing remote file name.")
 
 ;;;; Buffer name and modified status
@@ -279,8 +281,9 @@ face.  Let other buffers have no face.")
 
 (defun prot-modeline-major-mode-help-echo ()
   "Return `help-echo' value for `prot-modeline-major-mode'."
-  (format "Symbol: `%s'.  Derived from: `%s'"
-          major-mode (get major-mode 'derived-mode-parent)))
+  (if-let ((parent (get major-mode 'derived-mode-parent)))
+      (format "Symbol: `%s'.  Derived from: `%s'" major-mode parent)
+    (format "Symbol: `%s'." major-mode)))
 
 (defvar-local prot-modeline-major-mode
     (list
@@ -334,6 +337,18 @@ face.  Let other buffers have no face.")
 
 (declare-function vc-git-working-revision "vc-git" (file))
 
+(defvar prot-modeline-vc-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [mode-line down-mouse-1] 'vc-diff)
+    (define-key map [mode-line down-mouse-3] 'vc-root-diff)
+    map)
+  "Keymap to display on VC indicator.")
+
+(defun prot-modeline--vc-help-echo (file)
+  "Return `help-echo' message for FILE tracked by VC."
+  (format "Revision: %s\nmouse-1: `vc-diff'\nmouse-3: `vc-root-diff'"
+          (vc-working-revision file)))
+
 (defun prot-modeline--vc-text (file branch &optional face)
   "Prepare text for Git controlled FILE, given BRANCH.
 With optional FACE, use it to propertize the BRANCH."
@@ -343,7 +358,8 @@ With optional FACE, use it to propertize the BRANCH."
    (propertize branch
                'face face
                'mouse-face 'mode-line-highlight
-               'help-echo (vc-working-revision file))
+               'help-echo (prot-modeline--vc-help-echo file)
+               'local-map prot-modeline-vc-map)
    ;; " "
    ;; (prot-modeline-diffstat file)
    ))
@@ -367,7 +383,7 @@ than `split-width-threshold'."
 
 (defun prot-modeline--vc-get-face (key)
   "Get face from KEY in `prot-modeline--vc-faces'."
-  (alist-get key prot-modeline--vc-faces 'up-to-date))
+   (alist-get key prot-modeline--vc-faces 'up-to-date))
 
 (defun prot-modeline--vc-face (file backend)
   "Return VC state face for FILE with BACKEND."
@@ -448,10 +464,10 @@ than `split-width-threshold'."
                 ((and (not variable-pitch-p) box-p)
                  (* magic-number 0.25))
                 ((and variable-pitch-p (not box-p))
-                 (* magic-number 0.05))
+                 (* magic-number -0.05))
                 ;; No box, no variable pitch, but I am keeping it as
                 ;; the fallback for the time being.
-                (t (- (* magic-number 0.1)))))))))
+                (t (* magic-number -0.05))))))))
   "Mode line construct to align following elements to the right.
 Read Info node `(elisp) Pixel Specification'.")
 
