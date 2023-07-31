@@ -131,11 +131,11 @@
 (define-key consult-narrow-map (kbd "?") #'consult-narrow-help)
 (define-key minibuffer-local-map (kbd "C-s") #'consult-history)
 
-(with-eval-after-load 'pulsar
-  ;; see my `pulsar' package: <https://protesilaos.com/emacs/pulsar>
-  (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
-  (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
-    (add-hook 'consult-after-jump-hook fn)))
+;; (with-eval-after-load 'pulsar
+;;   ;; see my `pulsar' package: <https://protesilaos.com/emacs/pulsar>
+;;   (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
+;;   (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
+;;     (add-hook 'consult-after-jump-hook fn)))
 
 ;;; Embark
 ;;; Extended minibuffer actions and more (embark.el and prot-embark.el)
