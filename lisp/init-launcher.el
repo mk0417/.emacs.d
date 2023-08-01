@@ -112,6 +112,17 @@
   (browse-url
    (cdr (assoc (completing-read "Web-Page: " selector-web-page-alist) selector-web-page-alist))))
 
+(defun skim-open-pdf (selected-file)
+  (start-process "" nil "open" "-a" "Skim.app" selected-file))
+
+(defun literature-launcher-run-literature ()
+  (interactive)
+  (let* ((dir "~/Dropbox/literature")
+         (pdf-files (directory-files dir nil "\\.pdf\\'"))
+         (candidates (mapcar (lambda (file) (expand-file-name file dir)) pdf-files))
+         (selected-file (completing-read "Select PDF file: " candidates nil t)))
+    (skim-open-pdf selected-file)))
+
 (defun emacs-launcher-font-bold-hook (beginning end _)
   (when (region-active-p)
     (let ((font-lock-unfontify-region-function #'ignore)
@@ -132,8 +143,7 @@
              (height . ,height)
              (auto-raise . t)
              (fullscreen . 0)
-             ;; (undecorated . t)
-             ;; (background-color . "steel blue")
+             (undecorated . t)
              (tool-bar-lines . 0)
              (menu-bar-lines . 0)
              (internal-border-width . 3)
@@ -158,6 +168,10 @@
 (defun emacs-url-launcher ()
   (interactive)
   (emacs-run-launcher "emacs-web-page-launcher" 100 11 'url-launcher-run-url))
+
+(defun emacs-literature-launcher ()
+  (interactive)
+  (emacs-run-launcher "emacs-literature-launcher" 100 11 'literature-launcher-run-literature))
 
 (setq selector-web-page-alist
       '(("Github" . "https://github.com/mk0417")
