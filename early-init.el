@@ -39,10 +39,16 @@
 
 (setq file-name-handler-alist nil)
 
+;; Same idea as above for the `vc-handled-backends'.
+(defvar p-emacs--vc-handled-backends vc-handled-backends)
+
+(setq vc-handled-backends nil)
+
 (add-hook 'emacs-startup-hook
           (lambda ()
             (setq gc-cons-threshold p-emacs--gc-cons-threshold
-                  file-name-handler-alist p-emacs--file-name-handler-alist)))
+                  file-name-handler-alist p-emacs--file-name-handler-alist
+                  vc-handled-backends p-emacs--vc-handled-backends)))
 
 ;;; Native compilation settings
 (when (featurep 'native-compile)
@@ -82,10 +88,10 @@ not retain the generic background set by the function
 (defun prot-emacs-avoid-initial-flash-of-light ()
   "Avoid flash of light when starting Emacs, if needed.
 New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
-    (setq mode-line-format nil)
-    (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
-    (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
-    (add-hook 'after-make-frame-functions #'prot-emacs-re-enable-frame-theme))
+  (setq mode-line-format nil)
+  (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
+  (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
+  (add-hook 'after-make-frame-functions #'prot-emacs-re-enable-frame-theme))
 
 (prot-emacs-avoid-initial-flash-of-light)
 

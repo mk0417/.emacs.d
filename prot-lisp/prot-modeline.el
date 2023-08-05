@@ -383,7 +383,7 @@ than `split-width-threshold'."
 
 (defun prot-modeline--vc-get-face (key)
   "Get face from KEY in `prot-modeline--vc-faces'."
-   (alist-get key prot-modeline--vc-faces 'up-to-date))
+  (alist-get key prot-modeline--vc-faces 'up-to-date))
 
 (defun prot-modeline--vc-face (file backend)
   "Return VC state face for FILE with BACKEND."
@@ -464,7 +464,7 @@ than `split-width-threshold'."
                 ((and (not variable-pitch-p) box-p)
                  (* magic-number 0.25))
                 ((and variable-pitch-p (not box-p))
-                 (* magic-number -0.05))
+                 0)
                 ;; No box, no variable pitch, but I am keeping it as
                 ;; the fallback for the time being.
                 (t (* magic-number -0.05))))))))

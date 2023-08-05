@@ -134,7 +134,7 @@
 (with-eval-after-load 'pulsar
   ;; see my `pulsar' package: <https://protesilaos.com/emacs/pulsar>
   (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
-  (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
+  (dolist (fn '(pulsar-recenter-center pulsar-reveal-entry))
     (add-hook 'consult-after-jump-hook fn)))
 
 ;;; Embark
