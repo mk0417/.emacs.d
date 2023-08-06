@@ -111,4 +111,14 @@
 (dolist (hook prot/enable-variable-pitch-in-hooks)
   (add-hook hook #'prot/enable-variable-pitch))
 
+(defvar prot/variable-pitch-mode-hook nil
+  "Normal hook that runs after `variable-pitch-mode'.")
+
+(defun prot/variable-pitch-run-hook (&rest _)
+  "Run `prot/variable-pitch-mode-hook'.
+Use this as :after advice to the `variable-pitch-mode' function."
+  (run-hooks 'prot/variable-pitch-mode-hook))
+
+(advice-add #'variable-pitch-mode :after #'prot/variable-pitch-run-hook)
+
 (provide 'prot-emacs-font)

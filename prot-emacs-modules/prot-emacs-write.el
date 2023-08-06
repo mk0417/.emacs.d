@@ -11,6 +11,10 @@
 (define-key global-map (kbd "<f10>") #'outline-minor-mode)
 
 ;;;; `docview' (simple PDF viewer)
+;; The "mupdf" is a reference to the Arch Linux system packages
+;; `mupdf', `mupdf-tools', `libmupdf'.
+(setq doc-view-pdf->png-converter-function #'doc-view-pdf->png-converter-mupdf)
+(setq doc-view-mupdf-use-svg (image-type-available-p 'svg)) ; Emacs 30
 (setq doc-view-resolution 300) ; (doc-view-clear-cache)
 
 ;;;; `dictionary'
@@ -20,7 +24,7 @@
       dictionary-use-single-buffer t)
 (define-key global-map (kbd "C-c d") #'dictionary-search)
 
-;;; Denote (simple note-taking)
+;;; Denote (simple note-taking and file-naming)
 ;; Read the manual: <https://protesilaos.com/emacs/denote>.
 ;; Remember to check the doc strings of those variables.
 (setq denote-directory (expand-file-name "~/Dropbox/peng_notes/"))
