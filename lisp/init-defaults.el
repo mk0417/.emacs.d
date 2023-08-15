@@ -15,6 +15,9 @@
 (setq confirm-kill-processes nil)
 (setq process-adaptive-read-buffering nil)
 
+(when (fboundp 'pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode))
+
 ;; Enable these
 (dolist (c '(narrow-to-region narrow-to-page upcase-region downcase-region))
   (put c 'disabled nil))
