@@ -21,7 +21,7 @@
 (setq TeX-electric-sub-and-superscript t)
 (setq TeX-save-query nil)
 (setq LaTeX-fill-break-at-separators nil)
-(setq LaTeX-item-indent 0)
+;; (setq LaTeX-item-indent 0)
 (setq LaTeX-indent-level 4)
 (setq TeX-command-extra-options "-shell-escape")
 
