@@ -8,6 +8,7 @@
 /eshell
 /elpa
 /url
+/tree-sitter
 .bookmarks.el
 .DS_Store
 company-statistics-cache.el

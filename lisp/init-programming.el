@@ -5,6 +5,7 @@
 ;; https://github.com/nnicandro/emacs-jupyter/issues/433
 ;; (straight-use-package '(jupyter :type git :host github :repo "mk0417/emacs-jupyter" :branch "patch-1"))
 (straight-use-package 'jupyter)
+(straight-use-package 'treesit-auto)
 
 ;;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -39,6 +40,7 @@
 (setq python-indent-guess-indent-offset-verbose nil)
 (setq python-indent-guess-indent-offset t)
 (add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
+(add-hook 'python-ts-mode-hook 'display-fill-column-indicator-mode)
 
 (defun p-python-indent-key ()
   (define-key evil-normal-state-map (kbd "god") 'python-indent-shift-right)
@@ -47,6 +49,12 @@
   (define-key evil-visual-state-map (kbd "gou") 'python-indent-shift-left))
 
 (add-hook 'python-mode-hook 'p-python-indent-key)
+(add-hook 'python-ts-mode-hook 'p-python-indent-key)
+
+;;; Tree-sitter
+(require 'treesit-auto)
+(setq treesit-auto-install 'prompt)
+(global-treesit-auto-mode)
 
 (provide 'init-programming)
 ;;;;; init-programming.el ends here

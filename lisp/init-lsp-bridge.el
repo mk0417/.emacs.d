@@ -19,6 +19,7 @@
 
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
+        python-ts-mode-hook
         emacs-lisp-mode-hook
         LaTeX-mode-hook
         markdown-mode-hook))

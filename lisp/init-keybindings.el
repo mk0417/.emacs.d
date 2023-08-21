@@ -138,7 +138,7 @@
 (general-create-definer p-jupyter-leader-def
   :prefix ";"
   :states '(normal visual)
-  :keymaps '(python-mode-map))
+  :keymaps '(python-mode-map python-ts-mode-map))
 (p-jupyter-leader-def
   "j"  '(:ignore t :wk "jupyter")
   "jj" 'jupyter-run-repl
