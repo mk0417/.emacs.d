@@ -58,7 +58,7 @@
       (p-avy-goto-equal block-beginning-position block-end-position))))
 
 (define-key evil-normal-state-map (kbd "f") nil)
-(define-key evil-normal-state-map (kbd "fl") 'avy-goto-line)
+(define-key evil-normal-state-map (kbd "fj") 'avy-goto-line)
 (define-key evil-normal-state-map (kbd "f.") 'p-avy-goto-word-current-line)
 (define-key evil-normal-state-map (kbd "fk") 'p-avy-goto-bracket-block)
 (define-key evil-normal-state-map (kbd "fs") 'p-avy-goto-space-current-line)
