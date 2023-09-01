@@ -58,15 +58,15 @@
 (setq comment-multi-line t)
 (setq comment-style 'multi-line)
 (prot-emacs-keybind global-map
-  "C-:" #'comment-kill ; C-S-;
-  "M-;" #'comment-indent)
+  "C-:" comment-kill ; C-S-;
+  "M-;" comment-indent)
 
 (setq prot-comment-comment-keywords
       '("TODO" "NOTE" "XXX" "REVIEW" "FIXME"))
 (setq prot-comment-timestamp-format-concise "%F")
 (setq prot-comment-timestamp-format-verbose "%F %T %z")
 (prot-emacs-keybind global-map
-  "C-;" #'prot-comment-comment-dwim
-  "C-x C-;" #'prot-comment-timestamp-keyword)
+  "C-;" prot-comment-comment-dwim
+  "C-x C-;" prot-comment-timestamp-keyword)
 
 (provide 'prot-emacs-langs)

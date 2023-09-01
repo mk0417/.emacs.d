@@ -355,10 +355,10 @@
     (add-hook hook #'pulsar-reveal-entry)))
 
 (prot-emacs-keybind global-map
-  "C-c A" #'org-agenda ; see the `prot-org' section for C-c a
-  "C-c c" #'org-capture
-  "C-c l" #'org-store-link
-  "C-c o" #'org-open-at-point-global)
+  "C-c A" org-agenda ; see the `prot-org' section for C-c a
+  "C-c c" org-capture
+  "C-c l" org-store-link
+  "C-c o" org-open-at-point-global)
 
 (require 'org)
 
@@ -372,9 +372,9 @@
   "<C-S-return>" nil
   "C-M-S-<right>" nil
   "C-M-S-<left>" nil
-  "<tab>" #'org-cycle
-  "C-c M-l" #'org-insert-last-stored-link
-  "C-c C-M-l" #'org-toggle-link-display)
+  "<tab>" org-cycle
+  "C-c M-l" org-insert-last-stored-link
+  "C-c C-M-l" org-toggle-link-display)
 
 ;;; Custom extensions (prot-org.el)
 (require 'prot-org)
@@ -400,8 +400,8 @@
 (define-key global-map (kbd "C-c a") (lambda () (interactive) (org-agenda nil "A")))
 
 (prot-emacs-keybind ctl-x-x-map
-  "i" #'prot-org-id-headlines
-  "h" #'prot-org-ox-html)
+  "i" prot-org-id-headlines
+  "h" prot-org-ox-html)
 
 ;; NOTE 2023-06-16: evil 'o' to insert a new line below without indentation in org-mode
 (defun p-org-open-below-no-indent ()

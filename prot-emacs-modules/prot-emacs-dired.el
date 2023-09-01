@@ -27,9 +27,9 @@
 (setq dired-create-destination-dirs-on-trailing-dirsep t) ; Emacs 29
 
 (prot-emacs-keybind dired-mode-map
-  "C-+" #'dired-create-empty-file
-  "M-s f" #'nil
-  "C-x v v" #'dired-vc-next-action) ; Emacs 28
+  "C-+" dired-create-empty-file
+  "M-s f" nil
+  "C-x v v" dired-vc-next-action) ; Emacs 28
 
 (setq dired-clean-up-buffers-too t)
 (setq dired-clean-confirm-killing-deleted-buffers t)
@@ -41,14 +41,14 @@
 (add-hook 'dired-mode-hook #'prot-dired-setup-imenu)
 
 (prot-emacs-keybind dired-mode-map
-  "i" #'prot-dired-insert-subdir ; override `dired-maybe-insert-subdir'
-  "/" #'prot-dired-limit-regexp
-  "C-c C-l" #'prot-dired-limit-regexp
-  "M-n" #'prot-dired-subdirectory-next
-  "C-c C-n" #'prot-dired-subdirectory-next
-  "M-p" #'prot-dired-subdirectory-previous
-  "C-c C-p" #'prot-dired-subdirectory-previous
-  "M-s G" #'prot-dired-grep-marked-files) ; M-s g is `prot-search-grep'
+  "i" prot-dired-insert-subdir ; override `dired-maybe-insert-subdir'
+  "/" prot-dired-limit-regexp
+  "C-c C-l" prot-dired-limit-regexp
+  "M-n" prot-dired-subdirectory-next
+  "C-c C-n" prot-dired-subdirectory-next
+  "M-p" prot-dired-subdirectory-previous
+  "C-c C-p" prot-dired-subdirectory-previous
+  "M-s G" prot-dired-grep-marked-files) ; M-s g is `prot-search-grep'
 
 (setq wdired-allow-to-change-permissions t)
 (setq wdired-create-parent-directories t)

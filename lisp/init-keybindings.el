@@ -3,6 +3,7 @@
 (straight-use-package 'which-key)
 (straight-use-package 'general)
 
+(require 'prot-simple)
 (require 'prot-prefix)
 (require 'prot-scratch)
 
@@ -16,20 +17,22 @@
 (which-key-mode)
 
 ;;; Emacs keybindings
-(global-set-key (kbd "C-g") #'prot-simple-keyboard-quit-dwim)
-(global-set-key (kbd "C-o") #'prot-prefix)
-(global-set-key (kbd "C-x k") 'prot-simple-kill-buffer-current)
-(global-set-key (kbd "C-x K") 'kill-buffer-and-window)
-(global-set-key (kbd "M-i") 'forward-paragraph)
-(global-set-key (kbd "M-o") 'backward-paragraph)
-(global-set-key (kbd "C-h K") #'describe-keymap)
-(global-set-key (kbd "M-s s") #'isearch-forward)
-(global-set-key (kbd "M-s r") #'isearch-backward)
-(global-set-key (kbd "M-s M-s") #'isearch-forward-regexp)
-(global-set-key (kbd "M-s M-r") #'isearch-backward-regexp)
-(global-set-key (kbd "M-s a") #'query-replace)
-(global-set-key (kbd "M-s M-a") #'query-replace-regexp)
-(global-set-key (kbd "M-s e") #'occur-edit-mode)
+(prot-emacs-keybind global-map
+  "C-g" prot-simple-keyboard-quit-dwim
+  "C-o" prot-prefix
+  "C-x k" prot-simple-kill-buffer-current
+  "C-x K" kill-buffer-and-window
+  "M-i" forward-paragraph
+  "M-o" backward-paragraph
+  "C-h K" describe-keymap
+  "M-s s" isearch-forward
+  "M-s r" isearch-backward
+  "M-s M-s" isearch-forward-regexp
+  "M-s M-r" isearch-backward-regexp
+  "M-s a" query-replace
+  "M-s M-a" query-replace-regexp
+  "M-s e" occur-edit-mode
+  "C->" prot-simple-insert-line-prefix-dwim)
 
 ;;; General
 (general-evil-setup)
