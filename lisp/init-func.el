@@ -79,6 +79,12 @@
   (let ((default-directory (file-truename (file-name-directory (expand-file-name "~/Dropbox/org/")))))
     (call-interactively 'find-file)))
 
+;; Find file in my log
+(defun p-find-file-in-log ()
+  (interactive)
+  (let ((default-directory (file-truename (file-name-directory (expand-file-name "~/Dropbox/peng_log/")))))
+    (call-interactively 'find-file)))
+
 ;; Functions to switch buffers
 (defun p-switch-to-messages ()
   (interactive)

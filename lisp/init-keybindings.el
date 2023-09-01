@@ -62,6 +62,7 @@
   "fp" '(p-find-file-in-config :wk "find config file")
   "fn" '(p-find-file-in-notes :wk "find note file")
   "fo" '(p-find-file-in-org :wk "find org file")
+  "fd" '(p-find-file-in-log :wk "find log file")
   "fR" '(prot-simple-rename-file-and-buffer :wk "rename file")
   "fj" '(p-create-scratch-file :wk "scratch file")
   ;; Buffer
