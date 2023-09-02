@@ -5,7 +5,6 @@
 ;; https://github.com/nnicandro/emacs-jupyter/issues/433
 ;; (straight-use-package '(jupyter :type git :host github :repo "mk0417/emacs-jupyter" :branch "patch-1"))
 (straight-use-package 'jupyter)
-(straight-use-package 'treesit-auto)
 
 ;;; Jupyter
 ;; https://github.com/nnicandro/emacs-zmq
@@ -50,11 +49,6 @@
 
 (add-hook 'python-mode-hook 'p-python-indent-key)
 (add-hook 'python-ts-mode-hook 'p-python-indent-key)
-
-;;; Tree-sitter
-(require 'treesit-auto)
-(setq treesit-auto-install 'prompt)
-(global-treesit-auto-mode)
 
 (provide 'init-programming)
 ;;;;; init-programming.el ends here
