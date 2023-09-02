@@ -1,7 +1,11 @@
 ;;;;; init-lsp-bridge.el --- LSP-bridge -*- lexical-binding: t -*-
 
 ;;; Install packages
-(straight-use-package '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge" :files ("*")))
+;; (straight-use-package '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge" :files ("*")))
+(straight-use-package
+ '(lsp-bridge :type git :host github :repo "manateelazycat/lsp-bridge"
+              :files (:defaults "*.el" "*.py" "acm" "core" "langserver" "multiserver" "resources")
+              :build (:not compile)))
 
 (setq lsp-bridge-enable-diagnostics nil)
 (setq lsp-bridge-python-lsp-server "pyright")
