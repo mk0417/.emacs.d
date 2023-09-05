@@ -1,10 +1,6 @@
 ;;; General configurations for org
 
 (straight-use-package 'org)
-(straight-use-package 'org-modern)
-
-;; Org-modern
-(with-eval-after-load 'org (global-org-modern-mode))
 
 ;;; Calendar
 (setq calendar-mark-diary-entries-flag nil)
