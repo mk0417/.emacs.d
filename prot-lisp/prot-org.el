@@ -58,6 +58,7 @@
 
 ;; Same source as above
 (advice-add 'org-capture-place-template :around 'prot-org--capture-no-delete-windows)
+(advice-add 'org-add-log-note :around 'prot-org--capture-no-delete-windows)
 
 ;;;; org-agenda
 

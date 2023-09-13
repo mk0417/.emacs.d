@@ -78,7 +78,6 @@ DEFINITIONS is a sequence of string and command pairs."
                    'prot-emacs-langs
                    'prot-emacs-dired
                    'prot-emacs-window
-                   ;; 'prot-emacs-org
                    'prot-emacs-write
                    'prot-emacs-git
                    'prot-emacs-theme-extras

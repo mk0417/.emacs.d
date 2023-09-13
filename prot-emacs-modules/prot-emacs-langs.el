@@ -41,8 +41,8 @@
 (add-to-list 'auto-mode-alist '("PKGBUILD" . sh-mode))
 
 ;;;; SystemD and other configuration files (conf-mode)
-  (add-to-list 'auto-mode-alist '("\\.\\(service\\|timer\\)\\'" . conf-mode))
-  (add-to-list 'auto-mode-alist '("dircolors" . conf-mode))
+(add-to-list 'auto-mode-alist '("\\.\\(service\\|timer\\)\\'" . conf-mode))
+(add-to-list 'auto-mode-alist '("dircolors" . conf-mode))
 
 ;;;; Eldoc (elisp live documentation feedback)
 (setq eldoc-message-function #'message) ; don't use mode line for M-x eval-expression, etc.
@@ -57,6 +57,8 @@
 (setq comment-fill-column nil)
 (setq comment-multi-line t)
 (setq comment-style 'multi-line)
+(setq-default comment-column 0)
+
 (prot-emacs-keybind global-map
   "C-:" comment-kill ; C-S-;
   "M-;" comment-indent)

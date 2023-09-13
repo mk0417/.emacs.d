@@ -400,6 +400,31 @@ than `split-width-threshold'."
         (prot-modeline--vc-details file branch face)))
   "Mode line construct to return propertized VC branch.")
 
+;;;; Breadcrumb
+
+(defvar-local prot-modeline-breadcrumb
+    '(:eval
+      (when (and (featurep 'breadcrumb)
+                 (derived-mode-p 'text-mode 'prog-mode)
+                 (buffer-file-name)
+                 (mode-line-window-selected-p))
+        ;; (breadcrumb-project-crumbs)
+        (breadcrumb-imenu-crumbs)))
+  "Mode line construct for displaying breadcrumbs.")
+
+;;;; Eglot
+
+(with-eval-after-load 'eglot
+  (setq mode-line-misc-info
+        (delete '(eglot--managed-mode (" [" eglot--mode-line-format "] ")) mode-line-misc-info)))
+
+(defvar-local prot-modeline-eglot
+    `(:eval
+      (when (and (featurep 'eglot) (mode-line-window-selected-p))
+        '(eglot--managed-mode eglot--mode-line-format)))
+  "Mode line construct displaying Eglot information.
+Specific to the current window's mode line.")
+
 ;;;; Right side alignment
 
 (defun prot-modeline--right-align-rest ()
@@ -492,6 +517,8 @@ Specific to the current window's mode line.")
                      prot-modeline-major-mode
                      prot-modeline-process
                      prot-modeline-vc-branch
+                     prot-modeline-eglot
+                     prot-modeline-breadcrumb
                      prot-modeline-align-right
                      prot-modeline-misc-info))
   (put construct 'risky-local-variable t))

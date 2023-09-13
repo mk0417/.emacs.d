@@ -47,6 +47,10 @@
                 "  "
                 prot-modeline-vc-branch
                 "  "
+                prot-modeline-breadcrumb
+                "  "
+                prot-modeline-eglot
+                "  "
                 prot-modeline-align-right
                 prot-modeline-misc-info))
 

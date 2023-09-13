@@ -1,7 +1,5 @@
 ;;; General configurations for org
 
-(straight-use-package 'org)
-
 ;;; Calendar
 (setq calendar-mark-diary-entries-flag nil)
 (setq calendar-mark-holidays-flag t)
