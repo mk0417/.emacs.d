@@ -43,23 +43,23 @@
 ;; Insert surround pairs
 (defun p-insert-surround-parentheses ()
   (interactive)
-  (prot-simple-insert-pair "( Parentheses"))
+  (prot-simple-insert-pair '(?\( . ?\))))
 
 (defun p-insert-surround-bracket ()
   (interactive)
-  (prot-simple-insert-pair "[ Square brackets"))
+  (prot-simple-insert-pair '(?\[ . ?\])))
 
 (defun p-insert-surround-curly-bracket ()
   (interactive)
-  (prot-simple-insert-pair "{ Curly brackets"))
+  (prot-simple-insert-pair '(?{ . ?})))
 
 (defun p-insert-surround-single-quote ()
   (interactive)
-  (prot-simple-insert-pair "' Single quote"))
+  (prot-simple-insert-pair '(?' . ?')))
 
 (defun p-insert-surround-double-quotes ()
   (interactive)
-  (prot-simple-insert-pair "\" Double quotes"))
+  (prot-simple-insert-pair '(?\" . ?\")))
 
 ;; Find file in my config
 (defun p-find-file-in-config ()
