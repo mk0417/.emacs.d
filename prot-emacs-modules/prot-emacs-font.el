@@ -121,4 +121,12 @@ Use this as :after advice to the `variable-pitch-mode' function."
 
 (advice-add #'variable-pitch-mode :after #'prot/variable-pitch-run-hook)
 
+(with-eval-after-load 'fontaine
+  (add-to-list 'fontaine-presets
+               '(laptop-regular
+                 :default-family "Iosevka Comfy"
+                 :default-height 120
+                 :variable-pitch-family "Iosevka Comfy Duo"))
+  (fontaine-set-preset 'laptop-regular))
+
 (provide 'prot-emacs-font)
