@@ -129,7 +129,7 @@
 ;;         (identifier magenta-faint)
 ;;         (keybind magenta-cooler)))
 
-;; (load-theme 'modus-vivendi t)
+(load-theme 'modus-vivendi t)
 
 (provide 'init-theme)
 ;;;;; init-theme.el ends here
