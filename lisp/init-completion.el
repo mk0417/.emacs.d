@@ -29,7 +29,9 @@
         (embark-keybinding (styles . (basic substring)))
         (imenu (styles . (basic substring orderless)))
         (consult-location (styles . (basic substring orderless)))
-        (kill-ring (styles . (emacs22 orderless)))))
+        (kill-ring (styles . (emacs22 orderless)))
+        (eglot (styles . (emacs22 substring orderless)))))
+
 (setq completion-ignore-case t)
 (setq read-buffer-completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
@@ -40,6 +42,10 @@
 ;;   (setq org-use-fast-todo-selection 'expert)
 (setq resize-mini-windows t)
 (setq minibuffer-eldef-shorten-default t)
+
+(setq read-answer-short t) ; also check `use-short-answers' for Emacs28
+(setq echo-keystrokes 0.25)
+(setq kill-ring-max 60)               ; Keep it small
 
 ;; Do not allow the cursor to move inside the minibuffer prompt.  I
 ;; got this from the documentation of Daniel Mendler's Vertico
@@ -64,6 +70,23 @@
         (cdr args)))
 
 (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+;; Settings for the default completion UI.  These do not come into
+;; effect unless `prot-emacs-completion-ui' is nil or when not using
+;; any package for in-buffer completion.
+(setq completion-show-help nil)
+(setq completion-auto-help t)
+(setq completion-auto-select nil)
+(setq completions-detailed t)
+(setq completion-show-inline-help nil)
+(setq completions-max-height 6)
+(setq completions-header-format
+      (propertize "%s candidates:\n" 'face 'font-lock-comment-face))
+(setq completions-highlight-face 'completions-highlight)
+
+(file-name-shadow-mode 1)
+(minibuffer-depth-indicate-mode 1)
+(minibuffer-electric-default-mode 1)
 
 (file-name-shadow-mode 1)
 (minibuffer-depth-indicate-mode 1)

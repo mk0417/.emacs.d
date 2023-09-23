@@ -42,9 +42,6 @@
 
 (add-to-list 'auto-mode-alist '("\\(README\\|CHANGELOG\\|COPYING\\|LICENSE\\)\\'" . text-mode))
 
-;;;; Arch Linux and AUR package scripts (sh-mode)
-(add-to-list 'auto-mode-alist '("PKGBUILD" . sh-mode))
-
 ;;;; SystemD and other configuration files (conf-mode)
 (add-to-list 'auto-mode-alist '("\\.\\(service\\|timer\\)\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("dircolors" . conf-mode))
@@ -52,6 +49,13 @@
 ;;;; Eldoc (elisp live documentation feedback)
 (setq eldoc-message-function #'message) ; don't use mode line for M-x eval-expression, etc.
 (global-eldoc-mode 1)
+
+;;;; Eglot (built-in client for the language server protocol)
+(setq eglot-sync-connect nil)
+(setq eglot-autoshutdown t)
+
+;;;; Handle performance for very long lines (so-long.el)
+(global-so-long-mode 1)
 
 ;;; Markdown (markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))

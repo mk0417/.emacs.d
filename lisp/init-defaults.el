@@ -1,7 +1,6 @@
 ;;;;; init-defaults.el --- Emacs better defaults -*- lexical-binding: t -*-
 
 ;;; Some basic settings
-(setq echo-keystrokes 0.25)
 (setq delete-pair-blink-delay 0.15)
 (setq help-window-select t)
 (setq next-error-recenter '(4))
@@ -157,10 +156,6 @@
 ;;; Better support for files with long lines
 (setq-default bidi-paragraph-direction 'left-to-right)
 (setq-default bidi-inhibit-bpa t)
-(global-so-long-mode 1)
-
-;;; Keep small kill ring
-(setq kill-ring-max 60)
 
 ;;; Text mode
 (setq-default fill-column 120)
