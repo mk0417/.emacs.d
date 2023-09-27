@@ -43,6 +43,14 @@
         (bg-prompt bg-blue-nuanced)
         (fg-prompt blue-warmer)
         ;; ,@modus-themes-preset-overrides-warmer
+        (fg-completion-match-0 green-cooler)
+        (fg-completion-match-1 red-cooler)
+        (fg-completion-match-2 yellow-cooler)
+        (fg-completion-match-3 blue-cooler)
+        (bg-completion-match-0 bg-green-subtle)
+        (bg-completion-match-1 bg-red-subtle)
+        (bg-completion-match-2 bg-yellow-subtle)
+        (bg-completion-match-3 bg-blue-subtle)
         ))
 
 ;; Also check `modus-themes-select'.

@@ -145,61 +145,38 @@ AMOUNT is either 1 or that of a number prefix argument."
 ;;;; Commands for lines
 
 ;;;###autoload
-(defun prot-simple-new-line-below (&optional arg)
-  "Create an empty line below the current one.
-Move the point to the absolute beginning.  Adapt indentation by
-passing optional prefix ARG (\\[universal-argument]).  Also see
-`prot-simple-new-line-above'."
-  (interactive "P")
+(defun prot-simple-new-line-below (n)
+  "Create N empty lines below the current one.
+When called interactively without a prefix numeric argument, N is
+1."
+  (interactive "p")
   (goto-char (line-end-position))
-  (if arg
-      (newline-and-indent)
-    (newline)))
+  (dotimes (_ n) (insert "\n")))
 
 ;;;###autoload
-(defun prot-simple-new-line-above (&optional arg)
-  "Create an empty line above the current one.
-Move the point to the absolute beginning.  Adapt indentation by
-passing optional prefix ARG (\\[universal-argument])."
-  (interactive "P")
-  (let ((indent (or arg nil)))
+(defun prot-simple-new-line-above (n)
+  "Create N empty lines above the current one.
+When called interactively without a prefix numeric argument, N is
+1."
+  (interactive "p")
+  (let ((point-min (point-min)))
     (if (or (bobp)
-            (eq (point) (point-min))
-            (eq (line-number-at-pos (point-min)) 1))
+            (eq (point) point-min)
+            (eq (line-number-at-pos point-min) 1))
         (progn
           (goto-char (line-beginning-position))
-          (newline)
-          (forward-line -1))
-      (forward-line -1)
-      (prot-simple-new-line-below indent))))
-
-(defun prot-simple--duplicate-buffer-substring (beg end &optional indent)
-  "Duplicate buffer substring between BEG and END positions.
-With optional INDENT, run `indent-for-tab-command' after
-inserting the substring."
-  (save-excursion
-    (goto-char end)
-    (newline)
-    (insert (buffer-substring-no-properties beg end))
-    (when indent
-      (indent-for-tab-command))))
+          (dotimes (_ n) (insert "\n"))
+          (forward-line (- n)))
+      (forward-line (- n))
+      (prot-simple-new-line-below n))))
 
 ;;;###autoload
-(defun prot-simple-copy-line-or-region (&optional duplicate)
-  "Copy the current line to the `kill-ring'.
-With optional DUPLICATE as a prefix argument, duplicate the
-current line without adding it to the `kill-ring'.
+(defun prot-simple-copy-line ()
+  "Copy the current line to the `kill-ring'."
+  (interactive)
+  (copy-region-as-kill (line-beginning-position) (line-end-position)))
 
-When the region is active, duplicate it regardless of DUPLICATE."
-  (interactive "P")
-  (let* ((region (region-active-p))
-         (beg (if region (region-beginning) (line-beginning-position)))
-         (end (if region (region-end) (line-end-position)))
-         (message (if region "region" "line")))
-    (if (or duplicate region)
-        (prot-simple--duplicate-buffer-substring beg end region)
-      (copy-region-as-kill beg end)
-      (message "Copied current %s" message))))
+(make-obsolete 'prot-simple-copy-line-or-region 'prot-simple-copy-line "2023-09-26")
 
 ;;;###autoload
 (defun prot-simple-yank-replace-line-or-region ()
