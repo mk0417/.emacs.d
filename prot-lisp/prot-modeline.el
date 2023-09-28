@@ -492,7 +492,7 @@ Specific to the current window's mode line.")
                  0)
                 ;; No box, no variable pitch, but I am keeping it as
                 ;; the fallback for the time being.
-                (t (* magic-number -0.05))))))))
+                (t (* magic-number -0.1))))))))
   "Mode line construct to align following elements to the right.
 Read Info node `(elisp) Pixel Specification'.")
 

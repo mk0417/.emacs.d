@@ -61,9 +61,6 @@ Used by `prot-simple-inset-date'."
 
 ;;; Commands
 
-;; NOTE 2023-06-21: The code I had for scratch buffers per major mode
-;; is now part of prot-scratch.el.
-
 ;;;; General commands
 
 ;;;###autoload
@@ -211,119 +208,6 @@ This command can then be followed by the standard
 
 ;;;; Commands for text insertion or manipulation
 
-(make-obsolete 'prot-simple-insert-pair-alist nil "2023-09-10")
-
-(defcustom prot-simple-insert-pair-pairs
-  '((?'  :description "Single quotes"           :pair (?' . ?'))
-    (?\" :description "Double quotes"           :pair (?\" . ?\"))
-    (?‘  :description "Single curly quotes"     :pair (?‘ . ?’))
-    (?“  :description "Double curly quotes"     :pair (?“ . ?”))
-    (?\> :description "Natural language quotes" :pair prot-simple-insert-pair-natural-language-quotes)
-    (?\( :description "Parentheses"             :pair (?\( . ?\)))
-    (?{  :description "Curly brackets"          :pair (?{ . ?}))
-    (?\[ :description "Square brackets"         :pair (?\[ . ?\]))
-    (?\< :description "Angled brackets"         :pair (?\< . ?\>))
-    (?@  :description "At signs"                :pair (?@ . ?@))
-    (?=  :description "Equals signs"            :pair (?= . ?=))
-    (?+  :description "Plus signs"              :pair (?+ . ?+))
-    (?`  :description "Backticks"               :pair prot-simple-insert-pair-backticks)
-    (?~  :description "Tildes"                  :pair (?~ . ?~))
-    (?*  :description "Asterisks"               :pair (?* . ?*))
-    (?/  :description "Forward slashes"         :pair (?/ . ?/))
-    (?_  :description "Underscores"             :pair (?_ . ?_)))
-  "Alist of pairs for use with `prot-simple-insert-pair'.
-Each element in the list is a list whose `car' is a character and
-the `cdr' is a plist with a `:description' and `:pair' keys.  The
-`:description' is a string used to describe the character/pair in
-interactive use, while `:pair' is a cons cell referencing the
-opening and closing characters.
-
-The value of `:pair' can also be the unquoted symbol of a
-function.  The function is called with no arguments and must
-return a cons cell of two characters.  Examples of such functions
-are `prot-simple-insert-pair-natural-language-quotes' and
-`prot-simple-insert-pair-backticks'"
-  :type '(alist
-          :key-type character
-          :value-type (plist :options (((const :tag "Pair description" :description) string)
-                                       ((const :tag "Characters" :pair)
-                                        (choice (cons character character) function)))))
-  :group 'prot-simple)
-
-(defun prot-simple-insert-pair-backticks ()
-  "Return pair of backticks for `prot-simple-insert-pair-pairs'.
-When the major mode is derived from `lisp-mode', return a pair of
-backtick and single quote, else two backticks."
-  (if (derived-mode-p 'lisp-mode 'lisp-data-mode)
-      (cons ?` ?')
-    (cons ?` ?`)))
-
-(defun prot-simple-insert-pair-natural-language-quotes ()
-  "Return pair of quotes for `prot-simple-insert-pair-pairs', per natural language."
-  ;; There are more here: <https://en.wikipedia.org/wiki/Quotation_mark>.
-  ;; I cover the languages I might type in.
-  (cond
-   ((and current-input-method
-         (string-match-p "\\(greek\\|french\\|spanish\\)" current-input-method))
-    (cons ?« ?»))
-   (t (cons ?\" ?\"))))
-
-(defun prot-simple--insert-pair-prompt ()
-  "Prompt for initial character among `prot-simple-insert-pair-pairs'."
-  (car
-   (read-multiple-choice
-    "Select pair: "
-    (mapcar
-     (lambda (properties)
-       (list
-        (car properties)
-        (plist-get (cdr properties) :description)))
-     prot-simple-insert-pair-pairs))))
-
-(defun prot-simple--insert-pair-bounds ()
-  "Return boundaries of symbol at point or active region."
-  (if (region-active-p)
-      (cons (region-beginning) (region-end))
-    (bounds-of-thing-at-point 'symbol)))
-
-(defun prot-simple--insert-pair-characters (character)
-  "Return pair corresponding to CHARACTER in `prot-simple-insert-pair-pairs'."
-  (plist-get (alist-get character prot-simple-insert-pair-pairs) :pair))
-
-;;;###autoload
-(defun prot-simple-insert-pair (pair &optional count)
-  "Insert PAIR among `prot-simple-insert-pair-pairs' around object at point.
-The object at point is either a symbol or the boundaries of the
-active region.
-
-With optional COUNT as a numeric value, do the aforementioned
-COUNTth times.  Without a COUNT, the operation is performed once."
-  (interactive
-   (list
-    (prot-simple--insert-pair-characters (prot-simple--insert-pair-prompt))
-    (prefix-numeric-value current-prefix-arg)))
-  (let* ((bounds (prot-simple--insert-pair-bounds))
-         (beg (car bounds))
-         (end (1+ (cdr bounds))) ; 1+ because we want the character after it
-         (characters (if (functionp pair) (funcall pair) pair)))
-    (dotimes (_ (or count 1))
-      (save-excursion
-        (goto-char beg)
-        (insert (car characters))
-        (goto-char end)
-        (setq end (1+ end))
-        (insert (cdr characters))))))
-
-;;;###autoload
-(defun prot-simple-delete-pair-dwim ()
-  "Delete pair following or preceding point.
-For Emacs version 28 or higher, the feedback's delay is
-controlled by `delete-pair-blink-delay'."
-  (interactive)
-  (if (eq (point) (cdr (bounds-of-thing-at-point 'sexp)))
-      (delete-pair -1)
-    (delete-pair 1)))
-
 ;;;###autoload
 (defun prot-simple-insert-date (&optional arg)
   "Insert the current date as `prot-simple-date-specifier'.
@@ -341,31 +225,38 @@ with the specified date."
       (delete-region (region-beginning) (region-end)))
     (insert (format-time-string format))))
 
-(defun prot-simple--pos-url-on-line (&optional char)
-  "Return position of `prot-common-url-regexp' on line or at CHAR."
-  (save-excursion
-    (goto-char (or char (line-beginning-position)))
-    (re-search-forward prot-common-url-regexp (line-end-position) :noerror)))
+(defun prot-simple--pos-url-on-line (char)
+  "Return position of `prot-common-url-regexp' at CHAR."
+  (when (integer-or-marker-p char)
+    (save-excursion
+      (goto-char char)
+      (re-search-forward prot-common-url-regexp (line-end-position) :noerror))))
 
 ;;;###autoload
-(defun prot-simple-escape-url-line (&optional char)
+(defun prot-simple-escape-url-line (char)
   "Escape all URLs or email addresses on the current line.
-By default, start operating from `line-beginning-position' to the
-end of the current line.  With optional CHAR as a buffer
-position, operate from CHAR to the end of the line."
-  (interactive)
+When called from Lisp CHAR is a buffer position to operate from
+until the end of the line.  In interactive use, CHAR corresponds
+to `line-beginning-position'."
+  (interactive
+   (list
+    (if current-prefix-arg
+        (re-search-forward
+         prot-common-url-regexp
+         (line-end-position) :no-error
+         (prefix-numeric-value current-prefix-arg))
+      (line-beginning-position))))
   (when-let ((regexp-end (prot-simple--pos-url-on-line char)))
-    (save-excursion
-      (goto-char regexp-end)
-      (unless (looking-at ">")
-        (insert ">")
-        (search-backward "\s")
-        (forward-char 1)
-        (insert "<")))
-    (prot-simple-escape-url-line (1+ regexp-end))))
+    (goto-char regexp-end)
+    (unless (looking-at ">")
+      (insert ">")
+      (search-backward "\s")
+      (forward-char 1)
+      (insert "<"))
+    (prot-simple-escape-url-line (1+ regexp-end)))
+  (goto-char (line-end-position)))
 
-;; Thanks to Bruno Boal for `prot-simple-escape-url-region'.  I am
-;; just renaming it for consistency with the rest of prot-simple.el.
+;; Thanks to Bruno Boal for the original `prot-simple-escape-url-region'.
 ;; Check Bruno's Emacs config: <https://github.com/BBoal/emacs-config>.
 
 ;;;###autoload
@@ -375,15 +266,15 @@ position, operate from CHAR to the end of the line."
    (if (region-active-p)
        (list (region-beginning) (region-end))
      (error "There is no region!")))
-  (unless (> end beg)
-    (cl-rotatef end beg))
-  (save-excursion
-    (goto-char beg)
-    (setq beg (line-beginning-position))
-    (while (<= beg end)
-      (prot-simple-escape-url-line beg)
-      (beginning-of-line 2)
-      (setq beg (point)))))
+  (let ((beg (min beg end))
+        (end (max beg end)))
+    (save-excursion
+      (goto-char beg)
+      (setq beg (line-beginning-position))
+      (while (<= beg end)
+        (prot-simple-escape-url-line beg)
+        (beginning-of-line 2)
+        (setq beg (point))))))
 
 ;;;###autoload
 (defun prot-simple-escape-url-dwim ()
@@ -391,10 +282,9 @@ position, operate from CHAR to the end of the line."
 Call the commands `prot-simple-escape-url-line' and
 `prot-simple-escape-url-region' ."
   (interactive)
-  (call-interactively
-   (if (region-active-p)
-       #'prot-simple-escape-url-region
-     #'prot-simple-escape-url-line)))
+  (if (region-active-p)
+      (prot-simple-escape-url-region (region-beginning) (region-end))
+    (prot-simple-escape-url-line (line-beginning-position))))
 
 ;;;###autoload
 (defun prot-simple-zap-to-char-backward (char &optional arg)
@@ -425,6 +315,8 @@ demarcated by BEG and END."
   (when (and (buffer-modified-p) buffer-file-name)
     (diff-buffer-with-file (current-buffer))))
 
+;; FIXME 2023-09-28: The line prefix is problematic.  I plan to rewrite it.
+
 (defcustom prot-simple-line-prefix-strings '(">" "+" "-")
   "List of strings used as line prefixes.
 The command which serves as the point of entry is
@@ -438,7 +330,7 @@ With optional STRING use it directly.  Else format the regexp by
 concatenating `prot-simple-line-prefix-strings'."
   (if string
       (format "^%s " string)
-    (format "^[%s] " (mapconcat #'identity prot-simple-line-prefix-strings))))
+    (format "^[%s] " (apply #'concat prot-simple-line-prefix-strings))))
 
 (defun prot-simple--line-prefix-p (&optional string)
   "Return non-nil if line beginning has an appropriate string prefix.
@@ -578,40 +470,30 @@ If ARG is nil, do it one time."
   (unless (prot-simple--move-line-user-error (point-max))
     (prot-simple--move-line arg 1)))
 
-(defmacro prot-simple-transpose (name scope &optional doc)
-  "Macro to produce transposition functions.
-NAME is the function's symbol.  SCOPE is the text object to
-operate on.  Optional DOC is the function's docstring.
-
+(defmacro prot-simple-define-transpose (scope)
+  "Define transposition command for SCOPE.
+SCOPE is the text object to operate on.  The command's name is
+prot-simple-transpose-SCOPE."
+  `(defun ,(intern (format "prot-simple-transpose-%s" scope)) (arg)
+     ,(format "Transpose %s.
 Transposition over an active region will swap the object at
-mark (region beginning) with the one at point (region end)"
-  `(defun ,name (arg)
-     ,doc
+the region beginning with the one at the region end." scope)
      (interactive "p")
-     (let ((x (format "%s-%s" "transpose" ,scope)))
+     (let ((fn (intern (format "%s-%s" "transpose" ,scope))))
        (if (use-region-p)
-           (funcall (intern x) 0)
-         (funcall (intern x) arg)))))
+           (funcall fn 0)
+         (funcall fn arg)))))
 
-(prot-simple-transpose
- prot-simple-transpose-lines
- "lines"
- "Transpose lines or swap over active region.")
-
-(prot-simple-transpose
- prot-simple-transpose-paragraphs
- "paragraphs"
- "Transpose paragraphs or swap over active region.")
-
-(prot-simple-transpose
- prot-simple-transpose-sentences
- "sentences"
- "Transpose sentences or swap over active region.")
-
-(prot-simple-transpose
- prot-simple-transpose-sexps
- "sexps"
- "Transpose balanced expressions or swap over active region.")
+;;;###autoload (autoload 'prot-simple-transpose-lines "prot-simple")
+;;;###autoload (autoload 'prot-simple-transpose-paragraphs "prot-simple")
+;;;###autoload (autoload 'prot-simple-transpose-sentences "prot-simple")
+;;;###autoload (autoload 'prot-simple-transpose-sexps "prot-simple")
+;;;###autoload (autoload 'prot-simple-transpose-words "prot-simple")
+(prot-simple-define-transpose "lines")
+(prot-simple-define-transpose "paragraphs")
+(prot-simple-define-transpose "sentences")
+(prot-simple-define-transpose "sexps")
+(prot-simple-define-transpose "words")
 
 ;;;###autoload
 (defun prot-simple-transpose-chars ()
@@ -622,110 +504,6 @@ line."
   (interactive)
   (transpose-chars -1)
   (forward-char))
-
-;;;###autoload
-(defun prot-simple-transpose-words (arg)
-  "Like `transpose-words' but treat ARG as 0 when the region is active."
-  (interactive "*p")
-  (transpose-words (if (region-active-p) 0 arg)))
-
-;;;; Commands for marking syntactic constructs
-
-(defmacro prot-simple-mark (name object &optional docstring)
-  "Produce function for marking small syntactic constructs.
-NAME is how the function should be called.  OBJECT is its scope.
-Optional DOCSTRING describes the resulting function.
-
-This is a slightly modified version of the built-in `mark-word'."
-  `(defun ,name (&optional arg allow-extend)
-     ,docstring
-     (interactive "P\np")
-     (let ((x (format "%s-%s" "forward" ,object)))
-       (cond ((and allow-extend
-                   (or (and (eq last-command this-command) (mark t))
-                       (region-active-p)))
-              (setq arg (if arg (prefix-numeric-value arg)
-                          (if (< (mark) (point)) -1 1)))
-              (set-mark
-               (save-excursion
-                 (goto-char (mark))
-                 (funcall (intern x) arg)
-                 (point))))
-             (t
-              (let ((bounds (bounds-of-thing-at-point (intern ,object))))
-                (unless (consp bounds)
-                  (user-error "No %s at point" ,object))
-                (if (>= (prefix-numeric-value arg) 0)
-                    (goto-char (car bounds))
-                  (goto-char (cdr bounds)))
-                (push-mark
-                 (save-excursion
-                   (funcall (intern x) (prefix-numeric-value arg))
-                   (point)))
-                (activate-mark)))))))
-
-(prot-simple-mark
- prot-simple-mark-word
- "word"
- "Mark the whole word at point.
-This function is a slightly modified version of the built-in
-`mark-word', that I intend to use only in special circumstances,
-such as when recording a keyboard macro where precision is
-required.  For a general purpose utility, use `prot-simple-mark-symbol'
-instead.")
-
-(prot-simple-mark
- prot-simple-mark-symbol
- "symbol"
- "Mark the whole symbol at point.
-With optional ARG, mark the current symbol and any remaining
-ARGth symbols away from point.  A negative argument moves
-backward. Repeated invocations of this command mark the next
-symbol in the direction originally specified.
-
-In the absence of a symbol and if a word is present at point,
-this command will operate on it as described above.")
-
-;;;###autoload
-(defun prot-simple-mark-sexp-backward (&optional arg)
-  "Mark previous or ARGth balanced expression[s].
-Just a convenient backward-looking `mark-sexp'."
-  (interactive "P")
-  (if arg
-      (mark-sexp (- arg) t)
-    (mark-sexp (- 1) t)))
-
-;;;###autoload
-(defun prot-simple-mark-construct-dwim (&optional arg)
-  "Mark symbol or balanced expression at point.
-A do-what-I-mean wrapper for `prot-simple-mark-sexp-backward',
-`mark-sexp', and `prot-simple-mark-symbol'.
-
-When point is over a symbol, mark the entirety of it.  Regular
-words are interpreted as symbols when an actual symbol is not
-present.
-
-For balanced expressions, a backward match will happen when point
-is to the right of the closing delimiter.  A forward match is the
-fallback condition and should work when point is before a
-balanced expression, with or without whitespace in between it an
-the opening delimiter.
-
-Optional ARG will mark a total of ARGth objects while counting
-the current one (so 3 would be 1+2 more).  A negative count moves
-the mark backward (though that would invert the backward-moving
-sexp matching of `prot-simple-mark-sexp-backward', so be mindful of
-where the point is).  Repeated invocations of this command
-incrementally mark objects in the direction originally
-specified."
-  (interactive "P")
-  (cond
-   ((symbol-at-point)
-    (prot-simple-mark-symbol arg t))
-   ((eq (point) (cdr (bounds-of-thing-at-point 'sexp)))
-    (prot-simple-mark-sexp-backward arg))
-   (t
-    (mark-sexp arg t))))
 
 ;;;; Commands for code navigation (work in progress)
 
@@ -963,7 +741,7 @@ counter-clockwise."
 (defun prot-simple-accessible-colors (variant)
   "Return list of accessible `defined-colors'.
 VARIANT is either `dark' or `light'."
-  (let ((variant-color (if (eq variant 'dark) "#000000" "#ffffff")))
+  (let ((variant-color (if (eq variant 'black) "#000000" "#ffffff")))
     (seq-filter
      (lambda (c)
        (let* ((rgb (color-name-to-rgb c))
@@ -976,15 +754,16 @@ VARIANT is either `dark' or `light'."
      (defined-colors))))
 
 (defun prot-simple--list-accessible-colors-prompt ()
-  "Use `read-multiple-choice' to return `dark' or `light' variant."
+  "Use `read-multiple-choice' to return white or black background."
   (intern
    (cadr
     (read-multiple-choice
      "Variant"
-     '((?d "dark" "Load a random dark theme")
-       (?l "light" "Load a random light theme"))
-     "Limit to the dark or light subset of the Ef themes collection."))))
+     '((?b "black" "Black background")
+       (?w "white" "White background"))
+     "Choose between white or black background."))))
 
+;;;###autoload
 (defun prot-simple-list-accessible-colors (variant)
   "Return buffer with list of accessible `defined-colors'.
 VARIANT is either `dark' or `light'."

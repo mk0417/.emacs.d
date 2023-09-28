@@ -1,6 +1,6 @@
 ;;; init-func.el --- Functions -*- lexical-binding: t -*-
 
-(require 'prot-simple)
+(require 'prot-pair)
 (require 'prot-comment)
 
 ;; Mark paragraph
@@ -43,23 +43,23 @@
 ;; Insert surround pairs
 (defun p-insert-surround-parentheses ()
   (interactive)
-  (prot-simple-insert-pair '(?\( . ?\))))
+  (prot-pair-insert '(?\( . ?\))))
 
 (defun p-insert-surround-bracket ()
   (interactive)
-  (prot-simple-insert-pair '(?\[ . ?\])))
+  (prot-pair-insert '(?\[ . ?\])))
 
 (defun p-insert-surround-curly-bracket ()
   (interactive)
-  (prot-simple-insert-pair '(?{ . ?})))
+  (prot-pair-insert '(?{ . ?})))
 
 (defun p-insert-surround-single-quote ()
   (interactive)
-  (prot-simple-insert-pair '(?' . ?')))
+  (prot-pair-insert '(?' . ?')))
 
 (defun p-insert-surround-double-quotes ()
   (interactive)
-  (prot-simple-insert-pair '(?\" . ?\")))
+  (prot-pair-insert '(?\" . ?\")))
 
 ;; Find file in my config
 (defun p-find-file-in-config ()

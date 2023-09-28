@@ -75,6 +75,7 @@ DEFINITIONS is a sequence of string and command pairs."
 
 (defun p-config-after-startup ()
   (cl-dolist (mod (list
+                   'prot-emacs-essentials
                    'prot-emacs-search
                    'prot-emacs-langs
                    'prot-emacs-dired

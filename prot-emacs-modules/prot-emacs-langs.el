@@ -1,9 +1,9 @@
 ;;; General language/editing settings
 
-;;; Install package
 (straight-use-package 'markdown-mode)
 
-(require 'prot-comment)
+(require 'flyspell)
+(require 'prot-spell)
 
 ;;;; Tabs, indentation, and the TAB key
 (setq-default tab-always-indent 'complete
@@ -42,6 +42,9 @@
 
 (add-to-list 'auto-mode-alist '("\\(README\\|CHANGELOG\\|COPYING\\|LICENSE\\)\\'" . text-mode))
 
+;;;; Arch Linux and AUR package scripts (sh-mode)
+(add-to-list 'auto-mode-alist '("PKGBUILD" . sh-mode))
+
 ;;;; SystemD and other configuration files (conf-mode)
 (add-to-list 'auto-mode-alist '("\\.\\(service\\|timer\\)\\'" . conf-mode))
 (add-to-list 'auto-mode-alist '("dircolors" . conf-mode))
@@ -61,23 +64,29 @@
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 (setq markdown-fontify-code-blocks-natively t)
 
-;;; Comments (newcomment.el and prot-comment.el)
-(setq comment-empty-lines t)
-(setq comment-fill-column nil)
-(setq comment-multi-line t)
-(setq comment-style 'multi-line)
-(setq-default comment-column 0)
+;;; Flyspell and prot-spell.el (spell check)
+;; See FIXME for `jinx'.
+(setq flyspell-issue-message-flag nil)
+(setq flyspell-issue-welcome-flag nil)
+(setq ispell-program-name "aspell")
+(setq ispell-dictionary "en_GB")
+(define-key flyspell-mode-map (kbd "C-;") nil)
+(define-key ctl-x-x-map "s" flyspell-mode) ; C-x x s
+
+(setq prot-spell-dictionaries
+      '(("EN English" . "en")
+        ("EL Ελληνικά" . "el")
+        ("FR Français" . "fr")
+        ("ES Espanõl" . "es")))
+
+(setq ispell-choices-buffer "*ispell-top-choices*") ; see my `display-buffer-alist'
+
+;; Also check prot-spell.el for what I am doing with
+;; `prot-spell-ispell-display-buffer'.  Then refer to the
+;; `display-buffer-alist' for the relevant entry.
 
 (prot-emacs-keybind global-map
-  "C-:" comment-kill ; C-S-;
-  "M-;" comment-indent)
-
-(setq prot-comment-comment-keywords
-      '("TODO" "NOTE" "XXX" "REVIEW" "FIXME"))
-(setq prot-comment-timestamp-format-concise "%F")
-(setq prot-comment-timestamp-format-verbose "%F %T %z")
-(prot-emacs-keybind global-map
-  "C-;" prot-comment-comment-dwim
-  "C-x C-;" prot-comment-timestamp-keyword)
+  "M-$" prot-spell-spell-dwim
+  "C-M-$" prot-spell-change-dictionary)
 
 (provide 'prot-emacs-langs)

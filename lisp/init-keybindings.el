@@ -4,6 +4,7 @@
 (straight-use-package 'general)
 
 (require 'prot-simple)
+(require 'prot-pair)
 (require 'prot-prefix)
 (require 'prot-scratch)
 
@@ -161,15 +162,15 @@
   :states '(normal visual)
   :keymaps '(TeX-mode-map))
 (p-latex-leader-def
- "j"  '(:ignore t :wk "latex")
- "jm" '(TeX-insert-macro :wk "insert latex macro")
- "je" '(LaTeX-environment :wk "insert latex environment")
- "jF" '(LaTeX-fill-buffer :wk "format latex file")
- "jr" '(p-run-latex :wk "run tex")
- "ja" '(TeX-command-run-all :wk "run all")
- "jf" '(p-select-beamer-frame :wk "select beamer frame block")
- "jc" '(p-clear-latex-temp-files :wk "clear temp files")
- "jv" '(TeX-view :wk "view pdf"))
+  "j"  '(:ignore t :wk "latex")
+  "jm" '(TeX-insert-macro :wk "insert latex macro")
+  "je" '(LaTeX-environment :wk "insert latex environment")
+  "jF" '(LaTeX-fill-buffer :wk "format latex file")
+  "jr" '(p-run-latex :wk "run tex")
+  "ja" '(TeX-command-run-all :wk "run all")
+  "jf" '(p-select-beamer-frame :wk "select beamer frame block")
+  "jc" '(p-clear-latex-temp-files :wk "clear temp files")
+  "jv" '(TeX-view :wk "view pdf"))
 
 (general-imap "f"
   (general-key-dispatch 'self-insert-command

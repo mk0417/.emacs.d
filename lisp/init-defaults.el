@@ -1,15 +1,6 @@
 ;;;;; init-defaults.el --- Emacs better defaults -*- lexical-binding: t -*-
 
 ;;; Some basic settings
-(setq delete-pair-blink-delay 0.15)
-(setq help-window-select t)
-(setq next-error-recenter '(4))
-(setq find-library-include-other-files nil)
-(setq remote-file-name-inhibit-delete-by-moving-to-trash t)
-(setq remote-file-name-inhibit-auto-save t)
-(setq save-interprogram-paste-before-kill t)
-(setq mode-require-final-newline 'visit-save)
-(setq-default truncate-partial-width-windows nil)
 (setq mouse-yank-at-point t)
 (setq confirm-kill-processes nil)
 (setq process-adaptive-read-buffering nil)
@@ -50,16 +41,6 @@
    '(fill-column-indicator
      ((t (:background unspecified :foreground "grey30"))))))
 
-;;; Time
-(setq display-time-format "  %a %e %b, %H:%M ")
-(setq display-time-24hr-format t)
-(setq display-time-interval 60)
-(setq display-time-default-load-average nil)
-(setq prot-simple-date-specifier "%F")
-(setq prot-simple-time-specifier "%R %z")
-
-(add-hook 'after-init-hook #'display-time-mode)
-
 ;;; Pixelwise
 (setq frame-resize-pixelwise t)
 (setq window-resize-pixelwise t)
@@ -90,14 +71,6 @@
 
 ;;; Revert Dired and other buffers
 (setq global-auto-revert-non-file-buffers t)
-
-;;; Revert buffers when the underlying file has changed
-(setq auto-revert-verbose t)
-(global-auto-revert-mode 1)
-
-;;; Typed text replaces the selection if the selection is active,
-;; pressing delete or backspace deletes the selection.
-(delete-selection-mode)
 
 ;;; Set default coding system
 (set-default-coding-systems 'utf-8)
@@ -145,16 +118,6 @@
 
 (setq eval-expression-print-length nil)
 
-;;; Do not saves duplicates in kill-ring
-(setq kill-do-not-save-duplicates t)
-
-;;; Make scrolling less stuttered
-(setq-default scroll-preserve-screen-position t
-              scroll-conservatively 10000
-              scroll-step 1
-              scroll-margin 0
-              next-screen-context-lines 0)
-
 ;;; Better support for files with long lines
 (setq-default bidi-paragraph-direction 'left-to-right)
 (setq-default bidi-inhibit-bpa t)
@@ -193,61 +156,9 @@
 (dolist (hook '(prog-mode-hook markdown-mode-hook org-mode-hook conf-mode-hook text-mode-hook))
   (add-hook hook 'p-emacs-editing-enable-trailing-whitespace))
 
-;;;;; World clock (M-x world-clock)
-(setq display-time-world-list t)
-(setq zoneinfo-style-world-list ; M-x shell RET timedatectl list-timezones
-      '(("America/Los_Angeles" "Los Angeles")
-        ("America/Vancouver" "Vancouver")
-        ("Canada/Pacific" "Canada/Pacific")
-        ("America/Chicago" "Chicago")
-        ("Brazil/Acre" "Rio Branco")
-        ("America/New_York" "New York")
-        ("Canada/Atlantic" "Canada/Atlantic")
-        ("Brazil/East" "Brasília")
-        ("UTC" "UTC")
-        ("Europe/London" "London")
-        ("Europe/Lisbon" "Lisbon")
-        ("Europe/Brussels" "Brussels")
-        ("Europe/Athens" "Athens")
-        ("Asia/Riyadh" "Riyadh")
-        ("Asia/Tehran" "Tehran")
-        ("Asia/Tbilisi" "Tbilisi")
-        ("Asia/Yekaterinburg" "Yekaterinburg")
-        ("Asia/Kolkata" "Kolkata")
-        ("Asia/Singapore" "Singapore")
-        ("Asia/Shanghai" "Shanghai")
-        ("Asia/Seoul" "Seoul")
-        ("Asia/Tokyo" "Tokyo")
-        ("Asia/Vladivostok" "Vladivostok")
-        ("Australia/Sydney" "Sydney")))
-
-;; All of the following variables are for Emacs 28
-(setq world-clock-list t)
-(setq world-clock-time-format "%R %z (%Z)	%A %d %B")
-(setq world-clock-buffer-name "*world-clock*") ; Placement handled by `display-buffer-alist'
-(setq world-clock-timer-enable t)
-(setq world-clock-timer-second 60)
-
-;;;; Tooltips (tooltip-mode)
-(setq tooltip-delay 0.5
-      tooltip-short-delay 0.5
-      x-gtk-use-system-tooltips nil
-      tooltip-frame-parameters
-      '((name . "tooltip")
-        (internal-border-width . 10)
-        (border-width . 0)
-        (no-special-glyphs . t)))
-
-(autoload #'tooltip-mode "tooltip")
-(tooltip-mode 1)
-
 ;;; Electric pair
-(add-hook 'prog-mode-hook (lambda () (electric-pair-mode 1)))
-(add-hook 'text-mode-hook (lambda () (electric-pair-mode 1)))
-
-;;; Emacs server
-(setq server-client-instructions nil)
-(server-start)
+;; (add-hook 'prog-mode-hook (lambda () (electric-pair-mode 1)))
+;; (add-hook 'text-mode-hook (lambda () (electric-pair-mode 1)))
 
 (provide 'init-defaults)
 ;;;;; init-defaults.el ends here
