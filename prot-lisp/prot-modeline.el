@@ -319,21 +319,21 @@ face.  Let other buffers have no face.")
 ;; I want a generic VC method.  Granted, I only use Git but I still
 ;; want it to work as a VC extension.
 
-;; (defun prot-modeline-diffstat (file)
-;;   "Return shortened Git diff numstat for FILE."
-;;   (when-let* ((output (shell-command-to-string (format "git diff --numstat %s" file)))
-;;               (stats (split-string output "[\s\t]" :omit-nulls "[\s\f\t\n\r\v]+"))
-;;               (added (nth 0 stats))
-;;               (deleted (nth 1 stats)))
-;;     (cond
-;;      ((and (equal added "0") (equal deleted "0"))
-;;       "")
-;;      ((and (not (equal added "0")) (equal deleted "0"))
-;;       (propertize (format "+%s" added) 'face 'shadow))
-;;      ((and (equal added "0") (not (equal deleted "0")))
-;;       (propertize (format "-%s" deleted) 'face 'shadow))
-;;      (t
-;;       (propertize (format "+%s -%s" added deleted) 'face 'shadow)))))
+(defun prot-modeline-diffstat (file)
+  "Return shortened Git diff numstat for FILE."
+  (when-let* ((output (shell-command-to-string (format "git diff --numstat %s" file)))
+              (stats (split-string output "[\s\t]" :omit-nulls "[\s\f\t\n\r\v]+"))
+              (added (nth 0 stats))
+              (deleted (nth 1 stats)))
+    (cond
+     ((and (equal added "0") (equal deleted "0"))
+      "")
+     ((and (not (equal added "0")) (equal deleted "0"))
+      (propertize (format "+%s" added) 'face 'shadow))
+     ((and (equal added "0") (not (equal deleted "0")))
+      (propertize (format "-%s" deleted) 'face 'shadow))
+     (t
+      (propertize (format "+%s -%s" added deleted) 'face 'shadow)))))
 
 (declare-function vc-git-working-revision "vc-git" (file))
 
@@ -360,8 +360,8 @@ With optional FACE, use it to propertize the BRANCH."
                'mouse-face 'mode-line-highlight
                'help-echo (prot-modeline--vc-help-echo file)
                'local-map prot-modeline-vc-map)
-   ;; " "
-   ;; (prot-modeline-diffstat file)
+   " "
+   (prot-modeline-diffstat file)
    ))
 
 (defun prot-modeline--vc-details (file branch &optional face)
@@ -394,7 +394,7 @@ than `split-width-threshold'."
       (when-let* (((mode-line-window-selected-p))
                   (file (buffer-file-name))
                   (backend (vc-backend file))
-                  ;; ((vc-git-registered file))
+                  ((vc-git-registered file))
                   (branch (prot-modeline--vc-branch-name file backend))
                   (face (prot-modeline--vc-face file backend)))
         (prot-modeline--vc-details file branch face)))
@@ -492,7 +492,7 @@ Specific to the current window's mode line.")
                  0)
                 ;; No box, no variable pitch, but I am keeping it as
                 ;; the fallback for the time being.
-                (t (* magic-number -0.1))))))))
+                (t (* magic-number -0.01))))))))
   "Mode line construct to align following elements to the right.
 Read Info node `(elisp) Pixel Specification'.")
 

@@ -65,6 +65,7 @@ DEFINITIONS is a sequence of string and command pairs."
 (require 'prot-emacs-font)
 (require 'init-modeline)
 (require 'init-defaults)
+(require 'prot-emacs-evil)
 (require 'init-evil)
 (require 'init-completion)
 (require 'prot-emacs-completion-mct)

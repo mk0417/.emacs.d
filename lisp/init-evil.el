@@ -1,13 +1,25 @@
 ;;;;; init-evil.el --- Evil mode configuration -*- lexical-binding: t -*-
 
 ;;; Install packages
-(straight-use-package 'evil)
 (straight-use-package 'evil-surround)
 
-(setq evil-want-C-i-jump nil)
-(setq evil-respect-visual-line-mode t)
+;; (setq evil-want-C-i-jump nil)
+;; (setq evil-respect-visual-line-mode t)
+;;
+;; (evil-mode 1)
 
-(evil-mode 1)
+;;; Make evil search more like vim
+;; (evil-select-search-module 'evil-search-module 'evil-search)
+
+;;; Make sure some modes start in Emacs state
+;; (dolist
+;;     (mode
+;;      '(custom-mode eshell-mode term-mode xref--xref-buffer-mode lsp-bridge-ref-mode occur-mode occur-edit-mode grep-mode color-rg-mode))
+;;   (add-to-list 'evil-emacs-state-modes mode))
+
+;;; Set evil normal state for grep mode
+;; (dolist (mode '(dired-mode-map debugger-mode))
+;;   (evil-set-initial-state mode 'normal))
 
 ;;; Change cursor type and color
 ;; https://github.com/hlissner/doom-emacs/issues/1848
@@ -20,21 +32,8 @@
             (setq-local cursor-type 'hbar)
             (set-face-attribute 'cursor nil :background "#cf5a65")))
 
-;;; Make evil search more like vim
-(evil-select-search-module 'evil-search-module 'evil-search)
-
 ;;; Evil surround
 (global-evil-surround-mode 1)
-
-;;; Make sure some modes start in Emacs state
-(dolist
-    (mode
-     '(custom-mode eshell-mode term-mode xref--xref-buffer-mode lsp-bridge-ref-mode occur-mode occur-edit-mode grep-mode color-rg-mode))
-  (add-to-list 'evil-emacs-state-modes mode))
-
-;;; Set evil normal state for grep mode
-(dolist (mode '(dired-mode-map debugger-mode))
-  (evil-set-initial-state mode 'normal))
 
 ;;; Vim style replace
 (defun p-ex-evil-buffer-replace ()
