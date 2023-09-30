@@ -12,7 +12,7 @@
 (setq TeX-clean-confirm t)
 ;; Electric pairs in auctex
 (setq TeX-electric-sub-and-superscript t)
-(setq LaTeX-electric-left-right-brace t)
+(setq LaTeX-electric-left-right-brace nil)
 (setq TeX-electric-math (cons "$" "$"))
 ;; Correlate the source and the output
 (setq TeX-source-correlate-mode t)

@@ -1,14 +1,13 @@
 ;;; init-keybindings.el --- Keybindings -*- lexical-binding: t -*-
 
-(straight-use-package 'which-key)
-(straight-use-package 'general)
-
 (require 'prot-simple)
 (require 'prot-pair)
 (require 'prot-prefix)
 (require 'prot-scratch)
 
 ;;; Which-key
+(straight-use-package 'which-key)
+
 (setq which-key-sort-order #'which-key-key-order-alpha
       which-key-sort-uppercase-first nil
       which-key-add-column-padding 1
@@ -36,6 +35,8 @@
   "C->" prot-simple-insert-line-prefix-dwim)
 
 ;;; General
+(straight-use-package 'general)
+
 (general-evil-setup)
 
 ;; Fix leader key in Message buffer
@@ -119,12 +120,13 @@
   "t"  '(:ignore t :wk "toggle")
   "tr" '(p-reveal-file-in-finder :wk "reveal file in finder")
   "tw" '(count-words :wk "count words")
-  "tl" '(count-lines-page :wk "count lines")
+  "tc" '(count-lines-page :wk "count lines")
   "tm" '(toggle-frame-maximized :wk "maximize window")
   "tt" '(modus-themes-toggle :wk "toggle modus theme")
-  "ta" '(app-launcher-run-app :wk "app-launcher-run-app")
-  "td" '(dir-launcher-run-dir :wk "dir-launcher-run-dir")
-  "tu" '(url-launcher-run-url :wk "url-launcher-run-url")
+  "ta" '(app-launcher-run-app :wk "app-launcher")
+  "td" '(dir-launcher-run-dir :wk "dir-launcher")
+  "tu" '(url-launcher-run-url :wk "url-launcher")
+  "tl" '(literature-launcher-run-literature :wk "literature-launcher")
   "ty" '(yas-new-snippet :wk "create new snippet")
   "ti" '(yas-insert-snippet :wk "insert snippet")
   ;; Xah Lee

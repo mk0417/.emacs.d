@@ -23,14 +23,15 @@
 
 ;;; Change cursor type and color
 ;; https://github.com/hlissner/doom-emacs/issues/1848
-(setq evil-normal-state-cursor '(box "#cf5a65"))
-(setq evil-insert-state-cursor '(hbar "#cf5a65"))
-(setq evil-visual-state-cursor '(hollow "#cf5a65"))
+;; (setq evil-normal-state-cursor '(box "#cf5a65"))
+;; (setq evil-insert-state-cursor '(hbar "#cf5a65"))
+;; (setq evil-visual-state-cursor '(hollow "#cf5a65"))
+
 ;; curosr in minibuffer
-(add-hook 'minibuffer-setup-hook
-          (lambda ()
-            (setq-local cursor-type 'hbar)
-            (set-face-attribute 'cursor nil :background "#cf5a65")))
+;; (add-hook 'minibuffer-setup-hook
+;;           (lambda ()
+;;             (setq-local cursor-type 'hbar)
+;;             (set-face-attribute 'cursor nil :background "#cf5a65")))
 
 ;;; Evil surround
 (global-evil-surround-mode 1)
