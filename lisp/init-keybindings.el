@@ -22,8 +22,8 @@
   "C-o" prot-prefix
   "C-x k" prot-simple-kill-buffer-current
   "C-x K" kill-buffer-and-window
-  "M-i" forward-paragraph
-  "M-o" backward-paragraph
+  "M-n" forward-paragraph
+  "M-p" backward-paragraph
   "C-h K" describe-keymap
   "M-s s" isearch-forward
   "M-s r" isearch-backward
@@ -185,8 +185,7 @@
     :timeout 0.2
     "b" 'p-insert-pound))
 
-(define-key evil-normal-state-map (kbd "C-'") 'prot-simple-kill-line-backward)
-(define-key evil-normal-state-map (kbd "C-i") 'p-delete-backward-to-tab)
+(define-key evil-normal-state-map (kbd "M-j") 'p-delete-backward-to-tab)
 (define-key evil-normal-state-map (kbd "C-f") 'prot-simple-multi-line-below)
 (define-key evil-normal-state-map (kbd "C-b") 'prot-simple-multi-line-above)
 (define-key evil-normal-state-map (kbd "m") 'evil-jump-item)
@@ -243,10 +242,10 @@
 
 (define-key evil-insert-state-map (kbd "C-a") 'evil-first-non-blank)
 (define-key evil-insert-state-map (kbd "C-e") 'evil-last-non-blank)
-(define-key evil-insert-state-map (kbd "C-i") 'p-delete-backward-to-tab)
+(define-key evil-insert-state-map (kbd "M-j") 'p-delete-backward-to-tab)
 (define-key evil-insert-state-map (kbd "C-k") 'delete-backward-char)
 (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-(define-key evil-insert-state-map (kbd "C-'") 'prot-simple-kill-line-backward)
+(define-key evil-insert-state-map (kbd "M-w") 'backward-kill-word)
 
 (define-key evil-ex-completion-map (kbd "C-k") 'delete-backward-char)
 (define-key evil-ex-completion-map (kbd "C-f") 'forward-char)

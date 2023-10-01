@@ -1,7 +1,6 @@
 ;; WORK IN PROGRESS
 
 (straight-use-package 'evil)
-(straight-use-package 'evil-collection)
 
 ;; Evaluate these before loading `evil'
 (setq evil-want-C-i-jump t)
@@ -32,7 +31,7 @@
 (setq evil-repeat-move-cursor t)
 (setq evil-cross-lines nil)
 (setq evil-backspace-join-lines t)
-(setq evil-move-cursor-back nil) ; Emacs style, not Vim
+(setq evil-move-cursor-back t)
 (setq evil-move-beyond-eol t) ; Emacs style, not Vim
 (setq evil-repeat-find-to-skip-next t)
 (setq evil-kbd-macro-suppress-motion-error nil) ; never suppress errors in kmacros, Emacs-style
@@ -62,14 +61,14 @@
 ;; evil-buffer-regexps
 ;; evil-emacs-state-modes
 (setq evil-insert-state-modes '(comint-mode
-                                 erc-mode
-                                 rcirc-mode
-                                 eshell-mode
-                                 inferior-emacs-lisp-mode
-                                 reb-mode
-                                 shell-mode
-                                 term-mode
-                                 wdired-mode))
+                                erc-mode
+                                rcirc-mode
+                                eshell-mode
+                                inferior-emacs-lisp-mode
+                                reb-mode
+                                shell-mode
+                                term-mode
+                                wdired-mode))
 ;; (setq evil-motion-state-modes '(apropos-mode ; FIXME 2023-09-29: What is the motion state?
 ;;                                  Buffer-menu-mode
 ;;                                  calendar-mode
@@ -107,6 +106,8 @@
 (setq evil-visual-update-x-selection-p t)
 
 (evil-mode 1)
+
+(straight-use-package 'evil-collection)
 
 (evil-collection-init)
 
