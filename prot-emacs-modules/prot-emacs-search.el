@@ -1,9 +1,4 @@
 ;;; Isearch, occur, grep, and extras (prot-search.el)
-
-(straight-use-package 'wgrep)
-
-(require 'prot-search)
-
 (setq search-highlight t)
 (setq search-whitespace-regexp ".*?" ; one `setq' here to make it obvious they are a bundle
       isearch-lax-whitespace t
@@ -20,7 +15,7 @@
 (setq isearch-repeat-on-direction-change t)
 (setq lazy-highlight-initial-delay 0.5)
 (setq lazy-highlight-no-delay-length 3)
-(setq isearch-wrap-pause t)
+(setq isearch-wrap-pause t) ; `no-ding' makes keyboard macros never quit
 
 (add-hook 'occur-mode-hook #'hl-line-mode)
 (add-hook 'occur-mode-hook #'prot-common-truncate-lines-silently) ; from `prot-common.el'
@@ -31,9 +26,13 @@
   "C-g" isearch-cancel ; instead of `isearch-abort'
   "M-/" isearch-complete)
 
+(require 'prot-search)
+
 (setq prot-search-outline-regexp-alist
       '((emacs-lisp-mode . "^\\((\\|;;;+ \\)")
         (org-mode . "^\\(\\*+ +\\|#\\+[Tt][Ii][Tt][Ll][Ee]:\\)")
+        (outline-mode . "^\\*+ +")
+        (emacs-news-view-mode . "^\\*+ +")
         (conf-toml-mode . "^\\[")
         (markdown-mode . "^#+ +")))
 (setq prot-search-todo-keywords
@@ -57,6 +56,8 @@
   "<C-return>" prot-search-isearch-other-end)
 
 ;;; `grep' package
+(setq grep-program (or (executable-find "rg") "grep"))
+(setq grep-save-buffers nil)
 (setq grep-use-headings t) ; Emacs 30
 ;;; `re-builder' package
 (setq reb-re-syntax 'read)
@@ -65,13 +66,11 @@
 (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ; for M-.
 (setq xref-show-xrefs-function #'xref-show-definitions-buffer) ; for grep and the like
 (setq xref-file-name-display 'project-relative)
-(setq xref-search-program
-      (cond
-       ((or (executable-find "ripgrep") (executable-find "rg")) 'ripgrep)
-       ((executable-find "ugrep") 'ugrep)
-       (t 'grep)))
+(setq xref-search-program (if (string-match-p "rg" grep-program) 'ripgrep 'grep))
 
 ;;; wgrep (writable grep)
+(straight-use-package 'wgrep)
+
 (setq wgrep-auto-save-buffer t)
 (setq wgrep-change-readonly-file t)
 (prot-emacs-keybind grep-mode-map

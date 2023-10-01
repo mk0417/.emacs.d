@@ -11,6 +11,7 @@
              "/opt/homebrew/Caskroom/miniforge/base/bin/jupyter"
              "/opt/homebrew/Caskroom/mambaforge/base/bin"
              "/opt/homebrew/Caskroom/mambaforge/base/bin/jupyter"
+             "/opt/homebrew/Cellar/aspell"
              "/opt/homebrew/bin/"
              "/usr/local/bin"
              "/usr/local/sbin"

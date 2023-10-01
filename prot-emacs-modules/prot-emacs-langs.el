@@ -119,7 +119,7 @@
 (setq denote-known-keywords '("emacs" "economics"))
 (setq denote-infer-keywords t)
 (setq denote-sort-keywords t)
-(setq denote-file-type 'text) ; Org is the default, set others here like I do
+;; (setq denote-file-type 'text) ; Org is the default, set others here like I do
 (setq denote-excluded-directories-regexp nil)
 (setq denote-allow-multi-word-keywords nil)
 (setq denote-date-format nil) ; read its doc string
