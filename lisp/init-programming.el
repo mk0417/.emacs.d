@@ -38,8 +38,10 @@
 (setq python-indent-offset 4)
 (setq python-indent-guess-indent-offset-verbose nil)
 (setq python-indent-guess-indent-offset t)
-(add-hook 'python-mode-hook 'display-fill-column-indicator-mode)
-(add-hook 'python-ts-mode-hook 'display-fill-column-indicator-mode)
+(add-hook 'python-mode-hook #'display-fill-column-indicator-mode)
+(add-hook 'python-mode-hook #'electric-pair-mode)
+(add-hook 'python-ts-mode-hook #'display-fill-column-indicator-mode)
+(add-hook 'python-ts-mode-hook #'electric-pair-mode)
 
 (defun p-python-indent-key ()
   (define-key evil-normal-state-map (kbd "god") 'python-indent-shift-right)
