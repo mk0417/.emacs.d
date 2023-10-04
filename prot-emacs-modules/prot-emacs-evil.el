@@ -7,7 +7,6 @@
 (setq evil-want-C-u-scroll t) ; Vim style
 (setq evil-want-C-d-scroll t)
 (setq evil-want-C-u-delete nil) ; I can use Emacs keys in insert mode
-(setq evil-want-C-w-delete nil) ; I can use Emacs keys in insert mode
 (setq evil-want-C-h-delete nil) ; I can use Emacs keys in insert mode
 (setq evil-disable-insert-state-bindings t)
 (setq evil-want-C-g-bindings nil)

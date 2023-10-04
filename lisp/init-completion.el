@@ -94,7 +94,7 @@
 (minibuffer-electric-default-mode 1)
 
 (define-key minibuffer-local-map (kbd "C-k") 'delete-backward-char)
-(define-key minibuffer-local-map (kbd "M-w") 'backward-kill-word)
+(define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
 
 ;;; Orderless
 ;;; Orderless completion style (and prot-orderless.el)

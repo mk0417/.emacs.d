@@ -245,7 +245,7 @@
 (define-key evil-insert-state-map (kbd "M-j") 'p-delete-backward-to-tab)
 (define-key evil-insert-state-map (kbd "C-k") 'delete-backward-char)
 (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-(define-key evil-insert-state-map (kbd "M-w") 'backward-kill-word)
+(define-key evil-insert-state-map (kbd "C-w") 'backward-kill-word)
 
 (define-key evil-ex-completion-map (kbd "C-k") 'delete-backward-char)
 (define-key evil-ex-completion-map (kbd "C-f") 'forward-char)
