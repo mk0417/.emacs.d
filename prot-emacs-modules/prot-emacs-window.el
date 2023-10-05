@@ -1,7 +1,5 @@
 ;;; General window and buffer configurations
 
-(straight-use-package 'breadcrumb)
-
 ;;;; `uniquify' (unique names for buffers)
 (setq uniquify-buffer-name-style 'forward)
 (setq uniquify-strip-common-suffix t)

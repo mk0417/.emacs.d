@@ -274,8 +274,10 @@
 ;; whenever I would encounter an error in some Lisp evaluation.
 ;; Whereas the server works just fine when I need to connect to it via
 ;; the emacsclient.
+(require 'server)
 (setq server-client-instructions nil)
-(server-start)
+(unless (server-running-p)
+  (server-start))
 
 ;;; Mark syntactic constructs efficiently (expreg)
 (straight-use-package 'expreg)

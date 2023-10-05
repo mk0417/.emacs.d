@@ -56,5 +56,11 @@
 
 (prot-modeline-subtle-mode 1)
 
+;;; Context of current item (breadcrumb)
+(straight-use-package 'breadcrumb)
+
+(setq breadcrumb-imenu-max-length 0.5)
+(setq breadcrumb-project-max-length 0.5)
+
 (provide 'init-modeline)
 ;;;;; init-modeline.el ends here
