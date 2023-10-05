@@ -43,6 +43,7 @@
   :group 'dired)
 
 ;;;; General commands
+
 ;; NOTE 2023-06-27: This user option is quick-and-dirty.  I prefer not
 ;; to have an option at all and simply do the right thing based on
 ;; `dired-guess-shell-alist-user'.
@@ -179,7 +180,7 @@ For more on such headings, read `dired-maybe-insert-subdir'."
   (while (and (prot-dired-subdirectory-previous)
               (not (equal (dired-current-directory)
                           (expand-file-name default-directory))))
-    (dired-kill-subdir)))
+      (dired-kill-subdir)))
 
 (autoload 'cl-remove-if-not "cl-seq")
 

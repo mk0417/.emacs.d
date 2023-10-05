@@ -394,7 +394,7 @@ than `split-width-threshold'."
       (when-let* (((mode-line-window-selected-p))
                   (file (buffer-file-name))
                   (backend (vc-backend file))
-                  ((vc-git-registered file))
+                  ;; ((vc-git-registered file))
                   (branch (prot-modeline--vc-branch-name file backend))
                   (face (prot-modeline--vc-face file backend)))
         (prot-modeline--vc-details file branch face)))

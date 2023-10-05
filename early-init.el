@@ -1,79 +1,85 @@
-;;;;; early-init.el --- Early init file -*- lexical-binding: t -*-
+;;; early-init.el --- Early Init File -*- lexical-binding: t -*-
 
-;;; Don't use package.el, use straight.el instead
-(setq package-enable-at-startup nil)
-(advice-add #'package--ensure-init-file :override #'ignore)
+;; Copyright (c) 2020-2023  Protesilaos Stavrou <info@protesilaos.com>
 
-;;; Prefer loading newest compiled .el file
-(setq load-prefer-newer t)
+;; Author: Protesilaos Stavrou <info@protesilaos.com>
+;; URL: https://protesilaos.com/emacs/dotemacs
+;; Version: 0.1.0
+;; Package-Requires: ((emacs "30.1"))
 
-;;; Inhibit resizing frame
-(setq frame-inhibit-implied-resize t)
+;; This file is NOT part of GNU Emacs.
 
-;;; Make the initial buffer load faster by setting its mode to fundamental-mode
-(setq initial-major-mode 'fundamental-mode)
+;; This file is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU General Public License as published by the
+;; Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This file is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this file.  If not, see <https://www.gnu.org/licenses/>.
 
-;;; Minimal UI
-(setq inhibit-startup-message t)
-(setq inhibit-startup-screen t)
-(setq inhibit-startup-buffer-menu t)
-(setq inhibit-splash-screen t)
-(setq inhibit-startup-buffer-menu t)
-(setq inhibit-x-resources t)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-(push '(horizontal-scroll-bars) default-frame-alist)
+;;; Commentary:
 
-;;; Do not compact font cache
-(setq inhibit-compacting-font-caches t)
+;; See my dotfiles: https://git.sr.ht/~protesilaos/dotfiles
+
+;;; Code:
+
+(defun prot-emacs-add-to-list (list element)
+  "Add to symbol of LIST the given ELEMENT.
+Simplified version of `add-to-list'."
+  (set list (cons element (symbol-value list))))
+
+(setq frame-resize-pixelwise t
+      frame-inhibit-implied-resize t
+      use-dialog-box t ; only for mouse events, which I seldom use
+      use-file-dialog nil
+      inhibit-splash-screen t
+      inhibit-startup-screen t
+      inhibit-x-resources t
+      inhibit-startup-echo-area-message user-login-name ; read the docstring
+      inhibit-startup-buffer-menu t)
+
+;; I do not use those graphical elements by default, but I do enable
+;; them from time-to-time for testing purposes or to demonstrate
+;; something.
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
 
 ;; Temporarily increase the garbage collection threshold.  These
 ;; changes help shave off about half a second of startup time.
-;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/early-init.el
-(defvar p-emacs--gc-cons-threshold gc-cons-threshold)
+(defvar prot-emacs--gc-cons-threshold gc-cons-threshold)
 
 (setq gc-cons-threshold most-positive-fixnum)
 
-;; Same idea as above for the `file-name-handler-alist'
-(defvar p-emacs--file-name-handler-alist file-name-handler-alist)
+;; Same idea as above for the `file-name-handler-alist'.
+(defvar prot-emacs--file-name-handler-alist file-name-handler-alist)
 
 (setq file-name-handler-alist nil)
 
 ;; Same idea as above for the `vc-handled-backends'.
-(defvar p-emacs--vc-handled-backends vc-handled-backends)
+(defvar prot-emacs--vc-handled-backends vc-handled-backends)
 
 (setq vc-handled-backends nil)
 
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (setq gc-cons-threshold p-emacs--gc-cons-threshold
-                  file-name-handler-alist p-emacs--file-name-handler-alist
-                  vc-handled-backends p-emacs--vc-handled-backends)))
+            (setq gc-cons-threshold prot-emacs--gc-cons-threshold
+                  file-name-handler-alist prot-emacs--file-name-handler-alist
+                  vc-handled-backends prot-emacs--vc-handled-backends)))
 
-;;; Native compilation settings
-(when (featurep 'native-compile)
-  ;; silence compiler warnings as they can be pretty disruptive
-  (setq native-comp-async-report-warnings-errors nil)
-  ;; Make native compilation happens asynchronously
-  (setq native-comp-deferred-compilation t)
-  (setq compilation-scroll-output t))
+;; Initialise installed packages at this early stage, by using the
+;; available cache.  I had tried a setup with this set to nil in the
+;; early-init.el, but (i) it ended up being slower and (ii) various
+;; package commands, like `describe-package', did not have an index of
+;; packages to work with, requiring a `package-refresh-contents'.
+(setq package-enable-at-startup t)
 
-;;; No titlebar
-(add-to-list 'default-frame-alist '(undecorated . t))
-
-;;; Maximize frame at startup
-(setq initial-frame-alist (quote ((fullscreen . maximized))))
-
-;;; Premature redisplays can substantially affect startup times and produce ugly flashes of unstyled Emacs
-;; https://github.com/doomemacs/doomemacs/blob/master/early-init.el
-(setq-default inhibit-redisplay t)
-(add-hook 'window-setup-hook
-          (lambda ()
-            (setq-default inhibit-redisplay nil)
-            (redisplay)))
-
-;; Avoid startup flash
-;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/early-init.el
+;; NOTE 2023-10-05: my hack
 (defun prot-emacs-re-enable-frame-theme (_frame)
   "Re-enable active theme, if any, upon FRAME creation.
 Add this to `after-make-frame-functions' so that new frames do
@@ -82,9 +88,6 @@ not retain the generic background set by the function
   (when-let ((theme (car custom-enabled-themes)))
     (enable-theme theme)))
 
-;; NOTE 2023-02-05: The reason the following works is because (i) the
-;; `mode-line-format' is specified again and (ii) the
-;; `prot-emacs-theme-gsettings-dark-p' will load a dark theme.
 (defun prot-emacs-avoid-initial-flash-of-light ()
   "Avoid flash of light when starting Emacs, if needed.
 New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
@@ -95,8 +98,13 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 
 (prot-emacs-avoid-initial-flash-of-light)
 
-;;; Consistent color with theme
-;; (when (featurep 'ns)
-;;   (push '(ns-transparent-titlebar . t) default-frame-alist))
+(add-hook 'after-init-hook (lambda () (set-frame-name "home")))
 
-;;;;; early-init.el ends here
+;; NOTE 2023-10-05: my config
+;;; No titlebar
+(add-to-list 'default-frame-alist '(undecorated . t))
+
+;;; Maximize frame at startup
+(setq initial-frame-alist (quote ((fullscreen . maximized))))
+
+;;; early-init.el ends here

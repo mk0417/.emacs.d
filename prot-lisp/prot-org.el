@@ -44,6 +44,7 @@
 ;;;; org-capture
 
 (declare-function message-fetch-field "message" (header &optional first))
+
 (declare-function cl-letf "cl-lib")
 
 ;; Adapted from source: <https://stackoverflow.com/a/54251825>.

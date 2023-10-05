@@ -94,6 +94,18 @@
     ("r" "re-builder" re-builder)
     ("w" "world-clock" world-clock)]])
 
+;; This is independent of the transient, though still useful.
+(defvar-keymap prot-prefix-repeat-map
+  :doc "Global prefix map for repeatable keybindings (per `repeat-mode')."
+  :name "Repeat"
+  :repeat t
+  "n" #'next-buffer
+  "p" #'previous-buffer
+  "<down>" #'enlarge-window
+  "<right>" #'enlarge-window-horizontally
+  "<up>" #'shrink-window
+  "<left>" #'shrink-window-horizontally)
+
 (transient-define-prefix prot-prefix-toggle nil
   "Transient with minor mode toggles."
   [["Interface"

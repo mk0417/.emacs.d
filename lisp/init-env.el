@@ -3,22 +3,18 @@
 ;; Inherit variables from .zshrc
 ;; http://xahlee.info/emacs/emacs/emacs_env_var_paths.html
 (let ((emacs-init-env-path
-       (list (expand-file-name "~/anaconda3/bin")
-             (expand-file-name "~/anaconda3/bin/jupyter")
-             (expand-file-name "~/.emacs.d/bin")
-             (expand-file-name "~/.cargo/bin")
-             "/opt/homebrew/Caskroom/miniforge/base/bin"
+       (list "/opt/homebrew/Caskroom/miniforge/base/bin"
              "/opt/homebrew/Caskroom/miniforge/base/bin/jupyter"
              "/opt/homebrew/Caskroom/mambaforge/base/bin"
              "/opt/homebrew/Caskroom/mambaforge/base/bin/jupyter"
              "/opt/homebrew/Cellar/aspell"
              "/opt/homebrew/bin/"
+             "/bin"
+             "/sbin"
+             "/usr/bin"
+             "/usr/sbin"
              "/usr/local/bin"
              "/usr/local/sbin"
-             "/usr/bin"
-             "/bin"
-             "/usr/sbin"
-             "/sbin"
              "/Applications/Stata/StataMP.app/Contents/MacOS/"
              "/Applications/Stata/StataMP.app/Contents/MacOS/stata"
              "/Library/TeX/texbin"
@@ -36,4 +32,3 @@
   (setq insert-directory-program "/opt/homebrew/bin/gls"))
 
 (provide 'init-env)
-;;; init-env.el ends here

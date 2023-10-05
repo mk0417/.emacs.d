@@ -1,4 +1,4 @@
-;;; init-func.el --- Functions -*- lexical-binding: t -*-
+;; init-functions.el --- Functions -*- lexical-binding: t -*-
 
 (require 'prot-pair)
 (require 'prot-comment)
@@ -71,18 +71,6 @@
 (defun p-find-file-in-notes ()
   (interactive)
   (let ((default-directory (file-truename (file-name-directory (expand-file-name "~/Dropbox/peng_notes/")))))
-    (call-interactively 'find-file)))
-
-;; Find file in my org
-(defun p-find-file-in-org ()
-  (interactive)
-  (let ((default-directory (file-truename (file-name-directory (expand-file-name "~/Dropbox/org/")))))
-    (call-interactively 'find-file)))
-
-;; Find file in my log
-(defun p-find-file-in-log ()
-  (interactive)
-  (let ((default-directory (file-truename (file-name-directory (expand-file-name "~/Dropbox/peng_log/")))))
     (call-interactively 'find-file)))
 
 ;; Functions to switch buffers
@@ -162,28 +150,6 @@
     (set-mark start)
     (goto-char (- end 1))))
 
-;; kill-sexp and insert
-(defun p-kill-sexp-and-insert ()
-  (interactive)
-  (kill-sexp)
-  (evil-insert 0))
-
-;; http://yummymelon.com/devnull/moving-text-elegantly-in-emacs.html
-(defun p-move-sexp-forward ()
-  "Move balanced expression (sexp) to the right of point forward one sexp.
-Point must be at the beginning of balanced expression (sexp)."
-  (interactive)
-  (forward-sexp 1)
-  (transpose-sexps 1)
-  (forward-sexp -1))
-
-(defun p-move-sexp-backward ()
-  "Move balanced expression (sexp) to the right of point backward one sexp.
-Point must be at the beginning of balanced expression (sexp)."
-  (interactive)
-  (transpose-sexps 1)
-  (forward-sexp -2))
-
 ;; Create a scratch file
 (defun p-create-scratch-file ()
   "Prompts to create or open a scratch file based on chosen file type."
@@ -221,5 +187,4 @@ Point must be at the beginning of balanced expression (sexp)."
                    "end tell")
            (expand-file-name file))))
 
-(provide 'init-func)
-;;; init-func.el ends here
+(provide 'init-functions)

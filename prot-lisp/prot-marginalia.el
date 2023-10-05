@@ -32,6 +32,7 @@
 ;;; Code:
 
 (require 'bookmark)
+(require 'package)
 
 (defun prot-marginalia-truncate (string)
   "Truncate STRING to `fill-column', if necessary."
@@ -58,6 +59,17 @@
   (if-let ((name (buffer-file-name (get-buffer buffer))))
       (prot-marginalia-display (abbreviate-file-name name))
     (prot-marginalia-display (format "%s" (buffer-local-value 'major-mode (get-buffer buffer))))))
+
+(defun prot-marginalia-package (package)
+  "Annotate PACKAGE with its summary."
+  (when-let* ((pkg-alist (bound-and-true-p package-alist))
+              (pkg (intern-soft package))
+              (desc (or (when (package-desc-p pkg) pkg)
+                        (car (alist-get pkg pkg-alist))
+                        (if-let (built-in (assq pkg package--builtins))
+                            (package--from-builtin built-in)
+                          (car (alist-get pkg package-archive-contents))))))
+    (prot-marginalia-display (package-desc-summary desc))))
 
 (defun prot-marginalia--get-symbol-doc (symbol)
   "Return documentation string according to SYMBOL type."
