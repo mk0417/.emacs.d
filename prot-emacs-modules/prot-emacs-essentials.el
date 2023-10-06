@@ -360,29 +360,9 @@ by that special hook."
   (add-hook 'vundo-after-undo-functions #'prot/vundo-diff-buffer)
   (add-hook 'vundo-post-exit-hook #'prot/vundo-quit-diff-window))
 
-;;; TMR May Ring (tmr is used to set timers)
-;; Read the manual: <https://protesilaos.com/emacs/tmr>.
-(prot-emacs-package tmr
-  (:install t)
-  (:delay 15)
-  (setq tmr-sound-file "/usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga"
-        tmr-notification-urgency 'normal
-        tmr-description-list 'tmr-description-history)
-
-  (prot-emacs-keybind global-map
-    "C-c t t" tmr
-    "C-c t T" tmr-with-description
-    "C-c t l" tmr-tabulated-view ; "list timers" mnemonic
-    "C-c t c" tmr-clone
-    "C-c t k" tmr-cancel
-    "C-c t s" tmr-reschedule
-    "C-c t e" tmr-edit-description
-    "C-c t r" tmr-remove
-    "C-c t R" tmr-remove-finished))
-
 ;;; Laptop settings
 (prot-emacs-configure
-  (:delay 10)
+  (:delay 5)
 ;;;; Show battery status on the mode line (battery.el
   (require 'battery)
   (setq battery-mode-line-format
@@ -409,9 +389,7 @@ by that special hook."
   (:install t)
   (:delay 5)
   (dolist (cmd '( narrow-to-page narrow-to-defun
-                  narrow-to-region widen
-                  logos-forward-page-dwim
-                  logos-backward-page-dwim))
+                  narrow-to-region widen))
     (add-to-list 'pulsar-pulse-functions cmd))
 
   (setopt pulsar-pulse t
@@ -455,18 +433,13 @@ by that special hook."
 
   (setq lin-mode-hooks
         '(
-          ;; bongo-mode-hook
           dired-mode-hook
-          ;; elfeed-search-mode-hook
           git-rebase-mode-hook
           ibuffer-mode-hook
           ilist-mode-hook
           ledger-report-mode-hook
           log-view-mode-hook
           magit-log-mode-hook
-          ;; mu4e-headers-mode
-          ;; notmuch-search-mode-hook
-          ;; notmuch-tree-mode-hook
           occur-mode-hook
           org-agenda-mode-hook
           tabulated-list-mode-hook

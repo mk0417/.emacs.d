@@ -9,9 +9,9 @@
 ;;;; `window', `display-buffer-alist', and related
   (require 'prot-window)
 
-;; NOTE 2023-03-17: Remember that I am using development versions of
-;; Emacs.  Some of my `display-buffer-alist' contents are for Emacs
-;; 29+.
+  ;; NOTE 2023-03-17: Remember that I am using development versions of
+  ;; Emacs.  Some of my `display-buffer-alist' contents are for Emacs
+  ;; 29+.
   (setq display-buffer-alist
         `(;; no window
           ("\\`\\*Async Shell Command\\*\\'"
@@ -119,26 +119,6 @@
     ">" enlarge-window-horizontally
     "<" shrink-window-horizontally))
 
-;;; Frame-isolated buffers
-;; Another package of mine.  Read the manual:
-;; <https://protesilaos.com/emacs/beframe>.
-(prot-emacs-package beframe
-  (:install t)
-  (:delay 5)
-  (setq beframe-functions-in-frames '(project-prompt-project-dir))
-
-  (beframe-mode 1)
-
-  (prot-emacs-keybind global-map
-    ;; Override the `set-fill-column' that I have no use for.
-    "C-x f" other-frame-prefix
-    ;; Bind Beframe commands to a prefix key.
-    "C-c b" beframe-prefix-map
-    ;; Replace the generic `buffer-menu'.  With a prefix argument, this
-    ;; commands prompts for a frame.  Call the `buffer-menu' via M-x if
-    ;; you absolutely need the global list of buffers.
-    "C-x C-b" beframe-buffer-menu))
-
 ;;; Increased padding in windows/frames
 ;; Yet another one of my packages:
 ;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
@@ -154,15 +134,6 @@
   ;; (spacious-padding-mode 1)
 
   (define-key global-map (kbd "<f8>") #'spacious-padding-mode))
-
-;;; Window history (winner-mode)
-(prot-emacs-package winner
-  (:delay 5)
-  (winner-mode 1)
-
-  (prot-emacs-keybind global-map
-    "C-x <right>" winner-redo
-    "C-x <left>" winner-undo))
 
 ;;; Directional window motions (windmove)
 (prot-emacs-package windmove

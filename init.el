@@ -131,24 +131,25 @@ before all other modules of my setup."
 ;; test that the packaged version works as intended.
 (defvar prot-emacs-my-packages
   '(agitate
-    altcaps
-    beframe
     cursory
     denote
-    dired-preview
-    ;; ef-themes
     fontaine
     lin
-    logos
     mct
     modus-themes
-    ;; notmuch-indicator
     pulsar
     spacious-padding
-    ;; standard-themes
     substitute
+    ;; altcaps
+    ;; beframe
+    ;; dired-preview
+    ;; ef-themes
+    ;; logos
+    ;; notmuch-indicator
+    ;; standard-themes
     ;; sxhkdrc-mode
-    tmr)
+    ;; tmr
+    )
   "List of symbols representing the packages I develop/maintain.")
 
 (setq package-pinned-packages

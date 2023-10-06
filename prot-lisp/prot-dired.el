@@ -180,7 +180,7 @@ For more on such headings, read `dired-maybe-insert-subdir'."
   (while (and (prot-dired-subdirectory-previous)
               (not (equal (dired-current-directory)
                           (expand-file-name default-directory))))
-      (dired-kill-subdir)))
+    (dired-kill-subdir)))
 
 (autoload 'cl-remove-if-not "cl-seq")
 
