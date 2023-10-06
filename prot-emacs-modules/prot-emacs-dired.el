@@ -69,14 +69,6 @@
     "C-c C-p" prot-dired-subdirectory-previous
     "M-s G" prot-dired-grep-marked-files)) ; M-s g is `prot-search-grep'
 
-(prot-emacs-package dired-subtree
-  (:install t)
-  (:delay 5)
-  (setq dired-subtree-use-backgrounds nil)
-  (prot-emacs-keybind dired-mode-map
-    "<tab>" dired-subtree-toggle
-    "<backtab>" dired-subtree-remove)) ; S-TAB
-
 (prot-emacs-package wdired
   (:delay 5)
   (setq wdired-allow-to-change-permissions t)
@@ -92,32 +84,5 @@
   (setq image-dired-thumbs-per-row 4)
   (define-key image-dired-thumbnail-mode-map
               (kbd "<return>") #'image-dired-thumbnail-display-external))
-
-;;; dired-like mode for the trash (trashed.el)
-(prot-emacs-package trashed
-  (:install t)
-  (:delay 10)
-  (setq trashed-action-confirmer 'y-or-n-p)
-  (setq trashed-use-header-line t)
-  (setq trashed-sort-key '("Date deleted" . t))
-  (setq trashed-date-format "%Y-%m-%d %H:%M:%S"))
-
-;;; Automatically preview Dired file at point (dired-preview.el)
-;; One of my packages: <https://protesilaos.com/emacs>
-(prot-emacs-package dired-preview
-  (:install t)
-  ;; These are all set to their default values.  I keep them here for
-  ;; reference.
-  (setq dired-preview-max-size (* (expt 2 20) 6))
-  (setq dired-preview-delay 0.3)
-  (setq dired-preview-ignored-extensions-regexp
-        (concat "\\."
-                "\\(mkv\\|" "webm\\|" "mp4\\|" "mp3\\|" "ogg\\|" "m4a\\|"
-                "gz\\|" "zst\\|" "tar\\|" "xz\\|" "rar\\|" "zip\\|"
-                "iso\\|" "epub\\|" "\\)"))
-  (add-hook 'dired-mode-hook
-            (lambda ()
-              (when (string-match-p "Pictures" default-directory)
-                (dired-preview-mode 1)))))
 
 (provide 'prot-emacs-dired)

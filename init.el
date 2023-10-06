@@ -408,6 +408,7 @@ that is expanded with the `prot-emacs-package' macro."
 (require 'init-keychord)
 (require 'init-git)
 (require 'init-avy)
+(require 'init-lsp-bridge)
 
 (setq safe-local-variable-values
       '((org-hide-leading-stars . t)

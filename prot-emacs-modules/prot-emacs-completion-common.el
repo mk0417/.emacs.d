@@ -214,30 +214,30 @@
           prot-orderless-beg-or-end)))
 
 ;;; Corfu (in-buffer completion popup)
-(prot-emacs-package corfu
-  (:install t)
-  (:delay 5)
-  (global-corfu-mode 1)
-
-  (setq corfu-popupinfo-delay '(1.25 . 0.5))
-  (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
-
-  (define-key corfu-map (kbd "<tab>") #'corfu-complete)
-
-  ;; Sort by input history (no need to modify `corfu-sort-function').
-  (with-eval-after-load 'savehist
-    (corfu-history-mode 1)
-    (add-to-list 'savehist-additional-variables 'corfu-history))
-
-  ;; Adapted from Corfu's manual.
-  (defun contrib/corfu-enable-always-in-minibuffer ()
-    "Enable Corfu in the minibuffer if MCT or Vertico is not active.
-Useful for prompts such as `eval-expression' and `shell-command'."
-    (unless (or (bound-and-true-p vertico--input)
-                (bound-and-true-p mct--active))
-      (corfu-mode 1)))
-
-  (add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1))
+;; (prot-emacs-package corfu
+;;   (:install t)
+;;   (:delay 5)
+;;   (global-corfu-mode 1)
+;; 
+;;   (setq corfu-popupinfo-delay '(1.25 . 0.5))
+;;   (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+;; 
+;;   (define-key corfu-map (kbd "<tab>") #'corfu-complete)
+;; 
+;;   ;; Sort by input history (no need to modify `corfu-sort-function').
+;;   (with-eval-after-load 'savehist
+;;     (corfu-history-mode 1)
+;;     (add-to-list 'savehist-additional-variables 'corfu-history))
+;; 
+;;   ;; Adapted from Corfu's manual.
+;;   (defun contrib/corfu-enable-always-in-minibuffer ()
+;;     "Enable Corfu in the minibuffer if MCT or Vertico is not active.
+;; Useful for prompts such as `eval-expression' and `shell-command'."
+;;     (unless (or (bound-and-true-p vertico--input)
+;;                 (bound-and-true-p mct--active))
+;;       (corfu-mode 1)))
+;; 
+;;   (add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1))
 
 ;;; Enhanced minibuffer commands (consult.el)
 (prot-emacs-package consult
