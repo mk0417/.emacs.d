@@ -3,7 +3,6 @@
 ;;; This is modified based on `prot-emacs-evil.el' that has been removed by Prot
 
 (prot-emacs-configure
-  (:delay 5)
   ;; Evaluate these before loading `evil'
   (setq evil-want-C-i-jump t)
   (setq evil-want-C-u-scroll t) ; Vim style
@@ -114,15 +113,9 @@
 
     (evil-mode 1))
 
-  ;; Make sure some modes start in Emacs state
-  (dolist
-      (mode
-       '(custom-mode occur-mode occur-edit-mode grep-mode color-rg-mode vc-dir-mode))
-    (add-to-list 'evil-emacs-state-modes mode))
-
-  ;; Set evil normal state
-  (dolist (mode '(help-mode debugger-mode))
-    (evil-set-initial-state mode 'normal))
+  (prot-emacs-package evil-collection
+    (:install t)
+    (evil-collection-init))
 
   (prot-emacs-package evil-surround
     (:install t)

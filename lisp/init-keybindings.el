@@ -2,7 +2,6 @@
 
 (prot-emacs-package general
   (:install t)
-  (:delay 1)
   (general-evil-setup)
   ;; Fix leader key in Message buffer
   ;; https://github.com/noctuid/general.el/issues/493

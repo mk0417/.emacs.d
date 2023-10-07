@@ -2,7 +2,7 @@
 ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
 (prot-emacs-package fontaine
   (:install t)
-  (:delay 5)
+  ;; (:delay 5)
   ;; This is defined in Emacs C code: it belongs to font settings.
   (setq x-underline-at-descent-line nil)
 
@@ -37,9 +37,7 @@
   ;; | Iosevka Comfy Wide Motion Duo   | Slab   | Wide    | Duospaced  | Yes       |
   (setq fontaine-presets
         '((small
-           :default-family "Iosevka Comfy Wide"
-           :default-height 80
-           :variable-pitch-family "Iosevka Comfy Wide Duo")
+           :default-height 80)
           (regular) ; like this it uses all the fallback values and is named `regular'
           (medium
            :default-weight semilight
@@ -65,7 +63,7 @@
            :fixed-pitch-serif-family nil ; falls back to :default-family
            :fixed-pitch-serif-weight nil ; falls back to :default-weight
            :fixed-pitch-serif-height 1.0
-           :variable-pitch-family "Iosevka Comfy Motion Duo"
+           :variable-pitch-family "Iosevka Comfy Duo"
            :variable-pitch-weight nil
            :variable-pitch-height 1.0
            :bold-family nil ; use whatever the underlying face has
