@@ -1,13 +1,12 @@
 ;;;;; init-lsp-bridge.el --- LSP-bridge -*- lexical-binding: t -*-
 
-(prot-emacs-package yasnippet
-  (:install t)
-  (:delay 10)
-  (setq yas-verbosity 0)
-  (yas-global-mode 1))
-
 (prot-emacs-configure
   (:delay 10)
+  (prot-emacs-package yasnippet
+    (:install t)
+    (setq yas-verbosity 0)
+    (yas-global-mode 1))
+
   (require 'yasnippet)
   (setq lsp-bridge-enable-mode-line nil)
   (setq lsp-bridge-enable-diagnostics nil)
