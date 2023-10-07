@@ -148,20 +148,6 @@
         dictionary-use-single-buffer t)
   (define-key global-map (kbd "C-c d") #'dictionary-search))
 
-;;; aLtCaPs
-;; Read the manual: <https://protesilaos.com/emacs/altcaps>.
-(prot-emacs-package altcaps
-  (:install t)
-  (:delay 60)
-  ;; Force letter casing for certain characters (for legibility).
-  (setq altcaps-force-character-casing
-        '(;; Greek theta
-          (?θ . downcase)))
-
-  ;; The available commands: `altcaps-word', `altcaps-region',
-  ;; `altcaps-dwim'.
-  (define-key global-map (kbd "C-x C-a") #'altcaps-dwim))
-
 ;;; Denote (simple note-taking and file-naming)
 ;; Read the manual: <https://protesilaos.com/emacs/denote>.
 (prot-emacs-package denote
