@@ -65,30 +65,7 @@
     (setq evil-motion-state-modes nil)
     (setq evil-insert-state-modes nil)
     (setq evil-overriding-maps nil)
-    (setq evil-emacs-state-modes '(completion-list-mode
-                                   Buffer-menu-mode
-                                   dired-mode
-                                   Info-mode
-                                   help-mode
-                                   comint-mode
-                                   rcirc-mode
-                                   eshell-mode
-                                   inferior-emacs-lisp-mode
-                                   reb-mode
-                                   shell-mode
-                                   term-mode
-                                   wdired-mode
-                                   org-agenda-mode
-                                   ;; FIXME 2023-09-29: Not all Magit modes are here
-                                   log-edit-mode
-                                   git-commit-mode
-                                   magit-status-mode
-                                   magit-diff-mode
-                                   magit-log-mode
-                                   notmuch-hello-mode
-                                   notmuch-search-mode
-                                   notmuch-show-mode
-                                   notmuch-tree-mode))
+
     ;; evil-intercept-maps
     ;; evil-motions
     ;; evil-visual-newline-commands

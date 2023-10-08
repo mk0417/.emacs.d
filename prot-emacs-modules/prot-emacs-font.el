@@ -101,10 +101,7 @@
 
   (defvar prot/enable-variable-pitch-in-hooks
     '(text-mode-hook
-      help-mode-hook
-      ;; notmuch-show-mode-hook
-      ;; elfeed-show-mode-hook
-      )
+      help-mode-hook)
     "List of hook symbols to add `prot/enable-variable-pitch' to.")
 
   (dolist (hook prot/enable-variable-pitch-in-hooks)

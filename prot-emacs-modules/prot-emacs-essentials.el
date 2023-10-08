@@ -430,7 +430,6 @@ by that special hook."
           ilist-mode-hook
           ledger-report-mode-hook
           log-view-mode-hook
-          magit-log-mode-hook
           occur-mode-hook
           org-agenda-mode-hook
           tabulated-list-mode-hook
