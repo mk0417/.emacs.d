@@ -73,7 +73,7 @@ Simplified version of `add-to-list'."
                   file-name-handler-alist prot-emacs--file-name-handler-alist
                   vc-handled-backends prot-emacs--vc-handled-backends)))
 
-(setq package-check-signature nil)
+;; (setq package-check-signature nil)
 
 ;; Initialise installed packages at this early stage, by using the
 ;; available cache.  I had tried a setup with this set to nil in the
