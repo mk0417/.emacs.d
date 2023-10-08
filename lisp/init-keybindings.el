@@ -50,6 +50,8 @@
     ;; Git and project
     "gg" 'project-vc-dir
     "pp" 'p-project-switch-project
+    "gd" 'color-rg-search-symbol
+    "gp" 'color-rg-search-symbol-in-project
     ;; Eval
     "rb" 'eval-buffer
     ;; Toogle
@@ -63,7 +65,7 @@
   (general-create-definer p-jupyter-leader-def
     :prefix ";"
     :states '(normal visual)
-    :keymaps '(python-mode-map python-ts-mode-map))
+    :keymaps '(python-mode-map))
   (p-jupyter-leader-def
     "jj" 'jupyter-run-repl
     "jr" 'jupyter-eval-line-or-region
@@ -75,6 +77,20 @@
     "jC" 'jupyter-eval-remove-overlays
     "jc" 'p-jupyter-remove-line-overlay
     "jw" 'jupyter-repl-pop-to-buffer)
+
+  (general-create-definer p-latex-leader-def
+    :prefix ";"
+    :states '(normal visual)
+    :keymaps '(TeX-mode-map))
+  (p-latex-leader-def
+   "jm" 'TeX-insert-macro
+   "je" 'LaTeX-environment
+   "jf" 'LaTeX-fill-buffer
+   "jr" 'p-run-latex
+   "ja" 'TeX-command-run-all
+   "jp" 'p-select-beamer-frame
+   "jc" 'p-clear-latex-temp-files
+   "jv" 'TeX-view)
 
   (general-imap "f"
     (general-key-dispatch 'self-insert-command

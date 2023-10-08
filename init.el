@@ -382,6 +382,7 @@ that is expanded with the `prot-emacs-package' macro."
 ;; file for other obvious customisations.
 (load (locate-user-emacs-file "prot-emacs-pre-custom.el") :no-error :no-message)
 
+;; NOTE 2023-10-08: some Prot config are modified based on my workflow and needs
 (require 'prot-emacs-essentials)
 (pcase prot-emacs-load-theme-family
   ('modus (require 'prot-emacs-modus-themes)))
@@ -397,7 +398,7 @@ that is expanded with the `prot-emacs-package' macro."
 (require 'prot-emacs-git)               ; git, diff, and related
 (require 'prot-emacs-org)
 (require 'prot-emacs-langs)
-(require 'prot-emacs-web)               ; eww, elfeed, rcirc
+(require 'prot-emacs-web)
 
 ;; NOTE 2023-10-05: my config
 (require 'init-default)
@@ -405,9 +406,10 @@ that is expanded with the `prot-emacs-package' macro."
 (require 'init-env)
 (require 'init-programming)
 (require 'init-evil)
+(require 'init-git)
+(require 'init-latex)
 (require 'init-keybindings)
 (require 'init-keychord)
-(require 'init-git)
 (require 'init-avy)
 (require 'init-lsp-bridge)
 
