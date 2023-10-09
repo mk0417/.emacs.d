@@ -83,14 +83,14 @@
     :states '(normal visual)
     :keymaps '(TeX-mode-map))
   (p-latex-leader-def
-   "jm" 'TeX-insert-macro
-   "je" 'LaTeX-environment
-   "jf" 'LaTeX-fill-buffer
-   "jr" 'p-run-latex
-   "ja" 'TeX-command-run-all
-   "jp" 'p-select-beamer-frame
-   "jc" 'p-clear-latex-temp-files
-   "jv" 'TeX-view)
+    "jm" 'TeX-insert-macro
+    "je" 'LaTeX-environment
+    "jf" 'LaTeX-fill-buffer
+    "jr" 'p-run-latex
+    "ja" 'TeX-command-run-all
+    "jp" 'p-select-beamer-frame
+    "jc" 'p-clear-latex-temp-files
+    "jv" 'TeX-view)
 
   (general-imap "f"
     (general-key-dispatch 'self-insert-command

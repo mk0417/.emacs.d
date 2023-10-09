@@ -407,6 +407,7 @@ that is expanded with the `prot-emacs-package' macro."
 (require 'init-programming)
 (require 'init-evil)
 (require 'init-git)
+(require 'init-latex)
 (require 'init-keybindings)
 (require 'init-keychord)
 (require 'init-avy)
