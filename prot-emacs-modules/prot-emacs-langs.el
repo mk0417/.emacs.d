@@ -1,6 +1,6 @@
 ;;; General language/editing settings
 (prot-emacs-configure
-  (:delay 5)
+  (:delay 2)
 ;;;; Tabs, indentation, and the TAB key
   (setq-default tab-always-indent 'complete
                 tab-first-completion 'word-or-paren-or-punct ; Emacs 27
@@ -98,7 +98,7 @@
 ;;; Flyspell and prot-spell.el (spell check)
 ;; See FIXME for `jinx'.
 (prot-emacs-package flyspell
-  (:delay 10)
+  (:delay 30)
   (setq flyspell-issue-message-flag nil)
   (setq flyspell-issue-welcome-flag nil)
   (setq ispell-program-name "aspell")
@@ -107,7 +107,7 @@
   (define-key ctl-x-x-map "s" flyspell-mode)) ; C-x x s
 
 (prot-emacs-package prot-spell
-  (:delay 10)
+  (:delay 30)
   (setq prot-spell-dictionaries
         '(("EN English" . "en")
           ("EL Ελληνικά" . "el")
@@ -152,7 +152,7 @@
 ;; Read the manual: <https://protesilaos.com/emacs/denote>.
 (prot-emacs-package denote
   (:install t)
-  (:delay 10)
+  (:delay 5)
   ;; Remember to check the doc strings of those variables.
   (setq denote-directory (expand-file-name "~/Dropbox/peng_notes/"))
   (setq denote-known-keywords '("emacs" "philosophy" "politics" "economics"))

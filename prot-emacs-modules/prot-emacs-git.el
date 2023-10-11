@@ -1,6 +1,6 @@
 ;;; General Git/Project/Diff configurations
 (prot-emacs-configure
-  (:delay 5)
+  (:delay 2)
 ;;;; `ediff'
   (setq ediff-keep-variants nil)
   (setq ediff-make-buffers-readonly-at-startup nil)
@@ -63,7 +63,7 @@ Based on `project--keymap-prompt' and meant to be used as an
 
 ;;; Version control framework (vc.el, vc-git.el, and more)
 (prot-emacs-package vc
-  (:delay 5)
+  (:delay 2)
   ;; Those offer various types of functionality, such as blaming,
   ;; viewing logs, showing a dedicated buffer with changes to affected
   ;; files.
@@ -160,7 +160,7 @@ Based on `project--keymap-prompt' and meant to be used as an
 ;; here: <https://protesilaos.com/emacs/agitate>.
 (prot-emacs-package agitate
   (:install t)
-  (:delay 5)
+  (:delay 2)
   (add-hook 'diff-mode-hook #'agitate-diff-enable-outline-minor-mode)
   (advice-add #'vc-git-push :override #'agitate-vc-git-push-prompt-for-remote)
 
@@ -195,11 +195,9 @@ Based on `project--keymap-prompt' and meant to be used as an
     "C-c C-i C-e" agitate-log-edit-emoji-commit
     "C-c C-i C-c" agitate-log-edit-conventional-commit))
 
-;;; Interactive and powerful git front-end (Magit)
-
 ;; There is no need to install the package, as transient.el is built
 ;; into Emacs.  By requiring it, I prevent the installation of the
 ;; package, which would be done by Magit.
-(prot-emacs-package transient (:delay 5))
+(prot-emacs-package transient (:delay 2))
 
 (provide 'prot-emacs-git)

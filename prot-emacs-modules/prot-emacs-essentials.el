@@ -1,6 +1,6 @@
 ;;; Essential configurations
 (prot-emacs-configure
-  (:delay 5)
+  (:delay 1)
 
   ;; NOTE 2023-05-20: Normally those would not have to be `require'd
   ;; as every point of entry is autoloaded.  But Emacs does not have
@@ -200,16 +200,11 @@
   (setq display-time-interval 60)
   (setq display-time-default-load-average nil)
 
-  ;; I don't need the load average and the mail indicator, so let this
+;; I don't need the load average and the mail indicator, so let this
   ;; be simple:
   (setq display-time-string-forms
-        '((if (and (not display-time-format) display-time-day-and-date)
-	          (format-time-string "%a %b %e " now)
-            "")
-          (propertize
-           (format-time-string (or display-time-format
-			                       (if display-time-24hr-format "%H:%M" "%-I:%M%p"))
-			                   now)
+        '((propertize
+           (format-time-string display-time-format now)
            'face 'display-time-date-and-time
            'help-echo (format-time-string "%a %b %e, %Y" now))
           " "))
@@ -241,6 +236,7 @@
           ("Asia/Seoul" "Seoul")
           ("Asia/Tokyo" "Tokyo")
           ("Asia/Vladivostok" "Vladivostok")
+          ("Australia/Brisbane" "Brisbane")
           ("Australia/Sydney" "Sydney")
           ("Pacific/Auckland" "Auckland")))
 
@@ -281,7 +277,7 @@
 ;; <https://protesilaos.com/codelog/2023-01-16-emacs-substitute-package-demo/>.
 (prot-emacs-package substitute
   (:install t)
-  (:delay 5)
+  (:delay 10)
   ;; Set this to non-nil to highlight all occurrences of the current
   ;; target.
   (setopt substitute-highlight t)
@@ -307,7 +303,7 @@
 ;;; Mark syntactic constructs efficiently (expreg)
 (prot-emacs-package expreg
   (:install t)
-  (:delay 5)
+  (:delay 10)
   (defun prot/expreg-expand (n)
     "Expand to N syntactic units, defaulting to 1 if none is provided interactively."
     (interactive "p")
@@ -378,7 +374,7 @@ by that special hook."
 ;; Read the pulsar manual: <https://protesilaos.com/emacs/pulsar>.
 (prot-emacs-package pulsar
   (:install t)
-  (:delay 5)
+  (:delay 1)
   (dolist (cmd '( narrow-to-page narrow-to-defun
                   narrow-to-region widen))
     (add-to-list 'pulsar-pulse-functions cmd))
@@ -409,7 +405,7 @@ by that special hook."
 ;; Read the lin manual: <https://protesilaos.com/emacs/lin>.
 (prot-emacs-package lin
   (:install t)
-  (:delay 5)
+  (:delay 1)
   ;; You can use this to live update the face:
   ;;
   ;; (customize-set-variable 'lin-face 'lin-green)
@@ -458,7 +454,7 @@ by that special hook."
 ;; Read the manual: <https://protesilaos.com/emacs/cursory>.
 (prot-emacs-package cursory
   (:install t)
-  (:delay 5)
+  (:delay 1)
   (setq cursory-presets
         '((box
            :blink-cursor-interval 0.8)
@@ -492,7 +488,7 @@ by that special hook."
   ;; I am using the default values of `cursory-latest-state-file'.
 
   ;; Set last preset or fall back to desired style from `cursory-presets'.
-  (cursory-set-preset (or (cursory-restore-latest-preset) 'bar))
+  (cursory-set-preset (or (cursory-restore-latest-preset) 'box))
 
   ;; The other side of `cursory-restore-latest-preset'.
   (add-hook 'kill-emacs-hook #'cursory-store-latest-preset)
