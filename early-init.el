@@ -44,6 +44,10 @@ Simplified version of `add-to-list'."
       inhibit-startup-buffer-menu t
       initial-scratch-message nil)
 
+;; Disable message in echo area
+(defun display-startup-echo-area-message ()
+  (message nil))
+
 ;; I do not use those graphical elements by default, but I do enable
 ;; them from time-to-time for testing purposes or to demonstrate
 ;; something.

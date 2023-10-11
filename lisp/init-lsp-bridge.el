@@ -1,7 +1,7 @@
 ;;;;; init-lsp-bridge.el --- LSP-bridge -*- lexical-binding: t -*-
 
 (prot-emacs-configure
-  (:delay 10)
+  (:delay 5)
   (prot-emacs-package yasnippet
     (:install t)
     (setq yas-verbosity 0)

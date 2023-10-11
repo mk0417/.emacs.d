@@ -13,7 +13,7 @@
 
 ;;; color-rg
 (prot-emacs-configure
-  (:delay 15)
+  (:delay 10)
   (setq color-rg-mac-load-path-from-shell nil)
   (prot-emacs-package color-rg
     (:install "https://github.com/manateelazycat/color-rg")))
@@ -21,7 +21,7 @@
 ;;; diff-hl
 (prot-emacs-package diff-hl
   (:install t)
-  (:delay 10)
+  (:delay 5)
   (setq diff-hl-draw-borders nil)
 
   (autoload 'diff-hl-mode "diff-hl")
