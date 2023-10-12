@@ -488,7 +488,7 @@ by that special hook."
   ;; I am using the default values of `cursory-latest-state-file'.
 
   ;; Set last preset or fall back to desired style from `cursory-presets'.
-  (cursory-set-preset (or (cursory-restore-latest-preset) 'box))
+  (cursory-set-preset (or (cursory-restore-latest-preset) 'bar))
 
   ;; The other side of `cursory-restore-latest-preset'.
   (add-hook 'kill-emacs-hook #'cursory-store-latest-preset)
