@@ -103,21 +103,21 @@
 
   ;; NOTE 2022-09-17: Also see `prot-simple-swap-window-buffers'.
   (prot-emacs-keybind global-map
-    "C-x <down>" next-buffer
-    "C-x <up>" previous-buffer
-    "C-x C-n" next-buffer     ; override `set-goal-column'
-    "C-x C-p" previous-buffer ; override `mark-page'
-    "C-x !" delete-other-windows-vertically
-    "C-x _" balance-windows      ; underscore
-    "C-x -" fit-window-to-buffer ; hyphen
-    "C-x +" balance-windows-area
-    "C-x }" enlarge-window
-    "C-x {" shrink-window
-    "C-x >" enlarge-window-horizontally ; override `scroll-right'
-    "C-x <" shrink-window-horizontally) ; override `scroll-left'
+    "C-x <down>" #'next-buffer
+    "C-x <up>" #'previous-buffer
+    "C-x C-n" #'next-buffer     ; override `set-goal-column'
+    "C-x C-p" #'previous-buffer ; override `mark-page'
+    "C-x !" #'delete-other-windows-vertically
+    "C-x _" #'balance-windows      ; underscore
+    "C-x -" #'fit-window-to-buffer ; hyphen
+    "C-x +" #'balance-windows-area
+    "C-x }" #'enlarge-window
+    "C-x {" #'shrink-window
+    "C-x >" #'enlarge-window-horizontally ; override `scroll-right'
+    "C-x <" #'shrink-window-horizontally) ; override `scroll-left'
   (prot-emacs-keybind resize-window-repeat-map
-    ">" enlarge-window-horizontally
-    "<" shrink-window-horizontally))
+    ">" #'enlarge-window-horizontally
+    "<" #'shrink-window-horizontally))
 
 ;;; Increased padding in windows/frames
 ;; Yet another one of my packages:
@@ -142,14 +142,14 @@
   (prot-emacs-keybind global-map
     ;; Those override some commands that are already available with
     ;; C-M-u, C-M-f, C-M-b.
-    "C-M-<up>" windmove-up
-    "C-M-<right>" windmove-right
-    "C-M-<down>" windmove-down
-    "C-M-<left>" windmove-left
-    "C-M-S-<up>" windmove-swap-states-up
-    "C-M-S-<right>" windmove-swap-states-right ; conflicts with `org-increase-number-at-point'
-    "C-M-S-<down>" windmove-swap-states-down
-    "C-M-S-<left>" windmove-swap-states-left))
+    "C-M-<up>" #'windmove-up
+    "C-M-<right>" #'windmove-right
+    "C-M-<down>" #'windmove-down
+    "C-M-<left>" #'windmove-left
+    "C-M-S-<up>" #'windmove-swap-states-up
+    "C-M-S-<right>" #'windmove-swap-states-right ; conflicts with `org-increase-number-at-point'
+    "C-M-S-<down>" #'windmove-swap-states-down
+    "C-M-S-<left>" #'windmove-swap-states-left))
 
 ;;; Line numbers and relevant indicators (prot-sideline.el)
 (prot-emacs-package prot-sideline
@@ -184,8 +184,8 @@
           space-before-tab::space))
 
   (prot-emacs-keybind global-map
-    "<f6>" prot-sideline-negative-space-toggle
-    "<f7>" prot-sideline-mode
-    "C-c z" delete-trailing-whitespace))
+    "<f6>" #'prot-sideline-negative-space-toggle
+    "<f7>" #'prot-sideline-mode
+    "C-c z" #'delete-trailing-whitespace))
 
 (provide 'prot-emacs-window)

@@ -302,7 +302,6 @@ Also see `prot-emacs-package'."
         `(run-with-timer ,delay nil (lambda () ,@body))
       `(progn ,@body))))
 
-
 (defmacro prot-emacs-keybind (keymap &rest definitions)
   "Expand key binding DEFINITIONS for the given KEYMAP.
 DEFINITIONS is a sequence of string and command pairs."
@@ -317,10 +316,9 @@ DEFINITIONS is a sequence of string and command pairs."
        ,@(mapcar
           (lambda (pair)
             (let* ((key (car pair))
-                   (command (cdr pair))
-                   (command-symbol (if command `(function ,command) command)))
+                   (command (cdr pair)))
               (unless (and (null key) (null command))
-                `(define-key map (kbd ,key) ,command-symbol))))
+                `(define-key map (kbd ,key) ,command))))
           (cl-mapcar #'cons keys commands)))))
 
 ;; Sample of `prot-emacs-keybind'

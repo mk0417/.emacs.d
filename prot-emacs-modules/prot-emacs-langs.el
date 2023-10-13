@@ -24,11 +24,19 @@
 
 ;;;; Emacs Lisp (emacs-lisp-mode)
   (prot-emacs-keybind emacs-lisp-mode-map
-    "C-x e" edebug-defun ; override `kmacro-end-and-call-macro'
-    "C-x E" edebug-remove-instrumentation)
+    "C-x e" #'edebug-defun ; override `kmacro-end-and-call-macro'
+    "C-x E" #'edebug-remove-instrumentation)
 
 ;;;; Plain text (text-mode)
-  (setq sentence-end-double-space t)
+  (setq sentence-end-double-space nil)
+
+  (defun prot/prog-mode-sentence-end-double-space ()
+    "Set `sentence-end-double-space' to non-nil in the current buffer.
+Meant to be added to `prog-mode-hook'."
+    (setq-local sentence-end-double-space t))
+
+  (add-hook 'prog-mode-hook #'prot/prog-mode-sentence-end-double-space)
+
   (setq sentence-end-without-period nil)
   (setq colon-double-space nil)
   (setq use-hard-newlines nil)
@@ -121,8 +129,8 @@
   ;; `display-buffer-alist' for the relevant entry.
 
   (prot-emacs-keybind global-map
-    "M-$" prot-spell-spell-dwim
-    "C-M-$" prot-spell-change-dictionary))
+    "M-$" #'prot-spell-spell-dwim
+    "C-M-$" #'prot-spell-change-dictionary))
 
 ;;; General configurations for prose/writing
 (prot-emacs-configure
@@ -213,32 +221,32 @@ Else create a new file."
   ;; Denote DOES NOT define any key bindings.  This is for the user to
   ;; decide.  For example:
   (prot-emacs-keybind global-map
-    "C-c n j" prot/denote-journal
-    "C-c n n" denote
-    "C-c n N" denote-type
-    "C-c n d" denote-date
-    "C-c n z" denote-signature ; "zettelkasten" mnemonic
-    "C-c n s" denote-subdirectory
+    "C-c n j" #'prot/denote-journal
+    "C-c n n" #'denote
+    "C-c n N" #'denote-type
+    "C-c n d" #'denote-date
+    "C-c n z" #'denote-signature ; "zettelkasten" mnemonic
+    "C-c n s" #'denote-subdirectory
     ;; If you intend to use Denote with a variety of file types, it is
     ;; easier to bind the link-related commands to the `global-map', as
     ;; shown here.  Otherwise follow the same pattern for `org-mode-map',
     ;; `markdown-mode-map', and/or `text-mode-map'.
-    "C-c n i" denote-link ; "insert" mnemonic
-    "C-c n I" denote-add-links
-    "C-c n b" denote-backlinks
-    "C-c n f f" denote-find-link
-    "C-c n f b" denote-find-backlink
+    "C-c n i" #'denote-link ; "insert" mnemonic
+    "C-c n I" #'denote-add-links
+    "C-c n b" #'denote-backlinks
+    "C-c n f f" #'denote-find-link
+    "C-c n f b" #'denote-find-backlink
     ;; Note that `denote-rename-file' can work from any context, not
     ;; just Dired buffers.  That is why we bind it here to the
     ;; `global-map'.
     ;;
     ;; Also see `denote-rename-file-using-front-matter' further below.
-    "C-c n r" denote-rename-file)
+    "C-c n r" #'denote-rename-file)
 
   ;; Key bindings specifically for Dired.
   (prot-emacs-keybind dired-mode-map
-    "C-c C-d C-i" denote-link-dired-marked-notes
-    "C-c C-d C-r" denote-dired-rename-marked-files)
+    "C-c C-d C-i" #'denote-link-dired-marked-notes
+    "C-c C-d C-r" #'denote-dired-rename-marked-files)
 
   ;; Also see `denote-rename-file' further above.
   (define-key text-mode-map (kbd "C-c n R") #'denote-rename-file-using-front-matter)
