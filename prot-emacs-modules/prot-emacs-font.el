@@ -56,7 +56,7 @@
            ;; <https://protesilaos.com/emacs/fontaine>.
            :default-family "Iosevka Comfy"
            :default-weight regular
-           :default-height 120
+           :default-height 110
            :fixed-pitch-family nil ; falls back to :default-family
            :fixed-pitch-weight nil ; falls back to :default-weight
            :fixed-pitch-height 1.0

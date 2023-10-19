@@ -125,6 +125,7 @@
     (p-mark-defun)
     (run-with-timer 0 nil 'p-ex-evil-selection-replace-yank))
 
+  (define-key evil-normal-state-map (kbd "f") nil)
   (define-key evil-normal-state-map (kbd "C-.") nil)
   (define-key evil-normal-state-map (kbd "C-r") nil)
   (define-key evil-normal-state-map (kbd "C-n") nil)
