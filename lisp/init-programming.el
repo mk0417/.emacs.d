@@ -3,7 +3,7 @@
 ;;; Jupyter
 (prot-emacs-package jupyter
   (:install t)
-  (:delay 5)
+  (:delay 2)
   ;; https://github.com/nnicandro/emacs-zmq
   ;; https://github.com/nnicandro/emacs-zmq/issues/19
   ;; do not download zmq module from released version that contains .so file
@@ -33,7 +33,7 @@
 
 ;;; Python
 (prot-emacs-configure
-  (:delay 5)
+  (:delay 2)
   (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-guess-indent-offset t)

@@ -1,7 +1,7 @@
 ;;;;; init-lsp-bridge.el --- LSP-bridge -*- lexical-binding: t -*-
 
 (prot-emacs-configure
-  (:delay 5)
+  (:delay 1)
   (prot-emacs-package yasnippet
     (:install t)
     (setq yas-verbosity 0)
@@ -31,6 +31,9 @@
     (setq lsp-bridge-multi-lang-server-mode-list
           '(((python-mode) . nil)))
 
-    (global-lsp-bridge-mode)))
+    (global-lsp-bridge-mode))
+
+  (define-key evil-normal-state-map (kbd "gd") 'lsp-bridge-find-def)
+  (define-key evil-normal-state-map (kbd "gD") 'lsp-bridge-find-def-return))
 
 (provide 'init-lsp-bridge)
