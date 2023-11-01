@@ -60,6 +60,16 @@ before all other modules of my setup."
                  (const :tag "The `mct' module" mct)
                  (const :tag "The `vertico' module" vertico)))
 
+(defcustom prot-emacs-load-evil nil
+  "When non-nil, load Vim style key bindings."
+  :group 'prot-emacs
+  :type 'boolean)
+
+(defcustom prot-emacs-load-which-key nil
+  "When non-nil, display key binding hints after a short delay."
+  :group 'prot-emacs
+  :type 'boolean)
+
 (defcustom prot-emacs-omit-packages nil
   "List of package names to not load.
 This instructs the relevant macros to not `require' the given
@@ -401,13 +411,15 @@ that is expanded with the `prot-emacs-package' macro."
 ;; NOTE 2023-10-05: my config
 (require 'init-default)
 (require 'init-functions)
+(require 'prot-emacs-which-key)
 (require 'init-env)
+(require 'prot-emacs-evil)
 (require 'init-evil)
 (require 'init-git)
 (require 'init-programming)
 (require 'init-latex)
 (require 'init-lsp-bridge)
-(require 'init-keybindings)
+;; (require 'init-keybindings)
 (require 'init-keychord)
 (require 'init-avy)
 

@@ -33,7 +33,8 @@
 
     (global-lsp-bridge-mode))
 
-  (define-key evil-normal-state-map (kbd "gd") 'lsp-bridge-find-def)
-  (define-key evil-normal-state-map (kbd "gD") 'lsp-bridge-find-def-return))
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "gd") 'lsp-bridge-find-def)
+    (define-key evil-normal-state-map (kbd "gD") 'lsp-bridge-find-def-return)))
 
 (provide 'init-lsp-bridge)

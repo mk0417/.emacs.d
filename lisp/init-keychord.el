@@ -1,4 +1,4 @@
-;;;;; init-keychord.el --- Key chord -*- lexical-binding: t -*-
+;;;; init-keychord.el --- Key chord -*- lexical-binding: t -*-
 
 ;; My modified simultaneous keybindings based on Jonas Bernoulli's key-chord
 ;; https://github.com/emacsorphanage/key-chord/blob/master/key-chord.el
@@ -128,7 +128,7 @@ and `key-chord-one-key-delay'."
 (key-chord-mode 1)
 
 (with-eval-after-load 'evil
-  (dolist (mode (list evil-insert-state-map evil-ex-completion-map minibuffer-local-map))
+  (dolist (mode (list evil-insert-state-map evil-emacs-state-map evil-ex-completion-map minibuffer-local-map))
     (key-chord-define mode "kk" "()\C-b")
     (key-chord-define mode ",," "[]\C-b")
     (key-chord-define mode "hh" "{}\C-b")

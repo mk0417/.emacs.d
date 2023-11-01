@@ -33,9 +33,11 @@
                      (diff-hl-flydiff-mode)))))
 
 ;;; Keybindings
-(with-eval-after-load 'diff-hl
-  (define-key evil-normal-state-map (kbd "gn") 'diff-hl-next-hunk)
-  (define-key evil-normal-state-map (kbd "gp") 'diff-hl-previous-hunk)
-  (define-key evil-normal-state-map (kbd "gP") 'diff-hl-diff-goto-hunk))
+(prot-emacs-configure
+  (:delay 5)
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "gn") 'diff-hl-next-hunk)
+    (define-key evil-normal-state-map (kbd "gp") 'diff-hl-previous-hunk)
+    (define-key evil-normal-state-map (kbd "gP") 'diff-hl-diff-goto-hunk)))
 
 (provide 'init-git)

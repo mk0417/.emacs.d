@@ -10,8 +10,8 @@
   (require 'prot-simple)
   (require 'prot-scratch)
   (require 'prot-pair)
-  (require 'prot-prefix)
   (require 'prot-comment)
+  (require 'prot-prefix)
 
 ;;;; General settings and common custom functions (prot-simple.el)
   (setq delete-pair-blink-delay 0.1) ; Emacs28 -- see `prot-simple-delete-pair-dwim'
@@ -52,6 +52,7 @@
     "C-x C-c C-c" #'save-buffers-kill-emacs
     "C-h h" nil
     "M-`" nil
+    "C-z" prot-prefix-map
     "C-g" #'prot-simple-keyboard-quit-dwim
     "C-h ." #'prot-simple-describe-symbol ; overrides `display-local-help'
     "C-h F" #'describe-face ; overrides `Info-goto-emacs-command-node'
@@ -107,8 +108,6 @@
     "M-s v" #'prot-simple-buffers-vc-root
     ;; Scratch buffer for major mode of choice
     "C-c s" #'prot-scratch-buffer
-    ;; Prefix keymap (prot-prefix.el)
-    "C-z" #'prot-prefix
     ;; Comments
     "C-;" #'prot-comment
     "C-x C-;" #'prot-comment-timestamp-keyword)
