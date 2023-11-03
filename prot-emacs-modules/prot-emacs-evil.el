@@ -103,6 +103,8 @@
     (evil-prot-basic-state))
 
   (evil-define-key 'prot-basic global-map
+    "0" #'evil-beginning-of-line
+    "$" #'evil-end-of-line
     "h" #'evil-backward-char
     "j" #'evil-next-line
     "k" #'evil-previous-line
@@ -154,23 +156,23 @@
   (with-eval-after-load 'dired
     (evil-define-key 'prot-basic dired-mode-map (kbd "K") #'dired-do-kill-lines))
 
+  (with-eval-after-load 'embark
+    (defun prot/evil-embark-act-or-repeat-pop ()
+      "Call `evil-repeat-pop' if relevant, else `prot/embark-act-no-quit'."
+      (interactive)
+      (call-interactively
+       (if (memq last-command '(evil-repeat evil-repeat-pop evil-repeat-pop-next))
+           #'evil-repeat-pop
+         #'prot/embark-act-no-quit)))
+
+    (evil-define-key '(normal visual motion) global-map (kbd "C-.") #'prot/evil-embark-act-or-repeat-pop))
+
 ;;;; Make Emacs the Insert state
 
-  (defalias 'evil-insert-state 'evil-emacs-state)
+  
   (evil-define-key 'emacs global-map (kbd "<escape>") #'prot/evil-normal-or-basic-state)
   (evil-define-key 'emacs global-map (kbd "C-g") #'prot/evil-normal-or-basic-state)
   (setq evil-emacs-state-cursor evil-insert-state-cursor)
-
-;;;; Set up `devil-mode' to reduce modifier key usage
-
-  (prot-emacs-package devil (:install t))
-
-  (evil-define-key '(normal visual motion prot-basic) global-map (kbd ".") #'devil)
-
-  ;; This one affects the emacs/insert state.
-  (global-devil-mode 1)
-  (global-set-key (kbd "C-.") 'global-devil-mode)
-  (devil-set-key (kbd "."))
 
 ;;;; Set up my prefix keymap
 
@@ -186,13 +188,29 @@
   
   (evil-define-key '(emacs insert) global-map (kbd "SPC") #'prot/evil-prefix-or-self-insert)
   (evil-define-key '(normal visual motion prot-basic) global-map (kbd "SPC") prot-prefix-map)
-
+  (evil-define-key '(normal visual) python-mode-map (kbd ";") prot-prefix-map)
+  
 ;;;; Activate `evil-mode'
   (evil-mode 1)
 
   (prot-emacs-package evil-surround
     (:install t)
     (:delay 2)
-    (global-evil-surround-mode 1)))
+    (global-evil-surround-mode 1))
+
+  (prot-emacs-package general
+    (:install t)
+    (general-evil-setup)
+
+    (general-imap "f"
+      (general-key-dispatch 'self-insert-command
+        :timeout 0.1
+        "d" 'evil-normal-state))
+
+    (defun p-insert-pound () (interactive) (insert "£"))
+    (general-imap "y"
+      (general-key-dispatch 'self-insert-command
+        :timeout 0.2
+        "b" 'p-insert-pound))))
 
 (provide 'prot-emacs-evil)

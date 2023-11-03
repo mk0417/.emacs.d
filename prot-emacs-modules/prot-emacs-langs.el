@@ -163,10 +163,10 @@ Meant to be added to `prog-mode-hook'."
   (:delay 5)
   ;; Remember to check the doc strings of those variables.
   (setq denote-directory (expand-file-name "~/Dropbox/peng_notes/"))
-  (setq denote-known-keywords '("emacs" "philosophy" "politics" "economics"))
+  (setq denote-known-keywords '("emacs" "economics"))
   (setq denote-infer-keywords t)
   (setq denote-sort-keywords t)
-  (setq denote-file-type 'text) ; Org is the default, set others here like I do
+  ;; (setq denote-file-type 'text) ; Org is the default, set others here like I do
   (setq denote-excluded-directories-regexp nil)
   (setq denote-allow-multi-word-keywords nil)
   (setq denote-date-format nil) ; read its doc string

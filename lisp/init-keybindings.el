@@ -94,14 +94,14 @@
    "jv" 'TeX-view)
 
   (general-imap "f"
-                (general-key-dispatch 'self-insert-command
-                  :timeout 0.1
-                  "d" 'evil-normal-state))
+    (general-key-dispatch 'self-insert-command
+      :timeout 0.1
+      "d" 'evil-normal-state))
 
   (defun p-insert-pound () (interactive) (insert "£"))
   (general-imap "y"
-                (general-key-dispatch 'self-insert-command
-                  :timeout 0.2
-                  "b" 'p-insert-pound)))
+    (general-key-dispatch 'self-insert-command
+      :timeout 0.2
+      "b" 'p-insert-pound)))
 
 (provide 'init-keybindings)

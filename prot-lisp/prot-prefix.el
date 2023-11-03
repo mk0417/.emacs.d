@@ -35,32 +35,32 @@
 
 (declare-function prot-simple-kill-buffer-current "prot-simple" (&optional arg))
 (declare-function prot-simple-rename-file-and-buffer "prot-simple" (name))
+(declare-function prot-simple-buffers-major-mode "prot-simple")
+(declare-function prot-simple-buffers-vc-root "prot-simple")
 
 (defvar-keymap prot-prefix-buffer-map
   :doc "Prefix keymap for buffers."
   :name "Buffer"
-  "i" 'ibuffer
-  "d" 'prot-simple-kill-buffer-current
-  "D" 'kill-buffer-and-window
-  "r" 'revert-buffer
-  "h" 'mark-whole-buffer
-  "s" 'prot-scratch-buffer
-  "m" 'p-switch-to-messages
-  "b" #'consult-buffer
+  "D" #'kill-buffer-and-window
+  "d" #'prot-simple-kill-buffer-current
+  "h" #'mark-whole-buffer
+  "b" #'switch-to-buffer
+  "B" #'prot-simple-buffers-major-mode
   "c" #'clone-indirect-buffer-other-window
   "f" #'fit-window-to-buffer
   "k" #'prot-simple-kill-buffer-current
   "g" #'revert-buffer-quick
+  "r" #'prot-simple-rename-file-and-buffer
   "n" #'next-buffer
-  "p" #'previous-buffer)
+  "p" #'previous-buffer
+  "v" #'prot-simple-buffers-vc-root)
 
 (defvar-keymap prot-prefix-file-map
   :doc "Prefix keymaps for files."
   :name "File"
-  "p" 'p-find-file-in-config
-  "n" 'p-find-file-in-notes
-  "j" 'p-create-scratch-file
-  "r" #'prot-simple-rename-file-and-buffer
+  "p" #'p-find-file-in-config
+  "n" #'p-find-file-in-notes
+  "j" #'p-create-scratch-file
   "s" #'save-buffer
   "f" #'find-file
   "F" #'find-file-other-window
@@ -83,14 +83,12 @@
 (declare-function rainbow-mode "rainbow")
 (declare-function spacious-padding-mode "spacious-padding")
 
-(defvar-keymap prot-prefix-toggle-map
+(defvar-keymap prot-prefix-mode-map
   :doc "Prefix keymap for minor mode toggles."
   :name "Toggle"
-  "w" 'count-words
-  "c" 'count-lines-page
-  "m" 'toggle-frame-maximized
   "h" #'hl-line-mode
   "k" #'keycast-mode
+  "m" #'menu-bar-mode
   "n" #'display-line-numbers-mode
   "t" #'toggle-truncate-lines
   "p" #'spacious-padding-mode ; "padding" mnemonic
@@ -101,10 +99,9 @@
 (defvar-keymap prot-prefix-window-map
   :doc "Prefix keymap for windows."
   :name "Window"
-  "d" 'delete-window
-  "o" 'delete-other-windows
-  "v" 'split-window-right
-  "s" 'split-window-below
+  "o" #'delete-other-windows
+  "v" #'split-window-right
+  "d" #'delete-window
   "b" #'balance-windows-area
   "0" #'delete-window
   "1" #'delete-other-windows
@@ -124,6 +121,43 @@
   "K" #'windmove-swap-states-up
   "L" #'windmove-swap-states-right)
 
+(declare-function consult-find "consult" (&optional dir initial))
+(declare-function consult-ripgrep "consult" (&optional dir initial))
+(declare-function prot-search-grep "prot-search" (regexp &optional recursive))
+(declare-function prot-search-grep-todo-keywords "prot-search" (&optional arg))
+(declare-function prot-search-occur-browse-url "prot-search")
+(declare-function prot-search-occur-outline "prot-search" (&optional arg))
+(declare-function prot-simple-flush-and-diff "prot-simple" (regexp beg end))
+
+(defvar-keymap prot-prefix-search-map
+  :doc "Prefix keymap for search (and replace) commands."
+  :name "Search"
+  "s" #'consult-line
+  "f" #'consult-find
+  "d" #'prot-simple-flush-and-diff
+  "g" #'prot-search-grep
+  "o" #'prot-search-occur-outline
+  "r" #'consult-ripgrep
+  "t" #'prot-search-grep-todo-keywords
+  "u" #'prot-search-occur-browse-url)
+
+(declare-function prot-simple-transpose-chars "prot-simple")
+(declare-function prot-simple-transpose-lines "prot-simple" (arg))
+(declare-function prot-simple-transpose-paragraphs "prot-simple" (arg))
+(declare-function prot-simple-transpose-sentences "prot-simple" (arg))
+(declare-function prot-simple-transpose-words "prot-simple" (arg))
+(declare-function prot-simple-transpose-sexps "prot-simple" (arg))
+
+(defvar-keymap prot-prefix-transpose-map
+  :doc "Prefix keymap for object transposition."
+  :name "Transpose"
+  "c" #'prot-simple-transpose-chars
+  "l" #'prot-simple-transpose-lines
+  "p" #'prot-simple-transpose-paragraphs
+  "s" #'prot-simple-transpose-sentences
+  "w" #'prot-simple-transpose-words
+  "x" #'prot-simple-transpose-sexps)
+
 (defvar-keymap prot-prefix-expression-map
   :doc "Prefix keymap for s-expression motions."
   :name "S-EXP"
@@ -138,18 +172,7 @@
   "t" #'transpose-sexps
   "u" #'backward-up-list ; the actual "up"
   "k" #'kill-sexp
-  "SPC" #'prot/expreg-expand-dwim
   "DEL" #'backward-kill-sexp)
-
-(defvar-keymap prot-prefix-search-map
-  :doc "Prefix keymap for search."
-  :name "Search"
-  :repeat t
-  "s" #'consult-line
-  "k" #'consult-yank-pop
-  "p" #'consult-ripgrep
-  "i" #'consult-imenu
-  "l" #'consult-outline)
 
 (defvar-keymap prot-prefix-git-map
   :doc "Prefix keymap for git."
@@ -190,7 +213,6 @@
 (defvar-keymap prot-prefix-map
   :doc "Prefix keymap with multiple subkeymaps."
   :name "Prot Prefix"
-  "," #'execute-extended-command
   "`" #'p-switch-to-previous-buffer
   "0" #'delete-window
   "1" #'delete-other-windows
@@ -207,15 +229,16 @@
   "h" help-map
   "i" prot-prefix-insert-map
   "d" #'dired-jump
+  "m" prot-prefix-mode-map
   "n" narrow-map
   "p" project-prefix-map
   "r" ctl-x-r-map
-  "t" prot-prefix-toggle-map
+  "s" prot-prefix-search-map
+  "t" prot-prefix-transpose-map
   "u" #'universal-argument
   "v" vc-prefix-map
   "w" prot-prefix-window-map
   "x" prot-prefix-expression-map
-  "s" prot-prefix-search-map
   "g" prot-prefix-git-map
   "j" prot-prefix-jupyter-map
   "l" prot-prefix-latex-map)
@@ -226,10 +249,12 @@
     "f" `("File" . ,prot-prefix-file-map)
     "h" `("Help" . ,help-map)
     "i" `("Insert" . ,prot-prefix-insert-map)
+    "m" `("Mode" . ,prot-prefix-mode-map)
     "n" `("Narrow" . ,narrow-map)
     "p" `("Project" . ,project-prefix-map)
     "r" `("C-x r" . ,ctl-x-r-map)
-    "t" `("Toggle" . ,prot-prefix-toggle-map)
+    "s" `("Search" . ,prot-prefix-search-map)
+    "t" `("Transpose" . ,prot-prefix-transpose-map)
     "v" `("C-x v" . ,vc-prefix-map)
     "w" `("Window" . ,prot-prefix-window-map)
     "x" `("S-EXP" . ,prot-prefix-expression-map)
