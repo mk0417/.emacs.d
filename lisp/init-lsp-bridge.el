@@ -25,6 +25,7 @@
     (:install "https://github.com/manateelazycat/lsp-bridge")
     (setq lsp-bridge-default-mode-hooks
           '(python-mode-hook
+            julia-mode-hook
             emacs-lisp-mode-hook
             LaTeX-mode-hook
             markdown-mode-hook))

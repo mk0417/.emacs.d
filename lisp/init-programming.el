@@ -49,4 +49,14 @@
 
     (add-hook 'python-mode-hook 'p-python-indent-key)))
 
+;;; Julia
+(prot-emacs-package julia-mode
+  (:install t)
+  (:delay 2))
+
+(prot-emacs-configure
+  (:delay 2)
+  (add-hook 'julia-mode-hook #'display-fill-column-indicator-mode)
+  (add-hook 'julia-mode-hook #'electric-pair-mode))
+
 (provide 'init-programming)

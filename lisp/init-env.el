@@ -9,6 +9,7 @@
              "/opt/homebrew/Caskroom/mambaforge/base/bin/jupyter"
              "/opt/homebrew/Cellar/aspell"
              "/opt/homebrew/bin/"
+             "/opt/homebrew/bin/julia"
              "/bin"
              "/sbin"
              "/usr/bin"
