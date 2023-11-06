@@ -123,6 +123,9 @@
   (minibuffer-depth-indicate-mode 1)
   (minibuffer-electric-default-mode 1)
   
+  (define-key minibuffer-local-map (kbd "C-k") 'delete-backward-char)
+  (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
+
 ;;;; `dabbrev' (dynamic word completion (dynamic abbreviations))
   (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
   (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
@@ -259,7 +262,7 @@
 ;;; Extended minibuffer actions and more (embark.el and prot-embark.el)
 (prot-emacs-package embark
   (:install t)
-  (:delay 5)
+  (:delay 1)
   (setq prefix-help-command #'embark-prefix-help-command)
   ;; (setq prefix-help-command #'describe-prefix-bindings) ; the default of the above
 

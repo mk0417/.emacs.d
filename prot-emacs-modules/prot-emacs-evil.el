@@ -129,7 +129,8 @@
           term-mode
           wdired-mode
           log-edit-mode
-          git-commit-mode))
+          git-commit-mode
+          color-rg-mode))
   (setq evil-prot-basic-state-modes
         '(completion-list-mode
           Buffer-menu-mode
@@ -234,26 +235,6 @@
   (evil-define-key '(normal visual) julia-mode-map (kbd ";") prot-prefix-map)
 
 ;;;; Activate `evil-mode'
-  (evil-mode 1)
-
-  (prot-emacs-package evil-surround
-    (:install t)
-    (:delay 2)
-    (global-evil-surround-mode 1))
-
-  (prot-emacs-package general
-    (:install t)
-    (general-evil-setup)
-
-    (general-imap "f"
-      (general-key-dispatch 'self-insert-command
-        :timeout 0.1
-        "d" 'evil-normal-state))
-
-    (defun p-insert-pound () (interactive) (insert "£"))
-    (general-imap "y"
-      (general-key-dispatch 'self-insert-command
-        :timeout 0.2
-        "b" 'p-insert-pound))))
+  (evil-mode 1))
 
 (provide 'prot-emacs-evil)

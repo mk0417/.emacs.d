@@ -1,6 +1,27 @@
 ;;; init-evil.el --- Evil -*- lexical-binding: t -*-
 (prot-emacs-configure
   (:delay 1)
+
+  (prot-emacs-package evil-surround
+    (:install t)
+    (:delay 2)
+    (global-evil-surround-mode 1))
+
+  (prot-emacs-package general
+    (:install t)
+    (general-evil-setup)
+
+    (general-imap "f"
+      (general-key-dispatch 'self-insert-command
+        :timeout 0.1
+        "d" 'evil-normal-state))
+
+    (defun p-insert-pound () (interactive) (insert "£"))
+    (general-imap "y"
+      (general-key-dispatch 'self-insert-command
+        :timeout 0.2
+        "b" 'p-insert-pound)))
+
   (with-eval-after-load 'evil
     ;; Vim style replace
     (defun p-ex-evil-buffer-replace ()

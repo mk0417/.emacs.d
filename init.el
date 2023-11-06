@@ -407,13 +407,13 @@ that is expanded with the `prot-emacs-package' macro."
 (require 'prot-emacs-org)
 (require 'prot-emacs-langs)
 (require 'prot-emacs-web)
+(require 'prot-emacs-evil)
+(require 'prot-emacs-which-key)
 
 ;; NOTE 2023-10-05: my config
 (require 'init-default)
 (require 'init-functions)
-(require 'prot-emacs-which-key)
 (require 'init-env)
-(require 'prot-emacs-evil)
 (require 'init-evil)
 (require 'init-git)
 (require 'init-programming)
