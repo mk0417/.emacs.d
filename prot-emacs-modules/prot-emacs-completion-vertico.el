@@ -1,7 +1,7 @@
 ;;; Vertical completion layout
 (prot-emacs-package vertico
   (:install t)
-  ;; (:delay 5)
+  (:delay 1)
   (setq vertico-scroll-margin 0)
   (setq vertico-count 5)
   (setq vertico-resize nil)
@@ -17,7 +17,7 @@
 
 ;;; Custom tweaks for vertico (prot-vertico.el)
 (prot-emacs-package prot-vertico
-  ;; (:delay 5)
+  (:delay 5)
   (setq vertico-multiform-categories
         `(;; Maximal
           (embark-keybinding ,@prot-vertico-multiform-maximal)
@@ -40,8 +40,7 @@
     "DEL" #'vertico-directory-delete-char
     "M-DEL" #'vertico-directory-delete-word
     "M-," #'vertico-quick-insert
-    "M-." #'vertico-quick-exit
-    "M-h" #'vertico-directory-up)
+    "M-." #'vertico-quick-exit)
 
   (prot-emacs-keybind vertico-multiform-map
     "C-n" #'prot-vertico-private-next
