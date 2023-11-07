@@ -26,9 +26,8 @@
                 '("%e"
                   prot-modeline-kbd-macro
                   prot-modeline-narrow
-                  prot-modeline-input-method
                   prot-modeline-buffer-status
-                  " "
+                  prot-modeline-input-method
                   prot-modeline-evil
                   prot-modeline-buffer-identification
                   "  "
@@ -40,8 +39,6 @@
                   prot-modeline-breadcrumb
                   "  "
                   prot-modeline-eglot
-                  "  "
-                  prot-modeline-flymake
                   "  "
                   prot-modeline-align-right
                   prot-modeline-misc-info))
