@@ -278,7 +278,7 @@ VARIANT of the state tag is either :short or :long, as defined in
 `prot-modeline-evil-state-tags'."
   (pcase evil-state
     ('normal (prot-modeline--evil-propertize-tag 'normal variant 'prot-modeline-indicator-blue))
-    ('insert (prot-modeline--evil-propertize-tag 'insert variant))  ; I don't actually use an "insert" state: it switches to "emacs"
+    ('insert (prot-modeline--evil-propertize-tag 'insert variant 'prot-modeline-indicator-magenta))  ; I don't actually use an "insert" state: it switches to "emacs"
     ('visual (pcase evil-visual-selection
                ('line (prot-modeline--evil-propertize-tag 'vline variant 'prot-modeline-indicator-yellow))
                ('screen-line (prot-modeline--evil-propertize-tag 'vsline variant 'prot-modeline-indicator-yellow))

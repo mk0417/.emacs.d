@@ -21,7 +21,6 @@
   (setq evil-esc-delay 0.01)
   (setq evil-intercept-esc 'always)
   (setq evil-highlight-closing-paren-at-point-states '(not emacs insert replace))
-  (setq evil-kill-on-visual-paste nil) ; Does not work, see `prot/evil-visual-paste-no-kill'
   (setq evil-auto-indent t)
 
   (setq evil-undo-system 'undo-redo) ; Emacs 28
@@ -70,7 +69,7 @@
   (setq evil-track-eol t)
   (setq evil-v$-excludes-newline nil)
 
-;;;; Compatibility with other modes and other key bindings
+;;;; Compatibility with other modes
 
   ;; I load the `evil' feature here because some functions/macros of
   ;; it are needed from this point on.
@@ -141,7 +140,7 @@
           log-view-mode
           org-agenda-mode
           dired-mode
-          special-mode
+          ;; special-mode
           tabulated-list-mode
           world-clock-mode))
 
@@ -163,13 +162,6 @@
     (evil-define-key '(normal visual motion) org-mode-map
       (kbd "<tab>") #'org-cycle
       (kbd "<return>") #'org-ctrl-c-ctrl-c))
-
-  (evil-define-key '(normal visual motion) global-map
-    (kbd "<tab>") #'evil-indent
-    (kbd "<return>") #'prot-simple-new-line-below
-    (kbd "S-<return>") #'prot-simple-new-line-above
-    (kbd "K") #'ignore ; TODO 2023-11-06: do something useful with K
-    )
 
 ;;;; Evil search setup
 
@@ -216,17 +208,50 @@
   (setq evil-disable-insert-state-bindings t)
   (setq evil-toggle-key "<f12>") ; I seldom need this, so putting it somewhere far
 
-;;;; Do not pollute the kill-ring in visual state
+;;;; Custom Evil keys
 
-  (defun prot/evil-visual-paste-no-kill (&rest args)
-    "Do not add visual selection to the kill-ring while pasting.
-Add as :around advice to `evil-delete', applying its ARGS."
-    (if (evil-visual-state-p)
-        (cl-letf (((symbol-function 'evil-yank) #'ignore))
-          (apply args))
-      (apply args)))
+  (evil-define-operator prot-evil-erase (beg end type &rest _)
+    "Erase text from BEG to END with TYPE.
+Unlike the delete operator, do not store the erased text anywhere."
+    (interactive "<R><x><y>")
+    (when (and (memq type '(inclusive exclusive))
+               (not (evil-visual-state-p))
+               (eq 'prot-evil-erase evil-this-operator)
+               (save-excursion (goto-char beg) (bolp))
+               (save-excursion (goto-char end) (eolp))
+               (<= 1 (evil-count-lines beg end)))
+      ;; Imitate Vi strangeness: if motion meets above criteria,
+      ;; delete linewise. Not for change operator or visual state.
+      (let ((new-range (evil-line-expand beg end)))
+        (setq beg (car new-range)
+              end (cadr new-range)
+              type 'line)))
+    (cond
+     ((eq type 'block)
+      (evil-apply-on-block #'delete-region beg end nil))
+     ((and (eq type 'line)
+           (= end (point-max))
+           (or (= beg end)
+               (/= (char-before end) ?\n))
+           (/= beg (point-min))
+           (= (char-before beg) ?\n))
+      (delete-region (1- beg) end))
+     (t (delete-region beg end)))
+    (when (and (eq type 'line)
+               (called-interactively-p 'any))
+      (evil-first-non-blank)
+      (when (and (not evil-start-of-line)
+                 evil-operator-start-col
+                 ;; Special exceptions to ever saving column:
+                 (not (memq evil-this-motion '(evil-forward-word-begin
+                                               evil-forward-WORD-begin))))
+        (move-to-column evil-operator-start-col))))
 
-  (advice-add #'evil-delete :around #'prot/evil-visual-paste-no-kill)
+  (evil-define-key '(normal visual motion) global-map
+    (kbd "U") #'evil-redo
+    (kbd "C-r") #'isearch-backward
+    (kbd "K") #'prot-evil-erase
+    )
 
 ;;;; Set up my prefix keymap
 
