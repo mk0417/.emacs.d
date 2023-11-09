@@ -49,12 +49,19 @@
 
     (add-hook 'python-mode-hook 'p-python-indent-key)))
 
+;;; R
+(prot-emacs-package ess 
+  (:delay 2)
+  (:install t)
+  (with-eval-after-load 'ess
+    ;; disable flymake
+    (add-hook 'ess-r-mode-hook (lambda () (flymake-mode -1)))
+    (add-hook 'ess-mode-hook #'display-fill-column-indicator-mode)
+    (add-hook 'ess-mode-hook #'electric-pair-mode)))
+
 ;;; Julia
 (prot-emacs-package julia-mode
   (:install t)
-  (:delay 2))
-
-(prot-emacs-configure
   (:delay 2)
   (add-hook 'julia-mode-hook #'display-fill-column-indicator-mode)
   (add-hook 'julia-mode-hook #'electric-pair-mode))

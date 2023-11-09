@@ -251,8 +251,7 @@ Unlike the delete operator, do not store the erased text anywhere."
   (evil-define-key '(normal visual motion) global-map
     (kbd "U") #'evil-redo
     (kbd "C-r") #'isearch-backward
-    (kbd "K") #'prot-evil-erase
-    )
+    (kbd "K") #'prot-evil-erase)
 
 ;;;; Set up my prefix keymap
 
@@ -270,6 +269,7 @@ Unlike the delete operator, do not store the erased text anywhere."
   (evil-define-key '(normal visual motion prot-basic) global-map (kbd "SPC") prot-prefix-map)
   (evil-define-key '(emacs normal visual motion prot-basic) global-map (kbd "C-g") #'prot/evil-normal-or-basic-state)
   (evil-define-key '(normal visual) python-mode-map (kbd ";") prot-prefix-map)
+  (evil-define-key '(normal visual) ess-mode-map (kbd ";") prot-prefix-map)
   (evil-define-key '(normal visual) julia-mode-map (kbd ";") prot-prefix-map)
 
 ;;;; Activate `evil-mode'
