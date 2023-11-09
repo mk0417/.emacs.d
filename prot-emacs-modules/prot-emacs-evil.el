@@ -140,6 +140,7 @@
           log-view-mode
           org-agenda-mode
           dired-mode
+          vc-dir-mode
           ;; special-mode
           tabulated-list-mode
           world-clock-mode))
