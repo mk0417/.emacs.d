@@ -169,7 +169,7 @@
 
 (defun prot-modeline--string-truncate-p (str)
   "Return non-nil if STR should be truncated."
-  (and (< (window-total-width) split-width-threshold)
+  (and (prot-common-window-small-p)
        (> (length str) prot-modeline-string-truncate-length)
        (not (one-window-p :no-minibuffer))))
 
@@ -177,7 +177,7 @@
   "Return non-nil if truncation should happen.
 This is a more general and less stringent variant of
 `prot-modeline--string-truncate-p'."
-  (and (< (window-total-width) split-width-threshold)
+  (and (prot-common-window-small-p)
        (not (one-window-p :no-minibuffer))))
 
 (defun prot-modeline-string-truncate (str)
@@ -185,6 +185,37 @@ This is a more general and less stringent variant of
 Truncation is done up to `prot-modeline-string-truncate-length'."
   (if (prot-modeline--string-truncate-p str)
       (concat (substring str 0 prot-modeline-string-truncate-length) "...")
+    str))
+
+(defun prot-modeline-string-truncate-end (str)
+  "Like `prot-modeline-string-truncate' but truncate from string beginning."
+  (if (prot-modeline--string-truncate-p str)
+      (concat "..." (substring str (- prot-modeline-string-truncate-length)))
+    str))
+
+(defun prot-modeline--first-char (str)
+  "Return first character from STR."
+  (substring str 0 1))
+
+(defun prot-modeline-string-abbreviate (str)
+  "Abbreviate STR individual hyphen or underscore separated words.
+Also see `prot-modeline-string-abbreviate-but-last'."
+  (if (prot-modeline--string-truncate-p str)
+      (mapconcat #'prot-modeline--first-char (split-string str "[_-]") "-")
+    str))
+
+(defun prot-modeline-string-abbreviate-but-last (str nthlast)
+  "Abbreviate STR, keeping NTHLAST words intact.
+Also see `prot-modeline-string-abbreviate'."
+  (if (prot-modeline--string-truncate-p str)
+      (let* ((all-strings (split-string str "[_-]"))
+             (nbutlast-strings (nbutlast (copy-sequence all-strings) nthlast))
+             (last-strings (nreverse (ntake nthlast (nreverse (copy-sequence all-strings)))))
+             (first-component (mapconcat #'prot-modeline--first-char nbutlast-strings "-"))
+             (last-component (mapconcat #'identity last-strings "-")))
+        (if (string-empty-p first-component)
+            last-component
+          (concat first-component "-" last-component)))
     str))
 
 ;;;; Keyboard macro indicator
@@ -374,7 +405,7 @@ face.  Let other buffers have no face.")
         (prot-modeline-major-mode-indicator)
         " "
         (propertize
-         (prot-modeline-string-truncate
+         (prot-modeline-string-abbreviate
           (prot-modeline-major-mode-name))
          'mouse-face 'mode-line-highlight
          'help-echo (prot-modeline-major-mode-help-echo))))
@@ -481,17 +512,62 @@ than `split-width-threshold'."
         (prot-modeline--vc-details file branch face)))
   "Mode line construct to return propertized VC branch.")
 
-;;;; Breadcrumb
+;;;; which-function-mode
 
-(defvar-local prot-modeline-breadcrumb
-    '(:eval
-      (when (and (featurep 'breadcrumb)
+(with-eval-after-load 'which-func
+  (setq mode-line-misc-info
+        (delete
+         '(which-function-mode    ;Only display if mode is enabled.
+           (which-func-mode       ;Only display if buffer supports it.
+            (which-func--use-mode-line
+             ("" which-func-format " "))))
+         mode-line-misc-info)))
+
+(defun prot-modeline-which-function-string ()
+  "Return `which-function-mode' string."
+  (when (bound-and-true-p which-function-mode)
+    (prot-modeline-string-abbreviate-but-last
+     (string-replace
+      "%" "%%"
+      (or (gethash (selected-window) which-func-table)
+          which-func-unknown))
+     2)))
+
+(defvar which-func-keymap)
+
+(defvar-local prot-modeline-which-function
+    `(:eval
+      (when (and (bound-and-true-p which-function-mode)
                  (derived-mode-p 'text-mode 'prog-mode)
-                 (buffer-file-name)
+                 buffer-file-name
                  (mode-line-window-selected-p))
-        ;; (breadcrumb-project-crumbs)
-        (breadcrumb-imenu-crumbs)))
-  "Mode line construct for displaying breadcrumbs.")
+        (concat
+         (propertize "O" 'face 'shadow)
+         " "
+         (propertize (prot-modeline-which-function-string)
+		             'local-map which-func-keymap
+                     'face 'which-func
+                     'mouse-face 'mode-line-highlight
+                     'help-echo ,(concat
+                                  "Current function\n"
+                                  "mouse-1: go to beginning\n"
+                                  "mouse-2: toggle rest visibility\n"
+                                  "mouse-3: go to end")))))
+  "Mode line construct for displaying `which-function-mode'.")
+
+;; ;;;; Breadcrumb
+;;
+;; (defvar-local prot-modeline-breadcrumb
+;;     '(:eval
+;;       (when (and (featurep 'breadcrumb)
+;;                  (bound-and-true-p breadcrumb-mode)
+;;                  (derived-mode-p 'text-mode 'prog-mode)
+;;                  (buffer-file-name)
+;;                  (mode-line-window-selected-p))
+;;
+;;         (breadcrumb-project-crumbs)
+;;         (breadcrumb-imenu-crumbs)))
+;;   "Mode line construct for displaying breadcrumbs.")
 
 ;;;; Eglot
 
@@ -600,7 +676,8 @@ Specific to the current window's mode line.")
                      prot-modeline-process
                      prot-modeline-vc-branch
                      prot-modeline-eglot
-                     prot-modeline-breadcrumb
+                     prot-modeline-which-function
+                     ;; prot-modeline-breadcrumb
                      prot-modeline-align-right
                      prot-modeline-misc-info))
   (put construct 'risky-local-variable t))
