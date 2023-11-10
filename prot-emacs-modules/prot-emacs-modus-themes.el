@@ -22,13 +22,6 @@
           (agenda-date . (variable-pitch regular 1.3))
           (t . (regular 1.15))))
 
-  ;; (setq modus-themes-common-palette-overrides nil)
-
-  ;; To list the palette's colours, use `modus-themes-list-colors',
-  ;; `modus-themes-list-colors-current'.  With a prefix argument
-  ;; (`C-u'), they show only the semantic colour mappings, meaning
-  ;; those which reference a named colour from the palette, but which
-  ;; do not define a new colour themselves.
   (setq modus-themes-common-palette-overrides
         `((cursor cyan-intense)
           (bg-region bg-ochre)

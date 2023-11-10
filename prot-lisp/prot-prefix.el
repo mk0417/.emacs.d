@@ -210,6 +210,8 @@
   "c" #'p-clear-latex-temp-files
   "v" #'TeX-view)
 
+(declare-function prot-simple-other-windor-or-frame "prot-simple")
+
 (defvar-keymap prot-prefix-map
   :doc "Prefix keymap with multiple subkeymaps."
   :name "Prot Prefix"
@@ -222,6 +224,7 @@
   "3" #'split-window-right
   "#" #'split-root-window-right
   "o" #'other-window
+  "O" #'prot-simple-other-windor-or-frame
   "Q" #'save-buffers-kill-emacs
   "b" prot-prefix-buffer-map
   "c" #'world-clock

@@ -244,8 +244,8 @@ to `line-beginning-position'."
     (goto-char regexp-end)
     (unless (looking-at ">")
       (insert ">")
-      (search-backward "\s")
-      (forward-char 1)
+      (when (search-backward "\s" (line-beginning-position) :noerror)
+        (forward-char 1))
       (insert "<"))
     (prot-simple-escape-url-line (1+ regexp-end)))
   (goto-char (line-end-position)))
@@ -625,6 +625,14 @@ Name the buffer after the defun's symbol."
   (narrow-to-defun))
 
 ;;;; Commands for buffers
+
+;;;###autoload
+(defun prot-simple-other-windor-or-frame ()
+  "Switch to other window or frame.
+If there is only one window, call `other-frame'.  Otherwise use
+`other-window'."
+  (interactive)
+  (call-interactively (if (one-window-p) #'other-frame #'other-window)))
 
 ;;;###autoload
 (defun prot-simple-kill-buffer (buffer)
