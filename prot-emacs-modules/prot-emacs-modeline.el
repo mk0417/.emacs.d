@@ -1,8 +1,6 @@
 ;;; Mode line
-(prot-emacs-configure
+(prot-emacs-package prot-modeline
   (:delay 1)
-  (which-function-mode 1)
-  (require 'prot-modeline)
   (setq mode-line-compact nil) ; Emacs 28
 
   ;; NOTE 2023-10-05: my hack to display Jupyter indicator
@@ -38,8 +36,6 @@
                   prot-modeline-process
                   "  "
                   prot-modeline-vc-branch
-                  "  "
-                  prot-modeline-which-function
                   "  "
                   prot-modeline-eglot
                   "  "

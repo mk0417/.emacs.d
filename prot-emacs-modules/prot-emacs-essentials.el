@@ -414,23 +414,7 @@ by that special hook."
   ;; Or `setopt' on Emacs 29: (setopt lin-face 'lin-yellow)
   ;;
   ;; I still prefer `setq' for consistency.
-  (setq lin-face
-        (if (eq prot-emacs-load-theme-family 'modus)
-            'lin-cyan
-          'hl-line))
-
-  (setq lin-mode-hooks
-        '(
-          dired-mode-hook
-          git-rebase-mode-hook
-          ibuffer-mode-hook
-          ilist-mode-hook
-          ledger-report-mode-hook
-          log-view-mode-hook
-          occur-mode-hook
-          org-agenda-mode-hook
-          tabulated-list-mode-hook
-          vc-dir-mode-hook))
+  (setq lin-face 'lin-green)
 
   (lin-global-mode 1)) ; applies to all `lin-mode-hooks'
 
@@ -497,5 +481,11 @@ by that special hook."
   ;; We have to use the "point" mnemonic, because C-c c is often the
   ;; suggested binding for `org-capture' and is the one I use as well.
   (define-key global-map (kbd "C-c p") #'cursory-set-preset))
+
+;;; Header line context of symbol/heading (breadcrumb.el)
+(prot-emacs-package breadcrumb
+  (:install t)
+  (:delay 2)
+  (breadcrumb-mode 1))
 
 (provide 'prot-emacs-essentials)

@@ -407,8 +407,9 @@ face.  Let other buffers have no face.")
         (prot-modeline-major-mode-indicator)
         " "
         (propertize
-         (prot-modeline-string-abbreviate
-          (prot-modeline-major-mode-name))
+         (prot-modeline-string-abbreviate-but-last
+          (prot-modeline-major-mode-name)
+          2)
          'mouse-face 'mode-line-highlight
          'help-echo (prot-modeline-major-mode-help-echo))))
      (propertize "%]" 'face 'prot-modeline-indicator-red))
@@ -513,63 +514,6 @@ than `split-width-threshold'."
                   (face (prot-modeline--vc-face file backend)))
         (prot-modeline--vc-details file branch face)))
   "Mode line construct to return propertized VC branch.")
-
-;;;; which-function-mode
-
-(with-eval-after-load 'which-func
-  (setq mode-line-misc-info
-        (delete
-         '(which-function-mode    ;Only display if mode is enabled.
-           (which-func-mode       ;Only display if buffer supports it.
-            (which-func--use-mode-line
-             ("" which-func-format " "))))
-         mode-line-misc-info)))
-
-(defun prot-modeline-which-function-string ()
-  "Return `which-function-mode' string."
-  (when (bound-and-true-p which-function-mode)
-    (prot-modeline-string-abbreviate-but-last
-     (string-replace
-      "%" "%%"
-      (or (gethash (selected-window) which-func-table)
-          which-func-unknown))
-     2)))
-
-(defvar which-func-keymap)
-
-(defvar-local prot-modeline-which-function
-    `(:eval
-      (when (and (bound-and-true-p which-function-mode)
-                 (derived-mode-p 'text-mode 'prog-mode)
-                 buffer-file-name
-                 (mode-line-window-selected-p))
-        (concat
-         (propertize "O" 'face 'shadow)
-         " "
-         (propertize (prot-modeline-which-function-string)
-		             'local-map which-func-keymap
-                     'face 'which-func
-                     'mouse-face 'mode-line-highlight
-                     'help-echo ,(concat
-                                  "Current function\n"
-                                  "mouse-1: go to beginning\n"
-                                  "mouse-2: toggle rest visibility\n"
-                                  "mouse-3: go to end")))))
-  "Mode line construct for displaying `which-function-mode'.")
-
-;; ;;;; Breadcrumb
-;;
-;; (defvar-local prot-modeline-breadcrumb
-;;     '(:eval
-;;       (when (and (featurep 'breadcrumb)
-;;                  (bound-and-true-p breadcrumb-mode)
-;;                  (derived-mode-p 'text-mode 'prog-mode)
-;;                  (buffer-file-name)
-;;                  (mode-line-window-selected-p))
-;;
-;;         (breadcrumb-project-crumbs)
-;;         (breadcrumb-imenu-crumbs)))
-;;   "Mode line construct for displaying breadcrumbs.")
 
 ;;;; Eglot
 
@@ -678,8 +622,6 @@ Specific to the current window's mode line.")
                      prot-modeline-process
                      prot-modeline-vc-branch
                      prot-modeline-eglot
-                     prot-modeline-which-function
-                     ;; prot-modeline-breadcrumb
                      prot-modeline-align-right
                      prot-modeline-misc-info))
   (put construct 'risky-local-variable t))
