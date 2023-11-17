@@ -37,6 +37,7 @@
 (declare-function prot-simple-rename-file-and-buffer "prot-simple" (name))
 (declare-function prot-simple-buffers-major-mode "prot-simple")
 (declare-function prot-simple-buffers-vc-root "prot-simple")
+(declare-function beframe-buffer-menu "beframe" (&optional frame &key sort))
 
 (defvar-keymap prot-prefix-buffer-map
   :doc "Prefix keymap for buffers."
@@ -44,6 +45,7 @@
   "D" #'kill-buffer-and-window
   "d" #'prot-simple-kill-buffer-current
   "h" #'mark-whole-buffer
+  "m" #'beframe-buffer-menu
   "b" #'switch-to-buffer
   "B" #'prot-simple-buffers-major-mode
   "c" #'clone-indirect-buffer-other-window

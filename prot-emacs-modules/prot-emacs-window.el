@@ -120,6 +120,27 @@
     ">" #'enlarge-window-horizontally
     "<" #'shrink-window-horizontally))
 
+;;; Frame-isolated buffers
+;; Another package of mine.  Read the manual:
+;; <https://protesilaos.com/emacs/beframe>.
+(prot-emacs-package beframe
+  (:install t)
+  (:delay 1)
+  (setq beframe-functions-in-frames '(project-prompt-project-dir))
+
+  (beframe-mode 1)
+
+  (prot-emacs-keybind global-map
+    ;; Override the `set-fill-column' that I have no use for.
+    "C-x f" #'other-frame-prefix
+    ;; Bind Beframe commands to a prefix key. Notice the -map as I am
+    ;; binding keymap here, not a command.
+    "C-c b" beframe-prefix-map
+    ;; Replace the generic `buffer-menu'.  With a prefix argument, this
+    ;; commands prompts for a frame.  Call the `buffer-menu' via M-x if
+    ;; you absolutely need the global list of buffers.
+    "C-x C-b" #'beframe-buffer-menu))
+
 ;;; Increased padding in windows/frames
 ;; Yet another one of my packages:
 ;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
