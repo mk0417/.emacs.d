@@ -2,6 +2,7 @@
 (prot-emacs-package prot-modeline
   (:delay 1)
   (setq mode-line-compact nil) ; Emacs 28
+  (setq mode-line-right-align-edge 'right-margin)
 
   ;; NOTE 2023-10-05: my hack to display Jupyter indicator
   (defun get-jupyter-repl-interaction-indicator ()
@@ -39,7 +40,7 @@
                   "  "
                   prot-modeline-eglot
                   "  "
-                  prot-modeline-align-right
+                  ;; prot-modeline-align-right
                   prot-modeline-misc-info))
 
   (prot-modeline-subtle-mode 1)
