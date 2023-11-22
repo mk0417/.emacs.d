@@ -163,7 +163,7 @@
 (prot-emacs-package beframe
   (:install t)
   (:delay 1)
-  (setq beframe-functions-in-frames '(project-prompt-project-dir))
+  ;; (setq beframe-functions-in-frames '(project-prompt-project-dir))
 
   (beframe-mode 1)
 
