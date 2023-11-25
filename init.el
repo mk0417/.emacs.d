@@ -156,8 +156,8 @@ before all other modules of my setup."
     pulsar
     spacious-padding
     substitute
+    beframe
     ;; altcaps
-    ;; beframe
     ;; dired-preview
     ;; ef-themes
     ;; logos
