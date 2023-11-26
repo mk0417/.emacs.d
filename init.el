@@ -53,7 +53,7 @@ before all other modules of my setup."
                  (const :tag "The `modus-themes' module" modus)
                  (const :tag "Do not load a theme module" nil)))
 
-(defcustom prot-emacs-completion-ui 'vertico
+(defcustom prot-emacs-completion-ui 'mct
   "Choose minibuffer completion UI between `mct' or `vertico'."
   :group 'prot-emacs
   :type '(choice :tag "Minibuffer user interface"
@@ -413,6 +413,8 @@ that is expanded with the `prot-emacs-package' macro."
 (require 'prot-emacs-org)
 (require 'prot-emacs-langs)
 (require 'prot-emacs-web)
+(when prot-emacs-load-icons
+  (require 'prot-emacs-icons))
 (require 'prot-emacs-evil)
 (require 'prot-emacs-which-key)
 
