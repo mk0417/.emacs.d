@@ -262,7 +262,7 @@
 ;;; Extended minibuffer actions and more (embark.el and prot-embark.el)
 (prot-emacs-package embark
   (:install t)
-  (:delay 5)
+  ;; (:delay 5)
   (setq prefix-help-command #'embark-prefix-help-command)
   ;; (setq prefix-help-command #'describe-prefix-bindings) ; the default of the above
 
