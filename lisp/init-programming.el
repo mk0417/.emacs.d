@@ -11,6 +11,7 @@
   ;; answer No when first installation and build it to have .dylib file
   ;; (require 'jupyter)
   (setq jupyter-eval-use-overlays t)
+  (setq jupyter-org-auto-connect nil)
 
   ;; After new commits of emacs-jupyter upstream,
   ;; jupyter-eval-region has three arguments
