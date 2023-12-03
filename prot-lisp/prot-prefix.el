@@ -199,18 +199,19 @@
   "c" #'p-jupyter-remove-line-overlay
   "w" #'jupyter-repl-pop-to-buffer)
 
-(defvar-keymap prot-prefix-latex-map
+(defvar-keymap prot-prefix-text-map
   :doc "Prefix keymap for latex."
-  :name "Latex"
+  :name "Text"
   :repeat t
   "m" #'TeX-insert-macro
   "e" #'LaTeX-environment
   "f" #'LaTeX-fill-buffer
   "r" #'p-run-latex
   "a" #'TeX-command-run-all
-  "p" #'p-select-beamer-frame
+  "b" #'p-select-beamer-frame
   "c" #'p-clear-latex-temp-files
-  "v" #'TeX-view)
+  "v" #'TeX-view
+  "p" #'quarto-preview)
 
 (declare-function prot-simple-other-windor-or-frame "prot-simple")
 
@@ -246,7 +247,7 @@
   "x" prot-prefix-expression-map
   "g" prot-prefix-git-map
   "j" prot-prefix-jupyter-map
-  "l" prot-prefix-latex-map)
+  "l" prot-prefix-text-map)
 
 (with-eval-after-load 'which-key
   (which-key-add-keymap-based-replacements prot-prefix-map
@@ -266,7 +267,7 @@
     "s" `("Search" . ,prot-prefix-search-map)
     "g" `("Git" . ,prot-prefix-git-map)
     "j" `("Jupyter" . ,prot-prefix-jupyter-map)
-    "l" `("Latex" . ,prot-prefix-latex-map)))
+    "l" `("Text" . ,prot-prefix-text-map)))
 
 ;; What follows is an older experiment with transient.  I like its
 ;; visuals, though find it hard to extend.  Keymaps are easier for me,

@@ -66,4 +66,9 @@
   (add-hook 'julia-mode-hook #'display-fill-column-indicator-mode)
   (add-hook 'julia-mode-hook #'electric-pair-mode))
 
+;;; Quarto
+(prot-emacs-package quarto-mode
+  (:install t)
+  (:delay 3))
+
 (provide 'init-programming)
