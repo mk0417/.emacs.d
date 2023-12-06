@@ -11,7 +11,7 @@
         ;; modus-themes-to-toggle '(modus-operandi-deuteranopia modus-vivendi-deuteranopia)
         ;; modus-themes-to-toggle '(modus-operandi-tritanopia modus-vivendi-tritanopia)
         modus-themes-mixed-fonts t
-        modus-themes-variable-pitch-ui nil
+        modus-themes-variable-pitch-ui t
         modus-themes-italic-constructs t
         modus-themes-bold-constructs nil
         modus-themes-org-blocks nil
@@ -23,31 +23,24 @@
           (t . (regular 1.15))))
 
   (setq modus-themes-common-palette-overrides
-        `((cursor cyan-intense)
-          (bg-region bg-ochre)
-          (fg-region unspecified)
-          (bg-paren-match bg-blue-intense)
-          (bg-mode-line-active bg-lavender)
-          (border-mode-line-active magenta-cooler)
-          (border-mode-line-inactive border)
-          (bg-hl-line bg-dim)
+        `((bg-hl-line bg-dim)
           (bg-line-number-active bg-hl-line)
           (bg-line-number-inactive unspecified)
-          (fg-line-number-active fg-main)
-          (bg-prompt bg-blue-nuanced)
-          (fg-prompt blue-warmer)
-          ;; ,@modus-themes-preset-overrides-warmer
-          (fg-completion-match-0 green-cooler)
-          (fg-completion-match-1 red-cooler)
-          (fg-completion-match-2 yellow-cooler)
-          (fg-completion-match-3 blue-cooler)
-          (bg-completion-match-0 bg-green-subtle)
-          (bg-completion-match-1 bg-red-subtle)
-          (bg-completion-match-2 bg-yellow-subtle)
-          (bg-completion-match-3 bg-blue-subtle)
+          ;; (fg-completion-match-0 green-cooler)
+          ;; (fg-completion-match-1 red-cooler)
+          ;; (fg-completion-match-2 yellow-cooler)
+          ;; (fg-completion-match-3 blue-cooler)
+          ;; (bg-completion-match-0 bg-green-subtle)
+          ;; (bg-completion-match-1 bg-red-subtle)
+          ;; (bg-completion-match-2 bg-yellow-subtle)
+          ;; (bg-completion-match-3 bg-blue-subtle)
           ))
 
   (modus-themes-load-theme (cadr modus-themes-to-toggle))
+
+  ;; (setq modus-themes-common-palette-overrides nil)
+  ;; '((bg-mode-line-active bg-cyan-subtle)
+  ;;   (keybind yellow-warmer)))
 
   ;; Also check `modus-themes-select'.
   (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
@@ -61,14 +54,14 @@
 ;;   (require 'modus-themes)
 ;;
 ;;   (setq modus-themes-custom-auto-reload nil
-;;         ;; modus-themes-to-toggle '(modus-operandi modus-vivendi)
+;;         modus-themes-to-toggle '(modus-operandi modus-vivendi)
 ;;         ;; modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted)
 ;;         ;; modus-themes-to-toggle '(modus-operandi-deuteranopia modus-vivendi-deuteranopia)
-;;         modus-themes-to-toggle '(modus-operandi-tritanopia modus-vivendi-tritanopia)
+;;         ;; modus-themes-to-toggle '(modus-operandi-tritanopia modus-vivendi-tritanopia)
 ;;         modus-themes-mixed-fonts t
 ;;         modus-themes-variable-pitch-ui nil
 ;;         modus-themes-italic-constructs t
-;;         modus-themes-bold-constructs nil
+;;         modus-themes-bold-constructs t
 ;;         modus-themes-org-blocks nil
 ;;         modus-themes-completions '((t . (extrabold)))
 ;;         modus-themes-prompts nil

@@ -50,10 +50,12 @@ file.  If that file exists in the Emacs directory, it is loaded
 before all other modules of my setup."
   :group 'prot-emacs
   :type '(choice :tag "Set of themes to load" :value modus
+                 (const :tag "The `ef-themes' module" ef)
                  (const :tag "The `modus-themes' module" modus)
+                 (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
-(defcustom prot-emacs-completion-ui 'mct
+(defcustom prot-emacs-completion-ui 'vertico
   "Choose minibuffer completion UI between `mct' or `vertico'."
   :group 'prot-emacs
   :type '(choice :tag "Minibuffer user interface"
@@ -147,22 +149,22 @@ before all other modules of my setup."
 ;; test that the packaged version works as intended.
 (defvar prot-emacs-my-packages
   '(agitate
+    beframe
     cursory
     denote
+    ef-themes
     fontaine
     lin
     mct
     modus-themes
     pulsar
     spacious-padding
+    standard-themes
     substitute
-    beframe
     ;; altcaps
     ;; dired-preview
-    ;; ef-themes
     ;; logos
     ;; notmuch-indicator
-    ;; standard-themes
     ;; sxhkdrc-mode
     ;; tmr
     )
@@ -397,9 +399,8 @@ that is expanded with the `prot-emacs-package' macro."
 (load (locate-user-emacs-file "prot-emacs-pre-custom.el") :no-error :no-message)
 
 ;; NOTE 2023-10-08: some Prot config are modified based on my workflow and needs
+(require 'prot-emacs-theme)
 (require 'prot-emacs-essentials)
-(pcase prot-emacs-load-theme-family
-  ('modus (require 'prot-emacs-modus-themes)))
 (require 'prot-emacs-font)
 (require 'prot-emacs-modeline)
 (require 'prot-emacs-completion-common)

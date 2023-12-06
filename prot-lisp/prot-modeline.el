@@ -311,7 +311,7 @@ VARIANT of the state tag is either :short or :long, as defined in
 `prot-modeline-evil-state-tags'."
   (pcase evil-state
     ('normal (prot-modeline--evil-propertize-tag 'normal variant 'prot-modeline-indicator-blue))
-    ('insert (prot-modeline--evil-propertize-tag 'insert variant 'prot-modeline-indicator-magenta))  ; I don't actually use an "insert" state: it switches to "emacs"
+    ('insert (prot-modeline--evil-propertize-tag 'insert variant))  ; I don't actually use an "insert" state: it switches to "emacs"
     ('visual (pcase evil-visual-selection
                ('line (prot-modeline--evil-propertize-tag 'vline variant 'prot-modeline-indicator-yellow))
                ('screen-line (prot-modeline--evil-propertize-tag 'vsline variant 'prot-modeline-indicator-yellow))
@@ -632,41 +632,6 @@ Specific to the current window's mode line.")
                      ;; prot-modeline-align-right
                      prot-modeline-misc-info))
   (put construct 'risky-local-variable t))
-
-;;;; Subtle mode line style
-
-(defun prot-modeline-set-faces (_theme)
-  "Make THEME mode lines subtle."
-  (let ((subtle (face-foreground 'shadow)))
-    (custom-set-faces
-     `(mode-line ((t :background unspecified :box unspecified :overline ,subtle)))
-     `(mode-line-active ((t :inherit mode-line :box unspecified)))
-     `(mode-line-inactive ((t :background unspecified :foreground ,subtle :box unspecified :overline ,subtle))))))
-
-(defun prot-modeline-unset-faces ()
-  "Make window dividers for THEME invisible."
-  (custom-set-faces
-   `(mode-line (( )))
-   `(mode-line-active (( )))
-   `(mode-line-inactive (( )))))
-
-(defun prot-modeline--enable-mode ()
-  "Enable `prot-modeline-subtle-mode'."
-  (prot-modeline-set-faces nil)
-  (add-hook 'enable-theme-functions #'prot-modeline-set-faces))
-
-(defun prot-modeline--disable-mode ()
-  "Disable `prot-modeline-subtle-mode'."
-  (prot-modeline-unset-faces)
-  (remove-hook 'enable-theme-functions #'prot-modeline-set-faces))
-
-;;;###autoload
-(define-minor-mode prot-modeline-subtle-mode
-  "Increase the padding/spacing of frames and windows."
-  :global t
-  (if prot-modeline-subtle-mode
-      (prot-modeline--enable-mode)
-    (prot-modeline--disable-mode)))
 
 (provide 'prot-modeline)
 ;;; prot-modeline.el ends here

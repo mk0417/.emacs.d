@@ -26,6 +26,7 @@
 
   (setq-default mode-line-format
                 '("%e"
+                  mode-line-front-space
                   prot-modeline-kbd-macro
                   prot-modeline-narrow
                   prot-modeline-buffer-status
@@ -41,12 +42,8 @@
                   prot-modeline-eglot
                   "  "
                   ;; prot-modeline-align-right
-                  prot-modeline-misc-info))
-
-  (prot-modeline-subtle-mode 1)
-
-  ;; Overrides the "two-column" gimmick that I will never use.
-  (define-key global-map (kbd "<f2>") #'prot-modeline-subtle-mode))
+                  mode-line-format-right-align
+                  prot-modeline-misc-info)))
 
 ;;; Keycast mode
 (prot-emacs-package keycast

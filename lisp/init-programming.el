@@ -72,4 +72,7 @@
   (:install t)
   (:delay 3))
 
+;;; HTML
+(add-hook 'mhtml-mode-hook #'turn-off-auto-fill)
+
 (provide 'init-programming)

@@ -69,7 +69,8 @@
   "b" #'bookmark-jump
   "d" #'dired
   "l" #'find-library
-  "m" #'man)
+  "m" #'man
+  "x" #'p-reveal-file-in-finder)
 
 (defvar-keymap prot-prefix-insert-map
   :doc "Prefix keymap for character insertion."
@@ -78,7 +79,8 @@
   "e" #'emoji-search
   "q" #'quoted-insert
   "s" #'emoji-search
-  "l" #'emoji-list)
+  "l" #'emoji-list
+  "d" #'prot-simple-insert-date)
 
 (declare-function keycast-mode "keycast")
 (declare-function prot-modeline-subtle-mode "prot-modeline")
