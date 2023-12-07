@@ -29,7 +29,8 @@
             julia-mode-hook
             emacs-lisp-mode-hook
             LaTeX-mode-hook
-            markdown-mode-hook))
+            markdown-mode-hook
+            html-mode-hook))
     (setq lsp-bridge-multi-lang-server-mode-list
           '(((python-mode) . nil)))
 

@@ -166,7 +166,9 @@
     "texmacs"        "TeXmacs"
     "typescript"     "TypeScript"
     "visavis"        "vis-à-vis"
-    "youtube"        "YouTube")
+    "youtube"        "YouTube"
+    "3dots"          "…"
+    "rarrow"         "→")
 
   (with-eval-after-load 'message
     (prot-emacs-abbrev message-mode-abbrev-table

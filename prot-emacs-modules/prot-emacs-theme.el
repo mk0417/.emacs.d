@@ -85,4 +85,13 @@
 
   (define-key ctl-x-x-map "c" #'rainbow-mode)) ; C-x x c
 
+;;;; Theme buffet
+;; A package by Bruno Boal, that I am co-developing.  It cycles
+;; through themes periodically.  Check its documentation for the
+;; technicalities: <https://git.sr.ht/~bboal/theme-buffet>.
+(prot-emacs-package theme-buffet
+  (:install t)
+  (:delay 1)
+  (theme-buffet-modus-ef))
+
 (provide 'prot-emacs-theme)
