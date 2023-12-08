@@ -41,8 +41,7 @@
                   "  "
                   prot-modeline-eglot
                   "  "
-                  ;; prot-modeline-align-right
-                  mode-line-format-right-align
+                  mode-line-format-right-align ; Emacs 30
                   prot-modeline-misc-info)))
 
 ;;; Keycast mode

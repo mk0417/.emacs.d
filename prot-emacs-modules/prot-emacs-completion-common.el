@@ -168,7 +168,8 @@
     "visavis"        "vis-à-vis"
     "youtube"        "YouTube"
     "3dots"          "…"
-    "rarrow"         "→")
+    "rarrow"         "→"
+    "nbspace"         "&nbsp;")
 
   (with-eval-after-load 'message
     (prot-emacs-abbrev message-mode-abbrev-table
