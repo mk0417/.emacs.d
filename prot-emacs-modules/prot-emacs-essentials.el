@@ -28,6 +28,7 @@
   (setq kill-do-not-save-duplicates t)
   (setq duplicate-line-final-position -1 ; both are Emacs 29
         duplicate-region-final-position -1)
+  (setq scroll-error-top-bottom t)
 
   (setq prot-simple-date-specifier "%F")
   (setq prot-simple-time-specifier "%R %z")
@@ -54,14 +55,16 @@
     "C-h h" nil
     "M-`" nil
     "C-z" prot-prefix-map
+    "<f2>" prot-prefix-map ; override that two-column gimmick
     "C-g" #'prot-simple-keyboard-quit-dwim
+    "C-x ." #'prot-simple-goto-definition ; overrides `set-fill-prefix'
     "C-h ." #'prot-simple-describe-symbol ; overrides `display-local-help'
     "C-h F" #'describe-face ; overrides `Info-goto-emacs-command-node'
     "C-h K" #'describe-keymap ; overrides `Info-goto-emacs-key-command-node'
     "C-h c" #'describe-char ; overrides `describe-key-briefly'
+    "C-M-SPC" #'prot-simple-mark-sexp   ; will be overriden by `expreg' if tree-sitter is available
     "C-c +" #'prot-simple-number-increment
     "C-c -" #'prot-simple-number-decrement
-    "C-r" #'undo-redo
     ;; Commands for lines
     "M-o" #'delete-blank-lines   ; alias for C-x C-o
     "M-k" #'prot-simple-kill-line-backward
@@ -156,7 +159,7 @@
         ;; Technically, this is not in repeal.el, though it is the
         ;; same idea.
         set-mark-command-repeat-pop t)
-  ;; (repeat-mode 1)
+  (repeat-mode 1)
 
 ;;;; Built-in bookmarking framework (bookmark.el)
   (setq bookmark-use-annotations nil)
@@ -301,30 +304,31 @@
     "M-# d" #'substitute-target-in-defun    ; "defun" mnemonic
     "M-# b" #'substitute-target-in-buffer)) ; "buffer" mnemonic
 
-;;; Mark syntactic constructs efficiently (expreg)
-(prot-emacs-package expreg
-  (:install t)
-  (:delay 10)
-  (defun prot/expreg-expand (n)
-    "Expand to N syntactic units, defaulting to 1 if none is provided interactively."
-    (interactive "p")
-    (dotimes (_ n)
-      (expreg-expand)))
+;;; Mark syntactic constructs efficiently if tree-sitter is available (expreg)
+(when (treesit-available-p)
+  (prot-emacs-package expreg
+    (:install t)
+    (:delay 10)
+    (defun prot/expreg-expand (n)
+      "Expand to N syntactic units, defaulting to 1 if none is provided interactively."
+      (interactive "p")
+      (dotimes (_ n)
+        (expreg-expand)))
 
-  (defun prot/expreg-expand-dwim ()
-    "Do-What-I-Mean `expreg-expand' to start with symbol or word.
+    (defun prot/expreg-expand-dwim ()
+      "Do-What-I-Mean `expreg-expand' to start with symbol or word.
 If over a real symbol, mark that directly, else start with a
 word.  Fall back to regular `expreg-expand'."
-    (interactive)
-    (let ((symbol (bounds-of-thing-at-point 'symbol)))
-      (cond
-       ((equal (bounds-of-thing-at-point 'word) symbol)
-        (prot/expreg-expand 1))
-       (symbol (prot/expreg-expand 2))
-       (t (expreg-expand)))))
+      (interactive)
+      (let ((symbol (bounds-of-thing-at-point 'symbol)))
+        (cond
+         ((equal (bounds-of-thing-at-point 'word) symbol)
+          (prot/expreg-expand 1))
+         (symbol (prot/expreg-expand 2))
+         (t (expreg-expand)))))
 
-  ;; There is also an `expreg-contract' command, though I have no use for it.
-  (define-key global-map (kbd "C-M-SPC") #'prot/expreg-expand-dwim)) ; overrides `mark-sexp'
+    ;; There is also an `expreg-contract' command, though I have no use for it.
+    (define-key global-map (kbd "C-M-SPC") #'prot/expreg-expand-dwim))) ; overrides `mark-sexp'
 
 ;;; Visualise undo ring (`vundo')
 (prot-emacs-package vundo
@@ -359,7 +363,7 @@ by that special hook."
 
 ;;; Laptop settings
 (prot-emacs-configure
-  (:delay 5)
+  (:delay 10)
 ;;;; Show battery status on the mode line (battery.el
   (require 'battery)
   (setq battery-mode-line-format
@@ -409,7 +413,7 @@ by that special hook."
   ;; I am using the default values of `cursory-latest-state-file'.
 
   ;; Set last preset or fall back to desired style from `cursory-presets'.
-  (cursory-set-preset (or (cursory-restore-latest-preset) 'bar))
+  (cursory-set-preset (or (cursory-restore-latest-preset) 'box))
 
   ;; The other side of `cursory-restore-latest-preset'.
   (add-hook 'kill-emacs-hook #'cursory-store-latest-preset)
