@@ -178,6 +178,21 @@
     ;; you absolutely need the global list of buffers.
     "C-x C-b" #'beframe-buffer-menu))
 
+;;; Window history (winner-mode)
+(prot-emacs-package winner
+  (:delay 5)
+  (winner-mode 1)
+
+  (prot-emacs-keybind global-map
+    "C-x <right>" #'winner-redo
+    "C-x <left>" #'winner-undo))
+
+;;; Frame history (undelete-frame-mode)
+(prot-emacs-configure
+  (:delay 5)
+  (define-key global-map (kbd "C-x u") #'undelete-frame) ; I use only C-/ for `undo'
+  (undelete-frame-mode 1))
+
 ;;; Directional window motions (windmove)
 (prot-emacs-package windmove
   (:delay 5)
@@ -194,5 +209,16 @@
     "C-M-S-<right>" #'windmove-swap-states-right ; conflicts with `org-increase-number-at-point'
     "C-M-S-<down>" #'windmove-swap-states-down
     "C-M-S-<left>" #'windmove-swap-states-left))
+
+;;; Header line context of symbol/heading (breadcrumb.el)
+(prot-emacs-package breadcrumb
+  (:install t)
+  (:delay 2)
+  (setq bc-project-max-length 0.5)
+  (setq bc-project-crumb-separator "/")
+  (setq bc-imenu-max-length 1.0)
+  (setq bc-imenu-crumb-separator " > ")
+
+  (breadcrumb-mode 1))
 
 (provide 'prot-emacs-window)
