@@ -188,7 +188,6 @@
 (defvar-keymap prot-prefix-jupyter-map
   :doc "Prefix keymap for jupyter."
   :name "Jupyter"
-  :repeat t
   "j" #'jupyter-run-repl
   "r" #'jupyter-eval-line-or-region
   "f" #'jupyter-eval-defun
