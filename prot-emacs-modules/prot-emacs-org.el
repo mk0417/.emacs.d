@@ -39,7 +39,7 @@
   (setq org-directory (expand-file-name "~/Dropbox/org/"))
   (setq org-imenu-depth 7)
 ;;;; general settings
-  (setq org-ellipsis "⮧")
+  (setq org-ellipsis "↳") 
   (setq org-adapt-indentation nil)      ; No, non, nein, όχι!
   (setq org-special-ctrl-a/e nil)
   (setq org-special-ctrl-k nil)

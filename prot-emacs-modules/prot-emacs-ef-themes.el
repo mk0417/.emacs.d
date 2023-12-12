@@ -25,9 +25,7 @@
   ;; that (it can be called interactively as well).  I just check with
   ;; my desktop environment to determine if the choice should be about
   ;; a light or a dark theme.  Those functions are in my init.el.
-  (if (prot-emacs-theme-environment-dark-p)
-      (ef-themes-load-random 'dark)
-    (ef-themes-load-random 'light))
+  (ef-themes-load-random 'dark)
 
   (define-key global-map (kbd "<f5>") #'ef-themes-select))
 
