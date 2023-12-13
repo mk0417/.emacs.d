@@ -47,6 +47,12 @@
 
 ;;;; Faces
 
+(defface prot-modeline-indicator-button nil
+  "Generic face used for indicators that have a background.
+Modify this face to, for example, add a :box attribute to all
+relevant indicators (combines nicely with my `spacious-padding'
+package).")
+
 (defface prot-modeline-indicator-red
   '((default :inherit bold)
     (((class color) (min-colors 88) (background light))
@@ -58,7 +64,7 @@
   :group 'prot-modeline-faces)
 
 (defface prot-modeline-indicator-red-bg
-  '((default :inherit bold)
+  '((default :inherit (bold prot-modeline-indicator-button))
     (((class color) (min-colors 88) (background light))
      :background "#aa1111" :foreground "white")
     (((class color) (min-colors 88) (background dark))
@@ -78,7 +84,7 @@
   :group 'prot-modeline-faces)
 
 (defface prot-modeline-indicator-green-bg
-  '((default :inherit bold)
+  '((default :inherit (bold prot-modeline-indicator-button))
     (((class color) (min-colors 88) (background light))
      :background "#207b20" :foreground "white")
     (((class color) (min-colors 88) (background dark))
@@ -98,7 +104,7 @@
   :group 'prot-modeline-faces)
 
 (defface prot-modeline-indicator-yellow-bg
-  '((default :inherit bold)
+  '((default :inherit (bold prot-modeline-indicator-button))
     (((class color) (min-colors 88) (background light))
      :background "#805000" :foreground "white")
     (((class color) (min-colors 88) (background dark))
@@ -118,7 +124,7 @@
   :group 'prot-modeline-faces)
 
 (defface prot-modeline-indicator-blue-bg
-  '((default :inherit bold)
+  '((default :inherit (bold prot-modeline-indicator-button))
     (((class color) (min-colors 88) (background light))
      :background "#0000aa" :foreground "white")
     (((class color) (min-colors 88) (background dark))
@@ -138,7 +144,7 @@
   :group 'prot-modeline-faces)
 
 (defface prot-modeline-indicator-magenta-bg
-  '((default :inherit bold)
+  '((default :inherit (bold prot-modeline-indicator-button))
     (((class color) (min-colors 88) (background light))
      :background "#6f0f9f" :foreground "white")
     (((class color) (min-colors 88) (background dark))
@@ -158,7 +164,7 @@
   :group 'prot-modeline-faces)
 
 (defface prot-modeline-indicator-cyan-bg
-  '((default :inherit bold)
+  '((default :inherit (bold prot-modeline-indicator-button))
     (((class color) (min-colors 88) (background light))
      :background "#006080" :foreground "white")
     (((class color) (min-colors 88) (background dark))
@@ -190,7 +196,7 @@ Truncation is done up to `prot-modeline-string-truncate-length'."
     str))
 
 (defun prot-modeline-string-truncate-end (str)
-  "Like `prot-modeline-string-truncate' but truncate from string beginning."
+  "Like `prot-modeline-string-truncate' but truncate from STR beginning."
   (if (prot-modeline--string-truncate-p str)
       (concat "..." (substring str (- prot-modeline-string-truncate-length)))
     str))
@@ -244,7 +250,8 @@ Specific to the current window's mode line.")
 (defvar-local prot-modeline-input-method
     '(:eval
       (when current-input-method-title
-        (propertize (format " %s" current-input-method-title)
+        (propertize (format " %s " current-input-method-title)
+                    'face 'prot-modeline-indicator-green-bg
                     'mouse-face 'mode-line-highlight)))
   "Mode line construct to report the multilingual environment.")
 

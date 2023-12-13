@@ -156,6 +156,20 @@ Meant to be added to `prog-mode-hook'."
         dictionary-use-single-buffer t)
   (define-key global-map (kbd "C-c d") #'dictionary-search))
 
+;;; aLtCaPs
+;; Read the manual: <https://protesilaos.com/emacs/altcaps>.
+(prot-emacs-package altcaps
+  (:install t)
+  (:delay 60)
+  ;; Force letter casing for certain characters (for legibility).
+  (setq altcaps-force-character-casing
+        '(;; Greek theta
+          (?θ . downcase)))
+
+  ;; The available commands: `altcaps-word', `altcaps-region',
+  ;; `altcaps-dwim'.
+  (define-key global-map (kbd "C-x C-a") #'altcaps-dwim))
+
 ;;; Denote (simple note-taking and file-naming)
 ;; Read the manual: <https://protesilaos.com/emacs/denote>.
 (prot-emacs-package denote
@@ -163,79 +177,62 @@ Meant to be added to `prog-mode-hook'."
   (:delay 5)
   ;; Remember to check the doc strings of those variables.
   (setq denote-directory (expand-file-name "~/Dropbox/peng_notes/"))
+  (setq denote-file-name-letter-casing
+        '((signature . verbatim)
+          (title . downcase)
+          (keywords . verbatim)
+          (t , verbatim)))
+  ;; If you want to have a "controlled vocabulary" of keywords,
+  ;; meaning that you only use a predefined set of them, then you want
+  ;; `denote-infer-keywords' to be nil and `denote-known-keywords' to
+  ;; have the keywords you need.
   (setq denote-known-keywords '("emacs" "economics"))
   (setq denote-infer-keywords t)
   (setq denote-sort-keywords t)
-  ;; (setq denote-file-type 'text) ; Org is the default, set others here like I do
   (setq denote-excluded-directories-regexp nil)
-  (setq denote-allow-multi-word-keywords nil)
   (setq denote-date-format nil) ; read its doc string
+  (setq denote-rename-no-confirm t)
+  (setq denote-backlinks-show-context nil)
+  (setq denote-rename-buffer-format "[D] %t")
 
-  ;; By default, we fontify backlinks in their bespoke buffer.
-  (setq denote-link-fontify-backlinks t)
-
+  ;; Automatically rename Denote buffers when opening them so that
+  ;; instead of their long file name they have a literal "[D]"
+  ;; followed by the file's title.  Read the doc string of
+  ;; `denote-rename-buffer-format' for how to modify this.
   (denote-rename-buffer-mode 1)
-
-  ;; Also see `denote-link-backlinks-display-buffer-action' which is a bit
-  ;; advanced.
 
   ;; If you use Markdown or plain text files you want to buttonise
   ;; existing buttons upon visiting the file (Org renders links as
   ;; buttons right away).
   (add-hook 'find-file-hook #'denote-link-buttonize-buffer)
 
-  ;; We use different ways to specify a path for demo purposes.
-  (setq denote-dired-directories
-        (list denote-directory
-              (thread-last denote-directory (expand-file-name "attachments"))
-              (expand-file-name "~/Documents/books")))
-
-  ;; Generic (great if you rename files Denote-style in lots of places):
+  ;; Highlight Denote file names in Dired buffers.  Below is the
+  ;; generic approach, which is great if you rename files Denote-style
+  ;; in lots of places as I do:
   (add-hook 'dired-mode-hook #'denote-dired-mode)
   ;;
-  ;; OR if only want it in `denote-dired-directories':
-  ;; (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
+  ;; OR if you only want the `denote-dired-mode' in select
+  ;; directories, then modify the variable `denote-dired-directories'
+  ;; and use the following instead:
+  ;;
+  ;;  (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
 
-  ;; Here is a custom, user-level command from one of the examples we
-  ;; show in this manual.  We define it here and add it to a key binding
-  ;; below.  The manual: <https://protesilaos.com/emacs/denote>.
-  (defun prot/denote-journal ()
-    "Create an entry tagged 'journal' with the date as its title.
-If a journal for the current day exists, visit it.  If multiple
-entries exist, prompt with completion for a choice between them.
-Else create a new file."
-    (interactive)
-    (let* ((today (format-time-string "%A %e %B %Y"))
-           (string (denote-sluggify today))
-           (files (denote-directory-files-matching-regexp string)))
-      (cond
-       ((> (length files) 1)
-        (find-file (completing-read "Select file: " files nil :require-match)))
-       (files
-        (find-file (car files)))
-       (t
-        (denote
-         today
-         '("journal"))))))
+  (require 'denote-journal-extras)
+  (setq denote-journal-extras-directory nil) ; use the `denote-directory'
+  (setq denote-journal-extras-title-format nil) ; always prompt for title
+  (setq denote-journal-extras-keyword "journal")
 
   ;; Denote DOES NOT define any key bindings.  This is for the user to
   ;; decide.  For example:
   (prot-emacs-keybind global-map
-    "C-c n j" #'prot/denote-journal
     "C-c n n" #'denote
     "C-c n N" #'denote-type
     "C-c n d" #'denote-date
     "C-c n z" #'denote-signature ; "zettelkasten" mnemonic
     "C-c n s" #'denote-subdirectory
-    ;; If you intend to use Denote with a variety of file types, it is
-    ;; easier to bind the link-related commands to the `global-map', as
-    ;; shown here.  Otherwise follow the same pattern for `org-mode-map',
-    ;; `markdown-mode-map', and/or `text-mode-map'.
-    "C-c n i" #'denote-link ; "insert" mnemonic
-    "C-c n I" #'denote-add-links
-    "C-c n b" #'denote-backlinks
-    "C-c n f f" #'denote-find-link
-    "C-c n f b" #'denote-find-backlink
+    "C-c n o" #'denote-sort-dired ; "order" mnemonic
+    "C-c n j" #'denote-journal-extras-new-entry
+    "C-c n J" #'denote-journal-extras-new-or-existing-entry
     ;; Note that `denote-rename-file' can work from any context, not
     ;; just Dired buffers.  That is why we bind it here to the
     ;; `global-map'.
@@ -243,13 +240,31 @@ Else create a new file."
     ;; Also see `denote-rename-file-using-front-matter' further below.
     "C-c n r" #'denote-rename-file)
 
+  ;; If you intend to use Denote with a variety of file types, it is
+  ;; easier to bind the link-related commands to the `global-map', as
+  ;; shown here.  Otherwise follow the same pattern for
+  ;; `org-mode-map', `markdown-mode-map', and/or `text-mode-map'.
+  (prot-emacs-keybind text-mode-map
+    "C-c n i" #'denote-link ; "insert" mnemonic
+    "C-c n I" #'denote-add-links
+    "C-c n b" #'denote-backlinks
+    "C-c n f f" #'denote-find-link
+    "C-c n f b" #'denote-find-backlink
+    ;; Also see `denote-rename-file' further above.
+    "C-c n R" #'denote-rename-file-using-front-matter)
+
+  ;; I do not bind the Org dynamic blocks, but they are useful:
+  ;;
+  ;; - `denote-org-dblock-insert-links'
+  ;; - `denote-org-dblock-insert-backlinks'
+  ;; - `denote-org-dblock-insert-files'
+
   ;; Key bindings specifically for Dired.
   (prot-emacs-keybind dired-mode-map
     "C-c C-d C-i" #'denote-link-dired-marked-notes
-    "C-c C-d C-r" #'denote-dired-rename-marked-files)
-
-  ;; Also see `denote-rename-file' further above.
-  (define-key text-mode-map (kbd "C-c n R") #'denote-rename-file-using-front-matter)
+    "C-c C-d C-r" #'denote-dired-rename-marked-files
+    "C-c C-d C-k" #'denote-dired-rename-marked-files-with-keywords
+    "C-c C-d C-f" #'denote-dired-rename-marked-files-using-front-matter)
 
   (with-eval-after-load 'org-capture
     (setq denote-org-capture-specifiers "%l\n%i\n%?")
@@ -257,6 +272,18 @@ Else create a new file."
                  '("n" "New note (with denote.el)" plain
                    (file denote-last-path)
                    #'denote-org-capture
+                   :no-save t
+                   :immediate-finish nil
+                   :kill-buffer t
+                   :jump-to-captured t))
+
+    ;; This prompts for TITLE, KEYWORDS, and SUBDIRECTORY
+    (add-to-list 'org-capture-templates
+                 '("N" "New note with prompts (with denote.el)" plain
+                   (file denote-last-path)
+                   (function
+                    (lambda ()
+                      (denote-org-capture-with-prompts :title :keywords :signature)))
                    :no-save t
                    :immediate-finish nil
                    :kill-buffer t
