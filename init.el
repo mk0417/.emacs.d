@@ -109,8 +109,8 @@ before all other modules of my setup."
 
 ;; Watch my video about multilingual editing:
 ;; <https://protesilaos.com/codelog/2023-12-12-emacs-multilingual-editing/>.
-; (setq default-input-method "greek-postfix")
-; (setq default-transient-input-method "greek")
+;; (setq default-input-method "greek") ; also check "greek-postfix"
+;; (setq default-transient-input-method "greek")
 
 ;; Enable these
 (dolist (c '(narrow-to-region narrow-to-page upcase-region downcase-region))
