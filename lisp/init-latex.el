@@ -7,6 +7,10 @@
   ;; So I just install it without require
   (prot-emacs-package-install 'auctex t)
 
+  (prot-emacs-package engrave-faces
+    (:install t)
+    (:delay 2))
+
   (with-eval-after-load 'latex
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)

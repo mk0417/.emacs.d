@@ -34,7 +34,7 @@
 ;;; Org-mode (personal information manager)
   ;; NOTE 2023-05-20: Must be evaluated before Org is loaded,
   ;; otherwise we have to use the Custom UI.  No thanks!
-  (setq org-export-backends '(html texinfo md))
+  (setq org-export-backends '(html texinfo md latex))
 
   (setq org-directory (expand-file-name "~/Dropbox/org/"))
   (setq org-imenu-depth 7)
@@ -74,8 +74,7 @@
   ;;       '((sequence "TODO(t)" "MAYBE(m)" "WAIT(w@/!)" "|" "CANCEL(c@)" "DONE(d!)")
   ;;         (sequence "COACH(k)" "|" "COACHED(K!)")))
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "|" "CANCEL(c@)" "DONE(d!)")
-          (sequence "COACH(k)" "|" "COACHED(K!)")))
+        '((sequence "TODO(t)" "|" "CANCEL(c@)" "DONE(d!)")))
 
   (defface prot/org-bold-done
     '((t :inherit (bold org-done)))
@@ -381,6 +380,14 @@
   (setq org-src-preserve-indentation t)
   (setq org-src-tab-acts-natively t)
   (setq org-edit-src-content-indentation 0)
+  (setq org-latex-src-block-backend 'engraved)
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (shell . t)
+     (python . t)
+     (jupyter . t)))
 
 ;;;; export
   (setq org-export-with-toc t)
@@ -389,6 +396,7 @@
   (setq org-html-htmlize-output-type nil)
   (setq org-html-head-include-default-style nil)
   (setq org-html-head-include-scripts nil)
+  (setq org-html-htmlize-output-type 'css)
   ;; (require 'ox-texinfo)
   ;; (require 'ox-md)
 
@@ -460,23 +468,6 @@
 
   (prot-emacs-keybind ctl-x-x-map
     "i" #'prot-org-id-headlines
-    "h" #'prot-org-ox-html)
-
-  (add-to-list 'org-capture-templates
-               '("p" "Private lesson or service" entry
-                 (file "coach.org")
-                 #'prot-org-capture-coach
-                 :prepend t
-                 :empty-lines 1))
-
-  (add-to-list 'org-capture-templates
-               '("P" "Private service clocked" entry
-                 (file+headline "coach.org" "Clocked services")
-                 #'prot-org-capture-coach-clock
-                 :prepend t
-                 :clock-in t
-                 :clock-keep t
-                 :immediate-finish t
-                 :empty-lines 1)))
+    "h" #'prot-org-ox-html))
 
 (provide 'prot-emacs-org)
