@@ -435,7 +435,6 @@ that is expanded with the `prot-emacs-package' macro."
 ;; (require 'init-keybindings)
 (require 'init-keychord)
 (require 'init-avy)
-(require 'init-html)
 
 (setq safe-local-variable-values
       '((org-hide-leading-stars . t)

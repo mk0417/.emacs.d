@@ -386,8 +386,7 @@
    'org-babel-load-languages
    '((emacs-lisp . t)
      (shell . t)
-     (python . t)
-     (jupyter . t)))
+     (python . t)))
 
 ;;;; export
   (setq org-export-with-toc t)

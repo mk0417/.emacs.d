@@ -13,6 +13,9 @@
   (setq jupyter-eval-use-overlays t)
   (setq jupyter-org-auto-connect nil)
 
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages 'org-babel-load-languages '((jupyter . t))))
+
   ;; After new commits of emacs-jupyter upstream,
   ;; jupyter-eval-region has three arguments
   ;; (jupyter-eval-region INSERT BEG END)
@@ -73,6 +76,10 @@
   (:delay 3))
 
 ;;; HTML
+(prot-emacs-package htmlize
+  (:install t)
+  (:delay 2))
+
 (add-hook 'mhtml-mode-hook #'turn-off-auto-fill)
 
 (provide 'init-programming)
