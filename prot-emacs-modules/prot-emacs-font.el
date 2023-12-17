@@ -2,7 +2,7 @@
 ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
 (prot-emacs-package fontaine
   (:install t)
-  ;; (:delay 5)
+  (:delay 1)
   ;; This is defined in Emacs C code: it belongs to font settings.
   (setq x-underline-at-descent-line nil)
 
@@ -63,7 +63,7 @@
            :fixed-pitch-serif-family nil ; falls back to :default-family
            :fixed-pitch-serif-weight nil ; falls back to :default-weight
            :fixed-pitch-serif-height 1.0
-           :variable-pitch-family "Iosevka Comfy Duo"
+           :variable-pitch-family "Iosevka Comfy Motion Duo"
            :variable-pitch-weight nil
            :variable-pitch-height 1.0
            :bold-family nil ; use whatever the underlying face has
@@ -94,47 +94,16 @@
   ;; NOTE 2022-11-20: This may not cover every case, though it works
   ;; fine in my workflow.  I am still undecided by EWW.
   (defun prot/enable-variable-pitch ()
-    (unless (or (derived-mode-p 'mhtml-mode 'nxml-mode 'yaml-mode)
-                (member (buffer-name) '("*Colors*" "*Faces*" "*Quick Help*")))
+    (unless (derived-mode-p 'mhtml-mode 'nxml-mode 'yaml-mode)
       (variable-pitch-mode 1)))
 
   (defvar prot/enable-variable-pitch-in-hooks
     '(text-mode-hook
-      help-mode-hook)
+      notmuch-show-mode-hook
+      elfeed-show-mode-hook)
     "List of hook symbols to add `prot/enable-variable-pitch' to.")
 
   (dolist (hook prot/enable-variable-pitch-in-hooks)
-    (add-hook hook #'prot/enable-variable-pitch))
-
-  (with-eval-after-load 'cursory
-    (defvar prot/cursory-variable-pitch--preferred-presets '(bar underscore)
-      "List of preferred `cursory-presets' in order of preference.")
-
-    (defun prot/cursory-variable-pitch--return-preset ()
-      "Return preferred `cursory-presets' for `variable-pitch-mode'."
-      (catch 'preset
-        (dolist (element prot/cursory-variable-pitch--preferred-presets)
-          (memq element cursory-presets)
-          (throw 'preset element))))
-
-    (defun prot/cursory-variable-pitch-set-preset ()
-      "Set preferred Cursory preset or fall back to a reasonable default"
-      (cursory-set-preset
-       (if buffer-face-mode
-           (prot/cursory-variable-pitch--return-preset)
-         (or (cursory-restore-latest-preset) t))
-       :local))
-
-    (defvar prot/variable-pitch-mode-hook nil
-      "Normal hook that runs after `variable-pitch-mode'.")
-
-    (defun prot/variable-pitch-run-hook (&rest _)
-      "Run `prot/variable-pitch-mode-hook'.
-Use this as :after advice to the `variable-pitch-mode' function."
-      (run-hooks 'prot/variable-pitch-mode-hook))
-
-    (advice-add #'variable-pitch-mode :after #'prot/variable-pitch-run-hook)
-
-    (add-hook 'prot/variable-pitch-mode-hook #'prot/cursory-variable-pitch-set-preset)))
+    (add-hook hook #'prot/enable-variable-pitch)))
 
 (provide 'prot-emacs-font)

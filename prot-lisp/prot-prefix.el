@@ -83,7 +83,6 @@
   "d" #'prot-simple-insert-date)
 
 (declare-function keycast-mode "keycast")
-(declare-function prot-modeline-subtle-mode "prot-modeline")
 (declare-function rainbow-mode "rainbow")
 (declare-function spacious-padding-mode "spacious-padding")
 
@@ -95,9 +94,8 @@
   "m" #'menu-bar-mode
   "n" #'display-line-numbers-mode
   "t" #'toggle-truncate-lines
-  "p" #'spacious-padding-mode ; "padding" mnemonic
+  "s" #'spacious-padding-mode
   "r" #'rainbow-mode
-  "s" #'prot-modeline-subtle-mode ; "subtle" mnemonic
   "v" #'variable-pitch-mode)
 
 (defvar-keymap prot-prefix-window-map
