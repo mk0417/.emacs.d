@@ -50,4 +50,4 @@
     "<up>" #'prot-vertico-private-previous
     "C-l" #'vertico-multiform-vertical))
 
-(provide 'prot-emacs-completion-vertico)
+(provide 'prot-emacs-vertico)

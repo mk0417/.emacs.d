@@ -123,9 +123,6 @@
   (minibuffer-depth-indicate-mode 1)
   (minibuffer-electric-default-mode 1)
   
-  (define-key minibuffer-local-map (kbd "C-k") 'delete-backward-char)
-  (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
-
 ;;;; `dabbrev' (dynamic word completion (dynamic abbreviations))
   (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
   (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
@@ -147,7 +144,8 @@
     "meweb" "https://protesilaos.com"
     "megit" "https://git.sr.ht/~protesilaos"
     "mehub" "https://github.com/protesilaos"
-    "melab" "https://gitlab.com/protesilaos")
+    "melab" "https://gitlab.com/protesilaos"
+    "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
 
   (prot-emacs-abbrev text-mode-abbrev-table
     "asciidoc"       "AsciiDoc"
@@ -166,10 +164,7 @@
     "texmacs"        "TeXmacs"
     "typescript"     "TypeScript"
     "visavis"        "vis-à-vis"
-    "youtube"        "YouTube"
-    "3dots"          "…"
-    "rarrow"         "→"
-    "nbspace"         "&nbsp;")
+    "youtube"        "YouTube")
 
   (with-eval-after-load 'message
     (prot-emacs-abbrev message-mode-abbrev-table
@@ -265,7 +260,7 @@
 ;;; Extended minibuffer actions and more (embark.el and prot-embark.el)
 (prot-emacs-package embark
   (:install t)
-  ;; (:delay 5)
+  (:delay 5)
   (setq prefix-help-command #'embark-prefix-help-command)
   ;; (setq prefix-help-command #'describe-prefix-bindings) ; the default of the above
 
@@ -347,26 +342,6 @@
 ;; commands.
 (prot-emacs-package embark-consult (:install t) (:delay 5))
 
-;;; Template-based in-buffer completion (tempel.el)
-;; NOTE 2023-01-12: Check the `templates' file that I distribute with
-;; my Emacs files as part of my dotfiles:
-;; <https://git.sr.ht/~protesilaos/dotfiles>.
-(prot-emacs-package tempel
-  (:install t)
-  (:delay 5)
-  (setq tempel-path (expand-file-name "tempel-templates" user-emacs-directory))
-
-  (prot-emacs-keybind global-map
-    "M-+" #'tempel-complete ; Alternative: `tempel-expand'
-    "M-*" #'tempel-insert)
-  (prot-emacs-keybind tempel-map
-    "RET" #'tempel-done
-    "C-p" #'tempel-previous
-    "C-n" #'tempel-next
-    "<tab>" #'tempel-next
-    "<backtab>" #'tempel-previous
-    "C-S-<iso-lefttab>" #'tempel-previous))
-
 ;;; Detailed completion annotations (marginalia.el)
 (prot-emacs-package marginalia
   (:install t)
@@ -389,4 +364,11 @@
           (package prot-marginalia-package)
           (unicode-name marginalia-annotate-char))))
 
-(provide 'prot-emacs-completion-common)
+;;; The minibuffer user interface (mct, vertico, or none)
+(when prot-emacs-completion-ui
+  (require
+   (pcase prot-emacs-completion-ui
+     ('mct 'prot-emacs-mct)
+     ('vertico 'prot-emacs-vertico))))
+
+(provide 'prot-emacs-completion)

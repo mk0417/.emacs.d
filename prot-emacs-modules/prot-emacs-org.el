@@ -38,6 +38,10 @@
 
   (setq org-directory (expand-file-name "~/Dropbox/org/"))
   (setq org-imenu-depth 7)
+
+  (add-to-list 'safe-local-variable-values '(org-hide-leading-stars . t))
+  (add-to-list 'safe-local-variable-values '(org-hide-macro-markers . t))
+
 ;;;; general settings
   (setq org-ellipsis "↳") 
   (setq org-adapt-indentation nil)      ; No, non, nein, όχι!
@@ -52,6 +56,8 @@
         '(("s" . "src")
           ("e" . "src emacs-lisp")
           ("E" . "src emacs-lisp :results value code :lexical t")
+          ("t" . "src emacs-lisp :tangle FILENAME")
+          ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
           ("x" . "example")
           ("q" . "quote")))
   (setq org-catch-invisible-edits 'show)
