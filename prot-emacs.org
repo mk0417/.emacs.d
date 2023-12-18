@@ -475,9 +475,9 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 
 Finally, I like to call my default frame =home=. This is because I use
 my ~beframe~ package to group the list of buffers on a per-frame basis
-LINK TO BEFRAME. The multi-frame arrangement is the best thing I ever
-did to boost my productivity: bonus points when used in tandem with a
-tiling window manager.
+([[#h:77e4f174-0c86-460d-8a54-47545f922ae9][The =prot-emacs-window.el= section about ~beframe~]]). The multi-frame
+arrangement is the best thing I ever did to boost my productivity:
+bonus points when used in tandem with a tiling window manager.
 
 Naming frames allows you to select them using completion. Emacs can do
 this (=M-x select-frame-by-name=), though it is not always reliable as
@@ -577,7 +577,7 @@ before all other modules of my setup."
 :CUSTOM_ID: h:f012a254-2716-4c29-a64b-c2b3df34f57f
 :END:
 
-I normally use ~vertico~ with my own custom extensions to it (LINK TO
+I normally use ~vertico~ with my own custom extensions to it (TODO LINK TO
 =prot-vertico.el=), though I also maintain the ~mct~ package for those
 who want to use the built-in completion framework with a few extras
 for better movement and the like. I think ~mct~ will eventually be
@@ -1809,12 +1809,6 @@ are called. The pulse effect is added there (~pulsar-after-function-hook~).
 (prot-emacs-package pulsar
   (:install t)
   (:delay 1)
-  (dolist (cmd '( narrow-to-page narrow-to-defun
-                  narrow-to-region widen
-                  logos-forward-page-dwim
-                  logos-backward-page-dwim))
-    (add-to-list 'pulsar-pulse-functions cmd))
-
   (setopt pulsar-pulse t
           pulsar-delay 0.055
           pulsar-iterations 10
@@ -2083,6 +2077,27 @@ Bruno Boal is the lead developer and I am a co-maintainer.
 :CUSTOM_ID: h:cb41fef0-41a5-4a85-9552-496d96290258
 :END:
 
+My ~fontaine~ package allows the user to define detailed font
+configurations and set them on demand. For example, one can have a
+=regular-editing= preset and another for =presentation-mode= (these
+are arbitrary, user-defined symbols): the former uses small fonts
+which are optimised for writing, while the latter applies typefaces
+that are pleasant to read at comfortable point sizes.
+
++ Package name (GNU ELPA): ~fontaine~
++ Official manual: <https://protesilaos.com/emacs/fontaine>
++ Change log: <https://protesilaos.com/emacs/fontaine-changelog>
++ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/fontaine>
+  - Mirrors:
+    + GitHub: <https://github.com/protesilaos/fontaine>
+    + GitLab: <https://gitlab.com/protesilaos/fontaine>
++ Mailing list: <https://lists.sr.ht/~protesilaos/fontaine>
++ Backronym: Fonts, Ornaments, and Neat Typography Are Irrelevant in
+  Non-graphical Emacs
+
+You will notice that all my fonts are Iosevka Comfy variants. I
+explain what this is about ([[#h:3b989679-7e3f-4f03-b4bb-611006ea01ce][Information about my Iosevka Comfy fonts]]).
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
 ;;;; Fontaine (font configurations)
 ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
@@ -2099,28 +2114,6 @@ Bruno Boal is the lead developer and I am a co-maintainer.
   ;; completeness.
   (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
-  ;; Iosevka Comfy is my highly customised build of Iosevka with
-  ;; monospaced and duospaced (quasi-proportional) variants as well as
-  ;; support or no support for ligatures:
-  ;; <https://git.sr.ht/~protesilaos/iosevka-comfy>.
-  ;;
-  ;; | Family                          | Shapes | Spacing | Style      | Ligatures |
-  ;; |---------------------------------+--------+---------+------------+-----------|
-  ;; | Iosevka Comfy                   | Sans   | Compact | Monospaced | Yes       |
-  ;; | Iosevka Comfy Fixed             | Sans   | Compact | Monospaced | No        |
-  ;; | Iosevka Comfy Duo               | Sans   | Compact | Duospaced  | Yes       |
-  ;; |---------------------------------+--------+---------+------------+-----------|
-  ;; | Iosevka Comfy Motion            | Slab   | Compact | Monospaced | Yes       |
-  ;; | Iosevka Comfy Motion Fixed      | Slab   | Compact | Monospaced | No        |
-  ;; | Iosevka Comfy Motion Duo        | Slab   | Compact | Duospaced  | Yes       |
-  ;; |---------------------------------+--------+---------+------------+-----------|
-  ;; | Iosevka Comfy Wide              | Sans   | Wide    | Monospaced | Yes       |
-  ;; | Iosevka Comfy Wide Fixed        | Sans   | Wide    | Monospaced | No        |
-  ;; | Iosevka Comfy Wide Duo          | Sans   | Wide    | Duospaced  | Yes       |
-  ;; |---------------------------------+--------+---------+------------+-----------|
-  ;; | Iosevka Comfy Wide Motion       | Slab   | Wide    | Monospaced | Yes       |
-  ;; | Iosevka Comfy Wide Motion Fixed | Slab   | Wide    | Monospaced | No        |
-  ;; | Iosevka Comfy Wide Motion Duo   | Slab   | Wide    | Duospaced  | Yes       |
   (setq fontaine-presets
         '((small
            :default-family "Iosevka Comfy Motion"
@@ -2196,6 +2189,44 @@ Bruno Boal is the lead developer and I am a co-maintainer.
     (add-hook hook #'prot/enable-variable-pitch))
    prot/enable-variable-pitch-in-hooks))
 #+end_src
+
+**** Information about my Iosevka Comfy fonts
+:PROPERTIES:
+:CUSTOM_ID: h:3b989679-7e3f-4f03-b4bb-611006ea01ce
+:END:
+
+/Iosevka Comfy/ is a customised build of the Iosevka typeface, with a
+consistent rounded style and overrides for almost all individual
+glyphs in both roman (upright) and italic (slanted) variants. Many
+font families are available, covering a broad range of typographic
+weights. The README file in the git repository covers all the
+technicalities.
+
+  | Family                          | Shapes | Spacing | Style      | Ligatures |
+  |---------------------------------+--------+---------+------------+-----------|
+  | Iosevka Comfy                   | Sans   | Compact | Monospaced | Yes       |
+  | Iosevka Comfy Fixed             | Sans   | Compact | Monospaced | No        |
+  | Iosevka Comfy Duo               | Sans   | Compact | Duospaced  | Yes       |
+  |---------------------------------+--------+---------+------------+-----------|
+  | Iosevka Comfy Motion            | Slab   | Compact | Monospaced | Yes       |
+  | Iosevka Comfy Motion Fixed      | Slab   | Compact | Monospaced | No        |
+  | Iosevka Comfy Motion Duo        | Slab   | Compact | Duospaced  | Yes       |
+  |---------------------------------+--------+---------+------------+-----------|
+  | Iosevka Comfy Wide              | Sans   | Wide    | Monospaced | Yes       |
+  | Iosevka Comfy Wide Fixed        | Sans   | Wide    | Monospaced | No        |
+  | Iosevka Comfy Wide Duo          | Sans   | Wide    | Duospaced  | Yes       |
+  |---------------------------------+--------+---------+------------+-----------|
+  | Iosevka Comfy Wide Motion       | Slab   | Wide    | Monospaced | Yes       |
+  | Iosevka Comfy Wide Motion Fixed | Slab   | Wide    | Monospaced | No        |
+  | Iosevka Comfy Wide Motion Duo   | Slab   | Wide    | Duospaced  | Yes       |
+
++ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/iosevka-comfy>
+  - Mirrors:
+    + GitHub: <https://github.com/protesilaos/iosevka-comfy>
+    + GitLab: <https://gitlab.com/protesilaos/iosevka-comfy>
++ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
++ Sample pictures: <https://protesilaos.com/emacs/iosevka-comfy-pictures>
++ Backronym: Iosevka ... Could Only Modify a Font, Yes
 
 *** The =prot-emacs-theme.el= call to ~provide~
 :PROPERTIES:
@@ -2510,6 +2541,12 @@ bookmark and then visit one of your bookmarks with ~bookmark-jump~
 :CUSTOM_ID: h:7753549e-806d-4140-b72d-5460a4a14b3e
 :END:
 
+The "auto revert" facility makes Emacs update the contents of a saved
+buffer when its underlying file is change externally. This can happen,
+for example, when a =git pull= modifies the file we are already
+displaying in a buffer. Emacs thus automatically reverts the buffer to
+reflect the new file contents.
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; Auto revert mode
   (setq auto-revert-verbose t)
@@ -2521,6 +2558,10 @@ bookmark and then visit one of your bookmarks with ~bookmark-jump~
 :CUSTOM_ID: h:d551b90d-d730-4eb5-976a-24b010fd4db3
 :END:
 
+Every graphical application I have ever used will delete the selected
+text upon the insertion of new text. Emacs does not do this by
+default. With ~delete-selection-mode~ we get it.
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; Delete selection
   (delete-selection-mode 1)
@@ -2530,6 +2571,11 @@ bookmark and then visit one of your bookmarks with ~bookmark-jump~
 :PROPERTIES:
 :CUSTOM_ID: h:26afeb95-7920-45ed-8ff6-3648256c280b
 :END:
+
+With these settings in place, Emacs will use its own faces and frame
+infrastructure to display tooltips. I prefer it this way because then
+we can benefit from the text properties that can be added to these
+messages (e.g. a different colour or a slant).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; Tooltips (tooltip-mode)
@@ -2551,7 +2597,16 @@ bookmark and then visit one of your bookmarks with ~bookmark-jump~
 :CUSTOM_ID: h:d4e30bcb-2f90-445f-a5ca-856e2576483a
 :END:
 
-This is displayed on my mode line. LINK TO =prot-emacs-modeline.el=.
+I like to display the current date and time on the mode line([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =prot-emacs-modeline.el= module]]).
+This is what ~display-time-mode~ does. Note that my custom modeline
+shows the time only in the active/selected window. Otherwise, the
+default is to show the time on all mode lines, which is annoying.
+
+The =time.el= librart which provides the ~display-time-mode~ also
+defines functions to get the load average and check a directory for
+new emails. I have no use for the load avergae, while emails counters
+are best handled by my ~notmuch-indicator~ package
+([[#h:b26c6297-ebe8-4f99-b069-df53cfd90520][The =prot-emacs-email.el= submodule for ~notmuch~ (=prot-emacs-notmuch.el=)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; Display current time
@@ -2591,7 +2646,9 @@ I communicate with people from across the globe. Knowing their local
 time is of paramount importance. With =M-x world-clock= we get a
 buffer with all cities and concomitant the time zones specified in
 ~zoneinfo-style-world-list~. The contents are displayed according to
-the ~world-clock-time-format~.
+the ~world-clock-time-format~. Note that I control the placement of
+these and many other buffers by configuring the ~display-buffer-alist~
+([[#h:b5fa481d-8549-4424-869e-91091cdf730b][The =prot-emacs-window.el= module]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; World clock (M-x world-clock)
@@ -2629,32 +2686,105 @@ the ~world-clock-time-format~.
   (setq world-clock-buffer-name "*world-clock*") ; Placement handled by `display-buffer-alist'
   (setq world-clock-timer-enable t)
   (setq world-clock-timer-second 60)
+#+end_src
 
+*** The =prot-emacs-essentials.el= settings for manpages
+:PROPERTIES:
+:CUSTOM_ID: h:5eb16d63-ce21-4e76-8789-eef6ddbd7c00
+:END:
+
+Most buffers conform with rules we define in the ~display-buffer-alist~
+([[#h:b5fa481d-8549-4424-869e-91091cdf730b][The =prot-emacs-window.el= module]]). However, =M-x man= does not do
+this because it has its own behaviour. At least, it is customisable.
+The ~Man-notify-method~ is a very old option, according to what the
+Help buffer is telling me (check its documentation with =C-h v= or
+=M-x describe-variable=), so I suspect this was never updated to
+conform with the newer ~display-buffer-alist~...
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; `man' (manpages)
   (setq Man-notify-method 'pushy) ; does not obey `display-buffer-alist'
+#+end_src
 
+*** The =prot-emacs-essentials.el= settings for ~proced~
+:PROPERTIES:
+:CUSTOM_ID: h:14d40e5a-327e-453e-861c-3ece24351d62
+:END:
+
+The =M-x proced= command produces a listing of all running processes
+on the system. This is like the ~top~ program on the command-line.
+While inside the =*Proced*= buffer, type =C-h m= (=M-x describe-mode=)
+to learn about keys/commands you can use therein. Personally, I mostly
+use this interface to check if some process is doing more than it should.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; `proced' (process monitor, similar to `top')
   (setq proced-auto-update-flag t)
   (setq proced-enable-color-flag t) ; Emacs 29
   (setq proced-auto-update-interval 5)
   (setq proced-descend t)
   (setq proced-filter 'user)
+#+end_src
 
+*** The =prot-emacs-essentials.el= arrangement to run Emacs as a server
+:PROPERTIES:
+:CUSTOM_ID: h:7709b7e9-844f-49f3-badf-784aacec4bca
+:END:
+
+The "server" is functionally like the daemon, except it is run by the
+first Emacs frame we launch. With a running server, we can connect to
+it through a new ~emacsclient~ call. This is useful if we want to
+launch new frames that share resources with the existing running
+process. Though the ~emacsclient~ can be used to simply evaluate code
+outside of an Emacs frame (e.g. to load a new theme, as I do with my
+~delight~ shell script as part of my dotfiles).
+
+When we close the last frame, the server is terminated. Whereas the
+daemon remains active even if all Emacs frames are closed. For me, the
+server is easier to work with, as I know for sure when its life cycle
+starts and ends. Beside that, I did give the daemon an honest try.
+Emacs would crash whenever I would encounter an error in some Lisp
+evaluation. Whereas the server works just fine.
+
+Note that I only ever ~server-start~ if there is no server running.
+One is enough.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; Emacs server (allow emacsclient to connect to running session)
-  ;; The "server" is functionally like the daemon, except it is run by
-  ;; the first Emacs frame we launch.  When we close that frame, the
-  ;; server is terminated.  Whereas the daemon remains active even if
-  ;; all Emacs frames are closed.
-  ;;
-  ;; I experimented with the daemon for a while.  Emacs would crash
-  ;; whenever I would encounter an error in some Lisp evaluation.
-  ;; Whereas the server works just fine when I need to connect to it via
-  ;; the emacsclient.
   (require 'server)
   (setq server-client-instructions nil)
   (unless (server-running-p)
     (server-start)))
 #+end_src
+
+*** The =prot-emacs-essentials.el= section about ~substitute~
+:PROPERTIES:
+:CUSTOM_ID: h:b4b3c8b7-e35c-4a56-bfb9-0c8bb33b2423
+:END:
+
+I use ~substitute~ to efficiently replace targets in the buffer or
+context. The ~substitute~ package provides a set of commands that
+perform text replacement (i) throughout the buffer, (ii) limited to
+the current definition (per `narrow-to-defun`), (iii) from point to
+the end of the buffer, and (iv) from point to the beginning of the
+buffer.
+
+These substitutions are meant to be as quick as possible and to not
+move the point. As such, they differ from the standard ~query-replace~
+(which I still use where relevant). The provided commands prompt for
+substitute text and perform the substitution outright, without moving
+the point. Better check the video I did on the matter:
+<https://protesilaos.com/codelog/2023-01-16-emacs-substitute-package-demo/>.
+
++ Package name (GNU ELPA): `substitute`
++ Official manual: <https://protesilaos.com/emacs/substitute>
++ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/substitute>
+  - Mirrors:
+    + GitHub: <https://github.com/protesilaos/substitute>
+    + GitLab: <https://gitlab.com/protesilaos/substitute>
++ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
++ Backronym: Some Utilities Built to Substitute Targets Independent of
+  Their Utterances, Thoroughly and Easily.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;; Substitute
@@ -3757,12 +3887,16 @@ active and the Completions window is on display."
   (setq uniquify-buffer-name-style 'forward)
   (setq uniquify-strip-common-suffix t)
   (setq uniquify-after-kill-buffer-p t)
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;;; Line highlight
   (require 'hl-line)
   (setq hl-line-sticky-flag nil)
   (setq hl-line-overlay-priority -50) ; emacs28
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;;; Negative space highlight
   (require 'whitespace)
   ;; NOTE 2023-08-14: This is experimental.  I am not sure I like it.
@@ -3778,7 +3912,9 @@ active and the Completions window is on display."
           space-after-tab::space
           space-before-tab::tab
           space-before-tab::space))
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;; Line numbers on the side of the window (prot-line-numbers.el)
   (require 'display-line-numbers)
   ;; Set absolute line numbers, unless evil mode is loaded, in which
@@ -3794,7 +3930,9 @@ active and the Completions window is on display."
     "<f6>" #'whitespace-mode
     "<f7>" #'display-line-numbers-mode
     "C-c z" #'delete-trailing-whitespace)
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;;; `window', `display-buffer-alist', and related
   (require 'prot-window)
 
@@ -3908,7 +4046,32 @@ active and the Completions window is on display."
   (prot-emacs-keybind resize-window-repeat-map
     ">" #'enlarge-window-horizontally
     "<" #'shrink-window-horizontally))
+#+end_src
 
+*** The =prot-emacs-window.el= section about ~beframe~
+:PROPERTIES:
+:CUSTOM_ID: h:77e4f174-0c86-460d-8a54-47545f922ae9
+:END:
+
+My ~beframe~ package enables a frame-oriented Emacs workflow where
+each frame has access to the list of buffers visited therein. In the
+interest of brevity, we call buffers that belong to frames "beframed".
+Check the video demo I did and note that I consider this one of the
+best changes I ever did to boost my productivity:
+<https://protesilaos.com/codelog/2023-02-28-emacs-beframe-demo/>.
+
++ Package name (GNU ELPA): ~beframe~
++ Official manual: <https://protesilaos.com/emacs/beframe>
++ Change log: <https://protesilaos.com/emacs/beframe-changelog>
++ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/beframe>
+  - Mirrors:
+    + GitHub: <https://github.com/protesilaos/beframe>
+    + GitLab: <https://gitlab.com/protesilaos/beframe>
++ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
++ Backronym: Buffers Encapsulated in Frames Realise Advanced
+  Management of Emacs.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;; Frame-isolated buffers
 ;; Another package of mine.  Read the manual:
 ;; <https://protesilaos.com/emacs/beframe>.
