@@ -43,7 +43,7 @@
   (add-to-list 'safe-local-variable-values '(org-hide-macro-markers . t))
 
 ;;;; general settings
-  (setq org-ellipsis "↳") 
+  (setq org-ellipsis "↴") 
   (setq org-adapt-indentation nil)      ; No, non, nein, όχι!
   (setq org-special-ctrl-a/e nil)
   (setq org-special-ctrl-k nil)
@@ -58,6 +58,8 @@
           ("E" . "src emacs-lisp :results value code :lexical t")
           ("t" . "src emacs-lisp :tangle FILENAME")
           ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
+          ("p" . "src jupyter-python")
+          ("h" . "export html")
           ("x" . "example")
           ("q" . "quote")))
   (setq org-catch-invisible-edits 'show)
