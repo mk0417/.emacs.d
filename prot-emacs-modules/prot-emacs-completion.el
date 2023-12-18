@@ -123,6 +123,9 @@
   (minibuffer-depth-indicate-mode 1)
   (minibuffer-electric-default-mode 1)
   
+  (define-key minibuffer-local-map (kbd "C-k") 'delete-backward-char)
+  (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
+
 ;;;; `dabbrev' (dynamic word completion (dynamic abbreviations))
   (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
   (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
