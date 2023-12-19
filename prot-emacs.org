@@ -607,10 +607,12 @@ before all other modules of my setup.."
 I was a Vim user for three years before eventually switching to Emacs.
 As part of that transition, I also conveted to the Emacs style key
 bindings. They have stronger mnemonics and scale better as a result.
+
 Nevertheless, I provide this option for those who need Vim keys in
 Emacs: I was using it myself for a few weeks while my left wrist was
-in pain (in part due to the cheap/bad keyboard I was using but also
-because of the hard manual work I do around the hut).
+in pain (([[#h:0d6763f3-56d6-44be-b10d-bfb8cc96b442][The =prot-emacs-evil.el= module]])). This was in part due to
+the cheap/bad keyboard I am using but also because of the hard manual
+work I do around the hut.
 
 Remember to read how these options come into effect ([[#h:5a41861f-4c38-45ac-8da2-51d77c0b4a73][The init.el user options]]).
 
@@ -2776,7 +2778,7 @@ substitute text and perform the substitution outright, without moving
 the point. Better check the video I did on the matter:
 <https://protesilaos.com/codelog/2023-01-16-emacs-substitute-package-demo/>.
 
-+ Package name (GNU ELPA): `substitute`
++ Package name (GNU ELPA): ~substitute~
 + Official manual: <https://protesilaos.com/emacs/substitute>
 + Git repo on SourceHut: <https://git.sr.ht/~protesilaos/substitute>
   - Mirrors:
@@ -3203,7 +3205,7 @@ by that special hook."
   (file-name-shadow-mode 1)
   (minibuffer-depth-indicate-mode 1)
   (minibuffer-electric-default-mode 1)
-  
+
 ;;;; `savehist' (minibuffer and related histories)
   (setq savehist-file (locate-user-emacs-file "savehist"))
   (setq history-length 500)
@@ -3271,7 +3273,7 @@ by that special hook."
   ;; `abbrev-file-name' to save abbrevations.  I do not need that, nor
   ;; do I want it.
   (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save)
-    
+
   (prot-emacs-keybind global-map
     "M-/" #'dabbrev-expand
     "C-x M-/" #'dabbrev-completion
@@ -3463,7 +3465,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (:delay 5)
   (setq marginalia-max-relative-age 0) ; absolute time
   (marginalia-mode 1))
-  
+
 ;;;; Custom completion annotations
 (prot-emacs-package prot-marginalia
   (:delay 5)
@@ -3874,20 +3876,70 @@ active and the Completions window is on display."
 (provide 'prot-emacs-dired)
 #+end_src
 
-** TODO The =prot-emacs-window.el= module
+** The =prot-emacs-window.el= module
 :PROPERTIES:
 :CUSTOM_ID: h:b5fa481d-8549-4424-869e-91091cdf730b
 :END:
+
+This module is all about buffers and windows. How they are managed and
+displayed. We start with the ~prot-emacs-configure~ macro to simply
+group together lots of built-in functionality and give it a slight
+deferred loading time to speed up startup
+([[#h:54a4cb92-e7f8-4291-abe6-6e7dfdfd6200][The =init.el= macro to evaluate arbitrary Elisp (~prot-emacs-configure~)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el" :mkdirp yes
 ;;; General window and buffer configurations
 (prot-emacs-configure
   (:delay 1)
+  #+end_src
+
+*** The =prot-emacs-window.el= section about uniquifying buffer names
+:PROPERTIES:
+:CUSTOM_ID: h:cfbea29c-3290-4fd1-a02a-d7e887c15674
+:END:
+
+When a buffer name is reserved, Emacs tried to produce the new buffer
+by finding a suitable variant of the original name. The doc string of
+the variable ~uniquify-buffer-name-style~ does a good job at
+explaining the various patterns:
+
+#+begin_example
+For example, the files ‘/foo/bar/mumble/name’ and ‘/baz/quux/mumble/name’
+would have the following buffer names in the various styles:
+
+  forward                       bar/mumble/name    quux/mumble/name
+  reverse                       name\mumble\bar    name\mumble\quux
+  post-forward                  name|bar/mumble    name|quux/mumble
+  post-forward-angle-brackets   name<bar/mumble>   name<quux/mumble>
+  nil                           name               name<2>
+#+end_example
+
+I use the =forward= style, which is the closest to the actual file
+name.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;;; `uniquify' (unique names for buffers)
   (setq uniquify-buffer-name-style 'forward)
   (setq uniquify-strip-common-suffix t)
   (setq uniquify-after-kill-buffer-p t)
 #+end_src
+
+*** The =prot-emacs-window.el= section about line highlighting (~hl-line-mode~)
+:PROPERTIES:
+:CUSTOM_ID: h:ec156866-3d25-42e7-8247-b190103b6f17
+:END:
+
+The built-in ~hl-line-mode~ highlights the current line by adding a
+background colour to it. I normally do not use this functionality. I
+do it only when I need to draw attention to something I am demonstrating.
+
+The ~nil~ value for ~hl-line-sticky-flag~ make the line highlight not
+show up in unfocused windows. I prefer to keep highlights at a
+minimum, because I then find it harder to focus on where I am. The
+~hl-line-overlay-priority~ is a more obscure aspect of how Emacs
+decides which background should take precedence. You most probably do
+not need this, though I had a case for it a while ago: the specifics
+do not matter.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;;; Line highlight
@@ -3895,6 +3947,22 @@ active and the Completions window is on display."
   (setq hl-line-sticky-flag nil)
   (setq hl-line-overlay-priority -50) ; emacs28
 #+end_src
+
+*** The =prot-emacs-window.el= section about negative space highlighting (~whitespace-mode~)
+:PROPERTIES:
+:CUSTOM_ID: h:ad2945c5-992d-4c82-a8b8-652f47ebdbea
+:END:
+
+Much like ~hl-line-mode~, I normally do not use the ~whitespace-mode~
+([[#h:ec156866-3d25-42e7-8247-b190103b6f17][The =prot-emacs-window.el= section about line highlighting (~hl-line-mode~)]]).
+I do it only when I have to demonstrate something, or to quickly check
+that my spacing is correct in some context where that matters.
+
+The changes I have made to ~whitespace-style~ are experimental and I
+do not recommend you copy them. I basically tried to make it less
+busy, by highlighting fewer elements. For example, I do not highlight
+newline characters (represented as a =$=) because these are easy to
+infer in most cases.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;;; Negative space highlight
@@ -3914,6 +3982,21 @@ active and the Completions window is on display."
           space-before-tab::space))
 #+end_src
 
+*** The =prot-emacs-window.el= section about line numbers (~display-line-numbers-mode~)
+:PROPERTIES:
+:CUSTOM_ID: h:f45ea51c-8129-41bd-8d6e-4b66e7f35a49
+:END:
+
+As with the two previous sections, I do not like to see line numbers
+by default and seldom use ~display-line-numbers-mode~. They do not
+help me navigate a buffer, nor are they relevant in most cases. I
+enable the mode only when I need to compare buffers or to get a sense
+of how far apart two relevant section are in a file.
+
+You will notice that I use absolute numbers even for narrowed buffers,
+while I set a relative count for contextual lines when ~prot-emacs-load-evil~
+is true ([[#h:0d6763f3-56d6-44be-b10d-bfb8cc96b442][The =prot-emacs-evil.el= module]]).
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;; Line numbers on the side of the window (prot-line-numbers.el)
   (require 'display-line-numbers)
@@ -3925,12 +4008,71 @@ active and the Completions window is on display."
   (setq display-line-numbers-minor-tick 0)
   ;; Use absolute numbers in narrowed buffers
   (setq-default display-line-numbers-widen t)
+#+end_src
 
+*** The =prot-emacs-window.el= key bindings for built-in space and line number functionality
+:PROPERTIES:
+:CUSTOM_ID: h:6fa708d4-f1a8-41a2-ad29-dba9b1966b65
+:END:
+
+Here I simply bind some keys for the aforementioned.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
   (prot-emacs-keybind global-map
     "<f6>" #'whitespace-mode
     "<f7>" #'display-line-numbers-mode
     "C-c z" #'delete-trailing-whitespace)
 #+end_src
+
+*** The =prot-emacs-window.el= rules for displaying buffers (~display-buffer-alist~)
+:PROPERTIES:
+:CUSTOM_ID: h:50f8b1e4-b14e-453f-a37e-1c0e495ab80f
+:END:
+
+The ~display-buffer-alist~ is a powerful user option and somewhat hard
+to get started with. The reason for its difficulty comes from the
+knowledge required to understand the underlying ~display-buffer~
+mechanism.
+
+Here is the gist of what we do with it:
+
+- The alist is a list of lists.
+- Each element of the alist (i.e. one of the lists) is of the
+  following form:
+
+  #+begin_example
+  (BUFFER-MATCHER
+   FUNCTIONS-TO-DISPLAY-BUFFER
+   OTHER-PARAMETERS)
+  #+end_example
+
+- The =BUFFER-MATCHER= is either a regular expression to match the
+  buffer by its name or a method to get the buffer whose major mode is
+  the one specified. In the latter case, you will see the use of cons
+  cells (like =(one . two)=) involving the ~derived-mode~ symbol
+  (remember that I build Emacs from source, so ~derived-mode~ may not
+  exist in your version of Emacs).
+
+- The =FUNCTIONS-TO-DISPLAY-BUFFER= is a list of ~display-buffer~
+  functions that are tried in the order they appear in until one
+  works. The list can be of one element, as you will notice with some
+  of my entries.
+
+- The =OTHER-PARAMETERS= are enumerated in the Emacs Lisp Reference
+  Manual. Evaluate:
+
+  #+begin_src emacs-lisp
+  (info "(elisp) Buffer Display Action Alists")
+  #+end_src
+
+In my =prot-window.el= library, I define functions that determined how
+a buffer should be displayed, given size considerations ([[#h:35b8a0a5-c447-4301-a404-bc274596238d][The =prot-window.el= library]]).
+You will find the functions ~prot-window-shell-or-term-p~ to determine
+what a shell or terminal is, ~prot-window-display-buffer-below-or-pop~
+to display the buffer below the current one or to its side depending
+on how much width is available, and ~prot-window-select-fit-size~ to
+perform the two-fold task of selecting a window and making it fit up
+to a certain height.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 ;;;; `window', `display-buffer-alist', and related
@@ -4013,7 +4155,9 @@ active and the Completions window is on display."
                   (derived-mode . woman-mode)
                   "\\*\\(Man\\|woman\\).*"))
            (display-buffer-same-window))))
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
   (setq window-combination-resize t)
   (setq even-window-sizes 'height-only)
   (setq window-sides-vertical nil)
@@ -4022,13 +4166,17 @@ active and the Completions window is on display."
   (setq split-width-threshold 125)
   (setq window-min-height 3)
   (setq window-min-width 30)
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
   (dolist (hook '(epa-info-mode-hook help-mode-hook custom-mode-hook))
     (add-hook hook #'visual-line-mode))
 
   (add-hook 'world-clock-mode-hook #'prot-common-truncate-lines-silently)
   (add-hook 'calendar-mode-hook #'prot-common-truncate-lines-silently)
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
   ;; NOTE 2022-09-17: Also see `prot-simple-swap-window-buffers'.
   (prot-emacs-keybind global-map
     "C-x <down>" #'next-buffer
@@ -6071,7 +6219,7 @@ Meant to be added to `prog-mode-hook'."
             (lambda () (setq-local shr-width (current-fill-column))))
 
   (define-key global-map (kbd "C-c e") #'elfeed)
-  
+
   (prot-emacs-keybind elfeed-search-mode-map
     "w" #'elfeed-search-yank
     "g" #'elfeed-update
@@ -6083,7 +6231,7 @@ Meant to be added to `prog-mode-hook'."
   (prot-emacs-package prot-elfeed
     (setq prot-elfeed-tag-faces t)
     (prot-elfeed-fontify-tags)
-    
+
     (add-hook 'elfeed-search-mode-hook #'prot-elfeed-load-feeds)
 
     (prot-emacs-keybind elfeed-search-mode-map
@@ -6179,6 +6327,8 @@ Meant to be added to `prog-mode-hook'."
 :PROPERTIES:
 :CUSTOM_ID: h:0d6763f3-56d6-44be-b10d-bfb8cc96b442
 :END:
+
+([[#h:d32718d6-c678-483e-8cdf-02d77053c960][The =init.el= option to load Vim keys (=evil.el= and =devil.el=)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-evil.el" :mkdirp yes
 (prot-emacs-configure
@@ -11916,7 +12066,7 @@ demarcated by BEG and END."
 ;; `prot-simple-insert-line-prefix'."
 ;;   :type '(repeat string)
 ;;   :group 'prot-simple)
-;; 
+;;
 ;; (defun prot-simple--line-prefix-regexp (&optional string)
 ;;   "Format regular expression for `prot-simple--line-prefix-p'.
 ;; With optional STRING use it directly.  Else format the regexp by
@@ -11924,36 +12074,36 @@ demarcated by BEG and END."
 ;;   (if string
 ;;       (format "^%s " string)
 ;;     (format "^[%s] " (apply #'concat prot-simple-line-prefix-strings))))
-;; 
+;;
 ;; (defun prot-simple--line-prefix-p (&optional string)
 ;;   "Return non-nil if line beginning has an appropriate string prefix.
 ;; With optional STRING test that it is at the beginning of the line."
 ;;   (save-excursion
 ;;     (goto-char (line-beginning-position))
 ;;     (looking-at (prot-simple--line-prefix-regexp string))))
-;; 
+;;
 ;; (defun prot-simple--line-prefix-insert (string)
 ;;   "Insert STRING at the beginning of the line, followed by a space."
 ;;   (save-excursion
 ;;     (goto-char (line-beginning-position))
 ;;     (insert string)
 ;;     (insert " ")))
-;; 
+;;
 ;; (defun prot-simple--line-prefix-infer-string ()
 ;;   "Return line prefix string if it matches `prot-simple--line-prefix-p'."
 ;;   (when (prot-simple--line-prefix-p)
 ;;     (string-trim
 ;;      (buffer-substring-no-properties (match-beginning 0) (match-end 0)))))
-;; 
+;;
 ;; (defun prot-simple--line-prefix-toggle (string)
 ;;   "Insert or remove STRING at the beginning of the line."
 ;;   (if (prot-simple--line-prefix-p string)
 ;;       (delete-region (match-beginning 0) (match-end 0))
 ;;     (prot-simple--line-prefix-insert string)))
-;; 
+;;
 ;; (defvar prot-simple--line-prefix-history nil
 ;;   "Minibuffer history of `prot-simple--line-prefix-prompt'.")
-;; 
+;;
 ;; (defun prot-simple--line-prefix-prompt ()
 ;;   "Prompt for string to use as line prefix.
 ;; Provide `prot-simple-line-prefix-strings' as completion
@@ -11964,24 +12114,24 @@ demarcated by BEG and END."
 ;;      prot-simple-line-prefix-strings
 ;;      nil nil nil
 ;;      'prot-simple--line-prefix-history default)))
-;; 
+;;
 ;; (defun prot-simple-line-prefix-infer-or-prompt ()
 ;;   "Infer string for line prefix or prompt for one."
 ;;   (or (prot-simple--line-prefix-infer-string)
 ;;       (prot-simple--line-prefix-prompt)))
-;; 
+;;
 ;; ;;;###autoload
 ;; (defun prot-simple-insert-line-prefix-dwim (string)
 ;;   "Toggle presence of STRING at the beginning of the line.
-;; 
+;;
 ;; When called interactively try to infer STRING based on the line
 ;; prefix.  If one is found among `prot-simple-line-prefix-strings',
 ;; perform a removal outright.
-;; 
+;;
 ;; If no string can be inferred, prompt for STRING among
 ;; `prot-simple-line-prefix-strings'.  Accept arbitrary strings at
 ;; the prompt.
-;; 
+;;
 ;; When the region is active, toggle the presence of STRING for each
 ;; line in the region."
 ;;   (interactive (list (prot-simple-line-prefix-infer-or-prompt)))
