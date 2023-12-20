@@ -122,7 +122,7 @@
   (file-name-shadow-mode 1)
   (minibuffer-depth-indicate-mode 1)
   (minibuffer-electric-default-mode 1)
-  
+
   (define-key minibuffer-local-map (kbd "C-k") 'delete-backward-char)
   (define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
 
@@ -185,7 +185,7 @@
   ;; `abbrev-file-name' to save abbrevations.  I do not need that, nor
   ;; do I want it.
   (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save)
-  
+
   (prot-emacs-keybind global-map
     "M-/" #'dabbrev-expand
     "C-x M-/" #'dabbrev-completion

@@ -1,6 +1,7 @@
 ;;; General window and buffer configurations
 (prot-emacs-configure
   (:delay 1)
+
 ;;;; `uniquify' (unique names for buffers)
   (setq uniquify-buffer-name-style 'forward)
   (setq uniquify-strip-common-suffix t)
@@ -133,8 +134,10 @@
   (setq window-min-height 3)
   (setq window-min-width 30)
 
-  (dolist (hook '(epa-info-mode-hook help-mode-hook custom-mode-hook))
-    (add-hook hook #'visual-line-mode))
+  (mapc
+   (lambda (hook)
+     (add-hook hook #'visual-line-mode))
+   '(epa-info-mode-hook help-mode-hook custom-mode-hook))
 
   (add-hook 'world-clock-mode-hook #'prot-common-truncate-lines-silently)
   (add-hook 'calendar-mode-hook #'prot-common-truncate-lines-silently)
@@ -181,6 +184,12 @@
     ;; of `beframe-mode') it is appropriate to have this here:
     "C-x B" #'select-frame-by-name))
 
+;;; Frame history (undelete-frame-mode)
+(prot-emacs-configure
+  (:delay 5)
+  (define-key global-map (kbd "C-x u") #'undelete-frame) ; I use only C-/ for `undo'
+  (undelete-frame-mode 1))
+
 ;;; Window history (winner-mode)
 (prot-emacs-package winner
   (:delay 5)
@@ -189,12 +198,6 @@
   (prot-emacs-keybind global-map
     "C-x <right>" #'winner-redo
     "C-x <left>" #'winner-undo))
-
-;;; Frame history (undelete-frame-mode)
-(prot-emacs-configure
-  (:delay 5)
-  (define-key global-map (kbd "C-x u") #'undelete-frame) ; I use only C-/ for `undo'
-  (undelete-frame-mode 1))
 
 ;;; Directional window motions (windmove)
 (prot-emacs-package windmove
@@ -217,10 +220,10 @@
 (prot-emacs-package breadcrumb
   (:install t)
   (:delay 2)
-  (setq bc-project-max-length 0.5)
-  (setq bc-project-crumb-separator "/")
-  (setq bc-imenu-max-length 1.0)
-  (setq bc-imenu-crumb-separator " > ")
+  (setq breadcrumb-project-max-length 0.5)
+  (setq breadcrumb-project-crumb-separator "/")
+  (setq breadcrumb-imenu-max-length 1.0)
+  (setq breadcrumb-imenu-crumb-separator " > ")
 
   (breadcrumb-mode 1))
 
