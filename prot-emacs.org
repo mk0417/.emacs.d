@@ -1916,6 +1916,9 @@ and [[https://github.com/minad/org-modern][Daniel Mendler's ~org-modern~ package
   Usability State ... padding; Spacious ... Precise Adjustments to
   Desktop Divider Internals Neatly Generated.
 
+I also take care to make it work with my customised mode line
+([[#h:30bfbf81-a5ad-44af-a91b-6b8dd37ff789][The =prot-emacs-modeline.el= integration with ~spacious-padding~]]).
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
 ;;;; Increase padding of windows/frames
 ;; Yet another one of my packages:
@@ -2603,7 +2606,7 @@ messages (e.g. a different colour or a slant).
   (tooltip-mode 1)
 #+end_src
 
-*** The =prot-emacs-essentials.el= configurations for the date and time
+*** The =prot-emacs-essentials.el= configurations for the date and time (~display-time-mode~)
 :PROPERTIES:
 :CUSTOM_ID: h:d4e30bcb-2f90-445f-a5ca-856e2576483a
 :END:
@@ -3050,10 +3053,24 @@ by that special hook."
 (provide 'prot-emacs-essentials)
 #+end_src
 
-** TODO The =prot-emacs-modeline.el= module
+** The =prot-emacs-modeline.el= module
 :PROPERTIES:
 :CUSTOM_ID: h:41ee38d0-9099-4444-85e4-cc8dce00fb9a
 :END:
+
+I use a custom mode line that is close in spirit to the default one.
+The main difference is that I design most of the components to only
+appear in the focused window. This way, I get a minimal view while
+also avoid the repetition of global indicators, such as for the time
+([[#h:d4e30bcb-2f90-445f-a5ca-856e2576483a][The =prot-emacs-essentials.el= configurations for the date and time (~display-time-mode~)]])
+or the ~notmuch-indicator~ ([[#h:0f12f144-ca9f-4d07-8563-c33b3521bfb5][The =prot-emacs-notmuch.el= section about the ~notmuch-indicator~]]).
+
+Most items that go into the ~mode-line-format~ are defined in
+[[#h:935adc09-abaa-4413-a5ab-a7a562081c20][the =prot-modeline.el= library]].
+
+Notice the use of ~setq-default~. This is like ~setq~ but sets the
+default value of variable that normally are buffer-local. You will
+only find a few cases where this is needed.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-modeline.el" :mkdirp yes
 ;;; Mode line
@@ -3083,7 +3100,23 @@ by that special hook."
                   prot-modeline-notmuch-indicator
                   "  "
                   prot-modeline-misc-info))
+#+end_src
 
+*** The =prot-emacs-modeline.el= integration with ~spacious-padding~
+:PROPERTIES:
+:CUSTOM_ID: h:30bfbf81-a5ad-44af-a91b-6b8dd37ff789
+:END:
+
+My ~spacious-padding~ package adds, among others, a box effect to mode
+line constructs ([[#h:6c118185-fcb1-4c9a-93af-71814cb84279][The =prot-emacs-theme.el= section for ~spacious-padding~]]).
+
+To make the faces of ~prot-modeline.el~ look right in this scenario, I
+add a box to them as well. They then adopt whatever padding is there.
+
+The ~with-eval-after-load~ pattern is a nice way to evaluate some code
+as soon as the given package/feature is loaded.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-modeline.el" :mkdirp yes
   (with-eval-after-load 'spacious-padding
     (defun prot/modeline-spacious-indicators ()
       "Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
@@ -3096,7 +3129,24 @@ by that special hook."
     (prot/modeline-spacious-indicators)
 
     (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
+#+end_src
 
+*** The =prot-emacs-modeline.el= section about ~keycast~
+:PROPERTIES:
+:CUSTOM_ID: h:ba833ed8-f9d4-4693-bfd5-30452167137e
+:END:
+
+This is a helpful package by Jonas Bernoulli that echoes the key
+presses and corresponding commands  on the mode line, tab bar, header
+line, or a special buffer.
+
+I usually enable ~keycast-mode~ when I do a presentation. It shows an
+indicator on the focused mode line.
+
+Note that the value of ~keycast-mode-line-insert-after~ only works
+with my customised mode line ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =prot-emacs-modeline.el= module]]).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-modeline.el" :mkdirp yes
 ;;; Keycast mode
 (prot-emacs-package keycast
   (:install t)
@@ -5917,7 +5967,14 @@ Meant to be added to `prog-mode-hook'."
 
 ;;; Glue code for notmuch and org-link (ol-notmuch.el)
 (prot-emacs-package ol-notmuch (:install t) (:delay 5))
+#+end_src
 
+**** TODO The =prot-emacs-notmuch.el= section about the ~notmuch-indicator~
+:PROPERTIES:
+:CUSTOM_ID: h:0f12f144-ca9f-4d07-8563-c33b3521bfb5
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-notmuch.el"
 ;;; notmuch-indicator (another package of mine)
 (prot-emacs-package notmuch-indicator
   (:install t)
