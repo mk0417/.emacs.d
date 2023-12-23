@@ -1907,11 +1907,15 @@ Inspiration for this package comes from [[https://github.com/rougier][Nicolas Ro
 and [[https://github.com/minad/org-modern][Daniel Mendler's ~org-modern~ package]].
 
 + Package name (GNU ELPA): ~spacious-padding~
++ Official manual: <https://protesilaos.com/emacs/spacious-padding>
 + Git repo on SourceHut: <https://git.sr.ht/~protesilaos/spacious-padding>
   - Mirrors:
     + GitHub: <https://github.com/protesilaos/spacious-padding>
     + GitLab: <https://gitlab.com/protesilaos/spacious-padding>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
++ Sample images:
+  - <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>
+  - <https://protesilaos.com/codelog/2023-11-15-spacious-padding-extra-ui-dev/>
 + Backronyms: Space Perception Adjusted Consistently Impacts Overall
   Usability State ... padding; Spacious ... Precise Adjustments to
   Desktop Divider Internals Neatly Generated.
@@ -2028,6 +2032,10 @@ such as in the difference between writing and reading.
            :cursor-type (hbar . 8)
            :blink-cursor-interval 0.3
            :blink-cursor-blinks 50
+           :cursor-in-non-selected-windows (hbar . 3))
+          (underscore-thick-no-blink
+           :blink-cursor-mode -1
+           :cursor-type (hbar . 8)
            :cursor-in-non-selected-windows (hbar . 3))
           (t ; the default values
            :cursor-type box
@@ -3165,19 +3173,104 @@ with my customised mode line ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =pr
 (provide 'prot-emacs-modeline)
 #+end_src
 
-** TODO The =prot-emacs-completion.el= module
+** The =prot-emacs-completion.el= module
 :PROPERTIES:
 :CUSTOM_ID: h:15edf2c3-4419-4101-928a-6e224958a741
 :END:
+
+The term "completion" describes a process where user input is assisted
+by pattern matching algorithms to type out incomplete terms. The most
+basic way of this model of interaction is what we get in a
+command-line prompt, where we can hit =TAB= to expand the word before
+point to something the program already knows about (e.g =ema= followed
+by =TAB= may complete to =emacs=).
+
+In Emacs, completion encompasses user interfaces that show the
+available candidates (the likely options) right away, as well as
+provide more advanced capabilities for storing the history of previous
+inputs, displaying helpful annotations next to each candidate, and
+"completion styles" to control how user input is matched to
+candidates. Because we use the minibuffer for most common
+interactions, completion is an integral part of any setup.
+
+I start configuring this setion with some built-in options about the
+underlying framework. Since there is no specific package I am
+targeting, I use the ~prot-emacs-configure~ macro
+([[#h:54a4cb92-e7f8-4291-abe6-6e7dfdfd6200][The =init.el= macro to evaluate arbitrary Elisp (~prot-emacs-configure~)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el" :mkdirp yes
 ;;; General minibuffer settings
 (prot-emacs-configure
   (:delay 1)
+#+end_src
+
+*** The =prot-emacs-completion.el= settings for completion styles
+
+The ~completion-styles~ are pattern matching algorithms. They
+interpret user input and match candidates accordingly.
+
+- emacs22 :: Prefix completion that only operates on the text before
+  point. If we are in =prefix|suffix=, with =|= representing the
+  cursor, it will consider everything that expands =prefix= and then
+  add back to it the =suffix=.
+
+- basic :: Prefix completion that also accounts for the text after
+  point. Using the above example, this one will consider patterns that
+  match all of ~emacs22~ as well as anything that completes =suffix=.
+
+- partial-completion :: This is used for file navigation. Instead of
+  typing out a full path like =~/.local/share/fonts=, we do =~/.l/s/f=
+  or variants thereof to make the matches unique such as =~/.l/sh/fon=.
+  It is a joy to navigate the fily system in this way.
+
+- substring :: Matches the given sequence of characters literally
+  regardless of where it is in a word. So =pro= will match
+  =professional= as well as =reproduce=.
+
+- flex :: Completion of an in-order subset of characters. It does not
+  matter where the charactes are in the word, so long as they are
+  encountered in the given order. The input =lad= will thus match
+  ~list-faces-display~ as well as ~pulsar-highlight-dwim~.
+
+- initials :: Completion of acronyms and initialisms. Typing =lfd=
+  will thus match ~list-faces-display~. This completion style can also
+  be used for file system navigation, though I prefer to only have
+  ~partial-completion~ handle that task.
+
+- orderless :: This is the only completion style I use which is not
+  built into Emacs. It matches patterns out-of-order. Patterns are
+  typically words separated by spaces, though they can also be regular
+  expressions, and even styles that are the same as the aforementioned
+  ~flex~ and ~initials~.
+
+Now that you know about the completion styles I use, take a look at
+the value of my ~completion-styles~. You will notice that ~orderless~,
+which is the most powerful/flexible is placed last. I do this because
+Emacs tries the styles in the given order from left to right, moving
+the next one until it finds a match. As such, I usually want to start
+with tight matches (e.g. =li-fa-di= for ~list-faces-display~) and only
+widen the scope of the search as I need to. This is easy to do because
+none of the built-in completion styles parses the empty space, so as
+soon as I type a space after some characters I am using ~orderless~.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;;; Minibuffer configurations
   (setq completion-styles '(basic substring initials flex orderless)) ; also see `completion-category-overrides'
   (setq completion-category-defaults nil)
+#+end_src
 
+The ~completion-styles~ is the default. Though there are plenty of
+completion categories where we may want a deviation from the rule. To
+this end, we configure the user option ~completion-category-overrides~.
+Notice, for example, how I arrange for ~partial-completion~ to be set
+only for the =file= completion category, as I only ever need it there.
+Also bear in mind what I described above about why ~orderless~ is
+placed last on the list: Emacs uses the completion styles from left to
+right until something matches the given input. So I do not need to
+have ~partial-completion~ first as ~basic~ will never match something
+like =~/.l/s/fo= for =~/.local/share/fonts=.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
   ;; A list of known completion categories:
   ;;
   ;; - `bookmark'
@@ -3205,16 +3298,10 @@ with my customised mode line ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =pr
   ;; - `theme'
   ;; - `unicode-name' (the `insert-char' command bound to `C-x 8 RET')
   ;; - `variable' (the `describe-variable' command bound to `C-h v')
-  ;;
-  ;; From the `consult' package:
-  ;;
   ;; - `consult-grep'
   ;; - `consult-isearch'
   ;; - `consult-kmacro'
   ;; - `consult-location'
-  ;;
-  ;; From the `embark' package:
-  ;;
   ;; - `embark-keybinding'
   ;;
   (setq completion-category-overrides
@@ -3237,12 +3324,20 @@ with my customised mode line ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =pr
           (consult-location (styles . (basic substring orderless)))
           (kill-ring (styles . (emacs22 orderless)))
           (eglot (styles . (emacs22 substring orderless)))))
+#+end_src
 
+*** TODO The =prot-emacs-completion.el= settings to ignore letter casing
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
   (setq completion-ignore-case t)
   (setq read-buffer-completion-ignore-case t)
   (setq read-file-name-completion-ignore-case t)
   (setq-default case-fold-search t)   ; For general regexp
+#+end_src
 
+*** TODO The =prot-emacs-completion.el= settings for recursive minibuffers
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
   (setq enable-recursive-minibuffers t)
   ;; Allow Emacs to resize mini windows, otherwise this does not work:
   ;;   (setq org-use-fast-todo-selection 'expert)
