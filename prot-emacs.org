@@ -2316,7 +2316,6 @@ describe-variable=) to learn about each of these.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; General settings and common custom functions (prot-simple.el)
-  (setq read-minibuffer-restore-windows nil) ; Emacs 28
   (setq blink-matching-paren nil)
   (setq delete-pair-blink-delay 0.1) ; Emacs28 -- see `prot-simple-delete-pair-dwim'
   (setq help-window-select t)
@@ -2544,6 +2543,8 @@ Use the ~bookmark-set~ command (=C-x r m= by default) to record a
 bookmark and then visit one of your bookmarks with ~bookmark-jump~
 (=C-x r b= by default).
 
+Also see [[#h:5685df62-4484-42ad-a062-d55ab19022e3][the =prot-emacs-essentials.el= settings for registers]].
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; Built-in bookmarking framework (bookmark.el)
   (setq bookmark-use-annotations nil)
@@ -2556,6 +2557,30 @@ bookmark and then visit one of your bookmarks with ~bookmark-jump~
   (setq bookmark-save-flag 1)
 
   (add-hook 'bookmark-bmenu-mode-hook #'hl-line-mode)
+#+end_src
+
+*** The =prot-emacs-essentials.el= settings for registers
+:PROPERTIES:
+:CUSTOM_ID: h:5685df62-4484-42ad-a062-d55ab19022e3
+:END:
+
+Much like bookmarks, registers store data that we can reinstate
+quickly ([[#h:581aa0ff-b136-4099-a321-3b86edbfbccb][The =prot-emacs-essentials.el= settings for bookmarks]]). A
+common use-case is to write some text to a register and then insert
+that text by calling the given register. This is much better than
+relying on the ~kill-ring~, because registers are meant to be
+overwritten by the user, whereas the ~kill-ring~ accumulates lots of
+text that we do not necessarily need.
+
+To me, registers are essential for keyboard macros. By default,
+registers do not persist between Emacs sessions, though I do need to
+re-use them from time to time, hence the arrangement to record them
+with ~savehist-mode~ ([[#h:25765797-27a5-431e-8aa4-cc890a6a913a][The =prot-emacs-completion.el= settings for saving the history (~savehist-mode~)]]).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
+;;;; Registers (registers.el)
+(setq register-preview-delay 0.8
+        register-preview-function #'register-preview-default)
 #+end_src
 
 *** The =prot-emacs-essentials.el= settings for auto revert
@@ -3205,6 +3230,9 @@ targeting, I use the ~prot-emacs-configure~ macro
 #+end_src
 
 *** The =prot-emacs-completion.el= settings for completion styles
+:PROPERTIES:
+:CUSTOM_ID: h:14b09958-279e-4069-81e3-5a16c9b69892
+:END:
 
 The ~completion-styles~ are pattern matching algorithms. They
 interpret user input and match candidates accordingly.
@@ -3326,7 +3354,17 @@ like =~/.l/s/fo= for =~/.local/share/fonts=.
           (eglot (styles . (emacs22 substring orderless)))))
 #+end_src
 
-*** TODO The =prot-emacs-completion.el= settings to ignore letter casing
+*** The =prot-emacs-completion.el= settings to ignore letter casing
+:PROPERTIES:
+:CUSTOM_ID: h:7fe1787d-dba3-46fe-82a9-5dc5f8ea6217
+:END:
+
+I never really need to match letters case-sensitively in the
+minibuffer. Let's have everything ignore casing by default.
+
+[ In some Elisp that I write there is a ~let~ binding for
+  ~case-fold-search~ to make the search case-sensitive. Butf those are
+  the exceptions. ]
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
   (setq completion-ignore-case t)
@@ -3335,18 +3373,119 @@ like =~/.l/s/fo= for =~/.local/share/fonts=.
   (setq-default case-fold-search t)   ; For general regexp
 #+end_src
 
-*** TODO The =prot-emacs-completion.el= settings for recursive minibuffers
+*** The =prot-emacs-completion.el= settings for recursive minibuffers
+:PROPERTIES:
+:CUSTOM_ID: h:4299825a-db51-49fe-b415-fb1749eed289
+:END:
+
+"Recursive minibuffers" are of those advanced features that you don't
+need frequently, but when you do, it is an excellent addition to your
+workflow. The concept describes the use of a minibuffer while another
+minibuffer is already open.
+
+The need to have multiple (i.e. "recursive") minibuffers arises when
+you initiate a command, such as =M-x= followed by some incomplete
+command where you remember that you forgot to perform another command
+before confirming the first one. I mostly use this as a combination of
+=M-x= (~execute-extended-command~) and =M-:= (~eval-expression~).
+
+The ~read-minibuffer-restore-windows~ restores the window layout that
+was in place when the minibuffer recursion started. I personally do
+not want that: just leave me where I am.
+
+The ~minibuffer-depth-indicate-mode~ shows a number next to the
+minibuffer prompt, indicating the level of depth in the recursion,
+starting with =2=.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
   (setq enable-recursive-minibuffers t)
-  ;; Allow Emacs to resize mini windows, otherwise this does not work:
-  ;;   (setq org-use-fast-todo-selection 'expert)
-  (setq resize-mini-windows t)
-  (setq minibuffer-eldef-shorten-default t)
+  (setq read-minibuffer-restore-windows nil) ; Emacs 28
+  (minibuffer-depth-indicate-mode 1)
+#+end_src
 
+*** The =prot-emacs-completion.el= settings for default values
+:PROPERTIES:
+:CUSTOM_ID: h:aebbdd4c-6e5b-4773-9f0a-c69f0d3c7158
+:END:
+
+Minibuffer prompts often have a default value. This is used when the
+user types =RET= without inputting anything. The out-of-the-box
+behaviour of Emacs is to append informative text the prompt like
+=(default some-default-value)=. With the tweak to ~minibuffer-default-prompt-format~
+we get a more compact style of =[some-default-value]=, which looks
+better to me.
+
+The ~minibuffer-electric-default-mode~ displays the default value next
+to the prompt only if =RET= will actually use the default in that
+situation. This means that while you start typing in the minibuffer,
+the =[some-default-value]= indicator disappears, since it is no longer
+applicable. Without this mode, the indicator stays there at all times,
+which can be confusing or distracting.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
+  (setq minibuffer-default-prompt-format " [%s]") ; Emacs 29
+  (minibuffer-electric-default-mode 1)
+#+end_src
+
+*** The =prot-emacs-completion.el= settings for common interactions
+:PROPERTIES:
+:CUSTOM_ID: h:b640f032-ad11-413e-ad8f-63408671d500
+:END:
+
+Here I combine several small tweaks to improve the overall minibuffer
+experience.
+
+- The need to ~resize-mini-windows~ arises on some occasions where
+  Emacs has to show text spanning multiple lines in the "mini
+  windows". A common scenario for me is in Org mode buffers where I
+  set the =TODO= keyword of a task with =C-c C-t= (=M-x org-todo=) and
+  have this as my setting: ~(setq org-use-fast-todo-selection 'expert)~
+  Otherwise, this is not an issue anyway and I may also like other
+  options for ~org-use-fast-todo-selection~.
+
+- The ~read-answer-short~ is complementary to ~use-short-answers~.
+  This is about providing the shorter version to some confirmation
+  prompt, such as =y= instead of =yes=.
+
+- The ~echo-keystrokes~ is set to a low value to show in the echo area
+  the incomplete key sequence I have just typed. This is especially
+  helpful for demonstration purposes but also to double check that I
+  did not mistype something (I cannot touch-type, so this happens a lot).
+
+- The ~minibuffer-prompt-properties~ and advice to ~completing-read-multiple~
+  make it so that (i) the minibuffer prompt is not accessible with
+  regular motions to avoid mistakes and (ii) prompts that complete
+  multiple targets show an indicator about this fact. With regard to
+  the latter in particular, we have prompts like that of Org to set
+  tags for a heading (with =C-c C-q= else =M-x org-set-tags-command=)
+  where more than one candidates can be provided using completion,
+  provided each candidate is separated by the ~crm-separator~ (a comma
+  by default, though Org uses =:= in that scenario).
+
+  Remember that when using completion in the minibuffer, you can hit
+  =TAB= to expand the selected choice without exiting with it. For
+  cases when multiple candidates can be selected, you select the
+  candidate, =TAB=, then input the ~crm-separator~, and repeat until
+  you are done selecting at which point you type =RET=.
+
+- Finally the ~file-name-shadow-mode~ is a neat little feature to
+  remove the "shadowed" part of a file prompt while using something
+  like =C-x C-f= (=M-x find-file=). File name shadowing happens when
+  we invoke ~find-file~ and instead of first deleting the contents of
+  the minibuffer, we start typing out the file system path we wish to
+  visit. For example, I am in =~/Git/Projects/= and type directly
+  after it something like =~/.local/share/fonts/=, so Emacs displays
+  =~/Git/Projects/~/.local/share/fonts/= with the original part greyed
+  out. With ~file-name-shadow-mode~ the "shadowed" part is removed
+  altogether. This is especially nice when combined with the
+  completion style called ~partial-completion~
+  ([[#h:14b09958-279e-4069-81e3-5a16c9b69892][The =prot-emacs-completion.el= settings for completion styles]]).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
+  (setq resize-mini-windows t)
   (setq read-answer-short t) ; also check `use-short-answers' for Emacs28
   (setq echo-keystrokes 0.25)
-  (setq kill-ring-max 60)               ; Keep it small
+  (setq kill-ring-max 60) ; Keep it small
 
   ;; Do not allow the cursor to move inside the minibuffer prompt.  I
   ;; got this from the documentation of Daniel Mendler's Vertico
@@ -3374,9 +3513,24 @@ like =~/.l/s/fo= for =~/.local/share/fonts=.
 
   (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
 
-  ;; Settings for the default completion UI.  These do not come into
-  ;; effect unless `prot-emacs-completion-ui' is nil or when not using
-  ;; any package for in-buffer completion.
+  (file-name-shadow-mode 1)
+#+end_src
+
+*** The =prot-emacs-completion.el= generic minibuffer UI settings
+:PROPERTIES:
+:CUSTOM_ID: h:de61a607-0bdf-462b-94cd-c0898319590e
+:END:
+
+These are some settings for the default completion user interface.
+These do not come into effect unless ~prot-emacs-completion-ui~ is set
+to a ~nil~ value or when we are not using any package for in-buffer
+completion (such as the ~corfu~ package).
+
+- [[#h:f012a254-2716-4c29-a64b-c2b3df34f57f][The =init.el= option to load a minibuffer user interface]]
+- [[#h:cff33514-d3ac-4c16-a889-ea39d7346dc5][The =prot-emacs-completion.el= submodule for ~vertico~ (=prot-emacs-vertico.el=)]]
+- [[#h:e9fb09f0-f2e6-4943-83bf-e5fadcfa530a][The =prot-emacs-completion.el= submodule for ~mct~ (=prot-emacs-mct.el=)]]
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
   (setq completion-show-help nil)
   (setq completion-auto-help t)
   (setq completion-auto-select nil)
@@ -3386,19 +3540,78 @@ like =~/.l/s/fo= for =~/.local/share/fonts=.
   (setq completions-header-format
         (propertize "%s candidates:\n" 'face 'font-lock-comment-face))
   (setq completions-highlight-face 'completions-highlight)
+#+end_src
 
-  (file-name-shadow-mode 1)
-  (minibuffer-depth-indicate-mode 1)
-  (minibuffer-electric-default-mode 1)
+*** The =prot-emacs-completion.el= settings for saving the history (~savehist-mode~)
+:PROPERTIES:
+:CUSTOM_ID: h:25765797-27a5-431e-8aa4-cc890a6a913a
+:END:
 
+Minibuffer prompts can have their own history. When they do not, they
+share a common history of user inputs. Emacs keeps track of that
+history in the current session, but loses it as soon as we close it.
+With ~savehist-mode~ enabled, all minibuffer histories are written to
+a file and are restored when we start Emacs again.
+
+Histories are useful in two ways:
+
+1. Recent choices appear at the top, so we can find them more easily.
+2. The =M-p= (~previous-history-element~) and =M-n= (~next-history-element~)
+   commands in the minibuffer while be useful right away upon
+   restoring Emacs (all my packages make good use of minibuffer
+   histories per prompt, so =M-p= and =M-n= only show relevant values).
+
+Since we are already recording minibuffer histories, we can instruct
+~savehist-mode~ to also keep track of additional variables and restore
+them next time we use Emacs. Hence ~savehist-additional-variables~.
+
+Note that the user option ~history-length~ applies to each individual
+history variable: it is not about all histories combined.
+
+Overall, I am happy with this feature and benefit from it on a daily
+basis.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;;; `savehist' (minibuffer and related histories)
   (setq savehist-file (locate-user-emacs-file "savehist"))
-  (setq history-length 500)
+  (setq history-length 100)
   (setq history-delete-duplicates t)
   (setq savehist-save-minibuffer-history t)
   (setq savehist-additional-variables '(register-alist kill-ring))
   (savehist-mode 1)
+#+end_src
 
+*** The =prot-emacs-completion.el= settings for dynamic text expansion (~dabbrev~)
+:PROPERTIES:
+:CUSTOM_ID: h:567bb00f-1d82-4746-93e5-e0f60721728a
+:END:
+
+The built-in ~dabbrev~ package provides a text completion method that
+reads the contents of a buffer and expands the text before the cursor
+to match possible candidates. This is done with =M-/= (~dabbrev-expand~)
+which is what I use most of the time to perform in-buffer completions.
+
+I like ~dabbrev~ because it is minimal. It does not produce any popup
+or affect the window layout and so it is keeping me focused on what I
+am doing. I wish it had a behaviour where we could initiate it and at
+any point demand a fully fledged minibuffer presentation of what it is
+trying to match, instead of cycling through the candidates with
+repeated =M-/=. Granted, I normally do not cycle in that way, as I
+typically type out enough to get an exact match or be one =M-/= away
+from it.
+
+Apart from the ~dabbrev-expand~ command, we have ~dabbrev-completion~.
+I do not use it because it does not feel natural while typing to stop,
+check the minibuffer for some text, select it, and go back to typing.
+Perhaps this is because I have a style of writing without
+interruptions and without going back to immediately edit what I wrote
+(unless I am doing a demonstration, where the viewer needs to follow
+along).
+
+The term "dabbrev" stands for "dynamic abbreviation". Emacs also has
+static, user-defined abbreviations ([[#h:fd84b79a-351e-40f0-b383-bf520d77834b][The =prot-emacs-completion.el= settings for static text expansion (~abbrev~)]]).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;;; `dabbrev' (dynamic word completion (dynamic abbreviations))
   (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
   (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
@@ -3411,7 +3624,52 @@ like =~/.l/s/fo= for =~/.local/share/fonts=.
   (setq dabbrev-upcase-means-case-search t)
   (setq dabbrev-ignored-buffer-modes
         '(archive-mode image-mode docview-mode pdf-view-mode))
+#+end_src
 
+*** The =prot-emacs-completion.el= settings for static text expansion (~abbrev~)
+:PROPERTIES:
+:CUSTOM_ID: h:fd84b79a-351e-40f0-b383-bf520d77834b
+:END:
+
+Unlike "dynamic abbreviations" that depend on the text already
+available in a buffer, we can define abbreviations that always expand
+to what we have specified ([[#h:567bb00f-1d82-4746-93e5-e0f60721728a][The =prot-emacs-completion.el= settings for dynamic text expansion (~dabbrev~)]]).
+
+Abbreviations, else the ~abbrev~ mechanism, are strings of characters
+that when typed out are replaced by another string. For example, if I
+want to type in my website's URL, I insert =meweb= and continue
+typing. Emacs will expand that word into =https://protesilaos.com=.
+
+Unless you are documenting what your abbreviation does or have abbrevs
+that are easy to mistype, you will never need to tell Emacs not to
+expand the given input. Note that the command ~unexpand-abbrev~ is
+there if you need it. I had to use it in the above paragraph to first
+type out the abbrev I used as an example.
+
+Similarly, we can expand an abbrev anywhere with the command
+~expand-abbrev~, though we normally do not have to do this because it
+happens automatically as we type.
+
+Emacs is smart about how we define and use abbrevs. Each major mode
+has its own abbrev table, to which we add our definitions. When we are
+in a buffer that has that major mode, we gain access to the relevant
+abbreviations. A ~global-abbrev-table~ is also available. In case of a
+conflict between a major-mode-specific table and the global one, the
+former takes precedence. Furthermore, abbrev tables conform with the
+same inheritence principle as major modes at-large, meaning that
+something like Org mode will inherit the ~text-mode-abbrev-table~
+because ~org-mode~ is derived from ~text-mode~. Abbrev tables are thus
+consistent with how hooks and keymaps work in terms of precedence and
+inheritence.
+
+As you will notice below, I use the ~prot-emacs-abbrev~ macro to make
+it easier to define these ([[#h:e7a12825-7848-42bd-b99b-b87903012814][The =init.el= macro to define abbreviations (~prot-emacs-abbrev~)]]).
+Most of my abbrevs are simple letter casing tweaks. Though keep in
+mind that the underlying mechanism is powerful and can evaluate
+arbitrary Elisp code (I played around with it, though I don't use
+templates to have a real need for it---but it works).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;;; `abbrev' (Abbreviations, else Abbrevs)
   (setq abbrev-file-name (locate-user-emacs-file "abbrevs"))
   (setq only-global-abbrevs nil)
@@ -3457,19 +3715,41 @@ like =~/.l/s/fo= for =~/.local/share/fonts=.
   ;; By default, abbrev asks for confirmation on whether to use
   ;; `abbrev-file-name' to save abbrevations.  I do not need that, nor
   ;; do I want it.
-  (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save)
+  (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save))
+#+end_src
 
-  (prot-emacs-keybind global-map
-    "M-/" #'dabbrev-expand
-    "C-x M-/" #'dabbrev-completion
-    "C-x a e" #'expand-abbrev ; default, just here for visibility
-    "C-x a u" #'unexpand-abbrev))
+*** The =prot-emacs-completion.el= for the ~orderless~ completion style
+:PROPERTIES:
+:CUSTOM_ID: h:7cc77fd0-8f98-4fc0-80be-48a758fcb6e2
+:END:
 
+The ~orderless~ package by Omar Antolín Camarena provides one of the
+completion styles that I use ([[#h:14b09958-279e-4069-81e3-5a16c9b69892][The =prot-emacs-completion.el= settings for completion styles]]).
+It is a powerful pattern matching algorithm that parses user input and
+interprets it out-of-order, so that =in pa= will cover ~insert-pair~
+as well as ~package-install~. Components of the search are
+space-separated, by default, though we can modify the user option
+~orderless-component-separator~ to have something else (but I cannot
+think of a better value). In the section about completion styles, I
+explain how I use ~orderless~ and why its power does not result in
+lots of false positives.
+
+With ~orderless~ we can also define so-called "style dispatchers".
+These are characters attached to the input which instruct ~orderless~
+to use a specific pattern for that component. My =prot-orderless.el=
+defines such style dispatchers as postfix operators: they are added to
+the end of the input ([[#h:114c6e8c-697a-43e9-8fd9-52872997e1c9][The =prot-orderless.el= library]]). The equals
+sign takes the input literally, the dot interprets it as a file type
+extension, while the tilde means to match the input either at the
+beginning or the end. Granted, these are overkill most of the time. It
+is easier to just continue typing to narrow the list of candidates.
+Still, they do have their uses.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;; Orderless completion style (and prot-orderless.el)
 (prot-emacs-package orderless
   (:install t)
   (:delay 5)
-  (setq orderless-component-separator " +")
   ;; Remember to check my `completion-styles' and the
   ;; `completion-category-overrides'.
   (setq orderless-matching-styles
@@ -3486,16 +3766,39 @@ like =~/.l/s/fo= for =~/.local/share/fonts=.
         '(prot-orderless-literal
           prot-orderless-file-ext
           prot-orderless-beg-or-end)))
+#+end_src
 
+*** The =prot-emacs-completion.el= for in-buffer completion popup (~corfu~)
+:PROPERTIES:
+:CUSTOM_ID: h:804b858f-7913-47ef-aaf4-8eef5b59ecb4
+:END:
+
+I generally do not rely on in-buffer text completion. I feel it slows
+me down and distracts me. When I do, however, need to rely on it, I
+have the ~corfu~ package by Daniel Mendler: it handles the task
+splendidly as it works with Emacs' underlying infrastructure for
+~completion-at-point-functions~.
+
+Completion is triggered with the =TAB= key, which produces a popup
+where the cursor is. The companion ~corfu-popupinfo-mode~ will show a
+secondary documentation popup if we move over a candidate but do not
+do anything with it.
+
+Also see [[#h:567bb00f-1d82-4746-93e5-e0f60721728a][the =prot-emacs-completion.el= settings for dynamic text expansion (~dabbrev~)]].
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;; Corfu (in-buffer completion popup)
 (prot-emacs-package corfu
   (:install t)
   (:delay 5)
+
   (global-corfu-mode 1)
 
   (setq corfu-popupinfo-delay '(1.25 . 0.5))
   (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
 
+  ;; Also have (setq tab-always-indent 'complete) for TAB to complete
+  ;; if it does not have to perform an indentation change.
   (define-key corfu-map (kbd "<tab>") #'corfu-complete)
 
   ;; Sort by input history (no need to modify `corfu-sort-function').
@@ -3512,7 +3815,57 @@ Useful for prompts such as `eval-expression' and `shell-command'."
       (corfu-mode 1)))
 
   (add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1))
+#+end_src
 
+*** The =prot-emacs-completion.el= settings for ~consult~
+:PROPERTIES:
+:CUSTOM_ID: h:22e97b4c-d88d-4deb-9ab3-f80631f9ff1d
+:END:
+
+~consult~ is another wonderful package by Daniel Mendler. It provides
+a number of commands that turbocharge the minibuffer with advanced
+capabilities for filtering, asynchronous input, and previewing of the
+current candidate's context.
+
+- A case where filtering is in use is the ~consult-buffer~ command,
+  which many users have a drop-in replacement to the generic =C-x b=
+  (=M-x switch-to-buffer=). It is a one-stop-shop for buffers,
+  recently visited files (if ~recentf-mode~ is use---I don't),
+  bookmarks ([[#h:581aa0ff-b136-4099-a321-3b86edbfbccb][The =prot-emacs-essentials.el= settings for bookmarks]]),
+  and, in principle, anything else that defines a source for this
+  interface. To filter those source, we can type at the empty
+  minibuffer =b SPC=, which will insert a filter specific to buffers.
+  Delete back to remove the =[Buffer]= filter and insert another
+  filter. Available filters are displayed by typing =?= at the prompt
+  (I define it this way to call the command ~consult-narrow-help~).
+  Every multi-source command from ~consult~ relies on this paradigm.
+
+- Asynchronous input pertains to the intersection between Emacs and
+  external search programs. A case in point is ~consult-grep~, which
+  calls the system's ~grep~ program. The prompt distinguishes between
+  what is sent to the external program and what is only shown to Emacs
+  by wrapping the former inside of =#=. So the input =#prot-#completion=
+  will send =prot-= to the ~grep~ program and then use =completion=
+  inside of the minibuffer to perform the subsequent pattern-matching
+  (e.g. with help from ~orderless~ ([[#h:7cc77fd0-8f98-4fc0-80be-48a758fcb6e2][The =prot-emacs-completion.el= for the ~orderless~ completion style]]).
+  The part that is sent to the external program does not block Emacs.
+  It is handled asynchronously, so everything stays responsive.
+
+- As for previewing, ~consult~ commands show the context of the
+  current match and update the window as we move between completion
+  candidates in the minibuffer. For example, the ~consult-line~
+  command performs an in-buffer search and lets us move between
+  matches in the minibuffer while seeing in the window above what the
+  surrounding text looks like. This is an excellent feature when we
+  are trying to find something and do not quite remember all the
+  search terms to narrow down to it simply by typing at the minibuffer
+  prompt.
+
+The commands I use the most from this package are ~consult-outline~,
+especially in Org buffers, and ~consult-imenu~ in Elisp files. The
+rest have situational uses.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;; Enhanced minibuffer commands (consult.el)
 (prot-emacs-package consult
   (:install t)
@@ -3523,8 +3876,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (setq consult-async-input-debounce 0.5)
   (setq consult-async-input-throttle 0.8)
   (setq consult-narrow-key nil)
-  (setq register-preview-delay 0.8
-        register-preview-function #'consult-register-format)
   (setq consult-find-args
         (concat "find . -not ( "
                 "-path */.git* -prune "
@@ -3558,14 +3909,18 @@ Useful for prompts such as `eval-expression' and `shell-command'."
     (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
     (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
       (add-hook 'consult-after-jump-hook fn))))
+#+end_src
 
+*** TODO The =prot-emacs-completion.el= section about ~embark~
+:PROPERTIES:
+:CUSTOM_ID: h:61863da4-8739-42ae-a30f-6e9d686e1995
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;; Extended minibuffer actions and more (embark.el and prot-embark.el)
 (prot-emacs-package embark
   (:install t)
   (:delay 5)
-  (setq prefix-help-command #'embark-prefix-help-command)
-  ;; (setq prefix-help-command #'describe-prefix-bindings) ; the default of the above
-
   (setq embark-confirm-act-all nil)
   (setq embark-mixed-indicator-both nil)
   (setq embark-mixed-indicator-delay 1.0)
@@ -3580,30 +3935,6 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   ;; binding for `embark-act'.  So I just add some obscure key that I
   ;; do not have.  I absolutely do not want to cycle by accident!
   (setq embark-cycle-key "<XF86Travel>")
-
-  ;; The minimal indicator shows cycling options, but I have no use
-  ;; for those.  I want it to be silent.
-  (defun prot/embark-no-minimal-indicator ())
-  (advice-add #'embark-minimal-indicator :override #'prot/embark-no-minimal-indicator)
-
-  (defun prot/embark-act-no-quit ()
-    "Call `embark-act' but do not quit after the action."
-    (interactive)
-    (let ((embark-quit-after-action nil))
-      (call-interactively #'embark-act)))
-
-  (defun prot/embark-act-quit ()
-    "Call `embark-act' and quit after the action."
-    (interactive)
-    (let ((embark-quit-after-action t))
-      (call-interactively #'embark-act))
-    (when (and (> (minibuffer-depth) 0)
-               (derived-mode-p 'completion-list-mode))
-      (abort-recursive-edit)))
-
-  (dolist (map (list global-map embark-collect-mode-map minibuffer-local-filename-completion-map))
-    (define-key map (kbd "C-,") #'prot/embark-act-no-quit)
-    (define-key map (kbd "C-.") #'prot/embark-act-quit))
 
   ;; I do not want `embark-org' and am not sure what is loading it.
   ;; So I just unsert all the keymaps...
@@ -3638,12 +3969,26 @@ Useful for prompts such as `eval-expression' and `shell-command'."
           (region prot-embark-region-map)
           (symbol prot-embark-symbol-map)
           (url prot-embark-url-map)
-          (variable prot-embark-variable-map))))
+          (variable prot-embark-variable-map)
+          (t embark-general-map)))
+
+  (mapc
+   (lambda (map)
+     (define-key map (kbd "C-,") #'prot-embark-act-no-quit)
+     (define-key map (kbd "C-.") #'prot-embark-act-quit))
+   (list global-map embark-collect-mode-map minibuffer-local-filename-completion-map)))
 
 ;; Needed for correct exporting while using Embark with Consult
 ;; commands.
 (prot-emacs-package embark-consult (:install t) (:delay 5))
+#+end_src
 
+*** TODO The =prot-emacs-completion.el= section to configure completion annotations (~marginalia~)
+:PROPERTIES:
+:CUSTOM_ID: h:bd3f7a1d-a53d-4d3e-860e-25c5b35d8e7e
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;; Detailed completion annotations (marginalia.el)
 (prot-emacs-package marginalia
   (:install t)
@@ -3665,7 +4010,17 @@ Useful for prompts such as `eval-expression' and `shell-command'."
           (imenu marginalia-annotate-imenu)
           (package prot-marginalia-package)
           (unicode-name marginalia-annotate-char))))
+#+end_src
 
+*** TODO The =prot-emacs-completion.el= setting to load a minibuffer UI submodule
+:PROPERTIES:
+:CUSTOM_ID: h:db620e44-fc8f-45b8-a7fd-ae1d0b7ce86c
+:END:
+
+- [[#h:e9fb09f0-f2e6-4943-83bf-e5fadcfa530a][The =prot-emacs-completion.el= submodule for ~mct~ (=prot-emacs-mct.el=)]]
+- [[#h:cff33514-d3ac-4c16-a889-ea39d7346dc5][The =prot-emacs-completion.el= submodule for ~vertico~ (=prot-emacs-vertico.el=)]]
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;; The minibuffer user interface (mct, vertico, or none)
 (when prot-emacs-completion-ui
   (require
@@ -8257,6 +8612,26 @@ minibuffer with something like `exit-minibuffer'."
   "r" #'repunctuate-sentences
   "s" #'sort-lines
   "u" #'untabify)
+
+;; The minimal indicator shows cycling options, but I have no use
+;; for those.  I want it to be silent.
+(defun prot-embark-no-minimal-indicator ())
+(advice-add #'embark-minimal-indicator :override #'prot-embark-no-minimal-indicator)
+
+(defun prot-embark-act-no-quit ()
+  "Call `embark-act' but do not quit after the action."
+  (interactive)
+  (let ((embark-quit-after-action nil))
+    (call-interactively #'embark-act)))
+
+(defun prot-embark-act-quit ()
+  "Call `embark-act' and quit after the action."
+  (interactive)
+  (let ((embark-quit-after-action t))
+    (call-interactively #'embark-act))
+  (when (and (> (minibuffer-depth) 0)
+             (derived-mode-p 'completion-list-mode))
+    (abort-recursive-edit)))
 
 (provide 'prot-embark)
 ;;; prot-embark.el ends here
