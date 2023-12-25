@@ -1,4 +1,4 @@
-;;; Minibuffer and Completions in Tandem
+;;; Minibuffer and Completions in Tandem or Minibuffer Confines Transcended
 ;; Read the manual: <https://protesilaos.com/emacs/mct>.
 (prot-emacs-package mct
   (:install t)
@@ -7,7 +7,7 @@
   (setq mct-hide-completion-mode-line nil)
   ;; The blocklist and passlist accept either commands/functions or
   ;; completion categories.
-  ;; (setq mct-completion-blocklist '(notmuch-mua-new-mail notmuch-mua-prompt-for-sender))
+  (setq mct-completion-blocklist '(notmuch-mua-new-mail notmuch-mua-prompt-for-sender))
   (setq mct-completion-passlist '(consult-buffer consult-location embark-keybinding imenu select-frame-by-name))
   (setq mct-remove-shadowed-file-names t)
   (setq mct-completion-window-size (cons #'mct-frame-height-third 1))
@@ -36,6 +36,8 @@ Add this to `completion-list-mode-hook'."
 
   ;; Specify the sorting function.
   (setq completions-sort #'mct-sort-multi-category)
+
+;;;; MCT-like motions for the generic in-buffer completion
 
   (defun prot/mct-next-line-or-completion (n)
     "Select next completion or move to next line N times.

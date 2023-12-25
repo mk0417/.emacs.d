@@ -41,6 +41,10 @@
         (concat "TODO\\|FIXME\\|NOTE\\|REVIEW\\|XXX\\|KLUDGE"
                 "\\|HACK\\|WARN\\|WARNING\\|DEPRECATED\\|BUG"))
 
+  (with-eval-after-load 'pulsar
+    (add-hook 'prot-search-outline-hook #'pulsar-recenter-center)
+    (add-hook 'prot-search-outline-hook #'pulsar-reveal-entry))
+
   (prot-emacs-keybind global-map
     "M-s M-%" #'prot-search-replace-markup ; see `prot-search-markup-replacements'
     "M-s M-<" #'prot-search-isearch-beginning-of-buffer
@@ -49,6 +53,7 @@
     "M-s u" #'prot-search-occur-urls
     "M-s t" #'prot-search-occur-todo-keywords
     "M-s M-t" #'prot-search-grep-todo-keywords ; With C-u it runs `prot-search-git-grep-todo-keywords'
+    "M-s M-s" #'prot-search-outline
     "M-s M-o" #'prot-search-occur-outline
     "M-s M-u" #'prot-search-occur-browse-url)
   (prot-emacs-keybind isearch-mode-map

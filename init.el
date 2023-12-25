@@ -31,11 +31,17 @@ before all other modules of my setup."
   "Choose minibuffer completion UI between `mct' or `vertico'
 This user option must be set in the `prot-emacs-pre-custom.el'
 file.  If that file exists in the Emacs directory, it is loaded
-before all other modules of my setup.."
+before all other modules of my setup."
   :group 'prot-emacs
   :type '(choice :tag "Minibuffer user interface"
                  (const :tag "The `mct' module" mct)
                  (const :tag "The `vertico' module" vertico)))
+
+(defcustom prot-emacs-completion-extras t
+  "When non-nil load extras for minibuffer completion.
+These include the `consult' and `embark' packages."
+  :group 'prot-emacs
+  :type 'boolean)
 
 (defcustom prot-emacs-load-evil nil
   "When non-nil, load Vim style key bindings as well as `devil-mode'.
