@@ -211,7 +211,7 @@
   (setq display-time-string-forms
         '((propertize
            (format-time-string display-time-format now)
-           'face 'display-time-date-and-time
+           ;; 'face 'display-time-date-and-time
            'help-echo (format-time-string "%a %b %e, %Y" now))
           " "))
 

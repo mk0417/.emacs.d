@@ -38,8 +38,6 @@
 ;;; Python
 (prot-emacs-configure
   (:delay 2)
-  (setq python-shell-interpreter "ipython")
-  (setq python-shell-interpreter-args "-i --simple-prompt")
   (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-guess-indent-offset t)
