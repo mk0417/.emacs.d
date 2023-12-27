@@ -2977,8 +2977,13 @@ prefer nothing to pop up unless it is necessary. To this end, my
 command ~prot/vundo-if-repeat-undo~ produces a visualisation of the
 undo steps only after I repeat the ~undo~ command. The assumption is
 that if I am repeating, I am already interested in something further
-back in history, at which point having a representation of it is very
+back in history, at which point having a representation of it is
 helpful.
+
+To make this feel natural, I bind keys in the ~vundo-mode-map~ that
+are consistent with the defaults for ~undo~ and ~undo-redo~. This way,
+I can keep operating on the buffer without switching contexts. The
+visualisation is a nice extra ([[#h:d3684ec0-a972-4033-a4d6-41ee16e891d9][The =init.el= macro to bind keys (~prot-emacs-keybind~)]]).
 
 I did contribute to the ~vundo~ package a while ago to define the
 ~vundo-after-undo-functions~. This was an abnormal hook that we could
@@ -2996,8 +3001,6 @@ to pulse the region.
   (:delay 30)
   (setq vundo-glyph-alist vundo-unicode-symbols)
 
-  (define-key global-map (kbd "C-?") #'vundo) ; override `undo-redo'
-
   (defun prot/vundo-if-repeat-undo ()
     "Use `vundo' if the last command was an `undo'.
 In other words, start visualising the undo ring if we are going
@@ -3009,12 +3012,37 @@ to be cycling through the edits."
       'undo)))
 
   (define-key global-map (kbd "C-/") #'prot/vundo-if-repeat-undo) ; override `undo'
+  (prot-emacs-keybind vundo-mode-map
+    "C-/" #'vundo-backward
+    "C-?" #'vundo-forward)
 
   (with-eval-after-load 'pulsar
     (add-hook 'vundo-post-exit-hook #'pulsar-pulse-line-green)))
 #+end_src
 
-*** TODO The =prot-emacs-essentials.el= section about ~tmr~ (set timers)
+*** The =prot-emacs-essentials.el= section about ~tmr~ (set timers)
+:PROPERTIES:
+:CUSTOM_ID: h:6dce278e-86c7-4620-9271-d5af5499f0cc
+:END:
+
+This is a package that I wrote and for which I received substantial
+code contributions from Damien Cassou and Daniel Mendler. With ~tmr~
+we set timers using a convenient notation. The point of entry is the
+~tmr~ command (or ~tmr-with-description~ if you want to describe what
+the timer is about).
+
+Set  a timer by specifying one of these:
+
+| Input | Meaning              |
+|-------+----------------------|
+| 5     | 5 Minutes from now   |
+| 5m    | Same as abovre       |
+| 1h    | 1 hour from now      |
+| 06:35 | From now until 06:35 |
+
+To view the running timers in a tabulated list, invoke the command
+~tmr-tabulated-view~. From there, type =C-h m= (or =M-x describe-mode=)
+to learn about all the available commands and their respective key bindings.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;; TMR May Ring (tmr is used to set timers)
@@ -3038,7 +3066,29 @@ to be cycling through the edits."
     "C-c t R" #'tmr-remove-finished))
 #+end_src
 
-*** TODO The =prot-emacs-essentials.el= section about ~password-store~
+*** The =prot-emacs-essentials.el= section about ~password-store~
+:PROPERTIES:
+:CUSTOM_ID: h:aac21cc5-19eb-4a6c-a8ab-01b829df0d64
+:END:
+
+The ~pass~ program (aka =password-store=) is a Unix-style password
+manager. Each password entry is its own encrypted file, stored in a
+local directory (=~/.password-store=, by default). Encryption is done
+with GPG, though I believe Age can also be used. It can generate
+strong passwords and allows us to quickly retrieve the password
+associated with a given file.
+
+The Emacs interface makes it easy to access passowrds with =M-x pass=.
+The resulting buffer shows a tree representation of the =~/.password-store=
+and provides an overview of the available key bindings. From here we
+can write a new entry, generate a password for an existing one, and so
+on.
+
+My most common interaction with it is via the command ~password-store-copy~
+which uses minibuffer completion to match an entry and get the
+password from it. On this note, I have a convention of naming password
+files based on their scope, like =username@website=. This makes it
+easy to retrieve what I need.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;; Pass interface (password-store)
@@ -3053,7 +3103,70 @@ to be cycling through the edits."
 (prot-emacs-package pass (:install t) (:delay 5))
 #+end_src
 
-*** TODO The =prot-emacs-essentials.el= section about ~shell~
+*** The =prot-emacs-essentials.el= section about ~shell~
+:PROPERTIES:
+:CUSTOM_ID: h:7c25e281-d92e-4605-b5d6-18fe1f280a73
+:END:
+
+Before using Emacs, I did not have a clear idea of what the
+distinction between a "shell" and a "terminal" is. But I quickly
+learnt that a terminal ("terminal emulator") is an application that
+provides a text-centric interface and handles all the technicalities
+of presenting text accordingly. Whereas the "shell" (or "command-line
+shell") is the program that runs inside the terminal whose job is to
+interpret the user's input and communicate with the computer.
+Something like ~xterm~ or ~gnome-terminal~ is a terminal. While the
+likes of ~bash~, ~zsh~, and ~fish~ are shells.
+
+In Emacs we can have both. Emacs can run a process that constitutes a
+fully fledged terminal emulator, such as with the ~vterm~ package, or
+it can provide the interface necessary for a mere shell to handle the
+command-line interactivity.
+
+A terminal emulator is only needed if we use programs that require
+Terminal User Interface (TUI) capabilities, such as ~htop~. I do not
+run any of those, in large part because Emacs has better or equally
+capable alternatives like =M-x proced= to do what ~htop~ does in the
+terminal ([[#h:14d40e5a-327e-453e-861c-3ece24351d62][The =prot-emacs-essentials.el= settings for ~proced~]]).
+
+With the TUI out of the way, we can have =M-x shell= run a native Unix
+shell for us. Mine is ~bash~ because I am a simpleton, but also
+because my =prot-shell.el= provides a few niceties that improve the
+user experience ([[#h:32f6fe0f-23c4-44cc-97cc-3e5372bd484e][The =prot-shell.el= library]]).
+
+I run a shell to do tihngs like interface with my system's package
+manager or run a program with some flags. =M-x shell= is more than
+enough for this purppose.
+
+Note that there also exists a shell implemented in Emacs Lisp. It is
+called ~eshell~. Unlike ~shell~, it does not read the =~/.bashrc= and
+is its own little Emacs-only thing with its own command-line syntax.
+In short, it is "okay" in a vacuum but I have no use for it beside
+tinkering with Elisp, while I prefer to have a reliable =~/.bashrc= at
+all times. As such, the ~eshell~ command is on the list of disabled
+commands ([[#h:4ed6593f-6f55-4258-a1c2-ddb50e9e2465][The =init.el= settings to enable certain commands and disable others]]).
+
+My ~prot-shell-mode~ defines a few extra key bindings (per the
+~prot-shell-mode-map~) and also implements a bookmark handler for
+shell buffers ([[#h:581aa0ff-b136-4099-a321-3b86edbfbccb][The =prot-emacs-essentials.el= settings for bookmarks]]).
+The bookmarking functionality is a wonderful extra, as it leverages
+Emacs' TRAMP infrastructure to re-establish the connection to the
+given host. For example, if I do =M-x find-file= and then input
+=/sudo::/usr/share/= to go to =/usr/share/= with =sudo= privileges,
+then I can open a shell there and bookmark it. When I jump back to the
+bookmark, Emacs will automatically handle the =sudo= part while taking
+me to that shell in its directory. Relevant note from my source code:
+
+#+begin_example emacs-lisp
+;; NOTE 2023-08-18: I sent this to the Emacs maintainers as a patch
+;; (bug#65039).  I received approval to proceed with the change, but I
+;; did not do it because a user reported an issue with SSH (TRAMP).  I
+;; do not have access to SSH and am not familiar with such workflows.
+;; If/when that changes, I will try again.  In the meantime, this is
+;; good code and it works for me.
+#+end_example
+
+Now the actual configurations:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;; Shell (M-x shell)
@@ -3117,7 +3230,20 @@ to be cycling through the edits."
   (add-hook 'shell-mode-hook #'prot-shell-mode))
 #+end_src
 
-*** TODO The =prot-emacs-essentials.el= section about the laptop battery
+*** The =prot-emacs-essentials.el= section about the laptop-specific settings
+:PROPERTIES:
+:CUSTOM_ID: h:080aa291-95b4-4d54-8783-d156b13190e9
+:END:
+
+Due to my limited electricity setup, I spend about half my computer
+time on the laptop ([[#h:5668958c-2fc0-4a38-bd1f-3e0c6484977d][What hardware and software do you use?]]). It does
+not add to the load that my solar-powered batteries have to handle and
+I can thus keep the lights on until ~21:00.
+
+When I am working on my laptop, I want to make a few tweaks to the
+default dimensions of Emacs frames ([[#h:0403b581-142b-4613-bc81-51c5dccd831d][The =early-init.el= code to set frame parameters]]).
+I also arrange for the battery indicator to be displayed on the mode
+line.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;; Laptop settings
@@ -3139,7 +3265,16 @@ to be cycling through the edits."
     (display-battery-mode 1)))
 #+end_src
 
-*** TODO The =prot-emacs-essentials.el= section about ~exec-path-from-shell~
+*** The =prot-emacs-essentials.el= section about ~exec-path-from-shell~
+:PROPERTIES:
+:CUSTOM_ID: h:f2447060-5d89-48d5-a682-5cfc76e0928e
+:END:
+
+The ~exec-path-from-shell~ package by Steve Purcell gets environment
+variables from the system shell and makes them available to Emacs. I
+have found that I need this while running on Wayland to properly use
+SSH, but maybe I can do without it if I tweak a few things in
+=~/.config/environment.d=envvars.conf=... I will check.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;; Get environment variables into Emacs (exec-path-from-shell) while on Wayland
@@ -3151,7 +3286,17 @@ to be cycling through the edits."
     (setq exec-path-from-shell-variables
           '("PATH" "MANPATH" "SSH_AUTH_SOCK"))
     (exec-path-from-shell-initialize)))
+#+end_src
 
+*** The =prot-emacs-essentials.el= call to ~provide~
+:PROPERTIES:
+:CUSTOM_ID: h:c8b2f021-fe5a-4f6b-944c-20340f764fb2
+:END:
+
+Finally, we ~provide~ the module. This is the mirror function of
+~require~ ([[#h:e6c4acf5-5b51-4b38-a86a-bf3f698ac872][The init.el final part to load the individual modules]]).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 (provide 'prot-emacs-essentials)
 #+end_src
 
