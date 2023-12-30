@@ -4775,7 +4775,7 @@ whether I use the ~grep~ or ~rg~ (~ripgrep~) program.
     (setq xref-search-program (if rgp 'ripgrep 'grep))))
 #+end_src
 
-*** The =prot-emacs-search.el= setup for editable grep buffers (~wgrep~)
+*** TODO The =prot-emacs-search.el= setup for editable grep buffers (~wgrep~)
 :PROPERTIES:
 :CUSTOM_ID: h:9a3581df-ab18-4266-815e-2edd7f7e4852
 :END:
@@ -4929,7 +4929,7 @@ history ([[#h:25765797-27a5-431e-8aa4-cc890a6a913a][The =prot-emacs-completion.e
   (setq dired-dwim-target t)
 #+end_src
 
-*** TODO The =prot-emacs-dired.el= settings to open files externally
+*** The =prot-emacs-dired.el= settings to open files externally
 :PROPERTIES:
 :CUSTOM_ID: h:d7d5e619-3d50-4d9e-a951-7262462a60c9
 :END:
@@ -4942,7 +4942,22 @@ the name of the command. Emacs already tries to guess some relevant
 defaults, though we can make it do what we want by configuring the
 ~dired-guess-shell-alist-user~ user option.
 
-This variable takes an alist value...
+This variable takes an alist value: a list of lists. Each element
+(each list) has the first item in the list as a regular expression to
+match file names. We normally want to have file type extensions here,
+though we can also target the full name of a file. The remaining
+entries in the list are strings that specify the name of the external
+program to use. We can have as many as we want and cycle between them
+using the familiar =M-p= and =M-n= keys inside the minibuffer (which
+call the commands ~previous-history-element~ and ~next-history-element~,
+respectively).
+
+On Linux, the generic "open with default app" call is ~xdg-open~, so
+we always want that as a fallback.
+
+Note that Emacs 30 (current development target as of this writing on
+2023-12-30 16:12 +0200), we have the command ~dired-do-open~, which is
+the equivalent of typing =&= and then specifying the ~xdg-open~ command.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
   (setq dired-guess-shell-alist-user ; those are the suggestions for ! and & in Dired
@@ -4951,10 +4966,20 @@ This variable takes an alist value...
           (".*" "xdg-open")))
 #+end_src
 
-*** TODO The =prot-emacs-dired.el= miscellaneous tweaks
+*** The =prot-emacs-dired.el= miscellaneous tweaks
 :PROPERTIES:
 :CUSTOM_ID: h:6327e6ba-a468-416f-ad26-b530c32fe235
 :END:
+
+These are some minor tweaks that I do not really care about. The only
+one which is really nice in my opinion is the hook that involves the
+~dired-hide-details-mode~. This is the command that hides the noisy
+output of the ~ls~ =-l= flag, leaving only the file names in the list
+([[#h:679e4460-b306-450f-aa20-497243057e02][The =prot-emacs-dired.el= switches for ~ls~ (how files are listed)]]).
+We can toggle this effect at any time with the =(= key, by default.
+
+I disable the repetition of the =j= key as I do use ~repeat-mode~
+([[#h:fbe6f9da-25ee-46a3-bb03-8fa7c1d48dab][The =prot-emacs-essentials.el= settings for ~repeat-mode~]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
   (setq dired-auto-revert-buffer #'dired-directory-changed-p) ; also see `dired-do-revert-buffer'
@@ -4971,10 +4996,25 @@ This variable takes an alist value...
   (define-key dired-jump-map (kbd "j") nil))
 #+end_src
 
-*** TODO The =prot-emacs-dired.el= section about various conveniences
+*** The =prot-emacs-dired.el= section about various conveniences
 :PROPERTIES:
 :CUSTOM_ID: h:6758bf16-e47e-452e-b39d-9d67c2b9aa4b
 :END:
+
+The =dired-aux.el= and =dired-x.el= are two built-in libraries that
+provide useful extras for Dired. The highlights from what I have here
+are:
+
+- the user option ~dired-create-destination-dirs~ and
+  ~dired-create-destination-dirs-on-trailing-dirsep~, which offer to
+  create the specified directory path if it is missing.
+
+- the user options ~dired-clean-up-buffers-too~ and
+  ~dired-clean-confirm-killing-deleted-buffers~ which cover the
+  deletion of buffers related to files that we delete from Dired.
+
+- the key binding for ~dired-do-open~, which opens the file or
+  directory externally ([[#h:d7d5e619-3d50-4d9e-a951-7262462a60c9][The =prot-emacs-dired.el= settings to open files externally]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 (prot-emacs-package dired-aux
@@ -5010,12 +5050,32 @@ This variable takes an alist value...
   (define-key dired-mode-map (kbd "I") #'dired-info))
 #+end_src
 
-*** TODO The =prot-emacs-dired.el= section about my extras (=prot-dired.el=)
+*** The =prot-emacs-dired.el= section about my extras (=prot-dired.el=)
 :PROPERTIES:
 :CUSTOM_ID: h:933b156a-3be2-4025-96e9-e14687c8dcf1
 :END:
 
-([[#h:92cfefcf-8c20-43cd-b47c-ffe0c5fe1887][The =prot-dired.el= library]])
+Dired is excellent out-of-the-box. What I provide are a few minor
+commands that make it more convenient for me to perform common
+actions ([[#h:92cfefcf-8c20-43cd-b47c-ffe0c5fe1887][The =prot-dired.el= library]]). Chief among them is the
+~prot-dired-limit-regexp~ (bound to =C-c C-l=), which is an easier way
+to do this in standard Dired:
+
+- Type =% m= (~dired-mark-files-regexp~) to mark files you want to
+  keep seeing. Provide a regular expression or simply a common word.
+- Toggle the mark so that you now cover everything you do not want to
+  see.
+- Invoke ~dired-do-kill-lines~ (bound to =k= by default) to remove the
+  marked files from the view until the buffer is generated again (with
+  =g= by default (~revert-buffer~)).
+
+All this is fine, but with ~prot-dired-limit-regexp~ I simply provide
+the regexp I want to see.
+
+The other commands have situational uses. For example, the
+~prot-dired-grep-marked-files~ is something I have only used a few
+times where ~prot-search-grep~ would produce too many results in a
+given directory ([[#h:b902e6a3-cdd2-420f-bc99-3d973c37cd20][The =prot-emacs-search.el= extras provided by the =prot-search.el= library]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 (prot-emacs-package prot-dired
@@ -5033,10 +5093,19 @@ This variable takes an alist value...
     "M-s G" #'prot-dired-grep-marked-files)) ; M-s g is `prot-search-grep'
 #+end_src
 
-*** TODO The =prot-emacs-dired.el= section about ~dired-subtree~
+*** The =prot-emacs-dired.el= section about ~dired-subtree~
 :PROPERTIES:
 :CUSTOM_ID: h:3a4a29bc-3491-4d01-9d64-1cef63b3116a
 :END:
+
+The ~dired-subtree~ package by Matúš Goljer provides the convenience
+of quickly revealing the contents of the directory at point. We do not
+have to insert its contents below the current listing, as we would
+normally do in Dired, nor do we have to open it in another buffer just
+to check if we need to go further.
+
+I do not use this feature frequently, though I appreciate it when I do
+need it.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 (prot-emacs-package dired-subtree
@@ -5048,10 +5117,16 @@ This variable takes an alist value...
     "<backtab>" #'dired-subtree-remove)) ; S-TAB
 #+end_src
 
-*** TODO The =prot-emacs-dired.el= section about ~wdired~ (writable Dired)
+*** The =prot-emacs-dired.el= section about ~wdired~ (writable Dired)
 :PROPERTIES:
 :CUSTOM_ID: h:1b53bc10-8b1b-4f68-bbec-165909761e43
 :END:
+
+As noted in the introduction, Dired can be made writable
+([[#h:f8b08a77-f3a8-42fa-b1a9-f940348889c3][The =prot-emacs-dired.el= module]]). This way, we can quickly rename
+multiple files using Emacs' panoply of editing capabilities. Both of
+the variables I configure here have situational usage. I cannot
+remember the last time I benefited from them.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 (prot-emacs-package wdired
