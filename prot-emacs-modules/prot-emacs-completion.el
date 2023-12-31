@@ -80,8 +80,7 @@
   ;; Do not allow the cursor to move inside the minibuffer prompt.  I
   ;; got this from the documentation of Daniel Mendler's Vertico
   ;; package: <https://github.com/minad/vertico>.
-  (setq minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (setq completions-header-format (propertize "%s candidates:\n" 'face 'font-lock-comment-face))
 
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 

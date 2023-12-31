@@ -526,7 +526,7 @@ directory as the init.el."
   :group 'file)
 #+end_src
 
-*** The =init.el= option to load a theme family
+*** The =init.el= user option to load a theme family
 :PROPERTIES:
 :CUSTOM_ID: h:5612b5b8-45a5-4a79-a25b-6fa3d9146c39
 :END:
@@ -577,7 +577,7 @@ before all other modules of my setup."
                  (const :tag "Do not load a theme module" nil)))
 #+end_src
 
-*** The =init.el= option to load a minibuffer user interface
+*** The =init.el= user option to load a minibuffer user interface
 :PROPERTIES:
 :CUSTOM_ID: h:f012a254-2716-4c29-a64b-c2b3df34f57f
 :END:
@@ -647,7 +647,7 @@ that adds functionality on top of what the major mode provides."
   :type 'boolean)
 #+end_src
 
-*** The =init.el= option to load Vim keys (=evil.el= and =devil.el=)
+*** The =init.el= user option to load Vim keys (=evil.el= and =devil.el=)
 :PROPERTIES:
 :CUSTOM_ID: h:d32718d6-c678-483e-8cdf-02d77053c960
 :END:
@@ -674,7 +674,7 @@ before all other modules of my setup."
   :type 'boolean)
 #+end_src
 
-*** The =init.el= option to enable ~which-key~
+*** The =init.el= user option to enable ~which-key~
 :PROPERTIES:
 :CUSTOM_ID: h:24324854-1f8c-4d8b-aa7c-291de968cbf4
 :END:
@@ -701,7 +701,7 @@ before all other modules of my setup."
   :type 'boolean)
 #+end_src
 
-*** The =init.el= option to load icons (=nerd-icons.el=)
+*** The =init.el= user option to load icons (=nerd-icons.el=)
 :PROPERTIES:
 :CUSTOM_ID: h:a75444e3-527e-4525-84f8-0a43771966a6
 :END:
@@ -729,7 +729,7 @@ before all other modules of my setup."
   :type 'boolean)
 #+end_src
 
-*** The =init.el= option to omit packages at startup
+*** The =init.el= user option to omit packages at startup
 :PROPERTIES:
 :CUSTOM_ID: h:1547dde9-6a79-4f58-8160-3ece9d1b8b8b
 :END:
@@ -1874,6 +1874,8 @@ are called. The pulse effect is added there (~pulsar-after-function-hook~).
   ;; There are convenience functions/commands which pulse the line using
   ;; a specific colour: `pulsar-pulse-line-red' is one of them.
   (add-hook 'next-error-hook #'pulsar-pulse-line-red)
+  (add-hook 'next-error-hook #'pulsar-recenter-top)
+  (add-hook 'next-error-hook #'pulsar-reveal-entry)
 
   (add-hook 'minibuffer-setup-hook #'pulsar-pulse-line-red)
 
@@ -3751,8 +3753,7 @@ completion (such as the ~corfu~ package).
   (setq completions-detailed t)
   (setq completion-show-inline-help nil)
   (setq completions-max-height 6)
-  (setq completions-header-format
-        (propertize "%s candidates:\n" 'face 'font-lock-comment-face))
+  (setq completions-header-format (propertize "%s candidates:\n" 'face 'font-lock-comment-face))
   (setq completions-highlight-face 'completions-highlight)
 #+end_src
 
@@ -4286,7 +4287,7 @@ function as close to ~mct~ as possible.
 (provide 'prot-emacs-completion)
 #+end_src
 
-*** The =prot-emacs-completion.el= submodule for ~mct~ (=prot-emacs-mct.el=)
+**** The =prot-emacs-completion.el= submodule for ~mct~ (=prot-emacs-mct.el=)
 :PROPERTIES:
 :CUSTOM_ID: h:e9fb09f0-f2e6-4943-83bf-e5fadcfa530a
 :END:
@@ -4339,7 +4340,7 @@ pop up the minibuffer eagerly ([[#h:cff33514-d3ac-4c16-a889-ea39d7346dc5][The =p
 #+end_src
 
 
-*** The =prot-emacs-completion.el= submodule for ~vertico~ (=prot-emacs-vertico.el=)
+**** The =prot-emacs-completion.el= submodule for ~vertico~ (=prot-emacs-vertico.el=)
 :PROPERTIES:
 :CUSTOM_ID: h:cff33514-d3ac-4c16-a889-ea39d7346dc5
 :END:
@@ -4775,10 +4776,21 @@ whether I use the ~grep~ or ~rg~ (~ripgrep~) program.
     (setq xref-search-program (if rgp 'ripgrep 'grep))))
 #+end_src
 
-*** TODO The =prot-emacs-search.el= setup for editable grep buffers (~wgrep~)
+*** The =prot-emacs-search.el= setup for editable grep buffers (~wgrep~)
 :PROPERTIES:
 :CUSTOM_ID: h:9a3581df-ab18-4266-815e-2edd7f7e4852
 :END:
+
+The ~wgrep~ package by Masahiro Hayashi lets us make ~grep~ buffers
+editable ([[#h:ceb286c5-a5f7-4cc8-b883-89d20a75ea02][The =prot-emacs-search.el= tweaks to ~xref~, ~re-builder~ and ~grep~]]).
+I use this in tandem with my ~prot-search-grep~ command.
+
+The idea of an editable buffer is neat, because we can employ all the
+text-editing capabilities of Emacs to quickly produce a large number
+of replacements across many files. We have the same concept with occur
+(=M-x occur=) as well as with Dired buffers ([[#h:1b53bc10-8b1b-4f68-bbec-165909761e43][The =prot-emacs-dired.el= section about ~wdired~ (writable Dired)]]).
+The key bindings I define for the ~wgrep~ actions are consistent with
+those we find in the other "editable/writable buffer" interfaces.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-search.el"
 ;;; wgrep (writable grep)
@@ -5124,9 +5136,13 @@ need it.
 
 As noted in the introduction, Dired can be made writable
 ([[#h:f8b08a77-f3a8-42fa-b1a9-f940348889c3][The =prot-emacs-dired.el= module]]). This way, we can quickly rename
-multiple files using Emacs' panoply of editing capabilities. Both of
-the variables I configure here have situational usage. I cannot
-remember the last time I benefited from them.
+multiple files using Emacs' panoply of editing capabilities.
+
+Both of the variables I configure here have situational usage. I
+cannot remember the last time I benefited from them.
+
+Note that we have a variant of ~wdired~ for ~grep~ buffers
+([[#h:9a3581df-ab18-4266-815e-2edd7f7e4852][The =prot-emacs-search.el= setup for editable grep buffers (~wgrep~)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 (prot-emacs-package wdired
@@ -5135,10 +5151,19 @@ remember the last time I benefited from them.
   (setq wdired-create-parent-directories t))
 #+end_src
 
-*** TODO The =prot-emacs-dired.el= section about ~image-dired~
+*** The =prot-emacs-dired.el= section about ~image-dired~
 :PROPERTIES:
 :CUSTOM_ID: h:198cdda8-fc3f-4672-8fd6-dfc795cea9e0
 :END:
+
+The built-in ~image-dired~ feature is one of those tools that I like
+when I use, but never remember exactly how to use because of how
+infrequent my need for it is. The gist is that we put thumbnails in a
+buffer and can browse through them in a file listing. It is okay,
+though if I really have to rely on image previewing, I might just open
+the graphical file manager. It is not a sin to use something outside
+of Emacs and, anyway, I don't think Emacs' editing capabilities are of
+any relevance when we are just previewing a picture.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 (prot-emacs-package image-dired
@@ -5153,26 +5178,21 @@ remember the last time I benefited from them.
               (kbd "<return>") #'image-dired-thumbnail-display-external))
 #+end_src
 
-*** TODO The =prot-emacs-dired.el= section about =trashed.el=
-:PROPERTIES:
-:CUSTOM_ID: h:2e005bd1-d098-426d-91f9-2a31a6e55caa
-:END:
-
-#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
-;;; dired-like mode for the trash (trashed.el)
-(prot-emacs-package trashed
-  (:install t)
-  (:delay 60)
-  (setq trashed-action-confirmer 'y-or-n-p)
-  (setq trashed-use-header-line t)
-  (setq trashed-sort-key '("Date deleted" . t))
-  (setq trashed-date-format "%Y-%m-%d %H:%M:%S"))
-#+end_src
-
-*** TODO The =prot-emacs-dired.el= section about ~dired-preview~
+*** The =prot-emacs-dired.el= section about ~dired-preview~
 :PROPERTIES:
 :CUSTOM_ID: h:c345ff72-d905-482a-a885-fc111252aacf
 :END:
+
+The ~dired-preview~ is a package of mine that, unfortunately, I have
+not had the time to develop beyond the original release: it coincided
+with my relocation to the hut and I still am busy doing all sorts of
+work here. Once I get the opportunity, I will resume development of
+this package.
+
+At any rate, ~dired-preview~ previews the file at point in an Emacs
+window. The goal is to make this work for large files, so that we
+never experience any lag. I will expand this section once I feel we
+are where we need to be.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 ;;; Automatically preview Dired file at point (dired-preview.el)
@@ -5195,10 +5215,40 @@ remember the last time I benefited from them.
                 (dired-preview-mode 1)))))
 #+end_src
 
-*** TODO The =prot-emacs-dired.el= section about ~mandoura~ (~mpv~ media player)
+*** The =prot-emacs-dired.el= section about =trashed.el=
+:PROPERTIES:
+:CUSTOM_ID: h:2e005bd1-d098-426d-91f9-2a31a6e55caa
+:END:
+
+The ~trashed~ package by Shingo Tanaka provides a Dired-like interface
+to the system's virtual trash directory. The few times I need to
+restore a file, I do =M-x dired=, then type =r= to mark the file to be
+restored (=M-x trashed-flag-restore=), and then type =x= (=M-x trashed-do-execute=)
+to apply the effect.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
+;;; dired-like mode for the trash (trashed.el)
+(prot-emacs-package trashed
+  (:install t)
+  (:delay 60)
+  (setq trashed-action-confirmer 'y-or-n-p)
+  (setq trashed-use-header-line t)
+  (setq trashed-sort-key '("Date deleted" . t))
+  (setq trashed-date-format "%Y-%m-%d %H:%M:%S"))
+#+end_src
+
+*** The =prot-emacs-dired.el= section about ~mandoura~ (~mpv~ media player)
 :PROPERTIES:
 :CUSTOM_ID: h:bdea93a8-f420-400c-ac3a-9663cb10dbd2
 :END:
+
+The ~mandoura~ package is an experiment of mine to use Dired as a
+starting point to play back some media files (or directory containing
+such files) using the ~mpv~ program. I use it daily and it works fine
+for just playback, but I do need/want to develop it further as it
+really is nothing but a prototype right now. You will thus notice that
+the ~prot-emacs-package~ is actually installing the file from source
+([[#h:1457099d-fb05-4e38-9f8f-cfa4cc46b98e][The =init.el= macro to install and configure packages (~prot-emacs-package~)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 ;;; Play back media with Dired (mandoura.el)
@@ -5763,6 +5813,11 @@ As always, we ~provide~ the module. This is the mirror function of
 ;;; General Git/Project/Diff configurations
 (prot-emacs-configure
   (:delay 2)
+#+end_src
+
+[ Watch: [[https://protesilaos.com/codelog/2023-11-17-emacs-ediff-basics/][Emacs: ediff basics]] (2023-12-30) ]
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;;; `ediff'
   (setq ediff-keep-variants nil)
   (setq ediff-make-buffers-readonly-at-startup nil)
@@ -5770,7 +5825,9 @@ As always, we ~provide~ the module. This is the mirror function of
   (setq ediff-show-clashes-only t)
   (setq ediff-split-window-function 'split-window-horizontally)
   (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;;; `project'
   (setopt project-switch-commands
           '((project-find-file "Find file")
@@ -5836,7 +5893,9 @@ Based on `project--keymap-prompt' and meant to be used as an
     "C-x p C-g" #'keyboard-quit
     "C-x p <return>" #'project-dired
     "C-x p <delete>" #'project-forget-project)
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;;; `diff-mode'
   (setq diff-default-read-only t)
   (setq diff-advance-after-apply-hunk t)
@@ -5845,7 +5904,9 @@ Based on `project--keymap-prompt' and meant to be used as an
   (setq diff-refine nil) ; I do it on demand, with my `agitate' package (more below)
   (setq diff-font-lock-prettify t) ; I think nil is better for patches, but let me try this for a while
   (setq diff-font-lock-syntax 'hunk-also))
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;; Version control framework (vc.el, vc-git.el, and more)
 (prot-emacs-package vc
   (:delay 2)
@@ -5939,7 +6000,9 @@ Based on `project--keymap-prompt' and meant to be used as an
     "f" #'vc-log-incoming
     "F" #'vc-update
     "P" #'vc-push))
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;; Agitate
 ;; A package of mine to complement VC and friends.  Read the manual
 ;; here: <https://protesilaos.com/emacs/agitate>.
@@ -5979,7 +6042,9 @@ Based on `project--keymap-prompt' and meant to be used as an
     ;; `agitate-log-edit-conventional-commits-collection'.
     "C-c C-i C-e" #'agitate-log-edit-emoji-commit
     "C-c C-i C-c" #'agitate-log-edit-conventional-commit))
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;; Interactive and powerful git front-end (Magit)
 
 ;; There is no need to install the package, as transient.el is built
