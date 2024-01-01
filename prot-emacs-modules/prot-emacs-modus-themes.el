@@ -25,7 +25,7 @@
   (setq modus-themes-common-palette-overrides
         `((bg-hl-line bg-dim)
           (bg-line-number-active bg-hl-line)
-          (bg-line-number-inactive unspecified)
+          ;; (bg-line-number-inactive unspecified)
           ;; (fg-completion-match-0 green-cooler)
           ;; (fg-completion-match-1 red-cooler)
           ;; (fg-completion-match-2 yellow-cooler)

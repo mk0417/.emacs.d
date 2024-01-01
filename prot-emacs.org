@@ -2133,7 +2133,7 @@ Bruno Boal is the lead developer and I am a co-maintainer.
   (setq theme-buffet--end-user
         '( :night     (modus-vivendi ef-dark ef-winter ef-autumn ef-night ef-duo-dark ef-symbiosis)
            :morning   (modus-operandi ef-light ef-cyprus ef-spring ef-frost ef-duo-light)
-           :afternoon (modus-operandi-tinted ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light)
+           :afternoon (modus-operandi-tinted ef-arbutus ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light)
            :evening   (modus-vivendi-tinted ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark)))
 
   (theme-buffet-timer-hours 1))
@@ -2641,6 +2641,25 @@ reflect the new file contents.
   (global-auto-revert-mode 1)
 #+end_src
 
+*** The =prot-emacs-essentials.el= settings for auto saving files (~auto-save-visited-mode~)
+:PROPERTIES:
+:CUSTOM_ID: h:4a8caede-80b0-4195-8b5d-7f60ab64a3d4
+:END:
+
+When this mode is enabled, file-visiting buffers are automatically
+saved to their files after ~auto-save-visited-interval~ of idleness.
+This is in contrast to the ~auto-save-mode~, which automatically saves such
+buffers to a separate file, leaving the original file intact. We can
+then recover the auto-saved alternative file, if we want, but I prefer
+to just write directly to disk.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
+;;;; Auto save buffers visiting files
+  (setq auto-save-visited-interval 2)
+  (setq remote-file-name-inhibit-auto-save-visited t)
+  (auto-save-visited-mode 1)
+#+end_src
+
 *** The =prot-emacs-essentials.el= section for ~delete-selection-mode~
 :PROPERTIES:
 :CUSTOM_ID: h:d551b90d-d730-4eb5-976a-24b010fd4db3
@@ -2902,6 +2921,25 @@ the point. Better check the video I did on the matter:
     "M-# r" #'substitute-target-above-point ; Backward motion like isearch (C-r)
     "M-# d" #'substitute-target-in-defun    ; "defun" mnemonic
     "M-# b" #'substitute-target-in-buffer)) ; "buffer" mnemonic
+#+end_src
+
+*** The =prot-emacs-essentials.el= section about ~goto-chg~ (go to change)
+:PROPERTIES:
+:CUSTOM_ID: h:1cbb0a14-a2d4-49d1-88e9-688115445810
+:END:
+
+The ~goto-chg~ package, authored by David Andersson and maintained by
+Vasilij Schneidermann, moves the cursor to the point where the last
+change happened. Calling the command again cycles to the point before
+that and so on. Simple and super effective.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
+(prot-emacs-package goto-chg
+  (:install t)
+  (:delay 1)
+  (prot-emacs-keybind global-map
+    "C-(" #'goto-last-change
+    "C-)" #'goto-last-change-reverse))
 #+end_src
 
 *** The =prot-emacs-essentials.el= section about ~expreg~ (tree-sitter mark syntactically)
@@ -3265,29 +3303,6 @@ line.
 	        "⏻%b%p%% ")))
 
     (display-battery-mode 1)))
-#+end_src
-
-*** The =prot-emacs-essentials.el= section about ~exec-path-from-shell~
-:PROPERTIES:
-:CUSTOM_ID: h:f2447060-5d89-48d5-a682-5cfc76e0928e
-:END:
-
-The ~exec-path-from-shell~ package by Steve Purcell gets environment
-variables from the system shell and makes them available to Emacs. I
-have found that I need this while running on Wayland to properly use
-SSH, but maybe I can do without it if I tweak a few things in
-=~/.config/environment.d=envvars.conf=... I will check.
-
-#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
-;;; Get environment variables into Emacs (exec-path-from-shell) while on Wayland
-(when-let ((session (getenv "XDG_SESSION_TYPE"))
-           ((equal session "wayland")))
-  (prot-emacs-package exec-path-from-shell
-    (:install t)
-    (:delay 1)
-    (setq exec-path-from-shell-variables
-          '("PATH" "MANPATH" "SSH_AUTH_SOCK"))
-    (exec-path-from-shell-initialize)))
 #+end_src
 
 *** The =prot-emacs-essentials.el= call to ~provide~
@@ -4007,6 +4022,7 @@ Also see [[#h:567bb00f-1d82-4746-93e5-e0f60721728a][the =prot-emacs-completion.e
 (prot-emacs-package corfu
   (:install t)
   (:delay 5)
+  (setq corfu-min-width 20)
 
   (global-corfu-mode 1)
 
@@ -6083,6 +6099,12 @@ Based on `project--keymap-prompt' and meant to be used as an
 :CUSTOM_ID: h:d799c3c0-bd6a-40bb-bd1a-ba4ea5367840
 :END:
 
+Watch:
+
+- [[https://protesilaos.com/codelog/2023-05-23-emacs-org-basics/][Basics of Org mode]] (2023-05-23)
+- [[https://protesilaos.com/codelog/2021-12-09-emacs-org-block-agenda/][Demo of my custom Org block agenda]] (2021-12-09)
+- [[https://protesilaos.com/codelog/2020-02-04-emacs-org-capture-intro/][Primer on "org-capture"]] (2020-02-04)
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el" :mkdirp yes
 (prot-emacs-configure
   (:delay 5)
@@ -6104,7 +6126,9 @@ Based on `project--keymap-prompt' and meant to be used as an
   ;; (require 'cal-dst)
   (setq calendar-standard-time-zone-name "+0200")
   (setq calendar-daylight-time-zone-name "+0300")
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;; Appt (appointment reminders which also integrate with Org agenda)
   (setq appt-display-diary nil
         appt-display-format nil
@@ -6116,7 +6140,9 @@ Based on `project--keymap-prompt' and meant to be used as an
 
   (with-eval-after-load 'org-agenda
     (appt-activate 1))
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;; Org-mode (personal information manager)
   ;; NOTE 2023-05-20: Must be evaluated before Org is loaded,
   ;; otherwise we have to use the Custom UI.  No thanks!
@@ -6525,7 +6551,9 @@ Based on `project--keymap-prompt' and meant to be used as an
     "b" #'org-narrow-to-block
     "e" #'org-narrow-to-element
     "s" #'org-narrow-to-subtree)
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;; Custom extensions (prot-org.el)
   (require 'prot-org)
   (setq org-agenda-format-date #'prot-org-agenda-format-date-aligned)
@@ -7844,7 +7872,7 @@ I personally do not use this, except when I need to do a demonstration.
 (provide 'prot-emacs-which-key)
 #+end_src
 
-** The =prot-emacs-icons.el= module
+** The =prot-emacs-icons.el= module (~nerd-icons~ for various packages)
 :PROPERTIES:
 :CUSTOM_ID: h:4efde779-3ef0-40b7-82e4-70f71b321428
 :END:
@@ -7866,6 +7894,11 @@ information, which some people may find helpful.
   (:delay 5)
   (nerd-icons-completion-marginalia-setup)
   (nerd-icons-completion-mode 1))
+
+(prot-emacs-package nerd-icons-corfu
+  (:install t)
+  (:delay 5)
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (prot-emacs-package nerd-icons-dired
   (:install t)
