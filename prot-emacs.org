@@ -2478,7 +2478,7 @@ earlier ([[#h:713ede33-3802-40c6-a8e3-7e1fc0d0a924][The =prot-emacs-essentials.e
     ;; Commands for paragraphs
     "M-Q" #'prot-simple-unfill-region-or-paragraph
     ;; Commands for windows and pages
-    "C-x O" #'prot-simple-other-windor-or-frame
+    "C-x O" #'next-multiframe-window
     "C-x n k" #'prot-simple-delete-page-delimiters
     "C-x M-r" #'prot-simple-swap-window-buffers
     ;; Commands for buffers
@@ -4240,8 +4240,8 @@ pants. A second, unforeseen benefit is that it makes commands and
 listings that I would never use available in a frictionless way:
 commands like ~transpose-regions~ and ~apply-macro-to-region-lines~,
 or custom ~dired~, ~ibuffer~ and ~package-menu~ listings that are
-interactively inaccessible otherwise4. The ability to quickly whip up
-such buffers makes knowhing how to use dired or ibuffer pay off
+interactively inaccessible otherwise. The ability to quickly whip up
+such buffers makes knowing how to use dired or ibuffer pay off
 several fold. In composing such features seamlessly with minibuffer
 interaction or with text-regions, Embark acts as a lever to amplify
 the power of Emacs’ myriad built in commands and libraries.
@@ -4806,6 +4806,21 @@ For isearch, I have:
 
 For variants of ~occur~ or ~grep~, which also benefit from the rules I have on
 where windows/buffers are displayed ([[#h:50f8b1e4-b14e-453f-a37e-1c0e495ab80f][The =prot-emacs-window.el= rules for displaying buffers (~display-buffer-alist~)]]):
+
+- Type =M-s M-s= (~prot-search-outline~) to use minibuffer completion
+  to match an entry across the buffer's outline. This is probably my
+  most used command. What I like about it is that it benefits from the
+  extensive customisations I make to the completion mechanism and the
+  minibuffer user interface ([[#h:15edf2c3-4419-4101-928a-6e224958a741][The =prot-emacs-completion.el= module]]).
+  Concretely, I can benefit from the visualisation produced by the
+  ~vertico~ or ~mct~ packages and match the heading with an
+  out-of-order pattern using ~orderless~. Simple and super effective!
+  Note that the ~consult~ package provides the ~consult-outline~
+  command, which was the basis for my variant. Unlike mine, it shows a
+  preview of the current match. I find previews disorienting when I
+  type quickly and do not want to experience any motion sickness while
+  using Emacs (this is not the fault of ~consult~, just me needing to
+  have a more static interface).
 
 - Type =M-s M-o= (~prot-search-occur-outline~) to produce an outline
   of the given buffer. What constitutes an outline is defined in the
@@ -5786,6 +5801,8 @@ the mouse for such a case.
 :CUSTOM_ID: h:77e4f174-0c86-460d-8a54-47545f922ae9
 :END:
 
+[ Also see: [[#h:7dcbcadf-8af6-487d-b864-e4ce56d69530][The =prot-emacs-git.el= section about =project.el=]]. ]
+
 My ~beframe~ package enables a frame-oriented Emacs workflow where
 each frame has access to the list of buffers visited therein. In the
 interest of brevity, we call buffers that belong to frames "beframed".
@@ -5936,10 +5953,22 @@ As always, we ~provide~ the module. This is the mirror function of
 (provide 'prot-emacs-window)
 #+end_src
 
-** TODO The =prot-emacs-git.el= module
+** The =prot-emacs-git.el= module
 :PROPERTIES:
 :CUSTOM_ID: h:65e3eff5-0bff-4e1f-b6c5-0d3aa1a0d232
 :END:
+
+Emacs can handle several version control programs, though I only ever
+use ~git~. Version control is essential to any public-facing
+programming project: the history of changes is stored persistently, so
+the developer can retrace when a given snippet of code was introduced
+or modified. Plus, it is integral to collaboration, which is what free
+software (such as Emacs and all its packages) is all about.
+
+This section covers my settings for version control per se, but more
+widely for tools related to checking different versions of files and
+working with so-called "projects". Given that I am loading several
+built-in tools, I use my ~prot-emacs-configure~ macro ([[#h:54a4cb92-e7f8-4291-abe6-6e7dfdfd6200][The =init.el= macro to evaluate arbitrary Elisp (~prot-emacs-configure~)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el" :mkdirp yes
 ;;; General Git/Project/Diff configurations
@@ -5947,7 +5976,29 @@ As always, we ~provide~ the module. This is the mirror function of
   (:delay 2)
 #+end_src
 
+*** The =prot-emacs-git.el= section about ediff
+:PROPERTIES:
+:CUSTOM_ID: h:89edea05-4d94-4ea1-b2a8-5ad01422618c
+:END:
+
 [ Watch: [[https://protesilaos.com/codelog/2023-11-17-emacs-ediff-basics/][Emacs: ediff basics]] (2023-12-30) ]
+
+The built-in ~ediff~ feature provides several commands that let us
+compare files or buffers side-by-side. The default of ~ediff~ are bad,
+in my opinion: it put buffers one on top of the other and places the
+"control panel" in a separate Emacs frame. The first time I tried to
+use it, I thought I broke my setup because it is unlike anything we
+normally interact with. As such, the settings I have for
+~ediff-split-window-function~ and ~ediff-window-setup-function~ are
+what I would expect Emacs maintainers to adopt as the new default. I
+strongly encourage everyone to start with them.
+
+In my workflow, the points of entry to the ~ediff~ feature are the
+commands ~ediff-files~, ~ediff-buffers~. Sometimes I use the 3-way
+variants with ~ediff-files3~ and ~ediff-buffers3~, though this is rare.
+Do watch the video I link to in the beginning of this section, as it
+covers the main functionality of this neat tool. I also show how it
+integrates with ~magit~ [[#h:b08af527-9ebf-4425-ac3a-24b4f371a4fd][The =prot-emacs-git.el= section about ~magit~ (great Git client)]]). 
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;;; `ediff'
@@ -5958,6 +6009,50 @@ As always, we ~provide~ the module. This is the mirror function of
   (setq ediff-split-window-function 'split-window-horizontally)
   (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 #+end_src
+
+*** The =prot-emacs-git.el= section about =project.el=
+:PROPERTIES:
+:CUSTOM_ID: h:7dcbcadf-8af6-487d-b864-e4ce56d69530
+:END:
+
+In Emacs parlance, a "project" is a collection of files and/or
+directories that share the same root. The root of a project is
+identified by a special file or directory, with =.git/= being one of
+the defaults as it is a version control system supported by the
+built-in =vc.el= ([[#h:50add1d8-f0f4-49be-9e57-ab280a4aa300][The =prot-emacs-git.el= section about =vc.el= and related]]).
+
+We can specify more project roots as a list of strings in the user
+option ~project-vc-extra-root-markers~. I work exclusively with Git
+repositories, so I just add there a =.project= file in case I ever
+need to register a project without it being controlled by ~git~. In
+that case, the =.project= file is just an empty file in a directory
+that I want to treat as the root of this project.
+
+The common way to switch to a project is to type =C-x p p=, which
+calls the command ~project-switch-project~. It lists all registered
+projects and also includes a =... (choose a dir)= option. By choosing
+a new directory, we register it in our project list if it has a
+recognisable root. Once we select a project, we are presented with a
+list of common actions to start working on the project. These are
+defined in the user option ~project-switch-commands~ and are activated
+by the final key that accesses them from the =C-x p= prefix. As such,
+do =M-x describe-keymap= and check the ~project-prefix-map~. For
+example, I bind ~project-dired~ to =C-x p RET=, so =RET= accesses this
+command after =C-x p p= as well.
+
+While inside a project, we have many commands that operate on the
+project level. For example, =C-x p f= (~project-find-file~) searches
+for a file across the project, while =C-x p b= (~project-switch-to-buffer~)
+switches to a buffer that is specific to the project. Again, check the
+~project-prefix-map~ for available commands.
+
+If not inside a project, the project-related commands will first
+prompt to select a project (same as typing =C-x p p=) and then carry
+out their action.
+
+I combine projects with my ~beframe~ package, so that when I switch to
+a project I get a new frame that limits the buffers I visit there
+limited to that frame ([[#h:77e4f174-0c86-460d-8a54-47545f922ae9][The =prot-emacs-window.el= section about ~beframe~]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;;; `project'
@@ -5979,7 +6074,7 @@ As always, we ~provide~ the module. This is the mirror function of
 MODE must be the symbol of the major mode, without a quote.  FILE
 is a string."
     (let ((project-find-fn (intern (format "project-find-%s-root" mode)))
-          (major-mode-fn (intern (format "bb-%s-project-find-function" mode)))
+          (major-mode-fn (intern (format "prot-%s-project-find-function" mode)))
           (file-symbol (intern file)))
       `(progn
          (defun ,project-find-fn (dir)
@@ -5989,7 +6084,7 @@ is a string."
          (cl-defmethod project-root ((project (head ,file-symbol)))
            (cdr project))
 
-         (defun ,(intern (format "bb-%s-project-find-function" mode)) ()
+         (defun ,(intern (format "prot-%s-project-find-function" mode)) ()
            (add-hook 'project-find-functions #',project-find-fn :depth :local))
 
          (add-hook ',(intern (format "%s-hook" mode)) #',major-mode-fn))))
@@ -6027,6 +6122,42 @@ Based on `project--keymap-prompt' and meant to be used as an
     "C-x p <delete>" #'project-forget-project)
 #+end_src
 
+*** The =prot-emacs-git.el= section about ~diff-mode~
+:PROPERTIES:
+:CUSTOM_ID: h:8b426a69-e3cd-42ac-8788-f41f6629f879
+:END:
+
+This built-in mode is an easy and effective way to interact with
+diffs. A "diff" is a Unix tradition of showing line-wise differences
+in a file. If you, say, edit a line to replace =this= with =that=, the
+diff output will show the original line prefixed with a minus sign and
+the new line prefixed with a plus sign.
+
+Individual words can also be highlighted. This word-wise operation is
+known as "refining" the diff. In my setup, this is handled by the
+~agitate~ package, which provides convenience functions for various
+version control operations. The command is ~agitate-diff-refine-cycle~,
+bound to =C-c C-b= inside of diff buffers.
+
+With ~diff-mode~, we can also apply the "diff hunk" at point, if we
+have the corresponding files. The diff hunk is the section of the diff
+that pertains to a given region in the file and is delimited by a
+heading that enumerates the affected range, like =@@ -6125,7 +6125,9 @@=.
+Type =C-c C-a= (~diff-apply-hunk~).
+
+The ~diff-mode~ buffers specify the ~outline-regexp~, meaning that
+they can be used with the built-in ~outline-minor-mode~ to, for
+example, fold the invidual diff hunks and move between them ([[#h:ffff5f7b-a62b-4d4a-ae29-af75402e5c35][The =prot-emacs-langs.el= settings for ~outline-minor-mode~]]).
+Personally, I combine this feature with my ~prot-search-outline~
+command to quickly jump to an outline heading use minibuffer
+completion ([[#h:b902e6a3-cdd2-420f-bc99-3d973c37cd20][The =prot-emacs-search.el= extras provided by the =prot-search.el= library]]).
+
+Outside of Emacs, I have settings for ~git~ which produce more
+informative diff hunk headings in Elisp and Org buffers. I wrote about
+it here: <https://protesilaos.com/codelog/2021-01-26-git-diff-hunk-elisp-org/>.
+The configurations are part of my dotfiles (linked to at the opening
+section of this file).
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;;; `diff-mode'
   (setq diff-default-read-only t)
@@ -6037,6 +6168,11 @@ Based on `project--keymap-prompt' and meant to be used as an
   (setq diff-font-lock-prettify t) ; I think nil is better for patches, but let me try this for a while
   (setq diff-font-lock-syntax 'hunk-also))
 #+end_src
+
+*** TODO The =prot-emacs-git.el= section about =vc.el= and related
+:PROPERTIES:
+:CUSTOM_ID: h:50add1d8-f0f4-49be-9e57-ab280a4aa300
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;; Version control framework (vc.el, vc-git.el, and more)
@@ -6134,6 +6270,11 @@ Based on `project--keymap-prompt' and meant to be used as an
     "P" #'vc-push))
 #+end_src
 
+*** TODO The =prot-emacs-git.el= section about ~agitate~
+:PROPERTIES:
+:CUSTOM_ID: h:257b9118-4407-410e-a56a-134fd5d1a3b4
+:END:
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;; Agitate
 ;; A package of mine to complement VC and friends.  Read the manual
@@ -6175,6 +6316,11 @@ Based on `project--keymap-prompt' and meant to be used as an
     "C-c C-i C-e" #'agitate-log-edit-emoji-commit
     "C-c C-i C-c" #'agitate-log-edit-conventional-commit))
 #+end_src
+
+*** TODO The =prot-emacs-git.el= section about ~magit~ (great Git client)
+:PROPERTIES:
+:CUSTOM_ID: h:b08af527-9ebf-4425-ac3a-24b4f371a4fd
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;; Interactive and powerful git front-end (Magit)
@@ -6726,21 +6872,73 @@ Watch:
 (provide 'prot-emacs-org)
 #+end_src
 
-** TODO The =prot-emacs-langs.el= module
+** The =prot-emacs-langs.el= module
 :PROPERTIES:
 :CUSTOM_ID: h:f44afb76-a1d7-4591-934d-b698cc79a792
 :END:
+
+This module encompasses a wide range of packages and built-in
+configurations that relate to "language" in the wider sense. Settings
+here include basic patterns of interaction, such as what the =TAB= key
+does, to spell checking, code linting, and writing.
+
+The opening part covers built-in functionality, so I use my
+~prot-emacs-configure~ macro to handle this case ([[#h:54a4cb92-e7f8-4291-abe6-6e7dfdfd6200][The =init.el= macro to evaluate arbitrary Elisp (~prot-emacs-configure~)]])
+as opposed to ~prot-emacs-package~ ([[#h:1457099d-fb05-4e38-9f8f-cfa4cc46b98e][The =init.el= macro to install and configure packages (~prot-emacs-package~)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el" :mkdirp yes
 ;;; General language/editing settings
 (prot-emacs-configure
   (:delay 2)
-;;;; Tabs, indentation, and the TAB key
-  (setq-default tab-always-indent 'complete
-                tab-first-completion 'word-or-paren-or-punct ; Emacs 27
-                tab-width 4
-                indent-tabs-mode nil)
+#+end_src
 
+*** The =prot-emacs-langs.el= settings for TAB
+:PROPERTIES:
+:CUSTOM_ID: h:559713c8-0e1e-44aa-bca8-0caae01cc8bb
+:END:
+
+When I first switched to Emacs, I found the behaviour of the =TAB= key
+confusing. I was used to it inserting tabs or, at least, spaces.
+Whereas in Emacs, =TAB= tries to be smarter, depending on the major
+mode, as it tries to indent the current line to where it should be
+given the context. This works best when we mark a region of text and
+hit =TAB= there.
+
+If we need to forcefully indent, we can use =C-x C-i= (~indent-rigidly~).
+This command allows us to shift the region left or right using the
+arrow keys. A common use-case for me is to paste some text I want to
+indent, and then do =C-u C-x C-i=, which indents by four spaces the
+implicit region. I have explained this in my video about mark and register basics:
+<https://protesilaos.com/codelog/2023-06-28-emacs-mark-register-basics/>.
+
+To the settings I have here, the ~tab-always-indent~ makes the =TAB=
+key assume the dual role of indenting text as well as triggering
+completion at point ([[#h:804b858f-7913-47ef-aaf4-8eef5b59ecb4][The =prot-emacs-completion.el= for in-buffer completion popup (~corfu~)]]).
+When it can perform indentation, it does that, otherwise it starts a
+completion loop. The ~tab-first-completion~ determines when not to
+complete. Read its doc string for the technicalities.
+
+Finally, the ~tab-width~ and ~indent-tabs-mode~ are about the use of
+tabs. I never want them, as I only use spaces. Notice the ~setq-default~
+here: we need this form when the buffer's value automatically becomes
+buffer-local. This is very important, otherwise we will be setting the
+value only in the Emacs init file, which contradicts our intent. There
+are a few cases where ~setq-default~ is needed, so keep this in mind.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el" :mkdirp yes
+;;;; Tabs, indentation, and the TAB key
+  (setq tab-always-indent 'complete)
+  (setq tab-first-completion 'word-or-paren-or-punct) ; Emacs 27
+  (setq-default tab-width 4
+                indent-tabs-mode nil)
+#+end_src
+
+*** TODO The =prot-emacs-langs.el= settings for "electric" behaviour
+:PROPERTIES:
+:CUSTOM_ID: h:ebbc4e05-3654-4fc4-9948-d29dffeb6356
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Disable "electric" behaviour
   (electric-pair-mode -1)
   (electric-quote-mode -1)
@@ -6749,18 +6947,28 @@ Watch:
   (electric-indent-mode -1)
   (add-hook 'prog-mode-hook #'electric-indent-local-mode)
 
+#+end_src
+
+*** TODO The =prot-emacs-langs.el= settings ~show-paren-mode~
+:PROPERTIES:
+:CUSTOM_ID: h:7cd21ea6-c5d8-4258-999d-ad94cac2d8bf
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Parentheses (show-paren-mode)
   (setq show-paren-style 'parenthesis)
   (setq show-paren-when-point-in-periphery nil)
   (setq show-paren-when-point-inside-paren nil)
   (setq show-paren-context-when-offscreen 'overlay) ; Emacs 29
   (add-hook 'after-init-hook #'show-paren-mode)
+#+end_src
 
-;;;; Emacs Lisp (emacs-lisp-mode)
-  (prot-emacs-keybind emacs-lisp-mode-map
-    "C-x e" #'edebug-defun ; override `kmacro-end-and-call-macro'
-    "C-x E" #'edebug-remove-instrumentation)
+*** TODO The =prot-emacs-langs.el= settings for plain text
+:PROPERTIES:
+:CUSTOM_ID: h:c5fbd6dd-2982-4fca-aeed-d0e750d399bd
+:END:
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Plain text (text-mode)
   (setq sentence-end-double-space nil)
 
@@ -6779,32 +6987,74 @@ Meant to be added to `prog-mode-hook'."
   (add-hook 'text-mode-hook #'turn-on-auto-fill)
 
   (add-to-list 'auto-mode-alist '("\\(README\\|CHANGELOG\\|COPYING\\|LICENSE\\)\\'" . text-mode))
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for common file types
+:PROPERTIES:
+:CUSTOM_ID: h:1a132701-9487-4af0-8759-a8d64d02bf1f
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Arch Linux and AUR package scripts (sh-mode)
   (add-to-list 'auto-mode-alist '("PKGBUILD" . sh-mode))
 
 ;;;; SystemD and other configuration files (conf-mode)
   (add-to-list 'auto-mode-alist '("\\.\\(service\\|timer\\)\\'" . conf-mode))
   (add-to-list 'auto-mode-alist '("dircolors" . conf-mode))
+#+end_src
 
-;;;; Eldoc (elisp live documentation feedback)
+*** TODO The =prot-emacs-langs.el= settings for ~eldoc~
+:PROPERTIES:
+:CUSTOM_ID: h:a5773a39-a78f-43fa-8feb-669492c1d5a9
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
+;;;; Eldoc (Emacs live documentation feedback)
   (setq eldoc-message-function #'message) ; don't use mode line for M-x eval-expression, etc.
   (global-eldoc-mode 1)
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for ~eglot~
+:PROPERTIES:
+:CUSTOM_ID: h:92258aa8-0d8c-4c12-91b4-5f44420435ce
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Eglot (built-in client for the language server protocol)
   (setq eglot-sync-connect nil)
   (setq eglot-autoshutdown t)
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for very long lines
+:PROPERTIES:
+:CUSTOM_ID: h:20948a81-858d-4b21-b221-3b24833f5ad8
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Handle performance for very long lines (so-long.el)
   (global-so-long-mode 1))
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for ~markdown-mode~
+:PROPERTIES:
+:CUSTOM_ID: h:c9063898-07ae-4635-8853-bb5f4bbab421
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; Markdown (markdown-mode)
 (prot-emacs-package markdown-mode
   (:install t)
   (:delay 5)
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
   (setq markdown-fontify-code-blocks-natively t))
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for ~sxhkdrc-mode~
+:PROPERTIES:
+:CUSTOM_ID: h:88e36f15-4c74-4b7c-9ba6-cf5fb112ffd9
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; SXHKDRC mode (one of my many packages)
 (prot-emacs-package sxhkdrc-mode
   (:install t)
@@ -6813,7 +7063,14 @@ Meant to be added to `prog-mode-hook'."
   ;; relevant entries as well.  I separate my keys into different
   ;; modules and load only what I need.
   (add-to-list 'auto-mode-alist '("sxhkdrc_.*" . sxhkdrc-mode)))
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for spell checking
+:PROPERTIES:
+:CUSTOM_ID: h:115806c4-88b0-43c1-8db2-d9d8d20a5c17
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;; FIXME 2023-08-28: The laptop I use now that I do not have
 ;; electricity/Internet at home does not build the Jinx C module.  I
 ;; am not sure what is happening.  Commenting out for the time being,
@@ -6874,7 +7131,14 @@ Meant to be added to `prog-mode-hook'."
   (prot-emacs-keybind global-map
     "M-$" #'prot-spell-spell-dwim
     "C-M-$" #'prot-spell-change-dictionary))
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for code linting (~flymake~)
+:PROPERTIES:
+:CUSTOM_ID: h:df6d1b52-0306-4ace-9099-17dded11fbed
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; Flymake
 (prot-emacs-package flymake
   (:delay 30)
@@ -6926,7 +7190,14 @@ Meant to be added to `prog-mode-hook'."
   (:install t)
   (:delay 30)
   (add-hook 'flymake-diagnostic-functions #'package-lint-flymake))
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for ~outline-minor-mode~
+:PROPERTIES:
+:CUSTOM_ID: h:ffff5f7b-a62b-4d4a-ae29-af75402e5c35
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; General configurations for prose/writing
 (prot-emacs-configure
 ;;;; `outline' (`outline-mode' and `outline-minor-mode')
@@ -6936,21 +7207,28 @@ Meant to be added to `prog-mode-hook'."
   (setq outline-minor-mode-use-buttons nil) ; emacs29---bless you for the nil option!
   (setq outline-minor-mode-use-margins nil) ; as above
   (define-key global-map (kbd "<f10>") #'outline-minor-mode)
+#+end_src
 
-;;;; `docview' (simple PDF viewer)
-  ;; The "mupdf" is a reference to the Arch Linux system packages
-  ;; `mupdf', `mupdf-tools', `libmupdf'.
-  (setq doc-view-pdf->png-converter-function #'doc-view-pdf->png-converter-mupdf)
-  (setq doc-view-mupdf-use-svg (image-type-available-p 'svg)) ; Emacs 30
-  (setq doc-view-resolution 300) ; (doc-view-clear-cache)
+*** TODO The =prot-emacs-langs.el= settings for ~dictionary~
+:PROPERTIES:
+:CUSTOM_ID: h:f91563d8-f176-4555-b45b-ece56de03279
+:END:
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; `dictionary'
   (setq dictionary-server "dict.org"
         dictionary-default-popup-strategy "lev" ; read doc string
         dictionary-create-buttons nil
         dictionary-use-single-buffer t)
   (define-key global-map (kbd "C-c d") #'dictionary-search))
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for ~altcaps~ (alternating letter casing)
+:PROPERTIES:
+:CUSTOM_ID: h:2a2728a9-e392-4fbe-bf2a-83e883387857
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; aLtCaPs
 ;; Read the manual: <https://protesilaos.com/emacs/altcaps>.
 (prot-emacs-package altcaps
@@ -6964,7 +7242,14 @@ Meant to be added to `prog-mode-hook'."
   ;; The available commands: `altcaps-word', `altcaps-region',
   ;; `altcaps-dwim'.
   (define-key global-map (kbd "C-x C-a") #'altcaps-dwim))
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for ~denote~ (notes and file-naming)
+:PROPERTIES:
+:CUSTOM_ID: h:e86a66dc-7ef9-4f09-ad7e-946de2034e8d
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; Denote (simple note-taking and file-naming)
 ;; Read the manual: <https://protesilaos.com/emacs/denote>.
 (prot-emacs-package denote
@@ -7084,7 +7369,14 @@ Meant to be added to `prog-mode-hook'."
                    :immediate-finish nil
                    :kill-buffer t
                    :jump-to-captured t))))
+#+end_src
 
+*** TODO The =prot-emacs-langs.el= settings for ~logos~ (writing extras and file navigation)
+:PROPERTIES:
+:CUSTOM_ID: h:137c67f1-b112-42b7-aec9-c44ef4a6241a
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; Custom extensions for "focus mode" (logos.el)
 ;; Read the manual: <https://protesilaos.com/emacs/logos>.
 (prot-emacs-package olivetti
@@ -7093,7 +7385,9 @@ Meant to be added to `prog-mode-hook'."
   (setq olivetti-body-width 0.7)
   (setq olivetti-minimum-body-width 80)
   (setq olivetti-recall-visual-line-mode-entry-state t))
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 (prot-emacs-package logos
   (:install t)
   (:delay 10)
@@ -7136,7 +7430,9 @@ Meant to be added to `prog-mode-hook'."
       (recenter 1))) ; Use 0 for the absolute top
 
   (add-hook 'logos-page-motion-hook #'prot/logos--recenter-top))
+#+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 (provide 'prot-emacs-langs)
 #+end_src
 
@@ -14166,14 +14462,6 @@ Name the buffer after the defun's symbol."
   (narrow-to-defun))
 
 ;;;; Commands for buffers
-
-;;;###autoload
-(defun prot-simple-other-windor-or-frame ()
-  "Switch to other window or frame.
-If there is only one window, call `other-frame'.  Otherwise use
-`other-window'."
-  (interactive)
-  (call-interactively (if (one-window-p) #'other-frame #'other-window)))
 
 ;;;###autoload
 (defun prot-simple-kill-buffer (buffer)
