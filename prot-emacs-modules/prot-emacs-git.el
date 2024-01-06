@@ -219,11 +219,6 @@ Based on `project--keymap-prompt' and meant to be used as an
     "C-c C-i C-e" #'agitate-log-edit-emoji-commit
     "C-c C-i C-c" #'agitate-log-edit-conventional-commit))
 
-;;; Interactive and powerful git front-end (Magit)
-
-;; There is no need to install the package, as transient.el is built
-;; into Emacs.  By requiring it, I prevent the installation of the
-;; package, which would be done by Magit.
 (prot-emacs-package transient (:delay 2))
 
 (provide 'prot-emacs-git)
