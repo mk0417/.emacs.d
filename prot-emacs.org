@@ -55,7 +55,7 @@ Emacs.
     + GitLab: <https://gitlab.com/protesilaos/dotfiles>
 + Mailing list: <https://lists.sr.ht/~protesilaos/dotfiles>
 + Video demo: <https://protesilaos.com/codelog/2023-12-18-emacs-org-advanced-literate-conf/>
-+ Backronym: Do Observe, Transpose, Examine, or Mirror All
++ Backronyms: Do Observe, Transpose, Examine, or Mirror All
   Configurations, Stranger (dotemacs); Dotfiles Operate Transparently
   For the Included Linux and Emacs Setups (dotfiles).
 
@@ -1647,7 +1647,6 @@ designed by me).
 ;;   (load-theme 'ef-autumn t t)
 ;;   (load-theme 'ef-bio t t)
 ;;   (load-theme 'ef-cherie t t)
-;;   (load-theme 'ef-chloe-dark t t)
 ;;   (load-theme 'ef-cyprus t t)
 ;;   (load-theme 'ef-dark t t)
 ;;   (load-theme 'ef-day t t)
@@ -1661,6 +1660,7 @@ designed by me).
 ;;   (load-theme 'ef-melissa-dark t t)
 ;;   (load-theme 'ef-melissa-light t t)
 ;;   (load-theme 'ef-night t t)
+;;   (load-theme 'ef-rosa t t)
 ;;   (load-theme 'ef-spring t t)
 ;;   (load-theme 'ef-summer t t)
 ;;   (load-theme 'ef-symbiosis t t)
@@ -2134,7 +2134,7 @@ Bruno Boal is the lead developer and I am a co-maintainer.
         '( :night     (modus-vivendi ef-dark ef-winter ef-autumn ef-night ef-duo-dark ef-symbiosis)
            :morning   (modus-operandi ef-light ef-cyprus ef-spring ef-frost ef-duo-light)
            :afternoon (modus-operandi-tinted ef-arbutus ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light)
-           :evening   (modus-vivendi-tinted ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark)))
+           :evening   (modus-vivendi-tinted ef-rosa ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark)))
 
   (theme-buffet-timer-hours 1))
 #+end_src
@@ -6510,7 +6510,7 @@ all we need to select targets with ease ([[#h:15edf2c3-4419-4101-928a-6e224958a7
 
 The only downside of this wonderful package is that it is slow on
 Windows (based on what others have told me and showed me)... In those
-cases, a combination of =vc= and the command-line will suffice 
+cases, a combination of =vc= and the command-line will suffice
 ([[#h:50add1d8-f0f4-49be-9e57-ab280a4aa300][The =prot-emacs-git.el= section about =vc.el= and related]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
@@ -6561,7 +6561,7 @@ Finally, we ~provide~ the module. This is the mirror function of
 
 Watch:
 
-- [[https://protesilaos.com/codelog/2023-12-18-emacs-org-advanced-literate-conf/][Advanced literate configuration with Org]] (2023-12-18) 
+- [[https://protesilaos.com/codelog/2023-12-18-emacs-org-advanced-literate-conf/][Advanced literate configuration with Org]] (2023-12-18)
 - [[https://protesilaos.com/codelog/2023-05-23-emacs-org-basics/][Basics of Org mode]] (2023-05-23)
 - [[https://protesilaos.com/codelog/2021-12-09-emacs-org-block-agenda/][Demo of my custom Org block agenda]] (2021-12-09)
 - [[https://protesilaos.com/codelog/2020-02-04-emacs-org-capture-intro/][Primer on "org-capture"]] (2020-02-04)
@@ -6668,6 +6668,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= section with basic Org settings
+:PROPERTIES:
+:CUSTOM_ID: h:e03df1e0-b43e-49b5-978e-6a511165617c
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;; Org-mode (personal information manager)
@@ -6709,6 +6712,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= Org to-do and refile settings
+:PROPERTIES:
+:CUSTOM_ID: h:024dd541-0061-4a10-b10b-b17dcd4794b9
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; refile, todo
@@ -6750,6 +6756,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= Org heading tags
+:PROPERTIES:
+:CUSTOM_ID: h:81de4e32-a1af-4e1f-9e10-90eb0c90afa2
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; tags
@@ -6774,6 +6783,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= Org time/state logging
+:PROPERTIES:
+:CUSTOM_ID: h:0884658e-9eb5-47e3-9338-66e09004a1a0
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; log
@@ -6785,6 +6797,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= Org link settings
+:PROPERTIES:
+:CUSTOM_ID: h:da8ce883-7f21-4a6e-a41f-d668ad762b41
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; links
@@ -6793,6 +6808,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= Org capture templates
+:PROPERTIES:
+:CUSTOM_ID: h:f8f06938-0dfe-45c3-b4cf-996d36cba82d
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; capture
@@ -6867,6 +6885,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= Org agenda settings
+:PROPERTIES:
+:CUSTOM_ID: h:7fe87b83-2815-4617-a5f9-d3417dd9d248
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; agenda
@@ -7048,6 +7069,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= Org code block settings
+:PROPERTIES:
+:CUSTOM_ID: h:1f5a0d46-5202-48dd-8048-b48ce17f3df8
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; code blocks
@@ -7061,6 +7085,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= Org export settings
+:PROPERTIES:
+:CUSTOM_ID: h:bd11d4d8-6e9f-4536-87a4-4018783bf8f5
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; export
@@ -7075,6 +7102,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= Org ID settings
+:PROPERTIES:
+:CUSTOM_ID: h:ffb2ebcf-9f41-4ec0-892c-2e5789ebb437
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; IDs
@@ -7082,6 +7112,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= section about Org hooks and key bindings
+:PROPERTIES:
+:CUSTOM_ID: h:36d53809-2594-4b67-b6e5-19dde7d37644
+:END:
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
 ;;;; Hooks and key bindings
@@ -7120,6 +7153,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** TODO The =prot-emacs-org.el= custom Org extensions (=prot-org.el=)
+:PROPERTIES:
+:CUSTOM_ID: h:62055c1b-5356-4639-9c52-b6b77b41ad9f
+:END:
 
 [ Watch: [[https://protesilaos.com/codelog/2021-12-09-emacs-org-block-agenda/][Demo of my custom Org block agenda]] (2021-12-09). It has
   changed a bit since then, but the idea is the same. ]
@@ -7182,6 +7218,9 @@ Org is far more capable, though I switched to it completely.
 #+end_src
 
 *** The =prot-emacs-org.el= call to ~provide~
+:PROPERTIES:
+:CUSTOM_ID: h:62eb7ca3-2f79-45a6-a018-38238b486e98
+:END:
 
 Finally, we ~provide~ the module. This is the mirror function of
 ~require~ ([[#h:e6c4acf5-5b51-4b38-a86a-bf3f698ac872][The init.el final part to load the individual modules]]).
@@ -7251,10 +7290,23 @@ are a few cases where ~setq-default~ is needed, so keep this in mind.
                 indent-tabs-mode nil)
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for "electric" behaviour
+*** The =prot-emacs-langs.el= settings for "electric" behaviour
 :PROPERTIES:
 :CUSTOM_ID: h:ebbc4e05-3654-4fc4-9948-d29dffeb6356
 :END:
+
+Emacs describes as "electric" any behaviour that tries to be smart
+about how to handle a given action. The ~electric-pair-mode~, for
+example, automatically inserts a closing parenthesis when the user
+inputs an opening parenthesis. Same idea with quotes, performed by the
+~electric-quote-mode~. While the ~electric-indent-mode~ tries to be
+smart about how to indent a line, which is fine for programming
+purposes but makes a mess of things in Org and related because you
+have to delete back to the beginning of a line if you want to "escape"
+from the indentation of a list or something.
+
+If I need to manually wrap the symbol at point or a region in a pair
+of characters, I use my ~prot-pair-insert~ command ([[#h:a7edbb23-2daa-4d8f-bcdd-8c26829d7bb7][The =prot-emacs-essentials.el= section with key bindings]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Disable "electric" behaviour
@@ -7264,13 +7316,19 @@ are a few cases where ~setq-default~ is needed, so keep this in mind.
   ;; programming.
   (electric-indent-mode -1)
   (add-hook 'prog-mode-hook #'electric-indent-local-mode)
-
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings ~show-paren-mode~
+*** The =prot-emacs-langs.el= settings ~show-paren-mode~
 :PROPERTIES:
 :CUSTOM_ID: h:7cd21ea6-c5d8-4258-999d-ad94cac2d8bf
 :END:
+
+The built-in ~show-paren-mode~ highlights the parenthesis on the
+opposite end of the current symbolic expression. It also highlights
+matching terms of control flow in programming languages that are not
+using parentheses like Lisp: for instance, in a ~bash~ shell script it
+highlights the ~if~ and ~fi~ keywords. This mode also works for prose
+and I use it globally. Simple and effective!
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Parentheses (show-paren-mode)
@@ -7281,10 +7339,48 @@ are a few cases where ~setq-default~ is needed, so keep this in mind.
   (add-hook 'after-init-hook #'show-paren-mode)
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for plain text
+*** The =prot-emacs-langs.el= settings for plain text
 :PROPERTIES:
 :CUSTOM_ID: h:c5fbd6dd-2982-4fca-aeed-d0e750d399bd
 :END:
+
+These are some basic settings for plain text files but also for any
+major mode that inherits from ~text-mode~ (like Org and Markdown). For
+a long time, I was using double spaces after a sentence, as this is
+the Emacs default. I don't have a strong preference for or against it,
+though I reverted to the single space convention as it is the norm
+nowadays.
+
+The technical benefit of double spaces is that it makes sentence
+navigation less ambiguous as you do not get false positives like
+"Dr.". Though I realised I seldom use such language so why type more
+spaces for a theoretical advantage?
+
+I still need to use double spaces for Elisp programming, otherwise the
+byte compiler produces warnings. It is annoyingly pedantic, but here
+we are...
+
+The other setting that matters here is the use of "auto fill", else
+the ~auto-fill-mode~. This is about the automatic break of long lines
+so that they wrap at the ~fill-column~ length: it happens as you type.
+This way, a paragraph is not a single long line, but several shorter
+lines with newline characters between them. I find this much more
+pleasant to work with than to have to rely on ~visual-line-mode~ to
+visually wrap long lines. I want my text to be readable even if I do
+not use Emacs (e.g. if I use ~cat~ or ~less~ on the command-line).
+Auto-filled text does not affect published prose, as the relevant
+programs strip away the newlines inside a paragraph.
+
+To manually fill a region of text, mark it and type =M-q=. Or do =M-q=
+to operate on the current paragraph without marking it. Depending on
+the major mode you are in, this key binding calls a different command.
+The generic one is ~fill-paragraph~. I use =M-Q= to "unfill" text,
+which corresponds to the ~prot-simple-unfill-region-or-paragraph~
+command ([[#h:a7edbb23-2daa-4d8f-bcdd-8c26829d7bb7][The =prot-emacs-essentials.el= section with key bindings]]).
+
+Finally, notice how I am adding an association to the
+~auto-mode-alist~. The file names specified in that regular expression
+will be using ~text-mode~ when I visit them.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Plain text (text-mode)
@@ -7295,7 +7391,7 @@ are a few cases where ~setq-default~ is needed, so keep this in mind.
 Meant to be added to `prog-mode-hook'."
     (setq-local sentence-end-double-space t))
 
-  (add-hook 'prog-mode-hook #'prot/prog-mode-sentence-end-double-space)
+  (add-hook 'emacs-lisp-mode-hook #'prot/prog-mode-sentence-end-double-space)
 
   (setq sentence-end-without-period nil)
   (setq colon-double-space nil)
@@ -7307,10 +7403,15 @@ Meant to be added to `prog-mode-hook'."
   (add-to-list 'auto-mode-alist '("\\(README\\|CHANGELOG\\|COPYING\\|LICENSE\\)\\'" . text-mode))
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for common file types
+*** The =prot-emacs-langs.el= settings for common file types
 :PROPERTIES:
 :CUSTOM_ID: h:1a132701-9487-4af0-8759-a8d64d02bf1f
 :END:
+
+As I explained above about ~auto-mode-alist~ ([[#h:c5fbd6dd-2982-4fca-aeed-d0e750d399bd][The =prot-emacs-langs.el= settings for plain text]]),
+this is how we tell Emacs what major mode to use for files that match
+the given regular expression. The =PKGBUILD= is for Arch Linux package
+recipes, by the way.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Arch Linux and AUR package scripts (sh-mode)
@@ -7321,21 +7422,76 @@ Meant to be added to `prog-mode-hook'."
   (add-to-list 'auto-mode-alist '("dircolors" . conf-mode))
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for ~eldoc~
+*** The =prot-emacs-langs.el= settings for ~eldoc~
 :PROPERTIES:
 :CUSTOM_ID: h:a5773a39-a78f-43fa-8feb-669492c1d5a9
 :END:
 
+The built-in ~eldoc~ feature is especially useful in programming
+modes. While we are in a function call, it produces an indicator in
+the echo area (where the minibuffer appears upon invocation) that
+shows the name of the function, the arguments it takes, if any, and
+highlights the current argument we are positioned at. This way, we do
+not have to go back to review the signature of the function just to
+remember its arity. Same principle for variables, where ~eldoc-mode~
+puts the first line of their documentation string in the echo area.
+
+Of course, this works out-of-the-box for Emacs Lisp code. Other modes
+need to arrange how to use this feature.
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Eldoc (Emacs live documentation feedback)
   (setq eldoc-message-function #'message) ; don't use mode line for M-x eval-expression, etc.
-  (global-eldoc-mode 1)
+  (add-hook 'prog-mode-hook #'eldoc-mode)
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for ~eglot~
+*** The =prot-emacs-langs.el= settings for ~eglot~ (LSP client)
 :PROPERTIES:
 :CUSTOM_ID: h:92258aa8-0d8c-4c12-91b4-5f44420435ce
 :END:
+
+The built-in ~eglot~ feature, developed and maintained by João Távora,
+is Emacs' own client for the Language Server Protocol (LSP). The LSP
+technology is all about enhancing the ability of a text editor to work
+with a given programming language. This works by installing a
+so-called "language server" on your computer, which the "LSP client"
+(i.e. ~eglot~) will plug into. A typical language server provides the
+following capabilities:
+
+- Code completion :: This can be visualised for in-buffer
+  automatic expansion of function calls, variables, and the like
+  ([[#h:804b858f-7913-47ef-aaf4-8eef5b59ecb4][The =prot-emacs-completion.el= for in-buffer completion popup (~corfu~)]]).
+
+- Code linting :: To display suggestions, warnings, or errors. These
+  are highlighted in the buffer, usually with an underline, and can
+  also be displayed in a standalone buffer with the commands
+  ~flymake-show-buffer-diagnostics~, ~flymake-show-project-diagnostics~
+  ([[#h:df6d1b52-0306-4ace-9099-17dded11fbed][The =prot-emacs-langs.el= settings for code linting (~flymake~)]]).
+
+- Code navigation and cross-referencing :: While over a symbol, use a
+  command to jump directly to its definition. The default key bindings
+  for going forth and then back are =M-.= (~xref-find-definitions~)
+  and =M-,= (~xref-go-back~).
+
+  [ Features such as the definition of the outline should, in
+    principle, be implemented by the major mode though I see no reason
+    why a language server cannot also be involved in this task. You
+    can use the built-in ~outline-minor-mode~ to provide Org-like
+    folding capabilties for outline headings ([[#h:ffff5f7b-a62b-4d4a-ae29-af75402e5c35][The =prot-emacs-langs.el= settings for ~outline-minor-mode~]]).
+    I usually navigate the outline using minibuffer completion, with
+    the help of my ~prot-search-outline~ command ([[#h:b902e6a3-cdd2-420f-bc99-3d973c37cd20][The =prot-emacs-search.el= extras provided by the =prot-search.el= library]]). ]
+
+Assuming the language server is installed, to start using the LSP
+client in a given file, do =M-x eglot=. To make this happen
+automatically for every newly visited file, add a hook like this:
+
+#+begin_example
+(add-hook 'SOME-MAJOR-mode #'eglot-ensure)
+#+end_example
+
+I only code in Emacs Lisp, so I am actually not using ~eglot~
+anywhere. Though I have tried it in Bash and JavaScript files and it
+worked fine.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Eglot (built-in client for the language server protocol)
@@ -7343,40 +7499,54 @@ Meant to be added to `prog-mode-hook'."
   (setq eglot-autoshutdown t)
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for very long lines
+*** The =prot-emacs-langs.el= settings for very long lines
 :PROPERTIES:
 :CUSTOM_ID: h:20948a81-858d-4b21-b221-3b24833f5ad8
 :END:
+
+Emacs is notoriously bad at performing well when parsing long lines.
+I believe this has to do with how syntax highlighting and code
+navigation are implemented. The ~global-so-long-mode~ tries to
+mitigate this problem by disabling such extras when we visit a file
+with really long lines, such as minified JavaScript. I have not used
+it enough to know how reliable this is, though it is nice to have just
+in case.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; Handle performance for very long lines (so-long.el)
   (global-so-long-mode 1))
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for ~markdown-mode~
+*** The =prot-emacs-langs.el= settings for ~markdown-mode~
 :PROPERTIES:
 :CUSTOM_ID: h:c9063898-07ae-4635-8853-bb5f4bbab421
 :END:
+
+The ~markdown-mode~ lets us edit Markdown files. We get syntax
+highlighting and several extras, such as the folding of headings and
+navigation between them. The mode actually provides lots of added
+functionality for GitHub-flavoured Markdown and to preview a Markdown
+file's HTML representation on a web page. Though I only use it for
+basic text editing.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; Markdown (markdown-mode)
 (prot-emacs-package markdown-mode
   (:install t)
   (:delay 5)
-  (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
   (setq markdown-fontify-code-blocks-natively t))
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for ~sxhkdrc-mode~
+*** The =prot-emacs-langs.el= settings for ~sxhkdrc-mode~
 :PROPERTIES:
 :CUSTOM_ID: h:88e36f15-4c74-4b7c-9ba6-cf5fb112ffd9
 :END:
 
-This is a major mode for editing ~sxhkdrc~ files.  SXHKD is the Simple
+This is a major mode for editing ~sxhkdrc~ files. SXHKD is the Simple
 X Hot Key Daemon which is commonly used in minimalist desktop sessions
 on Xorg, such as with the Binary Space Partitioning Window Manager
-(BSPWM).  The ~sxhkdrc~ file configures key chords, binding them to
-commands.  For the technicalities, read the man page ~sxhkd(1)~.
+(BSPWM). The ~sxhkdrc~ file configures key chords, binding them to
+commands. For the technicalities, read the man page ~sxhkd(1)~.
 
 + Package name (GNU ELPA): ~sxhkdrc-mode~
 + Git repo on SourceHut: <https://git.sr.ht/~protesilaos/sxhkdrc-mode>
@@ -7398,10 +7568,29 @@ commands.  For the technicalities, read the man page ~sxhkd(1)~.
   (add-to-list 'auto-mode-alist '("sxhkdrc_.*" . sxhkdrc-mode)))
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for spell checking
+*** The =prot-emacs-langs.el= settings for spell checking
 :PROPERTIES:
 :CUSTOM_ID: h:115806c4-88b0-43c1-8db2-d9d8d20a5c17
 :END:
+
+The ~jinx~ package by Daniel Mendler handles spell checking as you
+type. It does it in an efficient way that does not block other Emacs
+processes. On top of that, ~jinx~ works with multiple languages, so
+any mixed language document will not be a problem for it. All you need
+is to activate ~jinx-mode~ in the current buffer or enable its global
+counterpart, ~global-jinx-mode~, at startup.
+
+I had a problem using ~jinx~ on my laptop and have not tried to make
+it work ever since. I plan to do it at some point. In the meantime, I
+rely on the built-in ~flyspell~ feature that I complement with some
+small extras ([[#h:551718b7-fb2d-4a4a-804e-3118001b96ec][The =prot-spell.el= library]]).
+
+In terms of workflow, I do not like to see any spell checking while I
+type. I prefer to write out the entire draft and then do a spell check
+at the end. Whatever typos do not bother me (and I have commented many
+times before about my "alla prima" approach to creativity). It is
+harder to set up multilingual spell checking with ~flyspell~ and I do
+not even bother trying as I seldom have that need.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;; FIXME 2023-08-28: The laptop I use now that I do not have
@@ -7425,8 +7614,6 @@ commands.  For the technicalities, read the man page ~sxhkd(1)~.
 ;;                "\\w*?[0-9\.'\"-]\\w*"
 ;;                "[a-z]+://\\S-+"
 ;;                "<?[-+_.~a-zA-Z][-+_.~:a-zA-Z0-9]*@[-.a-zA-Z0-9]+>?")))
-;;
-;;     (global-jinx-mode 1)
 ;;
 ;;     (define-key ctl-x-x-map "j" #'jinx-mode) ; C-x x j
 ;;
@@ -7466,10 +7653,32 @@ commands.  For the technicalities, read the man page ~sxhkd(1)~.
     "C-M-$" #'prot-spell-change-dictionary))
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for code linting (~flymake~)
+*** The =prot-emacs-langs.el= settings for code linting (~flymake~)
 :PROPERTIES:
 :CUSTOM_ID: h:df6d1b52-0306-4ace-9099-17dded11fbed
 :END:
+
+The built-in ~flymake~ feature defines an interface for viewing the
+output of linter programs. A "linter" parses a file and reports
+possible notes/warnings/errors in it. With ~flymake~ we get these
+diagnostics in the form of a standalone buffer as well as inline
+highlights (typically underlines combined with fringe indicators) for
+the portion of text in question. The linter report is displayed with
+the command ~flymake-show-buffer-diagnostics~, or ~flymake-show-project-diagnostics~.
+Highlights are shown in the context of the file.
+
+The built-in ~eglot~ feature uses ~flymake~ internally to handle the
+LSP linter output ([[#h:92258aa8-0d8c-4c12-91b4-5f44420435ce][The =prot-emacs-langs.el= settings for ~eglot~]]).
+
+As for what I have in this configuration block, the essentials for me
+are the user options ~flymake-start-on-save-buffer~ and ~flymake-start-on-flymake-mode~
+as they make the linter update its report when the buffer is saved and
+when ~flymake-mode~ is started, respectively. Otherwise, we have to
+run it manually, which is cumbersome.
+
+The ~package-lint-flymake~ package by Steve Purcell adds the glue code
+to make ~flymake~ report issues with Emacs Lisp files for the purposes
+of packaging. I use it whenever I work on my numerous Emacs packages.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; Flymake
@@ -7477,8 +7686,8 @@ commands.  For the technicalities, read the man page ~sxhkd(1)~.
   (:delay 30)
   (setq flymake-fringe-indicator-position 'left-fringe)
   (setq flymake-suppress-zero-counters t)
-  (setq flymake-start-on-flymake-mode t)
   (setq flymake-no-changes-timeout nil)
+  (setq flymake-start-on-flymake-mode t)
   (setq flymake-start-on-save-buffer t)
   (setq flymake-proc-compilation-prevents-syntax-check t)
   (setq flymake-wrap-around nil)
@@ -7501,11 +7710,11 @@ commands.  For the technicalities, read the man page ~sxhkd(1)~.
       (flymake-mode 1)))
 
   (defun prot/flymake-mode-in-my-projects ()
-    (when-let* ((file (buffer-file-name))
-                ((string-prefix-p prot/flymake-mode-projects-path
-                                  (expand-file-name file)))
-                ((not (file-directory-p file)))
-                ((file-regular-p file)))
+    (when-let ((file (buffer-file-name))
+               ((string-prefix-p prot/flymake-mode-projects-path
+                                 (expand-file-name file)))
+               ((not (file-directory-p file)))
+               ((file-regular-p file)))
       (add-hook 'find-file-hook #'prot/flymake-mode-lexical-binding nil t)))
 
   (add-hook 'emacs-lisp-mode-hook #'prot/flymake-mode-in-my-projects)
@@ -7525,10 +7734,46 @@ commands.  For the technicalities, read the man page ~sxhkd(1)~.
   (add-hook 'flymake-diagnostic-functions #'package-lint-flymake))
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for ~outline-minor-mode~
+*** The =prot-emacs-langs.el= settings for ~outline-minor-mode~
 :PROPERTIES:
 :CUSTOM_ID: h:ffff5f7b-a62b-4d4a-ae29-af75402e5c35
 :END:
+
+The built-in ~outline-minor-mode~ defines folding and navigation
+commands for the file's outline. The "outline" is the document's
+discernible structure, defined by the local value of the variable
+~outline-regexp~. Simply put, it is about the headings in the
+document.
+
+Any file can have its own outline. For example, in Emacs Lisp any
+comment with three or more delimiters that starts at the beginning of
+the line counts as a heading. Three delimiters make it a level 1
+heading; four delimiters for level 2, and so on. You will notice that
+I already use outlines in all my files. Sometimes I enable the
+~outline-minor-mode~, though I do not really need the folding
+capabilities. Plus, I can navigate the file using minibuffer
+completion among outline entries without enabling
+~outline-minor-mode~, courtesy of the command ~prot-search-outline~
+([[#h:b902e6a3-cdd2-420f-bc99-3d973c37cd20][The =prot-emacs-search.el= extras provided by the =prot-search.el= library]]).
+
+A common question/remark about my literate configuration with Org is
+why not use ~outline-minor-mode~ or the external ~outshine~ package to
+get "the same features" without Org. The feature sets are not really
+comparable. With Org we can comment at length without putting all that
+in the actual code, whereas with ~outline-minor-mode~ you would be
+reading all this commentary in the source code: now you only read it
+in this Org document and its website counterpart. Furthermore, we have
+links between headings, a convenient export mechanism to a website,
+and the ability to easily redirect where the code blocks are tangled
+to. On the latter point, if, for instance, I ever choose to
+consolidate all my Emacs setup in a monolithic =init.el=, I just run a
+quick replace for all the =:tangle= values in this document. Finally,
+we have to consider the use-case: if you have a private config, then
+~outline-minor-mode~ may be enough. In my case, I maintain a massive
+document which, I think, can be helpful for others in the community as
+well.
+
+[ Also read: [[#h:2d28a65c-bef6-4829-89d9-aef3581da7cd][Why use Org when you can have an outline in Elisp?]] ]
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; General configurations for prose/writing
@@ -7536,16 +7781,22 @@ commands.  For the technicalities, read the man page ~sxhkd(1)~.
 ;;;; `outline' (`outline-mode' and `outline-minor-mode')
   (:delay 10)
   (setq outline-minor-mode-highlight nil) ; emacs28
-  (setq outline-minor-mode-cycle t)             ; emacs28
+  (setq outline-minor-mode-cycle t) ; emacs28
   (setq outline-minor-mode-use-buttons nil) ; emacs29---bless you for the nil option!
   (setq outline-minor-mode-use-margins nil) ; as above
   (define-key global-map (kbd "<f10>") #'outline-minor-mode)
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for ~dictionary~
+*** The =prot-emacs-langs.el= settings for ~dictionary~
 :PROPERTIES:
 :CUSTOM_ID: h:f91563d8-f176-4555-b45b-ece56de03279
 :END:
+
+The built-in ~dictionary~ feature lets us access a webpage (or local
+server) to read dictionary entries. The command ~dictionary-search~ is
+also smart enough to use the word at point as the default value, so we
+can type =RET= at the minibuffer prompt to select it without typing it
+out. A neat package overall!
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;;; `dictionary'
@@ -7556,14 +7807,20 @@ commands.  For the technicalities, read the man page ~sxhkd(1)~.
   (define-key global-map (kbd "C-c d") #'dictionary-search))
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for ~altcaps~ (alternating letter casing)
+*** The =prot-emacs-langs.el= settings for ~altcaps~ (alternating letter casing)
 :PROPERTIES:
 :CUSTOM_ID: h:2a2728a9-e392-4fbe-bf2a-83e883387857
 :END:
 
-The ~altcaps~ package is a small, focused-in-scope tool that helps
-users communicate mockery or sarcasm effectively.  It does this by
-alternating the letter casing of characters in the words it affects.
+What follows is another package of mine. I wrote it to practice some
+programming concepts, though I genuinely find it useful. How else are
+we supposed to mock people when they say /wHy WoN't YoU sPoOnFeEd Me
+AlL tHe AnSwErS?/
+
+Technically, the ~altcaps~ package is a small, focused-in-scope tool
+that helps users communicate mockery or sarcasm effectively. It does
+this by alternating the letter casing of characters in the words it
+affects.
 
 + Package name (GNU ELPA): ~altcaps~
 + Official manual: <https://protesilaos.com/emacs/altcaps>
@@ -7830,23 +8087,83 @@ shows how to extend the code to achieve the desired result.
 (provide 'prot-emacs-langs)
 #+end_src
 
-** TODO The =prot-emacs-email.el= module
+** The =prot-emacs-email.el= module
 :PROPERTIES:
 :CUSTOM_ID: h:755e195b-9471-48c7-963b-33055969b4e2
 :END:
+
+Email inside of Emacs is one of the best changes I have ever made to
+my workflow. I consider it far better than the ~mutt~ setup I once
+had. The benefits are down to the interconnectedness of the Emacs
+environment (watch: [[https://protesilaos.com/codelog/2020-10-21-emacs-favourite-package/][Why Emacs itself is my "favourite Emacs package"]]
+(2020-10-21)). All text editing capabilities are available. Same for
+buffer navigation. Same for themes and fonts. Then we have integration
+with ~org-capture~ to quickly produce a task that shows up on the Org
+agenda and has a link back to the original email ([[#h:f8f06938-0dfe-45c3-b4cf-996d36cba82d][The =prot-emacs-org.el= Org capture templates]]).
+And there is also te seamless connection between Emacs and GPG, so any
+encrypted file/email is decrypted behind the scenes with us
+experiencing it as every other regular file. Fantastic stuff!
+
+In this portion of the configuration, I am configuring several of
+built-in variable, so I use the ~prot-emacs-configure~ macro to do so
+with a short delay post startup ([[#h:54a4cb92-e7f8-4291-abe6-6e7dfdfd6200][The =init.el= macro to evaluate arbitrary Elisp (~prot-emacs-configure~)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-email.el" :mkdirp yes
 ;;; Client-agnostic email settings
 (prot-emacs-configure
   (:delay 1)
+#+end_src
+
+*** TODO The =prot-emacs-email.el= basic settings (including =authinfo=)
+:PROPERTIES:
+:CUSTOM_ID: h:24f17614-ee3d-4cd1-bbe3-f53e4f39c281
+:END:
+
+Emacs reads login credentials from the list of files specified in the
+user option ~auth-sources~. I set it to a single GPG-encrypted entry.
+The contents of that file look like this:
+
+#+begin_example
+machine pub port 993 login SOME-USER-NAME-HERE password SOME-PASSWORD-HERE
+machine inf port 993 login SOME-USER-NAME-HERE password SOME-PASSWORD-HERE
+
+machine mail.gandi.net port 465 login SOME-USER-NAME-HERE password SOME-PASSWORD-HERE
+machine mail.gandi.net port 465 login SOME-USER-NAME-HERE password SOME-PASSWORD-HERE
+#+end_example
+
+Each line can be read as a map of key-value pairs. Think of it like this:
+
+#+begin_example
+machine pub
+port 993
+login SOME-USER-NAME-HERE
+password SOME-PASSWORD-HERE
+#+end_example
+
+Depending on the settings and the applicable program, Emacs reads this
+file to establish a connection. This is not limited to emails, mind
+you, as we can have credentials such as for running ~sudo~ via TRAMP
+or logging in to IRC with the ~rcirc~ command ([[#h:f23d9cef-ab7b-4486-a070-9c7ae664eadf][The =prot-emacs-web.el= module]]).
+
+For my email purposes, Emacs does not read from the ~auto-sources~,
+though I do keep this in place for other programs to read from. CONTINUE.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-email.el"
 ;;;; File with authentication credentials (`auth-source')
   (setq auth-sources '("~/.authinfo.gpg")
         user-full-name "Protesilaos Stavrou"
         user-mail-address "public@protesilaos.com")
+#+end_src
 
+*** TODO The =prot-emacs-email.el= message composition and encryption settings
+:PROPERTIES:
+:CUSTOM_ID: h:49815c07-737f-4f10-95ee-63640f9ae18b
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-email.el"
 ;;;; Encoding settings (`mm-encode')
-  (setq mm-encrypt-option nil ; use 'guided if you need more control
-        mm-sign-option nil)  ; same
+  (setq mm-encrypt-option nil ; use 'guided for both if you need more control
+        mm-sign-option nil)
 
 ;;;; Encryption settings (`mml-sec')
   (setq mml-secure-openpgp-encrypt-to-self t
@@ -7873,10 +8190,26 @@ shows how to extend the code to achieve the desired result.
   ;; (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
 
   (add-hook 'message-setup-hook #'message-sort-headers)
+#+end_src
 
+*** TODO The =prot-emacs-email.el= integration with Dired for email attachments (~gnus-dired-mode~)
+:PROPERTIES:
+:CUSTOM_ID: h:deccd4f1-c1bd-4b02-993e-914f57ea0fac
+:END:
+
+([[#h:f8b08a77-f3a8-42fa-b1a9-f940348889c3][The =prot-emacs-dired.el= module]]).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-email.el"
 ;;;; Add attachments from Dired (`gnus-dired' does not require `gnus')
   (add-hook 'dired-mode-hook #'turn-on-gnus-dired-mode)
+#+end_src
 
+*** TODO The =prot-emacs-email.el= settings for ~sendmail~
+:PROPERTIES:
+:CUSTOM_ID: h:c7c9815c-e259-4810-816a-9ebc1a146004
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-email.el"
 ;;;; `sendmail' (mail transfer agent)
   (setq send-mail-function 'sendmail-send-it
         ;; ;; NOTE 2023-08-08: We do not need this if we have the Arch
@@ -7885,7 +8218,19 @@ shows how to extend the code to achieve the desired result.
         ;;
         ;; sendmail-program (executable-find "msmtp")
         message-sendmail-envelope-from 'header))
+#+end_src
 
+*** TODO The =prot-emacs-email.el= loading of the email client and call to ~provide~
+:PROPERTIES:
+:CUSTOM_ID: h:200bc618-678a-4dc8-9d30-876d89e1edae
+:END:
+
+([[#h:b26c6297-ebe8-4f99-b069-df53cfd90520][The =prot-emacs-email.el= submodule for ~notmuch~ (=prot-emacs-notmuch.el=)]])
+
+Finally, we ~provide~ the module. This is the mirror function of
+~require~ ([[#h:e6c4acf5-5b51-4b38-a86a-bf3f698ac872][The init.el final part to load the individual modules]]).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-email.el"
 (when (executable-find "notmuch")
   (require 'prot-emacs-notmuch))
 
@@ -15465,29 +15810,40 @@ and continue my work in the many small files I already have.
 [ Also read: [[#h:74c3a9e1-6852-4307-b7ba-925d8d2f61ff][Why many modules instead of one init.el?]] ]
 
 This question is about the use of the built-in ~outline-minor-mode~ or
-the ~outshine~ package. They provide folding capabilities like those
-of Org mode and can, in principle, be enabled in any buffer (provided
-it has a recognisable outline).
+the ~outshine~ package ([[#h:ffff5f7b-a62b-4d4a-ae29-af75402e5c35][The =prot-emacs-langs.el= settings for ~outline-minor-mode~]]).
+They provide folding capabilities like those of Org mode and can, in
+principle, be enabled in any buffer (provided it has a recognisable
+outline).
 
 I am, in fact, using outlines in all my Elisp files. Not just here,
 but also in all my public-facing Emacs packages. You can spot the
 entries to the outline as comments that have three or more delimiters.
 I can thus visit the =.el= file I am interested in and enable
 ~outline-minor-mode~ to get the folding capabilities and extras.
-Furthermore, I can use the ~consult-outline~ command to navigate to a
-heading with minibuffer completion.
+Furthermore, I can use the ~consult-outline~ or ~prot-search-outline~
+command to navigate to a heading with minibuffer completion.
 
 What the =prot-emacs.org= provides is an /optional single point of
 entry/ to my Emacs configuration. I use this to produce all the
 individual files ([[#h:103d6f5a-bdb1-4b49-946a-708a83c79a7d][Anatomy of my Emacs configuration]]). It allows me to
 document my comprehensive corpus of work for the benefit of the Emacs
-community at-large. I can establish links between sections and use
-richer typography, something that ~outline-minor-mode~ does not
-provide. This document is exported to my website as a standalone web
-page. People can find what they want there. They may also read the
-source of this file to learn more about the technicalities of how this
-is done. And they can still use only the =.el= files, if they do not
-want to deal with Org. Everybody is covered.
+community at-large:
+
+- I can establish links between sections and use richer typography,
+  something that ~outline-minor-mode~ does not provide.
+
+- The extensive commentary included herein is not added to the source
+  code, thus making it easier for me or others to focus on the
+  programming parts when we want to.
+
+- This document is exported to my website as a standalone web page.
+  People can find what they need there and share it with friends,
+  regardless of their skill level.
+
+- Anyone may read the source of this file to learn more about the
+  technicalities of how this is done. And they can still use only the
+  =.el= files, if they do not want to deal with Org. Everybody is
+  covered.
 
 The =prot-emacs.org= *does not introduce a dependency on Org mode*.
 This file is not loaded at startup. I can remove =prot-emacs.org= at
