@@ -185,6 +185,12 @@ before all other modules of my setup."
 
 (setq custom-safe-themes t)
 
+(defmacro prot-emacs-comment (&rest body)
+  "Do nothing with BODY and return nil.
+Unlike `ignore', produce no side effects."
+  (declare (indent defun))
+  nil)
+
 (defun prot-emacs-package-install (package &optional method)
   "Install PACKAGE with optional METHOD.
 
@@ -235,7 +241,7 @@ The :delay property makes the evaluation of PACKAGE with the
 expanded BODY happen with `run-with-timer'.
 
 Also see `prot-emacs-configure'."
-  (declare (indent 1))
+  (declare (indent defun))
   (unless (memq package prot-emacs-omit-packages)
     (let (install delay)
       (dolist (element body)
@@ -262,44 +268,45 @@ Also see `prot-emacs-configure'."
 
 ;; Samples of `prot-emacs-package' (expand them with `pp-macroexpand-last-sexp').
 
-;; (prot-emacs-package denote
-;;   (setq denote-directory "path/to/dir")
-;;   (define-key global-map (kbd "C-c n") #'denote)
-;;   (:install '(denote . (:url "https://git.sr.ht/~protesilaos/denote" :branch "main")))
-;;   (:delay 5)
-;;   (setq denote-file-type nil))
-;;
-;; (prot-emacs-package denote
-;;   (setq denote-directory "path/to/dir")
-;;   (define-key global-map (kbd "C-c n") #'denote)
-;;   (:install "https://git.sr.ht/~protesilaos/denote")
-;;   (:delay 5)
-;;   (setq denote-file-type nil))
-;;
-;; (prot-emacs-package denote
-;;   (:delay 5)
-;;   (setq denote-directory "path/to/dir")
-;;   (define-key global-map (kbd "C-c n") #'denote)
-;;   (:install "https://git.sr.ht/~protesilaos/denote")
-;;   (setq denote-file-type nil))
-;;
-;; (prot-emacs-package denote
-;;   (:install "https://git.sr.ht/~protesilaos/denote")
-;;   (:delay 5)
-;;   (setq denote-directory "path/to/dir")
-;;   (define-key global-map (kbd "C-c n") #'denote)
-;;   (setq denote-file-type nil))
-;;
-;; (prot-emacs-package denote
-;;   (:delay 5)
-;;   (setq denote-directory "path/to/dir")
-;;   (define-key global-map (kbd "C-c n") #'denote)
-;;   (setq denote-file-type nil))
-;;
-;; (prot-emacs-package denote
-;;   (setq denote-directory "path/to/dir")
-;;   (define-key global-map (kbd "C-c n") #'denote)
-;;   (setq denote-file-type nil))
+(prot-emacs-comment
+ (prot-emacs-package denote
+   (setq denote-directory "path/to/dir")
+   (define-key global-map (kbd "C-c n") #'denote)
+   (:install '(denote . (:url "https://git.sr.ht/~protesilaos/denote" :branch "main")))
+   (:delay 5)
+   (setq denote-file-type nil))
+
+ (prot-emacs-package denote
+   (setq denote-directory "path/to/dir")
+   (define-key global-map (kbd "C-c n") #'denote)
+   (:install "https://git.sr.ht/~protesilaos/denote")
+   (:delay 5)
+   (setq denote-file-type nil))
+
+ (prot-emacs-package denote
+   (:delay 5)
+   (setq denote-directory "path/to/dir")
+   (define-key global-map (kbd "C-c n") #'denote)
+   (:install "https://git.sr.ht/~protesilaos/denote")
+   (setq denote-file-type nil))
+
+ (prot-emacs-package denote
+   (:install "https://git.sr.ht/~protesilaos/denote")
+   (:delay 5)
+   (setq denote-directory "path/to/dir")
+   (define-key global-map (kbd "C-c n") #'denote)
+   (setq denote-file-type nil))
+
+ (prot-emacs-package denote
+   (:delay 5)
+   (setq denote-directory "path/to/dir")
+   (define-key global-map (kbd "C-c n") #'denote)
+   (setq denote-file-type nil))
+
+ (prot-emacs-package denote
+   (setq denote-directory "path/to/dir")
+   (define-key global-map (kbd "C-c n") #'denote)
+   (setq denote-file-type nil)))
 
 (defmacro prot-emacs-configure (&rest body)
   "Evaluate BODY as a `progn'.
@@ -387,7 +394,9 @@ that is expanded with the `prot-emacs-package' macro."
   '(("(\\(prot-emacs-package\\)\\_>[ \t']*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
      (2 font-lock-constant-face nil t))
     ("(\\(prot-emacs-\\(keybind\\|abbrev\\)\\)\\_>[ \t']*\\(\\(\\sw\\|\\s_\\)+\\)?"
-     (3 font-lock-variable-name-face nil t))))
+     (3 font-lock-variable-name-face nil t))
+    ("(\\(prot-emacs-comment\\)\\_>[ \t']*"
+     (1 font-lock-preprocessor-face nil t))))
 
 (font-lock-add-keywords 'emacs-lisp-mode prot-emacs-font-lock-keywords)
 
