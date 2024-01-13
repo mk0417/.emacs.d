@@ -49,10 +49,9 @@ This means that my code may not necessarily work with your version of
 Emacs.
 
 + Website: <https://protesilaos.com/emacs/dotemacs>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/dotfiles>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/dotfiles>
-    + GitLab: <https://gitlab.com/protesilaos/dotfiles>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/dotfiles>
+  - GitLab: <https://gitlab.com/protesilaos/dotfiles>
 + Mailing list: <https://lists.sr.ht/~protesilaos/dotfiles>
 + Video demo: <https://protesilaos.com/codelog/2023-12-18-emacs-org-advanced-literate-conf/>
 + Backronyms: Do Observe, Transpose, Examine, or Mirror All
@@ -70,10 +69,9 @@ I track the emacs.git trunk, as I am the maintainer of several Emacs
 packages and a contributor to Emacs core. Users of Arch Linux can
 refer to this =PKGBUILD= I maintain for my purposes:
 
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/emacs-arch-linux-pkgbuild>
-  - Mirrors
-    + GitHub: <https://github.com/protesilaos/emacs-arch-linux-pkgbuild>
-    + GitLab: <https://gitlab.com/protesilaos/emacs-arch-linux-pkgbuild>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/emacs-arch-linux-pkgbuild>
+  - GitLab: <https://gitlab.com/protesilaos/emacs-arch-linux-pkgbuild>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym for "PKGBUILD ... of Emacs": Package Knowhow Germane to
   Building Unapologetically Individuated Local Design ... of Emacs.
@@ -1053,6 +1051,25 @@ Unlike `ignore', produce no side effects."
   nil)
 #+end_src
 
+And here is a function I might develop further to quickly insert
+~prot-emacs-comment~ (though another is needed to also remove it and
+then a Do-What-I-Mean wrapper to switch between the two):
+
+#+begin_src emacs-lisp :tangle "init.el"
+;; Sample use of `prot-emacs-comment'.  The function
+;; `prot-emacs-insert-comment-macro' is never evaluated.
+(prot-emacs-comment
+  (defun prot-emacs-insert-comment-macro (beg end)
+    "Wrap region between BEG and END in `prot-emacs-comment'."
+    (interactive "r")
+    (if (region-active-p)
+        (let ((text (buffer-substring beg end)))
+          (delete-region beg end)
+          (insert (format "(prot-emacs-comment\n%s)" text))
+          (indent-region beg end))
+      (user-error "No active region; will not insert `prot-emacs-comment' here"))))
+#+end_src
+
 ** The =init.el= macro to install and configure packages (~prot-emacs-package~)
 :PROPERTIES:
 :CUSTOM_ID: h:1457099d-fb05-4e38-9f8f-cfa4cc46b98e
@@ -1505,10 +1522,9 @@ the themes across the years.
 + Change log: <https://protesilaos.com/emacs/modus-themes-changelog>
 + Colour palette: <https://protesilaos.com/emacs/modus-themes-colors>
 + Sample pictures: <https://protesilaos.com/emacs/modus-themes-pictures>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/modus-themes>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/modus-themes>
-    + GitLab: <https://gitlab.com/protesilaos/modus-themes>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/modus-themes>
+  - GitLab: <https://gitlab.com/protesilaos/modus-themes>
 + Mailing list: <https://lists.sr.ht/~protesilaos/modus-themes>
 + Backronym: My Old Display Unexpectedly Sharpened ... themes
 
@@ -1625,10 +1641,9 @@ designed by me).
 + Official manual: <https://protesilaos.com/emacs/ef-themes>
 + Change log: <https://protesilaos.com/emacs/ef-themes-changelog>
 + Sample pictures: <https://protesilaos.com/emacs/ef-themes-pictures>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/ef-themes>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/ef-themes>
-    + GitLab: <https://gitlab.com/protesilaos/ef-themes>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/ef-themes>
+  - GitLab: <https://gitlab.com/protesilaos/ef-themes>
 + Mailing list: <https://lists.sr.ht/~protesilaos/ef-themes>
 + Backronym: Eclectic Fashion in Themes Hides Exaggerated Markings,
   Embellishments, and Sparkles.
@@ -1760,10 +1775,9 @@ interfaces by supporting a large number of packages.
 + Official manual: <https://protesilaos.com/emacs/standard-themes>
 + Change log: <https://protesilaos.com/emacs/standard-themes-changelog>
 + Sample pictures: <https://protesilaos.com/emacs/standard-themes-pictures>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/standard-themes>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/standard-themes>
-    + GitLab: <https://gitlab.com/protesilaos/standard-themes>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/standard-themes>
+  - GitLab: <https://gitlab.com/protesilaos/standard-themes>
 + Mailing list: <https://lists.sr.ht/~protesilaos/standard-themes>
 + Backronym: Standard Themes Are Not Derivatives but the
   Affectionately Reimagined Default ... themes.
@@ -1889,10 +1903,9 @@ are called. The pulse effect is added there (~pulsar-after-function-hook~).
 + Package name (GNU ELPA): ~pulsar~
 + Official manual: <https://protesilaos.com/emacs/pulsar>
 + Change log: <https://protesilaos.com/emacs/pulsar-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/pulsar>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/pulsar>
-    + GitLab: <https://gitlab.com/protesilaos/pulsar>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/pulsar>
+  - GitLab: <https://gitlab.com/protesilaos/pulsar>
 + Mailing list: <https://lists.sr.ht/~protesilaos/pulsar>
 + Backronym: Pulsar Unquestionably Luminates, Strictly Absent the Radiation
 
@@ -1951,10 +1964,9 @@ vertical axis.
 + Package name (GNU ELPA): ~lin~
 + Official manual: <https://protesilaos.com/emacs/lin>
 + Change log: <https://protesilaos.com/emacs/lin-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/lin>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/lin>
-    + GitLab: <https://gitlab.com/protesilaos/lin>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/lin>
+  - GitLab: <https://gitlab.com/protesilaos/lin>
 + Mailing list: <https://lists.sr.ht/~protesilaos/lin>
 + Backronym: LIN Is Noticeable
 
@@ -1992,10 +2004,9 @@ and [[https://github.com/minad/org-modern][Daniel Mendler's ~org-modern~ package
 
 + Package name (GNU ELPA): ~spacious-padding~
 + Official manual: <https://protesilaos.com/emacs/spacious-padding>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/spacious-padding>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/spacious-padding>
-    + GitLab: <https://gitlab.com/protesilaos/spacious-padding>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/spacious-padding>
+  - GitLab: <https://gitlab.com/protesilaos/spacious-padding>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Sample images:
   - <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>
@@ -2082,10 +2093,9 @@ such as in the difference between writing and reading.
 + Package name (GNU ELPA): ~cursory~
 + Official manual: <https://protesilaos.com/emacs/cursory>
 + Change log: <https://protesilaos.com/emacs/cursory-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/cursory>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/cursory>
-    + GitLab: <https://gitlab.com/protesilaos/cursory>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/cursory>
+  - GitLab: <https://gitlab.com/protesilaos/cursory>
 + Mailing list: <https://lists.sr.ht/~protesilaos/cursory>
 + Backronym: Cursor Usability Requires Styles Objectively Rated Yearlong
 
@@ -2193,10 +2203,9 @@ that are pleasant to read at comfortable point sizes.
 + Package name (GNU ELPA): ~fontaine~
 + Official manual: <https://protesilaos.com/emacs/fontaine>
 + Change log: <https://protesilaos.com/emacs/fontaine-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/fontaine>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/fontaine>
-    + GitLab: <https://gitlab.com/protesilaos/fontaine>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/fontaine>
+  - GitLab: <https://gitlab.com/protesilaos/fontaine>
 + Mailing list: <https://lists.sr.ht/~protesilaos/fontaine>
 + Backronym: Fonts, Ornaments, and Neat Typography Are Irrelevant in
   Non-graphical Emacs
@@ -2326,10 +2335,9 @@ technicalities.
   | Iosevka Comfy Wide Motion Fixed | Slab   | Wide    | Monospaced | No        |
   | Iosevka Comfy Wide Motion Duo   | Slab   | Wide    | Duospaced  | Yes       |
 
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/iosevka-comfy>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/iosevka-comfy>
-    + GitLab: <https://gitlab.com/protesilaos/iosevka-comfy>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/iosevka-comfy>
+  - GitLab: <https://gitlab.com/protesilaos/iosevka-comfy>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Sample pictures: <https://protesilaos.com/emacs/iosevka-comfy-pictures>
 + Backronym: Iosevka ... Could Only Modify a Font, Yes
@@ -2924,10 +2932,9 @@ the point. Better check the video I did on the matter:
 
 + Package name (GNU ELPA): ~substitute~
 + Official manual: <https://protesilaos.com/emacs/substitute>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/substitute>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/substitute>
-    + GitLab: <https://gitlab.com/protesilaos/substitute>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/substitute>
+  - GitLab: <https://gitlab.com/protesilaos/substitute>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: Some Utilities Built to Substitute Targets Independent of
   Their Utterances, Thoroughly and Easily.
@@ -3146,10 +3153,9 @@ to learn about all the available commands and their respective key bindings.
 + Package name (GNU ELPA): ~tmr~
 + Official manual: <https://protesilaos.com/emacs/tmr>
 + Change log: <https://protesilaos.com/emacs/tmr-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/tmr>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/tmr>
-    + GitLab: <https://gitlab.com/protesilaos/tmr>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/tmr>
+  - GitLab: <https://gitlab.com/protesilaos/tmr>
 + Mailing list: <https://lists.sr.ht/~protesilaos/tmr>
 + Backronym: TMR May Ring; Timer Must Run
 
@@ -3831,6 +3837,7 @@ completion (such as the ~corfu~ package).
 - [[#h:e9fb09f0-f2e6-4943-83bf-e5fadcfa530a][The =prot-emacs-completion.el= submodule for ~mct~ (=prot-emacs-mct.el=)]]
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
+  (setq completions-format 'one-column)
   (setq completion-show-help nil)
   (setq completion-auto-help t)
   (setq completion-auto-select nil)
@@ -4501,8 +4508,7 @@ pop up the minibuffer eagerly ([[#h:cff33514-d3ac-4c16-a889-ea39d7346dc5][The =p
 (prot-emacs-package mct
   (:install t)
   (:delay 1)
-  (setq completions-format 'one-column)
-  (setq mct-hide-completion-mode-line nil)
+  (setq mct-hide-completion-mode-line t)
   ;; The blocklist and passlist accept either commands/functions or
   ;; completion categories.
   (setq mct-completion-blocklist '(notmuch-mua-new-mail notmuch-mua-prompt-for-sender))
@@ -5392,10 +5398,9 @@ are where we need to be.
 
 + Package name (GNU ELPA): ~dired-preview~
 + Official manual: <https://protesilaos.com/emacs/dired-preview>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/dired-preview>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/dired-preview>
-    + GitLab: <https://gitlab.com/protesilaos/dired-preview>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/dired-preview>
+  - GitLab: <https://gitlab.com/protesilaos/dired-preview>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: Directories Invariably Render Everything Decently; PDFs
   Require Extra Viewing Instructions for Emacs to Work.
@@ -5457,10 +5462,9 @@ the ~prot-emacs-package~ is actually installing the file from source
 ([[#h:1457099d-fb05-4e38-9f8f-cfa4cc46b98e][The =init.el= macro to install and configure packages (~prot-emacs-package~)]]).
 
 + Package name (GNU ELPA): ~mandoura~ (⛔ not available yet)
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/mandoura>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/mandoura>
-    + GitLab: <https://gitlab.com/protesilaos/mandoura>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/mandoura>
+  - GitLab: <https://gitlab.com/protesilaos/mandoura>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: MPV Access Needs Dired to Output User's Requested Audio.
 
@@ -5880,10 +5884,9 @@ best changes I ever did to boost my productivity:
 + Package name (GNU ELPA): ~beframe~
 + Official manual: <https://protesilaos.com/emacs/beframe>
 + Change log: <https://protesilaos.com/emacs/beframe-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/beframe>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/beframe>
-    + GitLab: <https://gitlab.com/protesilaos/beframe>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/beframe>
+  - GitLab: <https://gitlab.com/protesilaos/beframe>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: Buffers Encapsulated in Frames Realise Advanced
   Management of Emacs.
@@ -6107,6 +6110,12 @@ do =M-x describe-keymap= and check the ~project-prefix-map~. For
 example, I bind ~project-dired~ to =C-x p RET=, so =RET= accesses this
 command after =C-x p p= as well.
 
+If any of the =project.el= commands is called from outside a project,
+it first prompts for a project and then carries out its action. For
+example, ~project-find-file~ will ask for a project to use, then
+switch to it, and then prompt for a file inside of the specified
+project.
+
 While inside a project, we have many commands that operate on the
 project level. For example, =C-x p f= (~project-find-file~) searches
 for a file across the project, while =C-x p b= (~project-switch-to-buffer~)
@@ -6132,6 +6141,7 @@ limited to that frame ([[#h:77e4f174-0c86-460d-8a54-47545f922ae9][The =prot-emac
             (project-shell "Shell")
             (keyboard-quit "Quit")))
   (setq project-vc-extra-root-markers '(".project")) ; Emacs 29
+  (setq project-key-prompt-style t) ; Emacs 30
 
   ;; I don't actually have a use-case for `prot-find-project-root',
   ;; but I wrote it once so I keep it here in case I ever need it.
@@ -6155,30 +6165,6 @@ is a string."
            (add-hook 'project-find-functions #',project-find-fn :depth :local))
 
          (add-hook ',(intern (format "%s-hook" mode)) #',major-mode-fn))))
-
-  (defun prot/project--get-key (key cmd)
-    "Return key binding for KEY, falling back to what CMD is bound to."
-    (if key
-        (vector key)
-      (where-is-internal cmd (list project-prefix-map) t)))
-
-  (defun prot/project--keymap-prompt ()
-    "Return `project-switch-commands' and their fontified key bindings.
-Use a newline character to separate each pair of key and command.
-
-Based on `project--keymap-prompt' and meant to be used as an
-:override advice for `project--menu-prompt' on Emacs 30."
-    (mapconcat
-     (pcase-lambda (`(,cmd ,label ,key))
-       (let ((key (prot/project--get-key key cmd)))
-         (format
-          "%s	%s"
-          (propertize (key-description key) 'face 'help-key-binding)
-          label)))
-     project-switch-commands
-     "\n"))
-
-  (advice-add #'project--menu-prompt :override #'prot/project--keymap-prompt)
 
   (advice-add #'project-switch-project :after #'prot-common-clear-minibuffer-message)
 
@@ -6435,10 +6421,9 @@ Control framework and its accoutrements (`diff-mode.el`,
 
 + Package name (GNU ELPA): ~agitate~
 + Official manual: <https://protesilaos.com/emacs/agitate>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/agitate>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/agitate>
-    + GitLab: <https://gitlab.com/protesilaos/agitate>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/agitate>
+  - GitLab: <https://gitlab.com/protesilaos/agitate>
 + Mailing list: <https://lists.sr.ht/~protesilaos/agitate>
 + Backronym: Another Git Interface Trying to Agitate Tranquil Emacsers
 
@@ -7588,10 +7573,9 @@ on Xorg, such as with the Binary Space Partitioning Window Manager
 commands. For the technicalities, read the man page ~sxhkd(1)~.
 
 + Package name (GNU ELPA): ~sxhkdrc-mode~
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/sxhkdrc-mode>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/sxhkdrc-mode>
-    + GitLab: <https://gitlab.com/protesilaos/sxhkdrc-mode>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/sxhkdrc-mode>
+  - GitLab: <https://gitlab.com/protesilaos/sxhkdrc-mode>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: Such Xenotropic Hot Keys Demonstrate Robustness and
   Configurability ... mode.
@@ -7864,10 +7848,9 @@ affects.
 + Package name (GNU ELPA): ~altcaps~
 + Official manual: <https://protesilaos.com/emacs/altcaps>
 + Change log: <https://protesilaos.com/emacs/altcaps-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/altcaps>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/altcaps>
-    + GitLab: <https://gitlab.com/protesilaos/altcaps>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/altcaps>
+  - GitLab: <https://gitlab.com/protesilaos/altcaps>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronyms: Alternating Letters Transform Casual Asides to Playful
   Statements.  ALTCAPS Lets Trolls Convert Aphorisms to Proper
@@ -7910,10 +7893,9 @@ facilities to rename files, regardless of file type.
 + Package name (GNU ELPA): ~denote~
 + Official manual: <https://protesilaos.com/emacs/denote>
 + Change log: <https://protesilaos.com/emacs/denote-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/denote>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/denote>
-    + GitLab: <https://gitlab.com/protesilaos/denote>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/denote>
+  - GitLab: <https://gitlab.com/protesilaos/denote>
 + Mailing list: <https://lists.sr.ht/~protesilaos/denote>
 + Video demo: <https://protesilaos.com/codelog/2022-06-18-denote-demo/>
 + Backronyms: Denote Everything Neatly; Omit The Excesses.  Don't Ever
@@ -8058,10 +8040,9 @@ shows how to extend the code to achieve the desired result.
 + Package name (GNU ELPA): ~logos~
 + Official manual: <https://protesilaos.com/emacs/logos>
 + Change log: <https://protesilaos.com/emacs/logos-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/logos>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/logos>
-    + GitLab: <https://gitlab.com/protesilaos/logos>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/logos>
+  - GitLab: <https://gitlab.com/protesilaos/logos>
 + Mailing list: <https://lists.sr.ht/~protesilaos/logos>
 + Video demo: <https://protesilaos.com/codelog/2022-03-11-emacs-logos-demo/>
 + Backronyms: =^L= Only Generates Ostensible Slides; Logos Optionally Goes through Outline Sections
@@ -8805,10 +8786,9 @@ love letters, respectively.
 + Package name (GNU ELPA): ~notmuch-indicator~
 + Official manual: <https://protesilaos.com/emacs/notmuch-indicator>
 + Change log: <https://protesilaos.com/emacs/notmuch-indicator-changelog>
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/notmuch-indicator>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/notmuch-indicator>
-    + GitLab: <https://gitlab.com/protesilaos/notmuch-indicator>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/notmuch-indicator>
+  - GitLab: <https://gitlab.com/protesilaos/notmuch-indicator>
 + Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: notmuch-... Interested in Notmuch Data Indicators that
   Count Any Terms Ordinarily Requested.
@@ -16560,10 +16540,9 @@ I need to avoid (like Guix).
 You can check my dotfiles to find all about the tiling window managers
 and other programs I use:
 
-+ Git repo on SourceHut: <https://git.sr.ht/~protesilaos/dotfiles>
-  - Mirrors:
-    + GitHub: <https://github.com/protesilaos/dotfiles>
-    + GitLab: <https://gitlab.com/protesilaos/dotfiles>
++ Git repositories:
+  - GitHub: <https://github.com/protesilaos/dotfiles>
+  - GitLab: <https://gitlab.com/protesilaos/dotfiles>
 
 I have been using tiling window managers for most of my time on Linux
 (I switched to Linux in the summer of 2016 and I think I started with
