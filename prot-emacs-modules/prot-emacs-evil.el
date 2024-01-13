@@ -139,7 +139,8 @@
           wdired-mode
           log-edit-mode
           git-commit-mode
-          color-rg-mode))
+          color-rg-mode
+          lsp-bridge-ref-mode))
   (setq evil-prot-basic-state-modes
         '(completion-list-mode
           Buffer-menu-mode
