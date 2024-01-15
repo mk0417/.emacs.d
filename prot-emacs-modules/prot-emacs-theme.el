@@ -80,7 +80,7 @@
                                 'help-key-binding)
            :mode-line-inactive vertical-border))
 
-  (spacious-padding-mode 1)
+  ;; (spacious-padding-mode 1)
 
   (define-key global-map (kbd "<f8>") #'spacious-padding-mode))
 
