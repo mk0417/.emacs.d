@@ -21,9 +21,9 @@ value. That method works but is very slow, because we have to load Org
 before starting Emacs (and Org loads a bunch of other things we do not
 need at such an early stage).
 
-Whereas this Org serves as (i) a single point of entry to my Emacs
-setup and (ii) the origin of all of my Emacs configurations. While I
-am defining everything in a single Org file, I am not actually
+Whereas this Org document serves as (i) a single point of entry to my
+Emacs setup and (ii) the origin of all of my Emacs configurations.
+While I am defining everything in a single Org file, I am not actually
 starting Emacs by reading this file. Rather, I am instructing Org to
 put the code blocks defined herein in standalone files, organised by
 scope. The end result is something where you cannot tell whether a
@@ -52,7 +52,6 @@ Emacs.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/dotfiles>
   - GitLab: <https://gitlab.com/protesilaos/dotfiles>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/dotfiles>
 + Video demo: <https://protesilaos.com/codelog/2023-12-18-emacs-org-advanced-literate-conf/>
 + Backronyms: Do Observe, Transpose, Examine, or Mirror All
   Configurations, Stranger (dotemacs); Dotfiles Operate Transparently
@@ -72,7 +71,6 @@ refer to this =PKGBUILD= I maintain for my purposes:
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/emacs-arch-linux-pkgbuild>
   - GitLab: <https://gitlab.com/protesilaos/emacs-arch-linux-pkgbuild>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym for "PKGBUILD ... of Emacs": Package Knowhow Germane to
   Building Unapologetically Individuated Local Design ... of Emacs.
 
@@ -1123,7 +1121,7 @@ controlled repository of PACKAGE.  Installation is done with
 If METHOD is a quoted list, it must have a form accepted by
 `package-vc-install' such as:
 
-\\='(denote :url \"https://git.sr.ht/~protesilaos/denote\" :branch \"main\")
+\\='(denote :url \"https://github.com/protesilaos/denote\" :branch \"main\")
 
 If METHOD is any other non-nil value, install PACKAGE using
 `package-install'."
@@ -1191,14 +1189,14 @@ Also see `prot-emacs-configure'."
   (prot-emacs-package denote
     (setq denote-directory "path/to/dir")
     (define-key global-map (kbd "C-c n") #'denote)
-    (:install '(denote . (:url "https://git.sr.ht/~protesilaos/denote" :branch "main")))
+    (:install '(denote . (:url "https://github.com/protesilaos/denote" :branch "main")))
     (:delay 5)
     (setq denote-file-type nil))
 
   (prot-emacs-package denote
     (setq denote-directory "path/to/dir")
     (define-key global-map (kbd "C-c n") #'denote)
-    (:install "https://git.sr.ht/~protesilaos/denote")
+    (:install "https://github.com/protesilaos/denote")
     (:delay 5)
     (setq denote-file-type nil))
 
@@ -1206,11 +1204,11 @@ Also see `prot-emacs-configure'."
     (:delay 5)
     (setq denote-directory "path/to/dir")
     (define-key global-map (kbd "C-c n") #'denote)
-    (:install "https://git.sr.ht/~protesilaos/denote")
+    (:install "https://github.com/protesilaos/denote")
     (setq denote-file-type nil))
 
   (prot-emacs-package denote
-    (:install "https://git.sr.ht/~protesilaos/denote")
+    (:install "https://github.com/protesilaos/denote")
     (:delay 5)
     (setq denote-directory "path/to/dir")
     (define-key global-map (kbd "C-c n") #'denote)
@@ -1277,7 +1275,7 @@ arguments supplied to it as an even number and the odd ones are key
 bindings (strings that can be passed to the ~kbd~ function). This
 means that it does not try to cover the case of =[remap COMMAND]= (I
 am not a fan of it because the code alone does not tell us which key
-we end up using).
+we end up using ([[#h:6b6778af-8bd2-4f97-a794-e23774aa6cf3][Why don't you remap keys?]])).
 
 #+begin_src emacs-lisp :tangle "init.el"
 (defmacro prot-emacs-keybind (keymap &rest definitions)
@@ -1529,7 +1527,6 @@ the themes across the years.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/modus-themes>
   - GitLab: <https://gitlab.com/protesilaos/modus-themes>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/modus-themes>
 + Backronym: My Old Display Unexpectedly Sharpened ... themes
 
 Note that the ~prot-emacs-comment~ is there for my testing purposes
@@ -1648,7 +1645,6 @@ designed by me).
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/ef-themes>
   - GitLab: <https://gitlab.com/protesilaos/ef-themes>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/ef-themes>
 + Backronym: Eclectic Fashion in Themes Hides Exaggerated Markings,
   Embellishments, and Sparkles.
 
@@ -1782,7 +1778,6 @@ interfaces by supporting a large number of packages.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/standard-themes>
   - GitLab: <https://gitlab.com/protesilaos/standard-themes>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/standard-themes>
 + Backronym: Standard Themes Are Not Derivatives but the
   Affectionately Reimagined Default ... themes.
 
@@ -1910,7 +1905,6 @@ are called. The pulse effect is added there (~pulsar-after-function-hook~).
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/pulsar>
   - GitLab: <https://gitlab.com/protesilaos/pulsar>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/pulsar>
 + Backronym: Pulsar Unquestionably Luminates, Strictly Absent the Radiation
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
@@ -1971,7 +1965,6 @@ vertical axis.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/lin>
   - GitLab: <https://gitlab.com/protesilaos/lin>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/lin>
 + Backronym: LIN Is Noticeable
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
@@ -2011,7 +2004,6 @@ and [[https://github.com/minad/org-modern][Daniel Mendler's ~org-modern~ package
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/spacious-padding>
   - GitLab: <https://gitlab.com/protesilaos/spacious-padding>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Sample images:
   - <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>
   - <https://protesilaos.com/codelog/2023-11-15-spacious-padding-extra-ui-dev/>
@@ -2100,7 +2092,6 @@ such as in the difference between writing and reading.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/cursory>
   - GitLab: <https://gitlab.com/protesilaos/cursory>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/cursory>
 + Backronym: Cursor Usability Requires Styles Objectively Rated Yearlong
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
@@ -2197,6 +2188,8 @@ Bruno Boal is the lead developer and I am a co-maintainer.
 :CUSTOM_ID: h:cb41fef0-41a5-4a85-9552-496d96290258
 :END:
 
+[ Watch: [[https://protesilaos.com/codelog/2024-01-16-customize-emacs-fonts/][Customise Emacs fonts]] (2024-01-16) ]
+
 My ~fontaine~ package allows the user to define detailed font
 configurations and set them on demand. For example, one can have a
 =regular-editing= preset and another for =presentation-mode= (these
@@ -2210,12 +2203,14 @@ that are pleasant to read at comfortable point sizes.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/fontaine>
   - GitLab: <https://gitlab.com/protesilaos/fontaine>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/fontaine>
 + Backronym: Fonts, Ornaments, and Neat Typography Are Irrelevant in
   Non-graphical Emacs
 
 You will notice that all my fonts are Iosevka Comfy variants. I
 explain what this is about ([[#h:3b989679-7e3f-4f03-b4bb-611006ea01ce][Information about my Iosevka Comfy fonts]]).
+
+The next section defines some complementary functionality
+([[#h:60d6aae2-6e4b-402c-b6a8-411fc49a6857][The =prot-emacs-theme.el= section about ~variable-pitch-mode~ and font resizing]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
 ;;;; Fontaine (font configurations)
@@ -2247,7 +2242,6 @@ explain what this is about ([[#h:3b989679-7e3f-4f03-b4bb-611006ea01ce][Informati
            :inherit medium
            :default-height 150)
           (presentation
-           :inherit medium
            :default-weight light
            :default-height 180)
           (t
@@ -2284,11 +2278,37 @@ explain what this is about ([[#h:3b989679-7e3f-4f03-b4bb-611006ea01ce][Informati
 
   (define-key global-map (kbd "C-c f") #'fontaine-set-preset)
   (define-key global-map (kbd "C-c F") #'fontaine-set-face-font))
+#+end_src
 
-;;;;; `variable-pitch-mode' setup
+*** The =prot-emacs-theme.el= section about ~variable-pitch-mode~ and font resizing
+:PROPERTIES:
+:CUSTOM_ID: h:60d6aae2-6e4b-402c-b6a8-411fc49a6857
+:END:
 
+[ Watch: [[https://protesilaos.com/codelog/2024-01-16-customize-emacs-fonts/][Customise Emacs fonts]] (2024-01-16) ]
+
+The built-in ~variable-pitch-mode~ makes the current buffer use a
+proportionately spaced font. In technical terms, it remaps the
+~default~ face to ~variable-pitch~, so whatever applies to the latter
+takes effect over the former. I take care of their respective font
+families in my ~fontaine~ setup ([[#h:cb41fef0-41a5-4a85-9552-496d96290258][The =prot-emacs-theme.el= section about ~fontaine~]]).
+
+I want to activate ~variable-pitch-mode~ in all buffers where I
+normally focus on prose. The exact mode hooks are specified in the
+variable =prot/enable-variable-pitch-in-hooks=. Exceptions to these
+are major modes that I do not consider related to prose (and which in
+my opinion should not be derived from ~text-mode~): these are excluded
+in the function ~prot/enable-variable-pitch~.
+
+Then I also arrange the key bindings that resize text on-the-fly. I
+want those to have a global effect, meaning that they affect all
+buffers and the minibuffer, instead of the default behaviour to only
+adjust the current buffer's text size ([[#h:6b6778af-8bd2-4f97-a794-e23774aa6cf3][Why don't you remap keys?]]).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
 (prot-emacs-configure
   (:delay 5)
+;;;;; `variable-pitch-mode' setup
   (define-key ctl-x-x-map (kbd "v") #'variable-pitch-mode)
 
   ;; NOTE 2022-11-20: This may not cover every case, though it works
@@ -2306,7 +2326,18 @@ explain what this is about ([[#h:3b989679-7e3f-4f03-b4bb-611006ea01ce][Informati
   (mapc
    (lambda (hook)
     (add-hook hook #'prot/enable-variable-pitch))
-   prot/enable-variable-pitch-in-hooks))
+   prot/enable-variable-pitch-in-hooks)
+
+;;;;; Resize keys with global effect
+
+  ;; Emacs 29 introduces commands that resize the font across all
+  ;; buffers (including the minibuffer), which is what I want, as
+  ;; opposed to doing it only in the current buffer.  The keys are the
+  ;; same as the defaults.
+  (prot-emacs-keybind global-map
+    "C-x C-=" #'global-text-scale-adjust
+    "C-x C-+" #'global-text-scale-adjust
+    "C-x C-0" #'global-text-scale-adjust))
 #+end_src
 
 **** Information about my Iosevka Comfy fonts
@@ -2342,7 +2373,6 @@ technicalities.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/iosevka-comfy>
   - GitLab: <https://gitlab.com/protesilaos/iosevka-comfy>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Sample pictures: <https://protesilaos.com/emacs/iosevka-comfy-pictures>
 + Backronym: Iosevka ... Could Only Modify a Font, Yes
 
@@ -2433,6 +2463,10 @@ describe-variable=) to learn about each of these.
   (setq prot-simple-time-specifier "%R %z")
 
   (setq prot-scratch-default-mode 'text-mode)
+
+  ;; NEVER tell me which key can call a command that I specifically
+  ;; invoked with M-x: I have a good reason to use it that way.
+  (advice-add #'execute-extended-command--describe-binding-msg :override #'prot-common-ignore)
 #+end_src
 
 *** The =prot-emacs-essentials.el= section for comments
@@ -2939,7 +2973,6 @@ the point. Better check the video I did on the matter:
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/substitute>
   - GitLab: <https://gitlab.com/protesilaos/substitute>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: Some Utilities Built to Substitute Targets Independent of
   Their Utterances, Thoroughly and Easily.
 
@@ -3160,7 +3193,6 @@ to learn about all the available commands and their respective key bindings.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/tmr>
   - GitLab: <https://gitlab.com/protesilaos/tmr>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/tmr>
 + Backronym: TMR May Ring; Timer Must Run
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
@@ -3850,6 +3882,7 @@ completion (such as the ~corfu~ package).
   (setq completions-max-height 6)
   (setq completions-header-format (propertize "%s candidates:\n" 'face 'font-lock-comment-face))
   (setq completions-highlight-face 'completions-highlight)
+  (setq minibuffer-visible-completions t) ; Emacs 30
 #+end_src
 
 *** The =prot-emacs-completion.el= settings for saving the history (~savehist-mode~)
@@ -3986,7 +4019,7 @@ templates to have a real need for it---but it works).
 
   (prot-emacs-abbrev global-abbrev-table
     "meweb" "https://protesilaos.com"
-    "megit" "https://git.sr.ht/~protesilaos"
+    "megit" "https://github.com/protesilaos"
     "mehub" "https://github.com/protesilaos"
     "melab" "https://gitlab.com/protesilaos"
     "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
@@ -5405,7 +5438,6 @@ are where we need to be.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/dired-preview>
   - GitLab: <https://gitlab.com/protesilaos/dired-preview>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: Directories Invariably Render Everything Decently; PDFs
   Require Extra Viewing Instructions for Emacs to Work.
 
@@ -5469,14 +5501,13 @@ the ~prot-emacs-package~ is actually installing the file from source
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/mandoura>
   - GitLab: <https://gitlab.com/protesilaos/mandoura>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: MPV Access Needs Dired to Output User's Requested Audio.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 ;;; Play back media with Dired (mandoura.el)
 ;; This is yet another package of mine: <https://protesilaos.com/emacs>
 (prot-emacs-package mandoura
-  (:install "https://git.sr.ht/~protesilaos/mandoura")
+  (:install "https://github.com/protesilaos/mandoura")
   (:delay 5)
   (setq mandoura-saved-playlist-directory "~/Music/playlists/")
 
@@ -5891,7 +5922,6 @@ best changes I ever did to boost my productivity:
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/beframe>
   - GitLab: <https://gitlab.com/protesilaos/beframe>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: Buffers Encapsulated in Frames Realise Advanced
   Management of Emacs.
 
@@ -6409,7 +6439,6 @@ Control framework and its accoutrements (`diff-mode.el`,
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/agitate>
   - GitLab: <https://gitlab.com/protesilaos/agitate>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/agitate>
 + Backronym: Another Git Interface Trying to Agitate Tranquil Emacsers
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
@@ -7561,7 +7590,6 @@ commands. For the technicalities, read the man page ~sxhkd(1)~.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/sxhkdrc-mode>
   - GitLab: <https://gitlab.com/protesilaos/sxhkdrc-mode>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: Such Xenotropic Hot Keys Demonstrate Robustness and
   Configurability ... mode.
 
@@ -7836,7 +7864,6 @@ affects.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/altcaps>
   - GitLab: <https://gitlab.com/protesilaos/altcaps>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronyms: Alternating Letters Transform Casual Asides to Playful
   Statements.  ALTCAPS Lets Trolls Convert Aphorisms to Proper
   Shitposts.
@@ -7881,7 +7908,6 @@ facilities to rename files, regardless of file type.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/denote>
   - GitLab: <https://gitlab.com/protesilaos/denote>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/denote>
 + Video demo: <https://protesilaos.com/codelog/2022-06-18-denote-demo/>
 + Backronyms: Denote Everything Neatly; Omit The Excesses.  Don't Ever
   Note Only The Epiphenomenal.
@@ -8028,7 +8054,6 @@ shows how to extend the code to achieve the desired result.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/logos>
   - GitLab: <https://gitlab.com/protesilaos/logos>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/logos>
 + Video demo: <https://protesilaos.com/codelog/2022-03-11-emacs-logos-demo/>
 + Backronyms: =^L= Only Generates Ostensible Slides; Logos Optionally Goes through Outline Sections
 
@@ -8774,7 +8799,6 @@ love letters, respectively.
 + Git repositories:
   - GitHub: <https://github.com/protesilaos/notmuch-indicator>
   - GitLab: <https://gitlab.com/protesilaos/notmuch-indicator>
-+ Mailing list: <https://lists.sr.ht/~protesilaos/general-issues>
 + Backronym: notmuch-... Interested in Notmuch Data Indicators that
   Count Any Terms Ordinarily Requested.
 
@@ -9325,7 +9349,7 @@ that read from the =~/.authinfo= file ([[#h:bf540a85-12a6-4005-bf00-2ff3370e5adb
 
 #+begin_example sh
 # See my mbsync config, which is reflectd here.
-# https://git.sr.ht/~protesilaos/dotfiles
+# https://github.com/protesilaos/dotfiles
 
 defaults
 auth on
@@ -10644,6 +10668,10 @@ completion (per `completing-read')."
      (insert-file-contents file)
      (buffer-substring-no-properties (point-min) (point-max)))
    "\n" :omit-nulls "[\s\f\t\n\r\v]+"))
+
+(defun prot-common-ignore (&rest _)
+  "Use this as override advice to make a function do nothing."
+  nil)
 
 ;; NOTE 2023-06-02: The `prot-common-wcag-formula' and
 ;; `prot-common-contrast' are taken verbatim from my `modus-themes'
@@ -14143,6 +14171,9 @@ controlled by `delete-pair-blink-delay'."
 
 ;;; Code:
 
+(require 'project)
+(require 'tab-bar)
+
 ;; NOTE 2024-01-15 07:07:52 +0200: I define the "in tab" functions as
 ;; a coding exercise.  I don't have a use for it, as I prefer to use
 ;; the approach of my `beframe' package instead.
@@ -14183,7 +14214,7 @@ If FRAME is nil, use the current frame."
 (defun prot-project-in-tab (directory)
   "Switch to project DIRECTORY in a tab.
 If a tab is named after the non-directory component of DIRECTORY,
-switch to it. Otherwise, create a new tab and name it after the
+switch to it.  Otherwise, create a new tab and name it after the
 non-directory component of DIRECTORY.
 
 Use this as an alternative to `project-switch-project'."
@@ -14553,7 +14584,7 @@ boundaries, else start from point to the end of the buffer."
     (user-error "`%s' is not part of `prot-search-markup-replacements'" type)))
 
 ;; NOTE 2023-01-14: See my `substitute' package instead of the
-;; following: <https://git.sr.ht/~protesilaos/substitute>.
+;; following: <https://github.com/protesilaos/substitute>.
 
 ;; (defun prot-search-isearch-replace-symbol ()
 ;;   "Run `query-replace-regexp' for the symbol at point."
@@ -16566,7 +16597,7 @@ it (long-term though, as it is a lot of work to document everything).
 
 This question is about the following pattern:
 
-#+begin_src emacs-lisp
+#+begin_example emacs-lisp
 ;; I usually have this:
 (setq var-1 val-1)
 (setq var-2 val-2)
@@ -16576,7 +16607,7 @@ This question is about the following pattern:
 (setq var-1 val-1
       var-2 val-2
       var-3 val-3)
-#+end_src
+#+end_example
 
 I actually use both approaches. To me, the latter is better when I
 want to say "these go together", while the former makes it easier for
@@ -16585,6 +16616,43 @@ me to copy-paste what I need when communicating with someone.
 Furthermore, the single ~setq~ call is harder to read when (i) there
 are lots of variables involved and/or (ii) the values are longer lists
 which themselves take some effort to figure out.
+
+** Why don't you remap keys?
+:PROPERTIES:
+:CUSTOM_ID: h:6b6778af-8bd2-4f97-a794-e23774aa6cf3
+:END:
+
+This is about the following pattern:
+
+#+begin_example emacs-lisp
+(define-key some-map [remap old-command] #'new-command)
+#+end_example
+
+This is a good way to replace in situ a command you don't use for the
+one you want. The problem is that it is not didactic for new users.
+The person reading my code will not know which key binding I am
+referencing. Sure, they can type =C-h w= (~where-is~ command) to
+search for the command /in the current major mode/, but this too
+requires some experience. Whereas an explicit key binding is self
+explanatory.
+
+** Why not use Org block arguments in the properties drawer?
+:PROPERTIES:
+:CUSTOM_ID: h:893f3735-ecb9-4e50-bb24-8389872aa650
+:END:
+
+The code blocks I define in this document have directives to tangle
+their contents to files. I do this for each code block, though it is
+possible to set the same settings inside the parent heading's
+=PROPERTIES= drawer and achieve the same result.
+
+The problem I have with that approach is that it is less discoverable
+in a massive file like this one. People are not expected to read this
+document from start to end. Instead, they will jump directly to the
+section that is of interest to them (perhaps by performing a search).
+They will thus skip past whatever parent heading declares the
+arguments. Whereas the code block encapsulates its own data and thus
+is self-documenting.
 
 ** What hardware and software do you use?
 :PROPERTIES:
