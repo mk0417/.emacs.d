@@ -8,6 +8,14 @@ prot-emacs-pre-custom.el.  This file must be in the same
 directory as the init.el."
   :group 'file)
 
+(defcustom prot-emacs-load-super-keys nil
+  "When non-nil load the `prot-emacs-super-keys-map'.
+This key map defines bindings involving the Super key for common
+commands.  The original key binding of each of those commands is
+still available."
+  :group 'prot-emacs
+  :type 'boolean)
+
 (defcustom prot-emacs-load-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
@@ -440,6 +448,11 @@ that is expanded with the `prot-emacs-package' macro."
   (require 'prot-emacs-icons))
 (require 'prot-emacs-evil)
 (require 'prot-emacs-which-key)
+;; This one comes after Evil mode because it is the only one that uses
+;; the Super key for key bindings, so we do not worry about overriding
+;; anything.
+(when prot-emacs-load-super-keys
+  (require 'prot-emacs-super-keys))
 
 ;; NOTE 2023-10-05: my config
 (require 'init-default)
