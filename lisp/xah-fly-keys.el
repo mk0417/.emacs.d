@@ -2756,16 +2756,15 @@ Version: 2017-01-29"
 
 
 (prot-emacs-configure
-  (:delay 1)
+  (:delay 2)
   (with-eval-after-load 'evil
-    (define-key evil-normal-state-map (kbd "ma") 'xah-beginning-of-line-or-block)
-    (define-key evil-normal-state-map (kbd "me") 'xah-end-of-line-or-block)
-    (define-key evil-normal-state-map (kbd "mfc") 'xah-copy-file-path)
-    (define-key evil-normal-state-map (kbd "mfr") 'xah-list-recently-closed)
-    (define-key evil-normal-state-map (kbd "mis") 'xah-add-space-after-comma)
-    (define-key evil-normal-state-map (kbd "mit") 'xah-insert-markdown-triple-quote)
-    (define-key evil-normal-state-map (kbd "mtc") 'xah-cycle-hyphen-lowline-space)
-    (define-key evil-normal-state-map (kbd "mdf") 'xah-delete-forward-bracket-pairs)
+    (define-key evil-normal-state-map (kbd ",xa") 'xah-beginning-of-line-or-block)
+    (define-key evil-normal-state-map (kbd ",xe") 'xah-end-of-line-or-block)
+    (define-key evil-normal-state-map (kbd ",xc") 'xah-copy-file-path)
+    (define-key evil-normal-state-map (kbd ",xs") 'xah-add-space-after-comma)
+    (define-key evil-normal-state-map (kbd ",xt") 'xah-insert-markdown-triple-quote)
+    (define-key evil-normal-state-map (kbd ",xc") 'xah-cycle-hyphen-lowline-space)
+    (define-key evil-normal-state-map (kbd ",xf") 'xah-delete-forward-bracket-pairs)
     ))
 
 (provide 'xah-fly-keys)
