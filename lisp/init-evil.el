@@ -52,6 +52,7 @@
 
     (define-key evil-normal-state-map (kbd ".") nil)
     (define-key evil-normal-state-map (kbd "f") nil)
+    (define-key evil-normal-state-map (kbd "m") nil)
     (define-key evil-normal-state-map (kbd "C-.") nil)
     (define-key evil-normal-state-map (kbd "C-r") nil)
     (define-key evil-normal-state-map (kbd "C-n") nil)

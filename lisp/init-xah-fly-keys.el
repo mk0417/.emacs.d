@@ -2757,17 +2757,57 @@ Version: 2017-01-29"
 
 (prot-emacs-configure
   (:delay 2)
-  (with-eval-after-load 'evil
-    (define-key evil-normal-state-map (kbd ",xa") 'xah-beginning-of-line-or-block)
-    (define-key evil-normal-state-map (kbd ",xe") 'xah-end-of-line-or-block)
-    (define-key evil-normal-state-map (kbd ",xc") 'xah-copy-file-path)
-    (define-key evil-normal-state-map (kbd ",xs") 'xah-add-space-after-comma)
-    (define-key evil-normal-state-map (kbd ",xt") 'xah-insert-markdown-triple-quote)
-    (define-key evil-normal-state-map (kbd ",xc") 'xah-cycle-hyphen-lowline-space)
-    (define-key evil-normal-state-map (kbd ",xf") 'xah-delete-forward-bracket-pairs)
-    ))
+  (defvar-keymap p-xah-prefix-buffer-map
+    :doc "Prefix keymap for Xah buffer"
+    :name "Xah Buffer"
+    "c" #'xah-copy-file-path)
 
-(provide 'xah-fly-keys)
+  (defvar-keymap p-xah-prefix-delete-map
+    :doc "Prefix keymap for Xah delete"
+    :name "Xah Delete"
+    "d" #'xah-smart-delete
+    "f" #'xah-delete-forward-bracket-pairs
+    "b" #'xah-delete-backward-bracket-pair
+    "k" #'xah-delete-backward-bracket-text
+    "i" #'xah-delete-bracket-text-backward)
+
+  (defvar-keymap p-xah-prefix-edit-map
+    :doc "Prefix keymap for Xah edit"
+    :name "Xah Edit"
+    "s" #'xah-add-space-after-comma
+    "t" #'xah-insert-markdown-triple-quote
+    "b" #'xah-copy-all
+    "h" #'xah-cycle-hyphen-lowline-space
+    "r" #'xah-run-current-file)
+
+  (defvar-keymap p-xah-prefix-move-map
+    :doc "Prefix keymap for Xah move"
+    :name "Xah Move"
+    "f" #'xah-forward-right-bracket
+    "b" #'xah-backward-left-bracket
+    "m" #'xah-goto-matching-bracket)
+
+  (defvar-keymap p-xah-prefix-map
+    :doc "Prefix keymap for Xah commands"
+    :name "Xah Prefix"
+    "a" #'xah-beginning-of-line-or-block
+    "e" #'xah-end-of-line-or-block
+    "b" p-xah-prefix-buffer-map
+    "d" p-xah-prefix-delete-map
+    "i" p-xah-prefix-edit-map
+    "m" p-xah-prefix-move-map)
+
+  (with-eval-after-load 'which-key
+    (which-key-add-keymap-based-replacements p-xah-prefix-map
+      "b" `("Xah Buffer" . ,p-xah-prefix-buffer-map)
+      "d" `("Xah Delete" . ,p-xah-prefix-delete-map)
+      "i" `("Xah Edit" . ,p-xah-prefix-edit-map)
+      "m" `("Xah Move" . ,p-xah-prefix-move-map)))
+
+  (with-eval-after-load 'evil
+    (define-key evil-normal-state-map (kbd "m") p-xah-prefix-map)))
+
+(provide 'init-xah-fly-keys)
 
 
 

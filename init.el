@@ -466,7 +466,7 @@ that is expanded with the `prot-emacs-package' macro."
 ;; (require 'init-keybindings)
 (require 'init-keychord)
 (require 'init-avy)
-(require 'xah-fly-keys)
+(require 'init-xah-fly-keys)
 
 ;; For those who use my dotfiles and need an easy way to write their
 ;; own extras on top of what I already load.  The file must exist at
