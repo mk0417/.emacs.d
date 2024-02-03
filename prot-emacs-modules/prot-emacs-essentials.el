@@ -62,6 +62,7 @@
     "M-`" nil
     "C-z" prot-prefix-map
     "<f2>" prot-prefix-map ; override that two-column gimmick
+    "ESC ESC" #'prot-simple-keyboard-quit-dwim
     "C-g" #'prot-simple-keyboard-quit-dwim
     "C-h K" #'describe-keymap ; overrides `Info-goto-emacs-key-command-node'
     "C-h u" #'apropos-user-option
@@ -73,8 +74,8 @@
     ;; Commands for lines
     "M-o" #'delete-blank-lines   ; alias for C-x C-o
     "M-k" #'prot-simple-kill-line-backward
+    "C-S-d" #'prot-simple-duplicate-line-or-region
     "C-S-w" #'prot-simple-copy-line
-    "C-S-d" #'duplicate-dwim ; Emacs 29
     "C-S-y" #'prot-simple-yank-replace-line-or-region
     "M-SPC" #'cycle-spacing
     "C-v" #'prot-simple-multi-line-below ; overrides `scroll-up-command'
@@ -356,7 +357,8 @@ word.  Fall back to regular `expreg-expand'."
 In other words, start visualising the undo ring if we are going
 to be cycling through the edits."
     (interactive)
-    (if (member last-command prot/vundo-undo-functions)
+    (if (and (member last-command prot/vundo-undo-functions)
+             (not undo-in-region))
         (call-interactively 'vundo)
       (apply args)))
 

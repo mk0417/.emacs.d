@@ -73,12 +73,14 @@
 
   ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
   ;; is very flexible.
-  (setq spacious-padding-subtle-mode-line
-        `( :mode-line-active ,(if (or (eq prot-emacs-load-theme-family 'modus)
-                                      (eq prot-emacs-load-theme-family 'standard))
-                                  'default
-                                'help-key-binding)
-           :mode-line-inactive vertical-border))
+  ;; (setq spacious-padding-subtle-mode-line
+  ;;       `( :mode-line-active ,(if (or (eq prot-emacs-load-theme-family 'modus)
+  ;;                                     (eq prot-emacs-load-theme-family 'standard))
+  ;;                                 'default
+  ;;                               'help-key-binding)
+  ;;          :mode-line-inactive vertical-border))
+
+  (setq spacious-padding-subtle-mode-line nil)
 
   ;; (spacious-padding-mode 1)
 
@@ -192,7 +194,6 @@
            :inherit medium
            :default-height 150)
           (presentation
-           :default-weight light
            :default-height 180)
           (t
            ;; I keep all properties for didactic purposes, but most can be

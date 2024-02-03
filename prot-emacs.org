@@ -196,7 +196,7 @@ When I want to make a change to my Emacs setup, I do the edits in this
 =prot-emacs.org= and then type =C-c C-v C-t= (=M-x org-babel-tangle=)
 to propagate the changes to the relevant files.
 
-On a new compueter, I put all my Emacs files where they are meant to
+On a new computer, I put all my Emacs files where they are meant to
 be (inside the =~/.emacs.d= directory) with this command, which uses
 the ~stow~ system package (all my dotfiles are stowed in place with
 this program):
@@ -2057,14 +2057,17 @@ I also take care to make it work with my customised mode line
            :right-divider-width 30
            :scroll-bar-width 8))
 
-  ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
-  ;; is very flexible.
-  (setq spacious-padding-subtle-mode-line
-        `( :mode-line-active ,(if (or (eq prot-emacs-load-theme-family 'modus)
-                                      (eq prot-emacs-load-theme-family 'standard))
-                                  'default
-                                'help-key-binding)
-           :mode-line-inactive vertical-border))
+  ;; ;; Read the doc string of `spacious-padding-subtle-mode-line' as
+  ;; ;; it is very flexible.
+  ;;
+  ;; (setq spacious-padding-subtle-mode-line
+  ;;       `( :mode-line-active ,(if (or (eq prot-emacs-load-theme-family 'modus)
+  ;;                                     (eq prot-emacs-load-theme-family 'standard))
+  ;;                                 'default
+  ;;                               'help-key-binding)
+  ;;          :mode-line-inactive vertical-border))
+
+  (setq spacious-padding-subtle-mode-line nil)
 
   (spacious-padding-mode 1)
 
@@ -2268,7 +2271,6 @@ The next section defines some complementary functionality
            :inherit medium
            :default-height 150)
           (presentation
-           :default-weight light
            :default-height 180)
           (t
            ;; I keep all properties for didactic purposes, but most can be
@@ -2545,6 +2547,7 @@ earlier ([[#h:713ede33-3802-40c6-a8e3-7e1fc0d0a924][The =prot-emacs-essentials.e
     "M-`" nil
     "C-z" prot-prefix-map
     "<f2>" prot-prefix-map ; override that two-column gimmick
+    "ESC ESC" #'prot-simple-keyboard-quit-dwim
     "C-g" #'prot-simple-keyboard-quit-dwim
     "C-h K" #'describe-keymap ; overrides `Info-goto-emacs-key-command-node'
     "C-h u" #'apropos-user-option
@@ -2556,8 +2559,8 @@ earlier ([[#h:713ede33-3802-40c6-a8e3-7e1fc0d0a924][The =prot-emacs-essentials.e
     ;; Commands for lines
     "M-o" #'delete-blank-lines   ; alias for C-x C-o
     "M-k" #'prot-simple-kill-line-backward
+    "C-S-d" #'prot-simple-duplicate-line-or-region
     "C-S-w" #'prot-simple-copy-line
-    "C-S-d" #'duplicate-dwim ; Emacs 29
     "C-S-y" #'prot-simple-yank-replace-line-or-region
     "M-SPC" #'cycle-spacing
     "C-v" #'prot-simple-multi-line-below ; overrides `scroll-up-command'
@@ -3164,9 +3167,10 @@ to pulse the region.
 In other words, start visualising the undo ring if we are going
 to be cycling through the edits."
     (interactive)
-     (if (member last-command prot/vundo-undo-functions)
-         (call-interactively 'vundo)
-       (apply args)))
+    (if (and (member last-command prot/vundo-undo-functions)
+             (not undo-in-region))
+        (call-interactively 'vundo)
+      (apply args)))
 
   (mapc
    (lambda (fn)
@@ -4040,14 +4044,14 @@ templates to have a real need for it---but it works).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;;; `abbrev' (Abbreviations, else Abbrevs)
-  (setq abbrev-file-name (locate-user-emacs-file "abbrevs"))
   (setq only-global-abbrevs nil)
 
   (prot-emacs-abbrev global-abbrev-table
-    "meweb" "https://protesilaos.com"
-    "megit" "https://github.com/protesilaos"
-    "mehub" "https://github.com/protesilaos"
-    "melab" "https://gitlab.com/protesilaos"
+    "meweb"   "https://protesilaos.com"
+    "megit"   "https://github.com/protesilaos"
+    "mehub"   "https://github.com/protesilaos"
+    "meclone" "git@github.com/protesilaos/"
+    "melab"   "https://gitlab.com/protesilaos"
     "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
 
   (prot-emacs-abbrev text-mode-abbrev-table
@@ -4075,7 +4079,10 @@ templates to have a real need for it---but it works).
       "bestregards"  "Best regards,\nProtesilaos (or simply \"Prot\")"
       "allthebest"   "All the best,\nProtesilaos (or simply \"Prot\")"
       "abest"        "All the best,\nProt"
-      "bregards"     "Best regards,\nProt"))
+      "bregards"     "Best regards,\nProt"
+      "nosrht"       "P.S. I am phasing out SourceHut:
+<https://protesilaos.com/codelog/2024-01-27-sourcehut-no-more/>.
+Development continues on GitHub with GitLab as a mirror."))
 
   ;; message-mode derives from text-mode, so we don't need a separate
   ;; hook for it.
@@ -4925,7 +4932,7 @@ For isearch, I have:
 For variants of ~occur~ or ~grep~, which also benefit from the rules I have on
 where windows/buffers are displayed ([[#h:50f8b1e4-b14e-453f-a37e-1c0e495ab80f][The =prot-emacs-window.el= rules for displaying buffers (~display-buffer-alist~)]]):
 
-- Type =M-s M-s= (~prot-search-outline~) to use minibuffer completion
+- Type =M-s s= or =M-s M-s= (~prot-search-outline~) to use minibuffer completion
   to match an entry across the buffer's outline. This is probably my
   most used command. What I like about it is that it benefits from the
   extensive customisations I make to the completion mechanism and the
@@ -4996,6 +5003,7 @@ by visiting individual files or by using a grep buffer as an index.
     "M-s t" #'prot-search-occur-todo-keywords
     "M-s M-t" #'prot-search-grep-todo-keywords ; With C-u it runs `prot-search-git-grep-todo-keywords'
     "M-s M-T" #'prot-search-git-grep-todo-keywords
+    "M-s s" #'prot-search-outline
     "M-s M-s" #'prot-search-outline
     "M-s M-o" #'prot-search-occur-outline
     "M-s M-u" #'prot-search-occur-browse-url)
@@ -15464,11 +15472,11 @@ expression."
   (interactive)
   (if (eq last-command this-command)
       (ignore-errors (forward-sexp 1))
-    (let ((thing (cond
-                  ((thing-at-point 'url) 'url)
-                  ((thing-at-point 'sexp) 'sexp)
-                  ((thing-at-point 'string) 'string)
-                  (t 'word))))
+    (when-let ((thing (cond
+                       ((thing-at-point 'url) 'url)
+                       ((thing-at-point 'sexp) 'sexp)
+                       ((thing-at-point 'string) 'string)
+                       (t 'word))))
       (prot-simple--mark (bounds-of-thing-at-point thing)))))
 
 ;;;###autoload
@@ -15609,6 +15617,28 @@ When called interactively without a prefix numeric argument, N is
   (copy-region-as-kill (line-beginning-position) (line-end-position)))
 
 (make-obsolete 'prot-simple-copy-line-or-region 'prot-simple-copy-line "2023-09-26")
+
+(defun prot-simple--duplicate-buffer-substring (boundaries)
+  "Duplicate buffer substring between BOUNDARIES.
+BOUNDARIES is a cons cell representing buffer positions."
+  (unless (consp boundaries)
+    (error "`%s' is not a cons cell" boundaries))
+  (let ((beg (car boundaries))
+        (end (cdr boundaries)))
+    (save-excursion
+      (goto-char end)
+      (newline)
+      (insert (buffer-substring-no-properties beg end))
+      (indent-for-tab-command))))
+
+;;;###autoload
+(defun prot-simple-duplicate-line-or-region (&optional beg end)
+  "Duplicate the current line or active region."
+  (interactive "r")
+  (prot-simple--duplicate-buffer-substring
+   (if (region-active-p)
+       (cons (region-beginning) (region-end))
+     (cons (line-beginning-position) (line-end-position)))))
 
 ;;;###autoload
 (defun prot-simple-yank-replace-line-or-region ()

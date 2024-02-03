@@ -60,6 +60,7 @@
 (defvar-keymap prot-prefix-file-map
   :doc "Prefix keymaps for files."
   :name "File"
+  "r" #'recentf
   "p" #'p-find-file-in-config
   "n" #'p-find-file-in-notes
   "j" #'p-create-scratch-file

@@ -87,6 +87,7 @@
     (define-key evil-normal-state-map (kbd ",h") 'p-insert-surround-curly-bracket)
     (define-key evil-normal-state-map (kbd ",s") 'p-insert-surround-single-quote)
     (define-key evil-normal-state-map (kbd ",d") 'p-insert-surround-double-quotes)
+    (define-key evil-normal-state-map (kbd "gom") 'execute-extended-command)
     (define-key evil-normal-state-map (kbd "goo") 'indent-region)
     (define-key evil-normal-state-map (kbd "goi") 'p-format-indent-in-buffer)
     (define-key evil-normal-state-map (kbd "gor") 'p-ex-evil-buffer-replace)

@@ -71,11 +71,11 @@ expression."
   (interactive)
   (if (eq last-command this-command)
       (ignore-errors (forward-sexp 1))
-    (let ((thing (cond
-                  ((thing-at-point 'url) 'url)
-                  ((thing-at-point 'sexp) 'sexp)
-                  ((thing-at-point 'string) 'string)
-                  (t 'word))))
+    (when-let ((thing (cond
+                       ((thing-at-point 'url) 'url)
+                       ((thing-at-point 'sexp) 'sexp)
+                       ((thing-at-point 'string) 'string)
+                       (t 'word))))
       (prot-simple--mark (bounds-of-thing-at-point thing)))))
 
 ;;;###autoload
@@ -216,6 +216,28 @@ When called interactively without a prefix numeric argument, N is
   (copy-region-as-kill (line-beginning-position) (line-end-position)))
 
 (make-obsolete 'prot-simple-copy-line-or-region 'prot-simple-copy-line "2023-09-26")
+
+(defun prot-simple--duplicate-buffer-substring (boundaries)
+  "Duplicate buffer substring between BOUNDARIES.
+BOUNDARIES is a cons cell representing buffer positions."
+  (unless (consp boundaries)
+    (error "`%s' is not a cons cell" boundaries))
+  (let ((beg (car boundaries))
+        (end (cdr boundaries)))
+    (save-excursion
+      (goto-char end)
+      (newline)
+      (insert (buffer-substring-no-properties beg end))
+      (indent-for-tab-command))))
+
+;;;###autoload
+(defun prot-simple-duplicate-line-or-region (&optional beg end)
+  "Duplicate the current line or active region."
+  (interactive "r")
+  (prot-simple--duplicate-buffer-substring
+   (if (region-active-p)
+       (cons (region-beginning) (region-end))
+     (cons (line-beginning-position) (line-end-position)))))
 
 ;;;###autoload
 (defun prot-simple-yank-replace-line-or-region ()
