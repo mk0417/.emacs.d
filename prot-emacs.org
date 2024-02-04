@@ -841,7 +841,7 @@ altogether, but this is not possible. So here we are...
 (setq custom-file (make-temp-file "emacs-custom-"))
 #+end_src
 
-** The =init.el= settings for multilingual editing
+** The =init.el= settings for multilingual editing (input methods)
 :PROPERTIES:
 :CUSTOM_ID: h:805e0539-c46d-4f03-b152-cefc635f945c
 :END:
@@ -1334,6 +1334,8 @@ DEFINITIONS is a sequence of string and command pairs."
 :CUSTOM_ID: h:e7a12825-7848-42bd-b99b-b87903012814
 :END:
 
+[ Watch: [[https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/][abbreviations with abbrev-mode (quick text expansion)]] (2024-02-03). ]
+
 This is the same idea as ~prot-emacs-keybind~, adjusted to work with
 the ~define-abbrev~ function ([[#h:d3684ec0-a972-4033-a4d6-41ee16e891d9][The init.el macro to bind keys (~prot-emacs-keybind~)]]).
 I probably do not need this, as I only write a small number of
@@ -1343,7 +1345,9 @@ abbreviations. Though it is good to practice some programming.
 (defmacro prot-emacs-abbrev (table &rest definitions)
   "Expand abbrev DEFINITIONS for the given TABLE.
 DEFINITIONS is a sequence of string pairs mapping the
-abbreviation to its expansion."
+abbreviation to its expansion.
+
+Also see `prot-emacs-abbrev-function'."
   (declare (indent 1))
   (unless (zerop (% (length definitions) 2))
     (error "Uneven number of key+command pairs"))
@@ -1354,6 +1358,24 @@ abbreviation to its expansion."
           (when-let ((abbrev (car pair))
                      (expansion (cadr pair)))
             `(define-abbrev table ,abbrev ,expansion)))
+        (seq-split definitions 2))))
+
+(defmacro prot-emacs-abbrev-function (table &rest definitions)
+  "Expand abbrev DEFINITIONS for the given TABLE.
+DEFINITIONS is a sequence of string and function symbol pairs
+mapping the abbreviation to its expansion.
+
+Also see `prot-emacs-abbrev'."
+  (declare (indent 1))
+  (unless (zerop (% (length definitions) 2))
+    (error "Uneven number of key+command pairs"))
+  `(when-let (((abbrev-table-p ,table))
+              (table ,table))
+     ,@(mapcar
+        (lambda (pair)
+          (when-let ((abbrev (car pair))
+                     (expansion (cadr pair)))
+            `(define-abbrev table ,abbrev "" ,expansion)))
         (seq-split definitions 2))))
 #+end_src
 
@@ -1400,7 +1422,7 @@ specifies how they should be colourised.
 (defconst prot-emacs-font-lock-keywords
   '(("(\\(prot-emacs-package\\)\\_>[ \t']*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
      (2 font-lock-constant-face nil t))
-    ("(\\(prot-emacs-\\(keybind\\|abbrev\\)\\)\\_>[ \t']*\\(\\(\\sw\\|\\s_\\)+\\)?"
+    ("(\\(prot-emacs-\\(keybind\\|abbrev\\|abbrev-function\\)\\)\\_>[ \t']*\\(\\(\\sw\\|\\s_\\)+\\)?"
      (3 font-lock-variable-name-face nil t))
     ("(\\(prot-emacs-comment\\)\\_>[ \t']*"
      (1 font-lock-preprocessor-face nil t))))
@@ -2525,6 +2547,8 @@ the module to set my desired configurations.
 :CUSTOM_ID: h:a7edbb23-2daa-4d8f-bcdd-8c26829d7bb7
 :END:
 
+[ Watch: [[https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/][define prefix/leader key (nested key maps)]] (2024-01-29). ]
+
 I always define key bindings as the final part of a configuration
 block. Now that we are done with tweaking variables, let us define
 keys. You will notice that I redefine some default key bindings whose
@@ -3463,6 +3487,8 @@ Finally, we ~provide~ the module. This is the mirror function of
 :CUSTOM_ID: h:41ee38d0-9099-4444-85e4-cc8dce00fb9a
 :END:
 
+[ Watch: [[https://protesilaos.com/codelog/2023-07-29-emacs-custom-modeline-tutorial/][write a custom mode line]] (2023-07-29) and [[https://protesilaos.com/codelog/2024-01-13-customize-emacs-mode-line/][customise mode line colours]] (2024-01-13). ]
+
 I use a custom mode line that is close in spirit to the default one.
 The main difference is that I design most of the components to only
 appear in the focused window. This way, I get a minimal view while
@@ -3555,7 +3581,7 @@ with my customised mode line ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =pr
 ;;; Keycast mode
 (prot-emacs-package keycast
   (:install t)
-  (:delay 60)
+  (:delay 5)
   (setq keycast-mode-line-format "%2s%k%c%R")
   (setq keycast-mode-line-insert-after 'prot-modeline-vc-branch)
   (setq keycast-mode-line-window-predicate 'mode-line-window-selected-p)
@@ -4004,6 +4030,8 @@ static, user-defined abbreviations ([[#h:fd84b79a-351e-40f0-b383-bf520d77834b][T
 :CUSTOM_ID: h:fd84b79a-351e-40f0-b383-bf520d77834b
 :END:
 
+[ Watch: [[https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/][abbreviations with abbrev-mode (quick text expansion)]] (2024-02-03). ]
+
 Unlike "dynamic abbreviations" that depend on the text already
 available in a buffer, we can define abbreviations that always expand
 to what we have specified ([[#h:567bb00f-1d82-4746-93e5-e0f60721728a][The =prot-emacs-completion.el= settings for dynamic text expansion (~dabbrev~)]]).
@@ -4072,22 +4100,48 @@ templates to have a real need for it---but it works).
     "texmacs"        "TeXmacs"
     "typescript"     "TypeScript"
     "visavis"        "vis-à-vis"
-    "youtube"        "YouTube")
+    "youtube"        "YouTube"
+    ":up"            "🙃"
+    ":uni"           "🦄"
+    ":laugh"         "🤣"
+    ":smile"         "😀"
+    ":sun"           "☀️")
+
+  ;; Allow abbrevs with a prefix colon or underscore.  I demonstrated
+  ;; this here: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>.
+  (abbrev-table-put text-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:_].*\\|.*\\)")
 
   (with-eval-after-load 'message
     (prot-emacs-abbrev message-mode-abbrev-table
       "bestregards"  "Best regards,\nProtesilaos (or simply \"Prot\")"
       "allthebest"   "All the best,\nProtesilaos (or simply \"Prot\")"
+      "niceday"      "Have a nice day,\nProtesilaos (or simply \"Prot\")"
       "abest"        "All the best,\nProt"
       "bregards"     "Best regards,\nProt"
+      "nday"         "Have a nice day,\nProt"
       "nosrht"       "P.S. I am phasing out SourceHut:
 <https://protesilaos.com/codelog/2024-01-27-sourcehut-no-more/>.
 Development continues on GitHub with GitLab as a mirror."))
+
+  ;; Unlike the above, the `prot-emacs-abbrev-function' macro does not
+  ;; expand a static text, but calls a function which dynamically
+  ;; expands into the requisite form.
+  (require 'prot-abbrev)
+  (prot-emacs-abbrev-function global-abbrev-table
+    "metime" #'prot-abbrev-current-time
+    "medate" #'prot-abbrev-current-date
+    "mejitsi" #'prot-abbrev-jitsi-link)
 
   ;; message-mode derives from text-mode, so we don't need a separate
   ;; hook for it.
   (dolist (hook '(text-mode-hook prog-mode-hook git-commit-mode-hook))
     (add-hook hook #'abbrev-mode))
+
+  ;; Because the *scratch* buffer is produced before we load this, we
+  ;; have to explicitly activate the mode there.
+  (when-let ((scratch (get-buffer "*scratch*")))
+    (with-current-buffer scratch
+      (abbrev-mode 1)))
 
   ;; By default, abbrev asks for confirmation on whether to use
   ;; `abbrev-file-name' to save abbrevations.  I do not need that, nor
@@ -10055,6 +10109,77 @@ Please bear in mind that the code I write here is not necessarily as
 high quality as what I put in my public packages, meaning that I do
 not test it as much and do not try to make it perfect.
 
+** The =prot-abbrev.el= library
+:PROPERTIES:
+:CUSTOM_ID: h:ddb9c32c-2114-4347-9f76-5160e590b5dc
+:END:
+
+#+begin_src emacs-lisp :tangle "prot-lisp/prot-abbrev.el" :mkdirp yes
+;;; prot-abbrev.el --- Functions for use with abbrev-mode -*- lexical-binding: t -*-
+
+;; Copyright (C) 2024  Protesilaos Stavrou
+
+;; Author: Protesilaos Stavrou <info@protesilaos.com>
+;; URL: https://protesilaos.com/emacs/dotemacs
+;; Version: 0.1.0
+;; Package-Requires: ((emacs "30.1"))
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+;;
+;; Functions for use with `abbrev-mode'.
+;;
+;; Remember that every piece of Elisp that I write is for my own
+;; educational and recreational purposes.  I am not a programmer and I
+;; do not recommend that you copy any of this if you are not certain of
+;; what it does.
+
+;;; Code:
+
+(defgroup prot-abbrev ()
+  "Functions for use with `abbrev-mode'."
+  :group 'editing)
+
+(defcustom prot-abbrev-time-specifier "%R"
+  "Time specifier for `format-time-string'."
+  :type 'string
+  :group 'prot-abbrev)
+
+(defcustom prot-abbrev-date-specifier "%F"
+  "Date specifier for `format-time-string'."
+  :type 'string
+  :group 'prot-abbrev)
+
+(defun prot-abbrev-current-time ()
+  "Insert the current time per `prot-abbrev-time-specifier'."
+  (insert (format-time-string prot-abbrev-time-specifier)))
+
+(defun prot-abbrev-current-date ()
+  "Insert the current date per `prot-abbrev-date-specifier'."
+  (insert (format-time-string prot-abbrev-date-specifier)))
+
+(defun prot-abbrev-jitsi-link ()
+  "Insert a Jitsi link."
+  (insert (concat "https://meet.jit.si/" (format-time-string "%Y%M%dT%H%M%S"))))
+
+(provide 'prot-abbrev)
+;;; prot-abbrev.el ends here
+#+end_src
+
 ** The =prot-coach.el= library
 :PROPERTIES:
 :CUSTOM_ID: h:dbdfc774-c389-403f-95e7-17fa62c53d84
@@ -12375,6 +12500,8 @@ As a final step, save `prot-eww-visited-history' to a file (see
 :CUSTOM_ID: h:935adc09-abaa-4413-a5ab-a7a562081c20
 :END:
 
+[ Watch: [[https://protesilaos.com/codelog/2023-07-29-emacs-custom-modeline-tutorial/][write a custom mode line]] (2023-07-29) and [[https://protesilaos.com/codelog/2024-01-13-customize-emacs-mode-line/][customise mode line colours]] (2024-01-13). ]
+
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-modeline.el" :mkdirp yes
 ;;; prot-modeline.el --- Code for my custom mode line -*- lexical-binding: t -*-
 
@@ -13903,6 +14030,8 @@ controlled by `delete-pair-blink-delay'."
 :PROPERTIES:
 :CUSTOM_ID: h:f860bd85-671e-477e-8233-23a8ba43e1c6
 :END:
+
+[ Watch: [[https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/][define prefix/leader key (nested key maps)]] (2024-01-29). ]
 
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-prefix.el" :mkdirp yes
 ;;; prot-prefix.el --- Prefix keymap for my dotemacs -*- lexical-binding: t -*-
@@ -15625,16 +15754,16 @@ BOUNDARIES is a cons cell representing buffer positions."
     (error "`%s' is not a cons cell" boundaries))
   (let ((beg (car boundaries))
         (end (cdr boundaries)))
-    (save-excursion
-      (goto-char end)
-      (newline)
-      (insert (buffer-substring-no-properties beg end))
-      (indent-for-tab-command))))
+    (goto-char end)
+    (newline)
+    (insert (buffer-substring-no-properties beg end))))
 
 ;;;###autoload
-(defun prot-simple-duplicate-line-or-region (&optional beg end)
+(defun prot-simple-duplicate-line-or-region ()
   "Duplicate the current line or active region."
-  (interactive "r")
+  (interactive)
+  (unless mark-ring                  ; needed when entering a new buffer
+    (push-mark (point) t nil))
   (prot-simple--duplicate-buffer-substring
    (if (region-active-p)
        (cons (region-beginning) (region-end))
