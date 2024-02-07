@@ -194,9 +194,9 @@ Development continues on GitHub with GitLab as a mirror."))
   ;; expands into the requisite form.
   (require 'prot-abbrev)
   (prot-emacs-abbrev-function global-abbrev-table
-                              "metime" #'prot-abbrev-current-time
-                              "medate" #'prot-abbrev-current-date
-                              "mejitsi" #'prot-abbrev-jitsi-link)
+    "metime" #'prot-abbrev-current-time
+    "medate" #'prot-abbrev-current-date
+    "mejitsi" #'prot-abbrev-jitsi-link)
 
   ;; message-mode derives from text-mode, so we don't need a separate
   ;; hook for it.

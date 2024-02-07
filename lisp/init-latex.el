@@ -40,6 +40,9 @@
     (add-hook 'LaTeX-mode-hook #'auto-fill-mode)
     (add-hook 'LaTeX-mode-hook #'LaTeX-math-mode)
 
+    ;; line number mode
+    (add-hook 'LaTeX-mode-hook #'display-line-numbers-mode)
+
     ;; add support for references
     (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
     (setq reftex-plug-into-AUCTeX t)
@@ -67,7 +70,7 @@
             (command
              (concat "find . -maxdepth 1 \\( -name \"*.aux\" -o -name \"*.log\" -o -name \"*.gz\" -o -name \"*.listing\""
                      " -o -name \"*.out\" -o -name \"*.fls\" -o -name \"*.nav\" -o -name \"*.snm\" -o -name \"*.vrb\""
-                     " -o -name \"*.toc\" -o -name \"*.fdb_latexmk\" -o -name \"auto\""
+                     " -o -name \"*.toc\" -o -name \"*.fdb_latexmk\" -o -name \"*.bcf\" -o -name \"*.xml\" -o -name \"auto\""
                      " -o -name \"_minted-*\" -type d \\) -exec rm -rf {} +")))
         (shell-command command)
         (message "Files and directories deleted.")))
