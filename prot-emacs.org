@@ -3518,6 +3518,7 @@ only find a few cases where this is needed.
                   prot-modeline-kbd-macro
                   prot-modeline-narrow
                   prot-modeline-buffer-status
+                  prot-modeline-window-dedicated-status
                   prot-modeline-input-method
                   prot-modeline-evil
                   prot-modeline-buffer-identification
@@ -4139,8 +4140,7 @@ templates to have a real need for it---but it works).
       "abest"        "All the best,\nProt"
       "bregards"     "Best regards,\nProt"
       "nday"         "Have a nice day,\nProt"
-      "nosrht"       "P.S. I am phasing out SourceHut:
-<https://protesilaos.com/codelog/2024-01-27-sourcehut-no-more/>.
+      "nosrht"       "P.S. I am phasing out SourceHut: <https://protesilaos.com/codelog/2024-01-27-sourcehut-no-more/>.
 Development continues on GitHub with GitLab as a mirror."))
 
   ;; Unlike the above, the `prot-emacs-abbrev-function' macro does not
@@ -5784,6 +5784,8 @@ Here I simply bind some keys for the aforementioned.
 :PROPERTIES:
 :CUSTOM_ID: h:50f8b1e4-b14e-453f-a37e-1c0e495ab80f
 :END:
+
+[ Watch: [[https://protesilaos.com/codelog/2024-02-08-emacs-window-rules-display-buffer-alist/][control where buffers are displayed (the ~display-buffer-alist~)]] (2024-02-08). ]
 
 The ~display-buffer-alist~ is a powerful user option and somewhat hard
 to get started with. The reason for its difficulty comes from the
@@ -12818,6 +12820,16 @@ Specific to the current window's mode line.")
                     'mouse-face 'mode-line-highlight)))
   "Mode line construct for showing remote file name.")
 
+;;;; Dedicated window
+
+(defvar-local prot-modeline-window-dedicated-status
+    '(:eval
+      (when (window-dedicated-p)
+        (propertize " = "
+                    'face 'prot-modeline-indicator-magenta-bg
+                    'mouse-face 'mode-line-highlight)))
+  "Mode line construct for dedicated window indicator.")
+
 ;;;; Evil state
 
 (defvar evil-state)
@@ -13168,6 +13180,7 @@ Specific to the current window's mode line.")
                      prot-modeline-narrow
                      prot-modeline-input-method
                      prot-modeline-buffer-status
+                     prot-modeline-window-dedicated-status
                      prot-modeline-evil
                      prot-modeline-buffer-identification
                      prot-modeline-major-mode
