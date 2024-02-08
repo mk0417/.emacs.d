@@ -107,14 +107,23 @@
 
   (setq completions-format 'one-column)
   (setq completion-show-help nil)
-  (setq completion-auto-help t)
+  (setq completion-auto-help 'always)
   (setq completion-auto-select nil)
   (setq completions-detailed t)
   (setq completion-show-inline-help nil)
   (setq completions-max-height 6)
-  (setq completions-header-format (propertize "%s candidates:\n" 'face 'font-lock-comment-face))
+  (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
   (setq completions-highlight-face 'completions-highlight)
+  (setq minibuffer-completion-auto-choose t)
   (setq minibuffer-visible-completions t) ; Emacs 30
+  (setq completions-sort 'historical)
+
+  (unless prot-emacs-completion-ui
+    (prot-emacs-keybind minibuffer-local-completion-map
+      "<up>" #'minibuffer-previous-line-completion
+      "<down>" #'minibuffer-next-line-completion)
+
+    (add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently))
 
 ;;;; `savehist' (minibuffer and related histories)
   (setq savehist-file (locate-user-emacs-file "savehist"))
@@ -146,7 +155,13 @@
     "mehub"   "https://github.com/protesilaos"
     "meclone" "git@github.com/protesilaos/"
     "melab"   "https://gitlab.com/protesilaos"
-    "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
+    "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/"
+    ";web"   "https://protesilaos.com"
+    ";git"   "https://github.com/protesilaos"
+    ";hub"   "https://github.com/protesilaos"
+    ";clone" "git@github.com/protesilaos/"
+    ";lab"   "https://gitlab.com/protesilaos"
+    ";drive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
 
   (prot-emacs-abbrev text-mode-abbrev-table
     "asciidoc"       "AsciiDoc"
@@ -167,15 +182,16 @@
     "typescript"     "TypeScript"
     "visavis"        "vis-à-vis"
     "youtube"        "YouTube"
-    ":up"            "🙃"
-    ":uni"           "🦄"
-    ":laugh"         "🤣"
-    ":smile"         "😀"
-    ":sun"           "☀️")
+    ";up"            "🙃"
+    ";uni"           "🦄"
+    ";laugh"         "🤣"
+    ";smile"         "😀"
+    ";sun"           "☀️")
 
-  ;; Allow abbrevs with a prefix colon or underscore.  I demonstrated
+  ;; Allow abbrevs with a prefix colon, semicolon, or underscore.  I demonstrated
   ;; this here: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>.
-  (abbrev-table-put text-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:_].*\\|.*\\)")
+  (abbrev-table-put global-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)")
+  (abbrev-table-put text-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)")
 
   (with-eval-after-load 'message
     (prot-emacs-abbrev message-mode-abbrev-table
@@ -196,7 +212,13 @@ Development continues on GitHub with GitLab as a mirror."))
   (prot-emacs-abbrev-function global-abbrev-table
     "metime" #'prot-abbrev-current-time
     "medate" #'prot-abbrev-current-date
-    "mejitsi" #'prot-abbrev-jitsi-link)
+    "mejitsi" #'prot-abbrev-jitsi-link
+    ";time" #'prot-abbrev-current-time
+    ";date" #'prot-abbrev-current-date
+    ";jitsi" #'prot-abbrev-jitsi-link)
+
+  (prot-emacs-abbrev-function text-mode-abbrev-table
+    ";update" #'prot-abbrev-update-html)
 
   ;; message-mode derives from text-mode, so we don't need a separate
   ;; hook for it.

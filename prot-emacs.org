@@ -615,12 +615,16 @@ these options come into effect ([[#h:5a41861f-4c38-45ac-8da2-51d77c0b4a73][The i
 
 #+begin_src emacs-lisp :tangle "init.el"
 (defcustom prot-emacs-completion-ui 'vertico
-  "Choose minibuffer completion UI between `mct' or `vertico'
+  "Choose minibuffer completion UI between `mct' or `vertico'.
+If the value is nil, the default completion user interface is
+used.  On Emacs 30, this is close the experience with `mct'.
+
 This user option must be set in the `prot-emacs-pre-custom.el'
 file.  If that file exists in the Emacs directory, it is loaded
 before all other modules of my setup."
   :group 'prot-emacs
   :type '(choice :tag "Minibuffer user interface"
+                 (const :tag "Default user interface" nil)
                  (const :tag "The `mct' module" mct)
                  (const :tag "The `vertico' module" vertico)))
 #+end_src
@@ -3931,14 +3935,23 @@ completion (such as the ~corfu~ package).
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
   (setq completions-format 'one-column)
   (setq completion-show-help nil)
-  (setq completion-auto-help t)
+  (setq completion-auto-help 'always)
   (setq completion-auto-select nil)
   (setq completions-detailed t)
   (setq completion-show-inline-help nil)
   (setq completions-max-height 6)
-  (setq completions-header-format (propertize "%s candidates:\n" 'face 'font-lock-comment-face))
+  (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
   (setq completions-highlight-face 'completions-highlight)
+  (setq minibuffer-completion-auto-choose t)
   (setq minibuffer-visible-completions t) ; Emacs 30
+  (setq completions-sort 'historical)
+
+  (unless prot-emacs-completion-ui
+    (prot-emacs-keybind minibuffer-local-completion-map
+      "<up>" #'minibuffer-previous-line-completion
+      "<down>" #'minibuffer-next-line-completion)
+
+    (add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently))
 #+end_src
 
 *** The =prot-emacs-completion.el= settings for saving the history (~savehist-mode~)
@@ -4080,7 +4093,13 @@ templates to have a real need for it---but it works).
     "mehub"   "https://github.com/protesilaos"
     "meclone" "git@github.com/protesilaos/"
     "melab"   "https://gitlab.com/protesilaos"
-    "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
+    "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/"
+    ";web"   "https://protesilaos.com"
+    ";git"   "https://github.com/protesilaos"
+    ";hub"   "https://github.com/protesilaos"
+    ";clone" "git@github.com/protesilaos/"
+    ";lab"   "https://gitlab.com/protesilaos"
+    ";drive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
 
   (prot-emacs-abbrev text-mode-abbrev-table
     "asciidoc"       "AsciiDoc"
@@ -4101,15 +4120,16 @@ templates to have a real need for it---but it works).
     "typescript"     "TypeScript"
     "visavis"        "vis-à-vis"
     "youtube"        "YouTube"
-    ":up"            "🙃"
-    ":uni"           "🦄"
-    ":laugh"         "🤣"
-    ":smile"         "😀"
-    ":sun"           "☀️")
+    ";up"            "🙃"
+    ";uni"           "🦄"
+    ";laugh"         "🤣"
+    ";smile"         "😀"
+    ";sun"           "☀️")
 
-  ;; Allow abbrevs with a prefix colon or underscore.  I demonstrated
+  ;; Allow abbrevs with a prefix colon, semicolon, or underscore.  I demonstrated
   ;; this here: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>.
-  (abbrev-table-put text-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:_].*\\|.*\\)")
+  (abbrev-table-put global-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)")
+  (abbrev-table-put text-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)")
 
   (with-eval-after-load 'message
     (prot-emacs-abbrev message-mode-abbrev-table
@@ -4130,7 +4150,13 @@ Development continues on GitHub with GitLab as a mirror."))
   (prot-emacs-abbrev-function global-abbrev-table
     "metime" #'prot-abbrev-current-time
     "medate" #'prot-abbrev-current-date
-    "mejitsi" #'prot-abbrev-jitsi-link)
+    "mejitsi" #'prot-abbrev-jitsi-link
+    ";time" #'prot-abbrev-current-time
+    ";date" #'prot-abbrev-current-date
+    ";jitsi" #'prot-abbrev-jitsi-link)
+
+  (prot-emacs-abbrev-function text-mode-abbrev-table
+    ";update" #'prot-abbrev-update-html)
 
   ;; message-mode derives from text-mode, so we don't need a separate
   ;; hook for it.
@@ -4236,17 +4262,7 @@ Also see [[#h:567bb00f-1d82-4746-93e5-e0f60721728a][the =prot-emacs-completion.e
   ;; Sort by input history (no need to modify `corfu-sort-function').
   (with-eval-after-load 'savehist
     (corfu-history-mode 1)
-    (add-to-list 'savehist-additional-variables 'corfu-history))
-
-  ;; Adapted from Corfu's manual.
-  (defun contrib/corfu-enable-always-in-minibuffer ()
-    "Enable Corfu in the minibuffer if MCT or Vertico is not active.
-Useful for prompts such as `eval-expression' and `shell-command'."
-    (unless (or (bound-and-true-p vertico--input)
-                (bound-and-true-p mct--active))
-      (corfu-mode 1)))
-
-  (add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1))
+    (add-to-list 'savehist-additional-variables 'corfu-history)))
 #+end_src
 
 *** The =prot-emacs-completion.el= settings for ~consult~
@@ -10176,6 +10192,22 @@ not test it as much and do not try to make it perfect.
   "Insert a Jitsi link."
   (insert (concat "https://meet.jit.si/" (format-time-string "%Y%M%dT%H%M%S"))))
 
+(defvar prot-abbrev-update-html-history nil
+  "Minibuffer history for `prot-abbrev-update-html-prompt'.")
+
+(defun prot-abbrev-update-html-prompt ()
+  "Minibuffer prompt for `prot-abbrev-update-html'.
+Use completion among previous entries, retrieving their data from
+`prot-abbrev-update-html-history'."
+  (completing-read
+   "Insert update for manual: "
+   'prot-abbrev-update-html-history
+   nil nil nil 'prot-abbrev-update-html-history))
+
+(defun prot-abbrev-update-html ()
+  "Insert message to update NAME.html page, by prompting for NAME."
+  (insert (format "Update %s.html" (prot-abbrev-update-html-prompt))))
+
 (provide 'prot-abbrev)
 ;;; prot-abbrev.el ends here
 #+end_src
@@ -11713,7 +11745,8 @@ Add as :around advice to `evil-paste-after' and `evil-paste-before',
 applying its ARGS."
   (if (evil-visual-state-p)
       (cl-letf (((symbol-function 'evil-yank) #'ignore))
-        (apply args))
+        (apply args)
+        (setq evil-last-paste nil))
     (apply args)))
 
 (advice-add #'evil-paste-after :around #'prot-evil-visual-paste-no-kill)
