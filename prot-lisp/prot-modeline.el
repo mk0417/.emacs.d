@@ -576,6 +576,7 @@ Specific to the current window's mode line.")
                      prot-modeline-narrow
                      prot-modeline-input-method
                      prot-modeline-buffer-status
+                     prot-modeline-window-dedicated-status
                      prot-modeline-evil
                      prot-modeline-buffer-identification
                      prot-modeline-major-mode
