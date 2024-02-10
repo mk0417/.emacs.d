@@ -1,7 +1,7 @@
 ;;; init-latex.el --- Latex -*- lexical-binding: t -*-
 
 (prot-emacs-configure
-  (:delay 10)
+  (:delay 5)
   ;; https://emacs.stackexchange.com/questions/41321/when-to-specify-a-package-name-in-use-packages-ensure-tag/41324#41324
   ;; prot-emacs-package will require auctex. This seems not to work with this package
   ;; So I just install it without require
