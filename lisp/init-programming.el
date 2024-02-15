@@ -73,7 +73,7 @@
 ;;; Quarto
 (prot-emacs-package quarto-mode
   (:install t)
-  (:delay 3))
+  (:delay 2))
 
 ;;; HTML
 (prot-emacs-package htmlize
