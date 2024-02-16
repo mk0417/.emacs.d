@@ -1293,6 +1293,8 @@ Also see `prot-emacs-package'."
 :CUSTOM_ID: h:d3684ec0-a972-4033-a4d6-41ee16e891d9
 :END:
 
+[ Watch: [[https://protesilaos.com/codelog/2024-01-29-emacs-prefix-map/][define prefix/leader key (nested key maps)]] (2024-01-29). ]
+
 This Lisp macro does not try to be too smart. It simply reduces the
 typing we have to do to define key bindings. As with the underlying
 ~define-key~ function, it can bind a key sequence to a command, a nil
@@ -2748,6 +2750,8 @@ Also see [[#h:5685df62-4484-42ad-a062-d55ab19022e3][the =prot-emacs-essentials.e
 :CUSTOM_ID: h:5685df62-4484-42ad-a062-d55ab19022e3
 :END:
 
+[ Watch: [[https://protesilaos.com/codelog/2023-06-28-emacs-mark-register-basics/][Mark and register basics]] (2023-06-28). ]
+
 Much like bookmarks, registers store data that we can reinstate
 quickly ([[#h:581aa0ff-b136-4099-a321-3b86edbfbccb][The =prot-emacs-essentials.el= settings for bookmarks]]). A
 common use-case is to write some text to a register and then insert
@@ -2796,10 +2800,28 @@ buffers to a separate file, leaving the original file intact. We can
 then recover the auto-saved alternative file, if we want, but I prefer
 to just write directly to disk.
 
+The ~prot/auto-save-visited-p~ and ~prot/auto-save-visited-blocklist~
+are set up for future review as I continue using this mode. Basically,
+there are cases where I do not want auto-saving to happen.
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; Auto save buffers visiting files
   (setq auto-save-visited-interval 2)
   (setq remote-file-name-inhibit-auto-save-visited t)
+
+  (defvar prot/auto-save-visited-blocklist
+    '(message-mode)
+    "List of major modes where files should not be auto-saved.")
+
+  (defun prot/auto-save-visited-p ()
+    "Predicate function for `auto-save-visited-predicate'.
+  Do not save the buffer if its major mode is among those specified
+  in `prot/auto-save-visited-blocklist'."
+    (and (derived-mode-p 'text-mode 'prog-mode)
+         (not (memq major-mode prot/auto-save-visited-blocklist))))
+
+  (setq auto-save-visited-predicate #'prot/auto-save-visited-p)
+
   (auto-save-visited-mode 1)
 #+end_src
 
@@ -5892,7 +5914,6 @@ to a certain height.
                   prot-window-shell-or-term-p
                   ,world-clock-buffer-name))
            (prot-window-display-buffer-below-or-pop)
-           (dedicated . t)
            (body-function . prot-window-select-fit-size))
           ("\\*\\(Calendar\\|Bookmark Annotation\\|ert\\).*"
            (display-buffer-reuse-mode-window display-buffer-below-selected)
@@ -6168,6 +6189,8 @@ As always, we ~provide~ the module. This is the mirror function of
 :PROPERTIES:
 :CUSTOM_ID: h:65e3eff5-0bff-4e1f-b6c5-0d3aa1a0d232
 :END:
+
+[ Watch: [[https://protesilaos.com/codelog/2023-08-03-contribute-core-emacs/][Contribute to GNU Emacs core]] (2023-08-03). ]
 
 Emacs can handle several version control programs, though I only ever
 use ~git~. Version control is essential to any public-facing
@@ -7288,8 +7311,12 @@ Org is far more capable, so I switched to it completely.
     "<C-S-return>" nil
     "C-M-S-<right>" nil
     "C-M-S-<left>" nil
+    "C-c ;" nil
+    "M-." #'org-edit-special ; alias for C-c ' (mnenomic is global M-. that goes to source)
     "C-c M-l" #'org-insert-last-stored-link
     "C-c C-M-l" #'org-toggle-link-display)
+
+  (define-key org-src-mode-map (kbd "M-,") #'org-edit-src-exit)
 
   (prot-emacs-keybind narrow-map
     "b" #'org-narrow-to-block
@@ -12714,6 +12741,21 @@ package).")
   "Face for modeline indicators with a background."
   :group 'prot-modeline-faces)
 
+(defface prot-modeline-indicator-gray
+  '((t :inherit shadow))
+  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  :group 'prot-modeline-faces)
+
+(defface prot-modeline-indicator-gray-bg
+  '((default :inherit (bold prot-modeline-indicator-button))
+    (((class color) (min-colors 88) (background light))
+     :background "#808080" :foreground "white")
+    (((class color) (min-colors 88) (background dark))
+     :background "#a0a0a0" :foreground "black")
+    (t :inverse-video t))
+  "Face for modeline indicatovrs with a background."
+  :group 'prot-modeline-faces)
+
 ;;;; Common helper functions
 
 (defun prot-modeline--string-truncate-p (str)
@@ -12827,7 +12869,7 @@ Specific to the current window's mode line.")
     '(:eval
       (when (window-dedicated-p)
         (propertize " = "
-                    'face 'prot-modeline-indicator-magenta-bg
+                    'face 'prot-modeline-indicator-gray-bg
                     'mouse-face 'mode-line-highlight)))
   "Mode line construct for dedicated window indicator.")
 
@@ -16706,7 +16748,7 @@ number (integer or floating point) or a function.")
      (t
       (error "The value of `%s' is neither a number nor a function" key)))))
 
-(defun prot-window-select-fit-size (window &rest _)
+(defun prot-window-select-fit-size (window)
   "Select WINDOW and resize it.
 The resize pertains to the maximum and minimum values for height
 and width, per `prot-window-window-sizes'.
@@ -16718,7 +16760,13 @@ Use this as the `body-function' in a `display-buffer-alist' entry."
    (prot-window--get-window-size :max-height)
    (prot-window--get-window-size :min-height)
    (prot-window--get-window-size :max-width)
-   (prot-window--get-window-size :min-width)))
+   (prot-window--get-window-size :min-width))
+  ;; If we did not use `display-buffer-below-selected', then we must
+  ;; be in a lateral window, which has more space.  Then we do not
+  ;; want to dedicate the window to this buffer, because we will be
+  ;; running out of space.
+  (when (or (window-in-direction 'above) (window-in-direction 'below))
+    (set-window-dedicated-p window t)))
 
 (defun prot-window--get-display-buffer-below-or-pop ()
   "Return list of functions for `prot-window-display-buffer-below-or-pop'."
@@ -16753,6 +16801,18 @@ use in `display-buffer-alist'."
       ;; REVIEW 2022-07-14: Is this robust?
       (and (not (derived-mode-p 'message-mode 'text-mode))
            (derived-mode-p 'eshell-mode 'shell-mode 'comint-mode 'fundamental-mode)))))
+
+(defun prot-window-remove-dedicated (&rest _)
+  "Remove dedicated window parameter.
+Use this as :after advice to `delete-other-windows' and
+`delete-window'."
+  (when (one-window-p :no-mini)
+    (set-window-dedicated-p nil nil)))
+
+(mapc
+ (lambda (fn)
+   (advice-add fn :after #'prot-window-remove-dedicated))
+ '(delete-other-windows delete-window))
 
 (defmacro prot-window-define-full-frame (name &rest args)
   "Define command to call ARGS in new frame with `display-buffer-full-frame' bound.
@@ -16816,8 +16876,9 @@ call NAME as a function."
 ;; will ever set it to the left.  It feels awkward there.
 (defun prot-window-scroll-bar-placement ()
   "Control the placement of scroll bars."
-  (setq default-frame-scroll-bars 'right)
-  (set-scroll-bar-mode 'right))
+  (when scroll-bar-mode
+    (setq default-frame-scroll-bars 'right)
+    (set-scroll-bar-mode 'right)))
 
 (add-hook 'scroll-bar-mode-hook #'prot-window-scroll-bar-placement)
 

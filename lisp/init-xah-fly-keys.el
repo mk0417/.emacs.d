@@ -1,10 +1,10 @@
 ;;; xah-fly-keys.el --- ergonomic modal keybinding minor mode. -*- coding: utf-8; lexical-binding: t; -*-
 
-;; Copyright © 2013-2024 by Xah Lee
+;; Copyright © 2013, 2024 by Xah Lee
 
 ;; Author: Xah Lee ( http://xahlee.info/ )
 ;; Maintainer: Xah Lee <xah@xahlee.org>
-;; Version: 24.20.20240120121202
+;; Version: 24.21.20240213125545
 ;; Created: 2013-09-10
 ;; Package-Requires: ((emacs "27"))
 ;; Keywords: convenience, vi, vim, ergoemacs, keybinding
@@ -162,7 +162,7 @@ Version: 2016-11-22 2023-07-22 2023-08-02"
      (t (backward-up-list 1 'ESCAPE-STRINGS 'NO-SYNTAX-CROSSING)))))
 
 (defvar xah-punctuation-regex nil "A regex string for the purpose of moving cursor to a punctuation.")
-(setq xah-punctuation-regex "[\"=+]")
+(setq xah-punctuation-regex "[\"]")
 
 (defun xah-forward-punct ()
   "Move cursor to the next occurrence of punctuation.
