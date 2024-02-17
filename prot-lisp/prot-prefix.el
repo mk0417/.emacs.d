@@ -42,6 +42,7 @@
 (defvar-keymap prot-prefix-buffer-map
   :doc "Prefix keymap for buffers."
   :name "Buffer"
+  :prefix 'prot-prefix-buffer
   "D" #'kill-buffer-and-window
   "d" #'prot-simple-kill-buffer-current
   "h" #'mark-whole-buffer
@@ -60,6 +61,7 @@
 (defvar-keymap prot-prefix-file-map
   :doc "Prefix keymaps for files."
   :name "File"
+  :prefix 'prot-prefix-file
   "r" #'recentf
   "p" #'p-find-file-in-config
   "n" #'p-find-file-in-notes
@@ -76,6 +78,7 @@
 (defvar-keymap prot-prefix-insert-map
   :doc "Prefix keymap for character insertion."
   :name "Insert"
+  :prefix 'prot-prefix-insert
   "i" #'insert-char
   "e" #'emoji-search
   "q" #'quoted-insert
@@ -90,6 +93,7 @@
 (defvar-keymap prot-prefix-mode-map
   :doc "Prefix keymap for minor mode toggles."
   :name "Toggle"
+  :prefix 'prot-prefix-mode
   "h" #'hl-line-mode
   "k" #'keycast-mode
   "m" #'menu-bar-mode
@@ -102,6 +106,7 @@
 (defvar-keymap prot-prefix-window-map
   :doc "Prefix keymap for windows."
   :name "Window"
+  :prefix 'prot-prefix-window
   "o" #'delete-other-windows
   "v" #'split-window-right
   "d" #'delete-window
@@ -135,6 +140,7 @@
 (defvar-keymap prot-prefix-search-map
   :doc "Prefix keymap for search (and replace) commands."
   :name "Search"
+  :prefix 'prot-prefix-search
   "s" #'consult-line
   "f" #'consult-find
   "d" #'prot-simple-flush-and-diff
@@ -154,6 +160,7 @@
 (defvar-keymap prot-prefix-transpose-map
   :doc "Prefix keymap for object transposition."
   :name "Transpose"
+  :prefix 'prot-prefix-transpose
   "c" #'prot-simple-transpose-chars
   "l" #'prot-simple-transpose-lines
   "p" #'prot-simple-transpose-paragraphs
@@ -164,6 +171,7 @@
 (defvar-keymap prot-prefix-expression-map
   :doc "Prefix keymap for s-expression motions."
   :name "S-EXP"
+  :prefix 'prot-prefix-expression
   "a" #'beginning-of-defun
   "e" #'end-of-defun
   "f" #'forward-sexp
@@ -179,7 +187,7 @@
 (defvar-keymap prot-prefix-git-map
   :doc "Prefix keymap for git."
   :name "Git"
-  :repeat t
+  :prefix 'prot-prefix-git
   "g" #'project-vc-dir
   "d" #'color-rg-search-symbol
   "p" #'color-rg-search-symbol-in-project)
@@ -187,6 +195,7 @@
 (defvar-keymap prot-prefix-jupyter-map
   :doc "Prefix keymap for jupyter."
   :name "Jupyter"
+  :prefix 'prot-prefix-jupyter
   "j" #'jupyter-run-repl
   "r" #'jupyter-eval-line-or-region
   "f" #'jupyter-eval-defun
@@ -199,9 +208,9 @@
   "w" #'jupyter-repl-pop-to-buffer)
 
 (defvar-keymap prot-prefix-text-map
-  :doc "Prefix keymap for latex."
+  :doc "Prefix keymap for text."
   :name "Text"
-  :repeat t
+  :prefix 'prot-prefix-text
   "m" #'TeX-insert-macro
   "e" #'LaTeX-environment
   "f" #'LaTeX-fill-buffer
@@ -214,13 +223,22 @@
 
 (declare-function prot-simple-other-windor-or-frame "prot-simple")
 
+;; NOTE 2024-02-17: Some cons cells here have a symbol as a `cdr' and
+;; some do not.  The former are those which define a prefix command
+;; (per `define-prefix-command').  This is a symbol that references
+;; the keymaps, thus making our binding an indirection: if we update
+;; the key map, we automatically get the new key bindings.  Whereas
+;; when we bind a key to the value of a variable, we have to update
+;; the key map and then the binding for changes to propagate.
 (defvar-keymap prot-prefix-map
   :doc "Prefix keymap with multiple subkeymaps."
   :name "Prot Prefix"
+  :prefix 'prot-prefix
   "`" #'p-switch-to-previous-buffer
   "0" #'delete-window
   "1" #'delete-other-windows
   "!" #'delete-other-windows-vertically
+  "^" #'tear-off-window
   "2" #'split-window-below
   "@" #'split-root-window-below
   "3" #'split-window-right
@@ -228,45 +246,49 @@
   "o" #'other-window
   "O" #'prot-simple-other-windor-or-frame
   "Q" #'save-buffers-kill-emacs
-  "b" prot-prefix-buffer-map
+  "b" (cons "Buffer" 'prot-prefix-buffer)
   "c" #'world-clock
-  "f" prot-prefix-file-map
-  "h" help-map
-  "i" prot-prefix-insert-map
+  "f" (cons "File" 'prot-prefix-file)
+  "h" (cons "Help" help-map)
+  "i" (cons "Insert" 'prot-prefix-insert)
   "d" #'dired-jump
-  "m" prot-prefix-mode-map
-  "n" narrow-map
-  "p" project-prefix-map
-  "r" ctl-x-r-map
-  "s" prot-prefix-search-map
-  "t" prot-prefix-transpose-map
+  "m" (cons "Minor modes" 'prot-prefix-mode)
+  "n" (cons "Narrow" narrow-map)
+  "p" (cons "Project" project-prefix-map)
+  "r" (cons "Rect/Registers" ctl-x-r-map)
+  "s" (cons "Search" 'prot-prefix-search)
+  "t" (cons "Transpose" 'prot-prefix-transpose)
   "u" #'universal-argument
-  "v" vc-prefix-map
-  "w" prot-prefix-window-map
-  "x" prot-prefix-expression-map
-  "g" prot-prefix-git-map
-  "j" prot-prefix-jupyter-map
-  "l" prot-prefix-text-map)
+  "v" (cons "Version Control" 'vc-prefix-map)
+  "w" (cons "Window" 'prot-prefix-window)
+  "x" (cons "S-EXP" 'prot-prefix-expression)
+  "g" (cons "Git" 'prot-prefix-git)
+  "j" (cons "Jupyter" 'prot-prefix-jupyter)
+  "l" (cons "Text" 'prot-prefix-text))
 
-(with-eval-after-load 'which-key
-  (which-key-add-keymap-based-replacements prot-prefix-map
-    "b" `("Buffer" . ,prot-prefix-buffer-map)
-    "f" `("File" . ,prot-prefix-file-map)
-    "h" `("Help" . ,help-map)
-    "i" `("Insert" . ,prot-prefix-insert-map)
-    "m" `("Mode" . ,prot-prefix-mode-map)
-    "n" `("Narrow" . ,narrow-map)
-    "p" `("Project" . ,project-prefix-map)
-    "r" `("C-x r" . ,ctl-x-r-map)
-    "s" `("Search" . ,prot-prefix-search-map)
-    "t" `("Transpose" . ,prot-prefix-transpose-map)
-    "v" `("C-x v" . ,vc-prefix-map)
-    "w" `("Window" . ,prot-prefix-window-map)
-    "x" `("S-EXP" . ,prot-prefix-expression-map)
-    "s" `("Search" . ,prot-prefix-search-map)
-    "g" `("Git" . ,prot-prefix-git-map)
-    "j" `("Jupyter" . ,prot-prefix-jupyter-map)
-    "l" `("Text" . ,prot-prefix-text-map)))
+;; NOTE 2024-02-17: This is not needed anymore, because I bind a cons
+;; ;; cell to the key.  The `car' of it is the description, which
+;; ;; `which-key-mode' understands.
+
+;; (with-eval-after-load 'which-key
+;;   (which-key-add-keymap-based-replacements prot-prefix-map
+;;     "b" `("Buffer" . ,prot-prefix-buffer-map)
+;;     "f" `("File" . ,prot-prefix-file-map)
+;;     "h" `("Help" . ,help-map)
+;;     "i" `("Insert" . ,prot-prefix-insert-map)
+;;     "m" `("Mode" . ,prot-prefix-mode-map)
+;;     "n" `("Narrow" . ,narrow-map)
+;;     "p" `("Project" . ,project-prefix-map)
+;;     "r" `("C-x r" . ,ctl-x-r-map)
+;;     "s" `("Search" . ,prot-prefix-search-map)
+;;     "t" `("Transpose" . ,prot-prefix-transpose-map)
+;;     "v" `("C-x v" . ,vc-prefix-map)
+;;     "w" `("Window" . ,prot-prefix-window-map)
+;;     "x" `("S-EXP" . ,prot-prefix-expression-map)
+;;     "s" `("Search" . ,prot-prefix-search-map)
+;;     "g" `("Git" . ,prot-prefix-git-map)
+;;     "j" `("Jupyter" . ,prot-prefix-jupyter-map)
+;;     "l" `("Text" . ,prot-prefix-text-map)))
 
 ;; What follows is an older experiment with transient.  I like its
 ;; visuals, though find it hard to extend.  Keymaps are easier for me,

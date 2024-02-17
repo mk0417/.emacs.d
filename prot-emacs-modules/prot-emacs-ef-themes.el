@@ -31,6 +31,7 @@
 
 ;; NOTE: For testing purposes
 (prot-emacs-comment
+  (:eval nil)
   (progn
     (mapc #'disable-theme custom-enabled-themes)
 
