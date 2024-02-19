@@ -194,7 +194,9 @@
   (evil-define-key '(normal visual motion) global-map
     (kbd "U") #'evil-redo
     (kbd "C-r") #'isearch-backward
-    (kbd "K") #'prot-evil-erase)
+    (kbd "K") #'prot-evil-erase
+    (kbd "<") #'prot-evil-shift-left
+    (kbd ">") #'prot-evil-shift-right)
 
 ;;;; Set up my prefix keymap
 
