@@ -1377,39 +1377,23 @@ abbreviations. Though it is good to practice some programming.
 #+begin_src emacs-lisp :tangle "init.el"
 (defmacro prot-emacs-abbrev (table &rest definitions)
   "Expand abbrev DEFINITIONS for the given TABLE.
-DEFINITIONS is a sequence of string pairs mapping the
-abbreviation to its expansion.
-
-Also see `prot-emacs-abbrev-function'."
+DEFINITIONS is a sequence of (i) string pairs mapping the
+abbreviation to its expansion or (ii) a string and symbol pair
+making an abbreviation to a function."
   (declare (indent 1))
   (unless (zerop (% (length definitions) 2))
     (error "Uneven number of key+command pairs"))
-  `(when-let (((abbrev-table-p ,table))
-              (table ,table))
-     ,@(mapcar
-        (lambda (pair)
-          (when-let ((abbrev (car pair))
-                     (expansion (cadr pair)))
-            `(define-abbrev table ,abbrev ,expansion)))
-        (seq-split definitions 2))))
-
-(defmacro prot-emacs-abbrev-function (table &rest definitions)
-  "Expand abbrev DEFINITIONS for the given TABLE.
-DEFINITIONS is a sequence of string and function symbol pairs
-mapping the abbreviation to its expansion.
-
-Also see `prot-emacs-abbrev'."
-  (declare (indent 1))
-  (unless (zerop (% (length definitions) 2))
-    (error "Uneven number of key+command pairs"))
-  `(when-let (((abbrev-table-p ,table))
-              (table ,table))
-     ,@(mapcar
-        (lambda (pair)
-          (when-let ((abbrev (car pair))
-                     (expansion (cadr pair)))
-            `(define-abbrev table ,abbrev "" ,expansion)))
-        (seq-split definitions 2))))
+  `(if (abbrev-table-p ,table)
+       (progn
+         ,@(mapcar
+            (lambda (pair)
+              (let ((abbrev (nth 0 pair))
+                    (expansion (nth 1 pair)))
+                (if (stringp expansion)
+                    `(define-abbrev ,table ,abbrev ,expansion)
+                  `(define-abbrev ,table ,abbrev "" ,expansion))))
+            (seq-split definitions 2)))
+     (error "%s is not an abbrev table" ,table)))
 #+end_src
 
 ** The =init.el= to find which packages have been loaded
@@ -2113,7 +2097,9 @@ I also take care to make it work with my customised mode line
            :mode-line-width 6
            :tab-width 4
            :right-divider-width 30
-           :scroll-bar-width 8))
+           :scroll-bar-width 8
+           :left-fringe-width 8
+           :right-fringe-width 8))
 
   ;; ;; Read the doc string of `spacious-padding-subtle-mode-line' as
   ;; ;; it is very flexible.
@@ -2328,6 +2314,13 @@ The next section defines some complementary functionality
           (large
            :inherit medium
            :default-height 150)
+          (live-stream
+           :default-family "Iosevka Comfy Wide Motion"
+           :default-height 150
+           :default-weight medium
+           :fixed-pitch-family "Iosevka Comfy Wide Motion"
+           :variable-pitch-family "Iosevka Comfy Wide Duo"
+           :bold-weight extrabold)
           (presentation
            :default-height 180)
           (t
@@ -2336,20 +2329,64 @@ The next section defines some complementary functionality
            ;; <https://protesilaos.com/emacs/fontaine>.
            :default-family "Iosevka Comfy"
            :default-weight regular
+           :default-slant normal
            :default-height 100
-           :fixed-pitch-family nil ; falls back to :default-family
-           :fixed-pitch-weight nil ; falls back to :default-weight
+
+           :fixed-pitch-family "Iosevka Comfy"
+           :fixed-pitch-weight nil
+           :fixed-pitch-slant nil
            :fixed-pitch-height 1.0
-           :fixed-pitch-serif-family nil ; falls back to :default-family
-           :fixed-pitch-serif-weight nil ; falls back to :default-weight
+
+           :fixed-pitch-serif-family nil
+           :fixed-pitch-serif-weight nil
+           :fixed-pitch-serif-slant nil
            :fixed-pitch-serif-height 1.0
+
            :variable-pitch-family "Iosevka Comfy Motion Duo"
            :variable-pitch-weight nil
+           :variable-pitch-slant nil
            :variable-pitch-height 1.0
-           :bold-family nil ; use whatever the underlying face has
+
+           :mode-line-active-family nil
+           :mode-line-active-weight nil
+           :mode-line-active-slant nil
+           :mode-line-active-height 1.0
+
+           :mode-line-inactive-family nil
+           :mode-line-inactive-weight nil
+           :mode-line-inactive-slant nil
+           :mode-line-inactive-height 1.0
+
+           :header-line-family nil
+           :header-line-weight nil
+           :header-line-slant nil
+           :header-line-height 1.0
+
+           :line-number-family nil
+           :line-number-weight nil
+           :line-number-slant nil
+           :line-number-height 1.0
+
+           :tab-bar-family nil
+           :tab-bar-weight nil
+           :tab-bar-slant nil
+           :tab-bar-height 1.0
+
+           :tab-line-family nil
+           :tab-line-weight nil
+           :tab-line-slant nil
+           :tab-line-height 1.0
+
+           :bold-family nil
            :bold-weight bold
+           :bold-slant nil
+           :bold-height 1.0
+
            :italic-family nil
+           :italic-weight nil
            :italic-slant italic
+           :italic-height 1.0
+
            :line-spacing nil)))
 
   ;; Set last preset or fall back to desired style from `fontaine-presets'.
@@ -2357,13 +2394,13 @@ The next section defines some complementary functionality
 
   ;; The other side of `fontaine-restore-latest-preset'.
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
+  (add-hook 'fontaine-set-preset-hook #'fontaine-store-latest-preset)
 
   ;; Persist font configurations while switching themes.  The
   ;; `enable-theme-functions' is from Emacs 29.
   (add-hook 'enable-theme-functions #'fontaine-apply-current-preset)
 
-  (define-key global-map (kbd "C-c f") #'fontaine-set-preset)
-  (define-key global-map (kbd "C-c F") #'fontaine-set-face-font))
+  (define-key global-map (kbd "C-c f") #'fontaine-set-preset))
 #+end_src
 
 *** The =prot-emacs-theme.el= section about ~variable-pitch-mode~ and font resizing
@@ -2818,10 +2855,14 @@ reflect the new file contents.
   (global-auto-revert-mode 1)
 #+end_src
 
-*** The =prot-emacs-essentials.el= settings for auto saving files (~auto-save-visited-mode~)
+*** COMMENT The =prot-emacs-essentials.el= settings for auto saving files (~auto-save-visited-mode~)
 :PROPERTIES:
 :CUSTOM_ID: h:4a8caede-80b0-4195-8b5d-7f60ab64a3d4
 :END:
+
+[ NOTE 2024-02-23: I stopped using this because it was messing up my
+  undo history, in the sense that I no longer knew which was the last
+  "okay" state. Keeping this here for posterity. ]
 
 When this mode is enabled, file-visiting buffers are automatically
 saved to their files after ~auto-save-visited-interval~ of idleness.
@@ -2845,10 +2886,11 @@ there are cases where I do not want auto-saving to happen.
 
   (defun prot/auto-save-visited-p ()
     "Predicate function for `auto-save-visited-predicate'.
-  Do not save the buffer if its major mode is among those specified
-  in `prot/auto-save-visited-blocklist'."
-    (and (derived-mode-p 'text-mode 'prog-mode)
-         (not (memq major-mode prot/auto-save-visited-blocklist))))
+    Do not save the buffer if its major mode parent is among those
+    specified in `prot/auto-save-visited-blocklist'."
+    (when (derived-mode-p 'text-mode 'prog-mode)
+      (not (or (memq major-mode prot/auto-save-visited-blocklist)
+               (memq (get major-mode 'derived-mode-parent) prot/auto-save-visited-blocklist)))))
 
   (setq auto-save-visited-predicate #'prot/auto-save-visited-p)
 
@@ -4183,7 +4225,14 @@ templates to have a real need for it---but it works).
   ;; Allow abbrevs with a prefix colon, semicolon, or underscore.  I demonstrated
   ;; this here: <https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/>.
   (abbrev-table-put global-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)")
-  (abbrev-table-put text-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)")
+
+  (with-eval-after-load 'text-mode
+    (abbrev-table-put text-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)"))
+
+  (with-eval-after-load 'org
+    (prot-emacs-abbrev org-mode-abbrev-table
+      ";dev" "{{{development-version}}}")
+    (abbrev-table-put org-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)"))
 
   (with-eval-after-load 'message
     (prot-emacs-abbrev message-mode-abbrev-table
@@ -4196,11 +4245,13 @@ templates to have a real need for it---but it works).
       "nosrht"       "P.S. I am phasing out SourceHut: <https://protesilaos.com/codelog/2024-01-27-sourcehut-no-more/>.
 Development continues on GitHub with GitLab as a mirror."))
 
-  ;; Unlike the above, the `prot-emacs-abbrev-function' macro does not
-  ;; expand a static text, but calls a function which dynamically
-  ;; expands into the requisite form.
+  ;; The `prot-emacs-abbrev' macro, which simplifies how we use
+  ;; `define-abbrev', does not only expand a static text.  It can take
+  ;; a pair of string and function to trigger the latter when the
+  ;; former is inserted.  Think of it like the basis of a simplistic
+  ;; templating system.
   (require 'prot-abbrev)
-  (prot-emacs-abbrev-function global-abbrev-table
+  (prot-emacs-abbrev global-abbrev-table
     "metime" #'prot-abbrev-current-time
     "medate" #'prot-abbrev-current-date
     "mejitsi" #'prot-abbrev-jitsi-link
@@ -4208,7 +4259,7 @@ Development continues on GitHub with GitLab as a mirror."))
     ";date" #'prot-abbrev-current-date
     ";jitsi" #'prot-abbrev-jitsi-link)
 
-  (prot-emacs-abbrev-function text-mode-abbrev-table
+  (prot-emacs-abbrev text-mode-abbrev-table
     ";update" #'prot-abbrev-update-html)
 
   ;; message-mode derives from text-mode, so we don't need a separate
@@ -8342,7 +8393,7 @@ file to establish a connection. This is not limited to emails, mind
 you, as we can have credentials such as for running ~sudo~ via TRAMP
 or logging in to IRC with the ~rcirc~ command ([[#h:f23d9cef-ab7b-4486-a070-9c7ae664eadf][The =prot-emacs-web.el= module]]).
 
-For my email purposes, Emacs does not read from the ~auto-sources~,
+For my email purposes, Emacs does not read from the ~auth-sources~,
 though I do keep this in place for other programs to read from. These
 programs include ~mbsync~ and ~msmtp~ ([[#h:33151014-3621-4be6-9185-aacc34ee2d2c][How I use email in Emacs]]).
 
