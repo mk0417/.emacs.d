@@ -111,6 +111,7 @@
   "v" #'split-window-right
   "d" #'delete-window
   "b" #'balance-windows-area
+  "t" #'toggle-window-dedicated
   "0" #'delete-window
   "1" #'delete-other-windows
   "!" #'delete-other-windows-vertically
