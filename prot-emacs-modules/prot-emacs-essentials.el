@@ -425,9 +425,9 @@ to be cycling through the edits."
   (setq battery-mode-line-format
         (cond
          ((eq battery-status-function #'battery-linux-proc-acpi)
-	      "⏻%b%p%%,%d°C  ")
+	      "⏻%b%p%%,%d°C ")
 	     (battery-status-function
-	      "⏻%b%p%%  ")))
+	      "⏻%b%p%% ")))
 
   (display-battery-mode 1))
 
