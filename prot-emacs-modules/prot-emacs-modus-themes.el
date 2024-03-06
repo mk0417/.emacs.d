@@ -14,7 +14,6 @@
         modus-themes-variable-pitch-ui t
         modus-themes-italic-constructs t
         modus-themes-bold-constructs nil
-        modus-themes-org-blocks nil
         modus-themes-completions '((t . (extrabold)))
         modus-themes-prompts '(extrabold)
         modus-themes-headings
@@ -64,7 +63,6 @@
           modus-themes-variable-pitch-ui nil
           modus-themes-italic-constructs t
           modus-themes-bold-constructs t
-          modus-themes-org-blocks nil
           modus-themes-completions '((t . (extrabold)))
           modus-themes-prompts nil
           modus-themes-headings
