@@ -316,7 +316,7 @@ Development continues on GitHub with GitLab as a mirror."))
 (when prot-emacs-completion-extras
   (prot-emacs-package embark
     (:install t)
-    (:delay 2)
+    (:delay 5)
     (setq embark-confirm-act-all nil)
     ;; The prot-embark.el has an advice to further simplify the
     ;; minimal indicator.  It shows cycling, which I never want to see
