@@ -188,7 +188,8 @@
         ;; Technically, this is not in repeal.el, though it is the
         ;; same idea.
         set-mark-command-repeat-pop t)
-  (repeat-mode 1))
+  ;; (repeat-mode 1)
+  )
 
 ;;;; Built-in bookmarking framework (bookmark.el)
 (prot-emacs-configure

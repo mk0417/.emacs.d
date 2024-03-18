@@ -1,7 +1,7 @@
-;;; Vertical completion layout
+;;; Vertical completion layout (vertico)
 (prot-emacs-package vertico
   (:install t)
-  ;; (:delay 1)
+  (:delay 1)
   (setq vertico-scroll-margin 0)
   (setq vertico-count 5)
   (setq vertico-resize nil)
