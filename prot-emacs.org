@@ -245,8 +245,7 @@ wrap any code that should only be evaluated when I am not in one of my
 tiling window managers.
 
 #+begin_src emacs-lisp :tangle "early-init.el"
-(defvar prot-emacs-tiling-window-manager-regexp
-  (regexp-opt '("bspwm" "herbstluftwm" "i3"))
+(defvar prot-emacs-tiling-window-manager-regexp "bspwm\\|herbstluftwm\\|i3"
   "Regular expression to  tiling window managers.
 See definition of `prot-emacs-with-desktop-session'.")
 
@@ -2628,7 +2627,7 @@ here:
   (mapc
    (lambda (hook)
      (add-hook hook #'prot-common-truncate-lines-silently))
-   '(fundamental-mode-hook text-mode-hook prog-mode-hook special-mode-hook))
+   '(fundamental-mode-hook text-mode-hook prog-mode-hook))
   ;; NEVER tell me which key can call a command that I specifically
   ;; invoked with M-x: I have a good reason to use it that way.
   (advice-add #'execute-extended-command--describe-binding-msg :override #'prot-common-ignore))
@@ -4470,8 +4469,7 @@ Still, they do have their uses.
   (:delay 5)
   ;; Remember to check my `completion-styles' and the
   ;; `completion-category-overrides'.
-  (setq orderless-matching-styles
-        '(orderless-prefixes orderless-regexp orderless-flex orderless-initialism))
+  (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
 
   ;; SPC should never complete: use it for `orderless' groups.
   ;; The `?' is a regexp construct.
@@ -4613,7 +4611,6 @@ Also check: [[#h:e0f9c30e-3a98-4479-b709-7008277749e4][The =prot-emacs-search.el
       "M-s M-y" #'consult-yank-pop
       "M-s M-s" #'consult-outline)
     (define-key consult-narrow-map (kbd "?") #'consult-narrow-help)
-    (define-key minibuffer-local-map (kbd "C-s") #'consult-history)
 
     (with-eval-after-load 'pulsar
       ;; see my `pulsar' package: <https://protesilaos.com/emacs/pulsar>

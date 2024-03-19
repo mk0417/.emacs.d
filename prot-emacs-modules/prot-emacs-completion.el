@@ -2,11 +2,16 @@
 (prot-emacs-configure
   (:delay 1)
 ;;;; Minibuffer configurations
-  (setq completion-styles '(basic substring initials flex orderless)) ; also see `completion-category-overrides'
-  (setq completion-category-defaults nil))
+  (setq completion-styles '(basic substring initials flex orderless))) ; also see `completion-category-overrides'
 
 (prot-emacs-configure
   (:delay 5)
+  ;; Reset all the per-category defaults so that (i) we use the
+  ;; standard `completion-styles' and (ii) can specify our own styles
+  ;; in the `completion-category-overrides' without having to
+  ;; explicitly override everything.
+  (setq completion-category-defaults nil)
+
   ;; A non-exhaustve list of known completion categories:
   ;;
   ;; - `bookmark'
@@ -269,8 +274,7 @@ Development continues on GitHub with GitLab as a mirror."))
   (:delay 5)
   ;; Remember to check my `completion-styles' and the
   ;; `completion-category-overrides'.
-  (setq orderless-matching-styles
-        '(orderless-prefixes orderless-regexp orderless-flex orderless-initialism))
+  (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
 
   ;; SPC should never complete: use it for `orderless' groups.
   ;; The `?' is a regexp construct.
@@ -321,7 +325,6 @@ Development continues on GitHub with GitLab as a mirror."))
       "M-s M-y" #'consult-yank-pop
       "M-s M-s" #'consult-outline)
     (define-key consult-narrow-map (kbd "?") #'consult-narrow-help)
-    (define-key minibuffer-local-map (kbd "C-s") #'consult-history)
 
     (with-eval-after-load 'pulsar
       ;; see my `pulsar' package: <https://protesilaos.com/emacs/pulsar>
