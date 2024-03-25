@@ -2564,6 +2564,7 @@ how we type multiple ~define-key~ calls ([[#h:d3684ec0-a972-4033-a4d6-41ee16e891
   ;; elsewhere later in the configuration.
   (prot-emacs-keybind global-map
     "<insert>" nil
+    "<menu>" nil
     "C-z" nil ; I have a window manager, thanks!
     "C-x C-z" nil ; same idea as above
     "C-x C-c" nil ; avoid accidentally exiting Emacs
@@ -2643,11 +2644,19 @@ built-in =simple.el=: it is a file with a collection of little
 commands that are useful for everyday tasks. I bind these commands to
 keys.
 
+The ~prot-simple-display-unsaved-buffers-on-exit~ produces a list of
+unsaved, file-visiting buffers before closing Emacs. I am doing this
+using the advice mechanism to redefine the behaviour of the original
+command (~save-buffers-kill-emacs~), since I cannot find a way to do
+this via some hook.
+
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 (prot-emacs-package prot-simple
   (:delay 1)
   (setq prot-simple-date-specifier "%F")
   (setq prot-simple-time-specifier "%R %z")
+
+  (advice-add #'save-buffers-kill-emacs :before #'prot-simple-display-unsaved-buffers-on-exit)
 
   (prot-emacs-keybind global-map
     "ESC ESC" #'prot-simple-keyboard-quit-dwim
@@ -2664,6 +2673,7 @@ keys.
     "<C-S-return>" #'prot-simple-new-line-above
     ;; Commands for text insertion or manipulation
     "C-=" #'prot-simple-insert-date
+    "C-<kp-equal>" #'prot-simple-insert-date
     "C-<" #'prot-simple-escape-url-dwim
     ;; "C->" #'prot-simple-insert-line-prefix-dwim
     "M-Z" #'prot-simple-zap-to-char-backward
@@ -14997,6 +15007,8 @@ controlled by `delete-pair-blink-delay'."
 (require 'project)
 (require 'tab-bar)
 
+;;;; Switch to a project root Dired outright
+
 (defun prot-project--switch (directory &optional command)
   "Do the work of `project-switch-project' in the given DIRECTORY.
 With optional COMMAND, run it in DIRECTORY."
@@ -15027,6 +15039,19 @@ the project in DIRECTORY using `project-dired'."
     (if (member name (prot-project--frame-names))
         (select-frame-by-name name)
       (prot-project--switch directory 'project-dired))))
+
+;;;; Produce a VC root log for the project
+
+(defun prot-project-rename-vc-root-log (&rest _)
+  "Rename the buffer of `vc-print-root-log' to mention the project."
+  (when-let ((root (vc-root-dir))
+             ((consp project--list))
+             ((member root (mapcar #'car project--list))))
+    (rename-buffer (format "*vc-root-log: %s*" root))))
+
+(advice-add #'vc-print-root-log :after #'prot-project-rename-vc-root-log)
+
+;;;; One tab per project
 
 ;; NOTE 2024-01-15 07:07:52 +0200: I define the "in tab" functions as
 ;; a coding exercise.  I don't have a use for it, as I prefer to use
@@ -15065,6 +15090,8 @@ Use this as an alternative to `project-switch-project'."
     (if (member name (prot-project-in-tab--get-tab-names))
         (tab-switch name)
       (prot-project-in-tab--create-tab directory name))))
+
+;;;; Set up a project root
 
 ;; I don't actually have a use-case for `prot-project-find-root',
 ;; but I wrote it once so I keep it here in case I ever need it.
@@ -16835,6 +16862,41 @@ Name the buffer after the defun's symbol."
   (narrow-to-defun))
 
 ;;;; Commands for buffers
+
+(defun prot-simple--display-unsaved-buffers (buffers buffer-menu-name)
+  "Produce buffer menu listing BUFFERS called BUFFER-MENU-NAME."
+  (let ((old-buf (current-buffer))
+        (buf (get-buffer-create buffer-menu-name)))
+    (with-current-buffer buf
+      (Buffer-menu-mode)
+      (setq-local Buffer-menu-files-only nil
+                  Buffer-menu-buffer-list buffers
+                  Buffer-menu-filter-predicate nil)
+      (list-buffers--refresh buffers old-buf)
+      (tabulated-list-print))
+    (display-buffer buf)))
+
+(defun prot-simple--get-unsaved-buffers ()
+  "Get list of unsaved buffers."
+  (seq-filter
+   (lambda (buffer)
+     (and (buffer-file-name buffer)
+          (buffer-modified-p buffer)))
+   (buffer-list)))
+
+;;;###autoload
+(defun prot-simple-display-unsaved-buffers ()
+  "Produce buffer menu listing unsaved file-visiting buffers."
+  (interactive)
+  (if-let ((unsaved-buffers (prot-simple--get-unsaved-buffers)))
+      (prot-simple--display-unsaved-buffers unsaved-buffers "*Unsaved buffers*")
+    (message "No unsaved buffers")))
+
+(defun prot-simple-display-unsaved-buffers-on-exit (&rest _)
+  "Produce buffer menu listing unsaved file-visiting buffers.
+Add this as :before advice to `save-buffers-kill-emacs'."
+  (when-let ((unsaved-buffers (prot-simple--get-unsaved-buffers)))
+    (prot-simple--display-unsaved-buffers unsaved-buffers "*Unsaved buffers*")))
 
 ;;;###autoload
 (defun prot-simple-copy-current-buffer-name ()

@@ -155,6 +155,7 @@
   "Prompts to create or open a scratch file based on chosen file type."
   (interactive)
   (let* ((file-types '(("py" . "scratch.py")
+                       ("R" . "scratch.R")
                        ("txt" . "scratch.txt")))
          (chosen-type (completing-read "Choose file type: " (mapcar #'car file-types))))
     (if (string-empty-p chosen-type)

@@ -36,6 +36,8 @@
 (require 'project)
 (require 'tab-bar)
 
+;;;; Switch to a project root Dired outright
+
 (defun prot-project--switch (directory &optional command)
   "Do the work of `project-switch-project' in the given DIRECTORY.
 With optional COMMAND, run it in DIRECTORY."
@@ -66,6 +68,19 @@ the project in DIRECTORY using `project-dired'."
     (if (member name (prot-project--frame-names))
         (select-frame-by-name name)
       (prot-project--switch directory 'project-dired))))
+
+;;;; Produce a VC root log for the project
+
+(defun prot-project-rename-vc-root-log (&rest _)
+  "Rename the buffer of `vc-print-root-log' to mention the project."
+  (when-let ((root (vc-root-dir))
+             ((consp project--list))
+             ((member root (mapcar #'car project--list))))
+    (rename-buffer (format "*vc-root-log: %s*" root))))
+
+(advice-add #'vc-print-root-log :after #'prot-project-rename-vc-root-log)
+
+;;;; One tab per project
 
 ;; NOTE 2024-01-15 07:07:52 +0200: I define the "in tab" functions as
 ;; a coding exercise.  I don't have a use for it, as I prefer to use
@@ -104,6 +119,8 @@ Use this as an alternative to `project-switch-project'."
     (if (member name (prot-project-in-tab--get-tab-names))
         (tab-switch name)
       (prot-project-in-tab--create-tab directory name))))
+
+;;;; Set up a project root
 
 ;; I don't actually have a use-case for `prot-project-find-root',
 ;; but I wrote it once so I keep it here in case I ever need it.

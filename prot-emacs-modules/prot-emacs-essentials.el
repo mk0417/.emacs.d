@@ -26,6 +26,7 @@
   ;; elsewhere later in the configuration.
   (prot-emacs-keybind global-map
     "<insert>" nil
+    "<menu>" nil
     "C-z" nil ; I have a window manager, thanks!
     "C-x C-z" nil ; same idea as above
     "C-x C-c" nil ; avoid accidentally exiting Emacs
@@ -73,6 +74,8 @@
   (setq prot-simple-date-specifier "%F")
   (setq prot-simple-time-specifier "%R %z")
 
+  (advice-add #'save-buffers-kill-emacs :before #'prot-simple-display-unsaved-buffers-on-exit)
+
   (prot-emacs-keybind global-map
     "ESC ESC" #'prot-simple-keyboard-quit-dwim
     "C-g" #'prot-simple-keyboard-quit-dwim
@@ -88,6 +91,7 @@
     "<C-S-return>" #'prot-simple-new-line-above
     ;; Commands for text insertion or manipulation
     "C-=" #'prot-simple-insert-date
+    "C-<kp-equal>" #'prot-simple-insert-date
     "C-<" #'prot-simple-escape-url-dwim
     ;; "C->" #'prot-simple-insert-line-prefix-dwim
     "M-Z" #'prot-simple-zap-to-char-backward
