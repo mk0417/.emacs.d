@@ -205,7 +205,7 @@ Meant to be added to `prog-mode-hook'."
   ;;  (add-hook 'dired-mode-hook #'denote-dired-mode-in-directories)
 
   (require 'denote-journal-extras)
-  (setq denote-journal-extras-directory nil) ; use the `denote-directory'
+  (setq denote-journal-extras-directory denote-directory) ; use the `denote-directory'
   (setq denote-journal-extras-title-format nil) ; always prompt for title
   (setq denote-journal-extras-keyword "journal")
 
