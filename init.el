@@ -453,7 +453,8 @@ that is expanded with the `prot-emacs-package' macro."
 ;; file for other obvious customisations.
 (load (locate-user-emacs-file "prot-emacs-pre-custom.el") :no-error :no-message)
 
-(setq prot-emacs-completion-ui 'mct)
+;; Comment out below if I want mct
+;; (setq prot-emacs-completion-ui 'mct)
 
 ;; NOTE 2023-10-08: some Prot config are modified based on my workflow and needs
 (require 'prot-emacs-theme)

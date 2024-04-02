@@ -144,6 +144,7 @@
   :prefix 'prot-prefix-search
   "s" #'consult-line
   "f" #'consult-find
+  "i" #'consult-imenu
   "d" #'prot-simple-flush-and-diff
   "g" #'prot-search-grep
   "o" #'prot-search-occur-outline
