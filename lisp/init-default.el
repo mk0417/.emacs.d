@@ -7,7 +7,12 @@
 (fringe-mode '(3 . 0))
 
 ;;; Recentf
-(recentf-mode 1)
+(prot-emacs-configure
+  (:delay 2)
+  (setq recentf-max-saved-items 10)
+  (recentf-mode 1)
+  (add-to-list 'recentf-exclude "/var/folders/.*") 
+  (add-to-list 'recentf-exclude "/private/var/folders/.*"))
 
 ;;; Line number
 (when (fboundp 'display-line-numbers-mode)

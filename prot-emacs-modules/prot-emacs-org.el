@@ -31,13 +31,14 @@
         appt-message-warning-time 6)
 
   (with-eval-after-load 'org-agenda
-    (appt-activate 1)
+    ;; (appt-activate 1)
 
     ;; NOTE 2021-12-07: In my `prot-org.el' (see further below), I add
     ;; `org-agenda-to-appt' to various relevant hooks.
     ;;
     ;; Create reminders for tasks with a due date when this file is read.
-    (org-agenda-to-appt)))
+    ;; (org-agenda-to-appt)
+    ))
 
 ;;; Org-mode (personal information manager)
 ;; Some of these settings need to be eva;uated before the `org'

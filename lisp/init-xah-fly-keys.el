@@ -2776,7 +2776,7 @@ Version: 2017-01-29"
     :doc "Prefix keymap for Xah edit"
     :name "Xah Edit"
     "s" #'xah-add-space-after-comma
-    "t" #'xah-insert-markdown-triple-quote
+    "q" #'xah-insert-markdown-triple-quote
     "b" #'xah-copy-all
     "h" #'xah-cycle-hyphen-lowline-space
     "r" #'xah-run-current-file)
