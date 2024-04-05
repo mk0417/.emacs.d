@@ -71,9 +71,9 @@
   (add-hook 'julia-mode-hook #'electric-pair-mode))
 
 ;;; Quarto
-(prot-emacs-package quarto-mode
-  (:install t)
-  (:delay 2))
+;; (prot-emacs-package quarto-mode
+;;   (:install t)
+;;   (:delay 2))
 
 ;;; HTML
 (prot-emacs-package htmlize

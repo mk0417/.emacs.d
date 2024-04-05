@@ -198,6 +198,9 @@
   :doc "Prefix keymap for jupyter."
   :name "Jupyter"
   :prefix 'prot-prefix-jupyter
+  "R" #'run-ess-r
+  "l" #'ess-eval-line
+  "s" #'ess-eval-region
   "j" #'jupyter-run-repl
   "r" #'jupyter-eval-line-or-region
   "f" #'jupyter-eval-defun
@@ -220,8 +223,7 @@
   "a" #'TeX-command-run-all
   "b" #'p-select-beamer-frame
   "c" #'p-clear-latex-temp-files
-  "v" #'TeX-view
-  "p" #'quarto-preview)
+  "v" #'TeX-view)
 
 (declare-function prot-simple-other-windor-or-frame "prot-simple")
 
