@@ -76,6 +76,9 @@
 
   (advice-add #'save-buffers-kill-emacs :before #'prot-simple-display-unsaved-buffers-on-exit)
 
+  ;; Make the numpad equal the same as the regular one.
+  (add-to-list 'key-translation-map '("<kp-equal>" . "="))
+
   (prot-emacs-keybind global-map
     "ESC ESC" #'prot-simple-keyboard-quit-dwim
     "C-g" #'prot-simple-keyboard-quit-dwim
@@ -214,7 +217,45 @@
 (prot-emacs-configure
   (:delay 5)
   (setq register-preview-delay 0.8
-        register-preview-function #'register-preview-default))
+        register-preview-function #'register-preview-default)
+
+  ;; This is to handle registers.  We want to (i) save positions to
+  ;; files when closing Emacs and (ii) not be asked to restore the file
+  ;; as this is what we want anyway.
+  (cl-defmethod register-val-jump-to ((val cons) delete)
+    "Handle how to jump to a location register.
+This is like the default, but does not ask to visit a file: it does it
+outright."
+    (cond
+     ((frame-configuration-p (car val))
+      (set-frame-configuration (car val) (not delete))
+      (goto-char (cadr val)))
+     ((window-configuration-p (car val))
+      (set-window-configuration (car val))
+      (goto-char (cadr val)))
+     ((eq (car val) 'file)
+      (find-file (cdr val)))
+     ((eq (car val) 'buffer)
+      (switch-to-buffer (cdr val)))
+     ((eq (car val) 'file-query)
+      (find-file (nth 1 val))
+      (goto-char (nth 2 val)))
+     (t (cl-call-next-method val delete))))
+
+  (defun prot/register-swap-out-all (&rest args)
+    "Expand all location registers to their file equivalent.
+This must be done before closing Emacs, to persist registers across
+sessions."
+    (mapc
+     (lambda (buffer)
+       (with-current-buffer buffer
+         (register-swap-out)))
+     (buffer-list)))
+
+  (advice-add #'save-buffers-kill-terminal :before #'prot/register-swap-out-all)
+
+  (with-eval-after-load 'savehist
+    (add-to-list 'savehist-additional-variables 'register-alist)))
 
 ;;;; Auto revert mode
 (prot-emacs-configure
@@ -309,7 +350,7 @@
 ;;;; `proced' (process monitor, similar to `top')
 (prot-emacs-configure
   (:delay 10)
-  (setq proced-auto-update-flag t)
+  (setq proced-auto-update-flag t) ; Emacs 30 supports more than `t' value
   (setq proced-enable-color-flag t) ; Emacs 29
   (setq proced-auto-update-interval 5)
   (setq proced-descend t)

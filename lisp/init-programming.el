@@ -57,9 +57,14 @@
 (prot-emacs-package ess 
   (:delay 2)
   (:install t)
+  (setq ess-imenu-use-S nil)
+  (setq ess-imenu-use-p nil)
+  (setq ess-indent-offset 4)
+  (setq ess-use-flymake nil)
+  (setq ess-indent-with-fancy-comments nil)
   (with-eval-after-load 'ess
     ;; disable flymake
-    (add-hook 'ess-r-mode-hook (lambda () (flymake-mode -1)))
+    ;; (add-hook 'ess-r-mode-hook (lambda () (flymake-mode -1)))
     (add-hook 'ess-mode-hook #'display-fill-column-indicator-mode)
     (add-hook 'ess-mode-hook #'electric-pair-mode)))
 
