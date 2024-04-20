@@ -1,20 +1,38 @@
 ;;; Dired file manager and prot-dired.el extras
-(prot-emacs-package dired
-  (:delay 2)
+(use-package dired
+  :ensure nil
+  :commands (dired)
+  :config
   (setq dired-recursive-copies 'always)
   (setq dired-recursive-deletes 'always)
-  (setq delete-by-moving-to-trash t)
+  (setq delete-by-moving-to-trash t))
 
+(use-package dired
+  :ensure nil
+  :commands (dired)
+  :config
   (setq dired-listing-switches
-        "-AGFhlv --group-directories-first --time-style=long-iso")
-  
-  (setq dired-dwim-target t)
+        "-AGFhlv --group-directories-first --time-style=long-iso"))
 
+(use-package dired
+  :ensure nil
+  :commands (dired)
+  :config
+  (setq dired-dwim-target t))
+
+(use-package dired
+  :ensure nil
+  :commands (dired)
+  :config
   (setq dired-guess-shell-alist-user ; those are the suggestions for ! and & in Dired
         '(("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
           ("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "mpv" "xdg-open")
-		  (".*" "xdg-open")))
-  
+          (".*" "xdg-open"))))
+
+(use-package dired
+  :ensure nil
+  :commands (dired)
+  :config
   (setq dired-auto-revert-buffer #'dired-directory-changed-p) ; also see `dired-do-revert-buffer'
   (setq dired-make-directory-clickable t) ; Emacs 29.1
   (setq dired-free-space nil) ; Emacs 29.1
@@ -28,54 +46,62 @@
   ;; problem as j calls `dired-goto-file', which I often use.
   (define-key dired-jump-map (kbd "j") nil))
 
-(prot-emacs-package dired-aux
-  (:delay 2)
+(use-package dired-aux
+  :ensure nil
+  :after dired
+  :bind
+  ( :map dired-mode-map
+    ("C-+" . dired-create-empty-file)
+    ("M-s f" . nil)
+    ("C-<return>" . dired-do-open) ; Emacs 30
+    ("C-x v v" . dired-vc-next-action)) ; Emacs 28
+  :config
   (setq dired-isearch-filenames 'dwim)
   (setq dired-create-destination-dirs 'ask) ; Emacs 27
   (setq dired-vc-rename-file t)             ; Emacs 27
   (setq dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir)))) ; Emacs 28
-  (setq dired-create-destination-dirs-on-trailing-dirsep t) ; Emacs 29
+  (setq dired-create-destination-dirs-on-trailing-dirsep t)) ; Emacs 29
 
-  (prot-emacs-keybind dired-mode-map
-    "C-+" #'dired-create-empty-file
-    "M-s f" nil
-    "C-<return>" #'dired-do-open ; Emacs 30
-    "C-x v v" #'dired-vc-next-action)) ; Emacs 28
-
-;; ;; NOTE 2021-05-10: I do not use `find-dired' and related commands
-;; ;; because there are other tools that offer a better interface, such
-;; ;; as `consult-find', `consult-grep', `project-find-file',
-;; ;; `project-find-regexp', `prot-vc-git-grep'.
-;; (prot-emacs-package find-dired
-;;   (setq find-ls-option
-;;         '("-ls" . "-AGFhlv --group-directories-first --time-style=long-iso"))
-;;   (setq find-name-arg "-iname"))
-
-(prot-emacs-package dired-x
-  (:delay 2)
+(use-package dired-x
+  :ensure nil
+  :after dired
+  :bind
+  ( :map dired-mode-map
+    ("I" . dired-info))
+  :config
   (setq dired-clean-up-buffers-too t)
   (setq dired-clean-confirm-killing-deleted-buffers t)
   (setq dired-x-hands-off-my-keys t)    ; easier to show the keys I use
   (setq dired-bind-man nil)
-  (setq dired-bind-info nil)
-  (define-key dired-mode-map (kbd "I") #'dired-info))
+  (setq dired-bind-info nil))
 
-(prot-emacs-package prot-dired
-  (:delay 2)
-  (add-hook 'dired-mode-hook #'prot-dired-setup-imenu)
+(use-package prot-dired
+  :ensure nil
+  :hook (dired-mode . prot-dired-setup-imenu)
+  :bind
+  ( :map dired-mode-map
+    ("i" . prot-dired-insert-subdir) ; override `dired-maybe-insert-subdir'
+    ("/" . prot-dired-limit-regexp)
+    ("C-c C-l" . prot-dired-limit-regexp)
+    ("M-n" . prot-dired-subdirectory-next)
+    ("C-c C-n" . prot-dired-subdirectory-next)
+    ("C-c C-p" . prot-dired-subdirectory-previous)
+    ("M-s G" . prot-dired-grep-marked-files) ; M-s g is `prot-search-grep'
+    ("M-p" . prot-dired-subdirectory-previous)))
 
-  (prot-emacs-keybind dired-mode-map
-    "i" #'prot-dired-insert-subdir ; override `dired-maybe-insert-subdir'
-    "/" #'prot-dired-limit-regexp
-    "C-c C-l" #'prot-dired-limit-regexp
-    "M-n" #'prot-dired-subdirectory-next
-    "C-c C-n" #'prot-dired-subdirectory-next
-    "M-p" #'prot-dired-subdirectory-previous
-    "C-c C-p" #'prot-dired-subdirectory-previous
-    "M-s G" #'prot-dired-grep-marked-files)) ; M-s g is `prot-search-grep'
+(use-package dired-subtree
+  :ensure t
+  :bind
+  ( :map dired-mode-map
+    ("<tab>" . dired-subtree-toggle)
+    ("<backtab>" . dired-subtree-remove)) ; S-TAB
+  :config
+  (setq dired-subtree-use-backgrounds nil))
 
-(prot-emacs-package wdired
-  (:delay 2)
+(use-package wdired
+  :ensure nil
+  :commands (wdired-change-to-wdired-mode)
+  :config
   (setq wdired-allow-to-change-permissions t)
   (setq wdired-create-parent-directories t))
 

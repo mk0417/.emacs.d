@@ -3,9 +3,11 @@
 ;; The themes are customisable.  Read the manual:
 ;; <https://protesilaos.com/emacs/standard-themes>.
 
-(prot-emacs-package standard-themes
-  (:install t)
-  (:delay 1)
+(use-package standard-themes
+  :ensure t
+  :demand t
+  :bind ("<f5>" . standard-themes-toggle)
+  :config
   (setq standard-themes-bold-constructs t
         standard-themes-italic-constructs t
         standard-themes-mixed-fonts t
@@ -38,9 +40,7 @@
 
   ;; Load a theme that is consistent with my session's theme.  Those
   ;; functions are defined in my init.el.
-  (standard-themes-load-dark)
-
-  (define-key global-map (kbd "<f5>") #'standard-themes-toggle))
+  (standard-themes-load-light))
 
 ;; NOTE: For testing purposes
 (prot-emacs-comment

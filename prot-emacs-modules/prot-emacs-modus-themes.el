@@ -2,9 +2,13 @@
 
 ;; The themes are highly customisable.  Read the manual:
 ;; <https://protesilaos.com/emacs/modus-themes>.
-(prot-emacs-package modus-themes
-  (:install t)
-  (:delay 1)
+(use-package modus-themes
+  :ensure t
+  :demand t
+  :bind (("<f5>" . modus-themes-toggle)
+         ("C-<f5>" . modus-themes-select))
+  :config
+
   (setq modus-themes-custom-auto-reload nil
         modus-themes-to-toggle '(modus-operandi modus-vivendi)
         ;; modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted)
@@ -35,14 +39,11 @@
           ;; (bg-completion-match-3 bg-blue-subtle)
           ))
 
-  (modus-themes-load-theme (cadr modus-themes-to-toggle))
-
   ;; (setq modus-themes-common-palette-overrides nil)
   ;; '((bg-mode-line-active bg-cyan-subtle)
   ;;   (keybind yellow-warmer)))
 
-  ;; Also check `modus-themes-select'.
-  (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
+  (modus-themes-load-theme (cadr modus-themes-to-toggle)))
 
 ;; NOTE: For testing purposes
 (prot-emacs-comment

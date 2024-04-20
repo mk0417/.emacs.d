@@ -1,8 +1,8 @@
 ;;;;; init-avy.el --- Avy -*- lexical-binding: t -*-
 
-(prot-emacs-package avy
-  (:install t)
-  (:delay 10)
+(use-package avy
+  :ensure t
+  :config
   (setq avy-background t)
   (setq avy-style 'at)
   (setq avy-styles-alist '((avy-goto-line . pre)))

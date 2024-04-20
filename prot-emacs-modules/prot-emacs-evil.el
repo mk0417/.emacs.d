@@ -1,8 +1,7 @@
-(prot-emacs-configure
-  (:delay 1)
-
+(use-package evil
+  :ensure t
+  :init
 ;;;; General settings
-
   (setq evil-want-C-u-delete nil)
   (setq evil-want-C-w-delete nil)
   (setq evil-want-C-h-delete nil)
@@ -118,13 +117,7 @@
   ;; packages that requires certain variables to be evaluated before
   ;; it is `require'd.  This is why I place most of the `setq' calls
   ;; above.
-  (prot-emacs-package evil (:install t))
-
-  ;; The `prot-evil' library defines a new state for better
-  ;; compatibility with most (all?) major modes.  It also introduces a
-  ;; new "erase" operator.  These are configured from this point on.
-  (prot-emacs-package prot-evil)
-
+  :config
   (setq evil-overriding-maps nil)
   (setq evil-motion-state-modes nil)
   (setq evil-insert-state-modes nil)
@@ -200,14 +193,21 @@
 
 ;;;; Set up my prefix keymap
 
-  (evil-define-key '(emacs insert) global-map (kbd "SPC") #'prot-evil-prefix-or-self-insert)
-  (evil-define-key '(normal visual motion prot-basic) global-map (kbd "SPC") prot-prefix-map)
-  (evil-define-key '(emacs normal visual motion prot-basic) global-map (kbd "C-g") #'prot-evil-normal-or-basic-state)
-  (evil-define-key '(normal visual) python-mode-map (kbd ";") prot-prefix-map)
-  (evil-define-key '(normal visual) ess-mode-map (kbd ";") prot-prefix-map)
-  (evil-define-key '(normal visual) julia-mode-map (kbd ";") prot-prefix-map)
+  (with-eval-after-load 'prot-prefix
+    (evil-define-key '(emacs insert) global-map (kbd "SPC") #'prot-evil-prefix-or-self-insert)
+    (evil-define-key '(normal visual motion prot-basic) global-map (kbd "SPC") prot-prefix-map)
+    (evil-define-key '(emacs normal visual motion prot-basic) global-map (kbd "C-g") #'prot-evil-normal-or-basic-state)
+    (evil-define-key '(normal visual) python-mode-map (kbd ";") prot-prefix-map)
+    (evil-define-key '(normal visual) ess-mode-map (kbd ";") prot-prefix-map)
+    (evil-define-key '(normal visual) julia-mode-map (kbd ";") prot-prefix-map))
 
-;;;; Activate `evil-mode'
   (evil-mode 1))
+
+;; The `prot-evil' library defines a new state for better
+;; compatibility with most (all?) major modes.  It also introduces a
+;; new "erase" operator.  These are configured from this point on.
+(use-package prot-evil
+  :ensure nil
+  :after evil)
 
 (provide 'prot-emacs-evil)

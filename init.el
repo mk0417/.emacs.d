@@ -8,14 +8,6 @@ prot-emacs-pre-custom.el.  This file must be in the same
 directory as the init.el."
   :group 'file)
 
-(defcustom prot-emacs-load-super-keys nil
-  "When non-nil load the `prot-emacs-super-keys-map'.
-This key map defines bindings involving the Super key for common
-commands.  The original key binding of each of those commands is
-still available."
-  :group 'prot-emacs
-  :type 'boolean)
-
 (defcustom prot-emacs-load-theme-family 'modus
   "Set of themes to load.
 Valid values are the symbols `ef', `modus', and `standard', which
@@ -59,14 +51,6 @@ These include packages such as `consult' and `embark'."
   "When non-nil load extras for tree-sitter integration
 These include packages such as `expreg' and generally anything
 that adds functionality on top of what the major mode provides."
-  :group 'prot-emacs
-  :type 'boolean)
-
-(defcustom prot-emacs-load-evil nil
-  "When non-nil, load Vim style key bindings as well as `devil-mode'.
-This user option must be set in the `prot-emacs-pre-custom.el'
-file.  If that file exists in the Emacs directory, it is loaded
-before all other modules of my setup."
   :group 'prot-emacs
   :type 'boolean)
 
@@ -304,48 +288,6 @@ Also see `prot-emacs-configure'."
          (t
           `(progn ,@(delq nil common))))))))
 
-;; Samples of `prot-emacs-package' (expand them with `pp-macroexpand-last-sexp').
-
-(prot-emacs-comment
-  (prot-emacs-package denote
-    (setq denote-directory "path/to/dir")
-    (define-key global-map (kbd "C-c n") #'denote)
-    (:install '(denote . (:url "https://github.com/protesilaos/denote" :branch "main")))
-    (:delay 5)
-    (setq denote-file-type nil))
-
-  (prot-emacs-package denote
-    (setq denote-directory "path/to/dir")
-    (define-key global-map (kbd "C-c n") #'denote)
-    (:install "https://github.com/protesilaos/denote")
-    (:delay 5)
-    (setq denote-file-type nil))
-
-  (prot-emacs-package denote
-    (:delay 5)
-    (setq denote-directory "path/to/dir")
-    (define-key global-map (kbd "C-c n") #'denote)
-    (:install "https://github.com/protesilaos/denote")
-    (setq denote-file-type nil))
-
-  (prot-emacs-package denote
-    (:install "https://github.com/protesilaos/denote")
-    (:delay 5)
-    (setq denote-directory "path/to/dir")
-    (define-key global-map (kbd "C-c n") #'denote)
-    (setq denote-file-type nil))
-
-  (prot-emacs-package denote
-    (:delay 5)
-    (setq denote-directory "path/to/dir")
-    (define-key global-map (kbd "C-c n") #'denote)
-    (setq denote-file-type nil))
-
-  (prot-emacs-package denote
-    (setq denote-directory "path/to/dir")
-    (define-key global-map (kbd "C-c n") #'denote)
-    (setq denote-file-type nil)))
-
 (defmacro prot-emacs-configure (&rest body)
   "Evaluate BODY as a `progn'.
 BODY consists of ordinary Lisp expressions.  The sole exception
@@ -425,7 +367,7 @@ that is expanded with the `prot-emacs-package' macro."
   (delete-dups (append prot-emacs-loaded-packages package-activated-list)))
 
 (defvar prot-emacs-package-form-regexp
-  "^(\\(prot-emacs-package\\|prot-emacs-keybind\\|prot-emacs-abbrev\\|require\\) +'?\\([0-9a-zA-Z-]+\\)"
+  "^(\\(prot-emacs-keybind\\|prot-emacs-abbrev\\) +'?\\([0-9a-zA-Z-]+\\)"
   "Regexp to add packages to `lisp-imenu-generic-expression'.")
 
 (eval-after-load 'lisp-mode
@@ -433,9 +375,7 @@ that is expanded with the `prot-emacs-package' macro."
                 (list "Packages" ,prot-emacs-package-form-regexp 2)))
 
 (defconst prot-emacs-font-lock-keywords
-  '(("(\\(prot-emacs-package\\)\\_>[ \t']*\\(\\(?:\\sw\\|\\s_\\)+\\)?"
-     (2 font-lock-constant-face nil t))
-    ("(\\(prot-emacs-\\(keybind\\|abbrev\\|abbrev-function\\)\\)\\_>[ \t']*\\(\\(\\sw\\|\\s_\\)+\\)?"
+  '(("(\\(prot-emacs-\\(keybind\\|abbrev\\)\\)\\_>[ \t']*\\(\\(\\sw\\|\\s_\\)+\\)?"
      (3 font-lock-variable-name-face nil t))
     ("(\\(prot-emacs-comment\\)\\_>[ \t']*"
      (1 font-lock-preprocessor-face nil t))))
@@ -447,14 +387,11 @@ that is expanded with the `prot-emacs-package' macro."
 ;; ~/.emacs.d/prot-emacs-pre-custom.el
 ;;
 ;; The purpose of this file is for the user to define their
-;; preferences BEFORE loading any of the modules.  For example, the
-;; user option `prot-emacs-omit-packages' lets the user specify which
-;; packages not to load.  Search for all `defcustom' forms in this
-;; file for other obvious customisations.
+;; preferences BEFORE loading any of the modules.
 (load (locate-user-emacs-file "prot-emacs-pre-custom.el") :no-error :no-message)
 
 ;; Comment out below if I want mct
-(setq prot-emacs-completion-ui 'mct)
+; (setq prot-emacs-completion-ui 'mct)
 
 ;; NOTE 2023-10-08: some Prot config are modified based on my workflow and needs
 (require 'prot-emacs-theme)
@@ -472,11 +409,6 @@ that is expanded with the `prot-emacs-package' macro."
   (require 'prot-emacs-icons))
 (require 'prot-emacs-evil)
 (require 'prot-emacs-which-key)
-;; This one comes after Evil mode because it is the only one that uses
-;; the Super key for key bindings, so we do not worry about overriding
-;; anything.
-(when prot-emacs-load-super-keys
-  (require 'prot-emacs-super-keys))
 
 ;; NOTE 2023-10-05: my config
 (require 'init-default)
