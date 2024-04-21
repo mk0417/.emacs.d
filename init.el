@@ -74,19 +74,6 @@ before all other modules of my setup."
   :group 'prot-emacs
   :type 'boolean)
 
-(defcustom prot-emacs-omit-packages nil
-  "List of package names to not load.
-This instructs the relevant macros to not `require' the given
-package.  In the case of `prot-emacs-elpa-package', the package
-will not be installed if it is not already available on the
-system.
-
-This user option must be set in the `prot-emacs-pre-custom.el'
-file.  If that file exists in the Emacs directory, it is loaded
-before all other modules of my setup."
-  :group 'prot-emacs
-  :type '(repeat symbol))
-
 (setq make-backup-files nil)
 (setq backup-inhibited nil) ; Not sure if needed, given `make-backup-files'
 (setq create-lockfiles nil)
@@ -312,7 +299,7 @@ making an abbreviation to a function."
 (load (locate-user-emacs-file "prot-emacs-pre-custom.el") :no-error :no-message)
 
 ;; Comment out below if I want mct
-; (setq prot-emacs-completion-ui 'mct)
+;; (setq prot-emacs-completion-ui 'mct)
 
 ;; NOTE 2023-10-08: some Prot config are modified based on my workflow and needs
 (require 'prot-emacs-theme)
