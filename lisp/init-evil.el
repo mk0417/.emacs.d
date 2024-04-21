@@ -1,11 +1,12 @@
 ;;; init-evil.el --- Evil -*- lexical-binding: t -*-
 (prot-emacs-package evil-surround
-  (:install t)
-  (:delay 2)
+  :ensure t
+  :config
   (global-evil-surround-mode 1))
 
 (prot-emacs-package general
-  (:install t)
+  :ensure t
+  :config
   (general-evil-setup)
 
   (general-imap "f"

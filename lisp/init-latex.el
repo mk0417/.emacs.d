@@ -1,16 +1,11 @@
 ;;; init-latex.el --- Latex -*- lexical-binding: t -*-
 
-(prot-emacs-configure
-  (:delay 5)
-  ;; https://emacs.stackexchange.com/questions/41321/when-to-specify-a-package-name-in-use-packages-ensure-tag/41324#41324
-  ;; prot-emacs-package will require auctex. This seems not to work with this package
-  ;; So I just install it without require
-  (prot-emacs-package-install 'auctex t)
-
-  (prot-emacs-package engrave-faces
-    (:install t)
-    (:delay 2))
-
+;; https://emacs.stackexchange.com/questions/41321/when-to-specify-a-package-name-in-use-packages-ensure-tag/41324#41324
+;; prot-emacs-package will require auctex. This seems not to work with this package
+;; So I just install it without require
+(use-package tex
+  :ensure auctex
+  :config
   (with-eval-after-load 'latex
     (setq TeX-auto-save t)
     (setq TeX-parse-self t)
@@ -19,7 +14,7 @@
     (setq LaTeX-item-indent 0)
     (setq TeX-command-extra-options "-shell-escape")
     (setq TeX-electric-sub-and-superscript t)
-    (setq LaTeX-electric-left-right-brace t)
+    (setq LaTeX-electric-left-right-brace nil)
     (setq TeX-electric-math (cons "$" "$"))
 
     ;; compile to pdf
@@ -79,5 +74,8 @@
       (interactive)
       (TeX-save-document (TeX-master-file))
       (TeX-command "LaTeX" 'TeX-master-file))))
+
+(use-package engrave-faces
+  :ensure t)
 
 (provide 'init-latex)

@@ -1,9 +1,9 @@
 ;;;;; init-programming.el --- Programming -*- lexical-binding: t -*-
 
 ;;; Jupyter
-(prot-emacs-package jupyter
-  (:install t)
-  (:delay 2)
+(use-package jupyter
+  :ensure t
+  :config
   ;; https://github.com/nnicandro/emacs-zmq
   ;; https://github.com/nnicandro/emacs-zmq/issues/19
   ;; do not download zmq module from released version that contains .so file
@@ -36,8 +36,9 @@
     (previous-line)))
 
 ;;; Python
-(prot-emacs-configure
-  (:delay 2)
+(use-package python
+  :ensure nil
+  :config
   (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-guess-indent-offset t)
@@ -54,9 +55,9 @@
     (add-hook 'python-mode-hook 'p-python-indent-key)))
 
 ;;; R
-(prot-emacs-package ess 
-  (:delay 2)
-  (:install t)
+(use-package ess 
+  :ensure t
+  :config
   (setq ess-imenu-use-S nil)
   (setq ess-imenu-use-p nil)
   (setq ess-indent-offset 4)
@@ -69,9 +70,9 @@
     (add-hook 'ess-mode-hook #'electric-pair-mode)))
 
 ;;; Julia
-(prot-emacs-package julia-mode
-  (:install t)
-  (:delay 2)
+(use-package julia-mode
+  :ensure t
+  :config
   (add-hook 'julia-mode-hook #'display-fill-column-indicator-mode)
   (add-hook 'julia-mode-hook #'electric-pair-mode))
 
@@ -81,9 +82,8 @@
 ;;   (:delay 2))
 
 ;;; HTML
-(prot-emacs-package htmlize
-  (:install t)
-  (:delay 2))
+(use-package htmlize
+  :ensure t)
 
 (add-hook 'mhtml-mode-hook #'turn-off-auto-fill)
 
