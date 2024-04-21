@@ -238,77 +238,6 @@ If METHOD is any other non-nil value, install PACKAGE using
         (package-refresh-contents))
       (package-install package))))
 
-(defvar prot-emacs-loaded-packages nil)
-
-(defmacro prot-emacs-package (package &rest body)
-  "Require PACKAGE with BODY configurations.
-
-PACKAGE is an unquoted symbol that is passed to `require'.  It
-thus conforms with `featurep'.
-
-BODY consists of ordinary Lisp expressions.  There are,
-nevertheless, two unquoted plists that are treated specially:
-
-1. (:install METHOD)
-2. (:delay NUMBER)
-
-These plists can be anywhere in BODY and are not part of its
-final expansion.
-
-The :install property is the argument passed to
-`prot-emacs-package-install' and has the meaning of METHOD
-described therein.
-
-The :delay property makes the evaluation of PACKAGE with the
-expanded BODY happen with `run-with-timer'.
-
-Also see `prot-emacs-configure'."
-  (declare (indent defun))
-  (unless (memq package prot-emacs-omit-packages)
-    (let (install delay)
-      (dolist (element body)
-        (when (plistp element)
-          (pcase (car element)
-            (:install (setq install (cdr element)
-                            body (delq element body)))
-            (:delay (setq delay (cadr element)
-                          body (delq element body))))))
-      (let ((common `(,(when install
-                         `(prot-emacs-package-install ',package ,@install))
-                      (require ',package)
-                      (add-to-list 'prot-emacs-loaded-packages ',package)
-                      ,@body
-                      ;; (message "Prot Emacs loaded package: %s" ',package)
-                      )))
-        (cond
-         ((featurep package)
-          `(progn ,@body))
-         (delay
-          `(run-with-timer ,delay nil (lambda () ,@(delq nil common))))
-         (t
-          `(progn ,@(delq nil common))))))))
-
-(defmacro prot-emacs-configure (&rest body)
-  "Evaluate BODY as a `progn'.
-BODY consists of ordinary Lisp expressions.  The sole exception
-is an unquoted plist of the form (:delay NUMBER) which evaluates
-BODY with NUMBER seconds of `run-with-timer'.
-
-Note that `prot-emacs-configure' does not try to autoload
-anything.  Use it only for forms that evaluate regardless.
-
-Also see `prot-emacs-package'."
-  (declare (indent 0))
-  (let (delay)
-    (dolist (element body)
-      (when (plistp element)
-        (pcase (car element)
-          (:delay (setq delay (cadr element)
-                        body (delq element body))))))
-    (if delay
-        `(run-with-timer ,delay nil (lambda () ,@body))
-      `(progn ,@body))))
-
 (defmacro prot-emacs-keybind (keymap &rest definitions)
   "Expand key binding DEFINITIONS for the given KEYMAP.
 DEFINITIONS is a sequence of string and command pairs."
@@ -357,14 +286,6 @@ making an abbreviation to a function."
                   `(define-abbrev ,table ,abbrev "" ,expansion))))
             (seq-split definitions 2)))
      (error "%s is not an abbrev table" ,table)))
-
-(defun prot-emacs-return-loaded-packages ()
-  "Return a list of all loaded packages.
-Here packages include both `prot-emacs-loaded-packages' and
-`package-activated-list'.  The latter only covers what is found
-in the `package-archives', whereas the former is for anything
-that is expanded with the `prot-emacs-package' macro."
-  (delete-dups (append prot-emacs-loaded-packages package-activated-list)))
 
 (defvar prot-emacs-package-form-regexp
   "^(\\(prot-emacs-keybind\\|prot-emacs-abbrev\\) +'?\\([0-9a-zA-Z-]+\\)"
