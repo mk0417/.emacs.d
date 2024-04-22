@@ -1,23 +1,15 @@
 ;;;;; init-git.el --- Git -*- lexical-binding: t -*-
 
 ;;; Project
-;; (require 'project)
-
 (use-package project
   :ensure nil
   :config
-  (setq project-list-file (expand-file-name "projects" user-emacs-directory))
-
-  ;; https://macowners.club/posts/custom-functions-5-navigation/
-  (defun p-project-switch-project (dir)
-    (interactive (list (project-prompt-project-dir)))
-    (let ((project-current-directory-override dir))
-      (project-find-file))))
+  (setq project-list-file (expand-file-name "projects" user-emacs-directory)))
 
 ;;; color-rg
 (use-package color-rg
   :ensure t
-  :vc (color-rg :url "https://gitlab.com/protesilaos/modus-themes" :branch "master")
+  :vc (color-rg :url "https://github.com/manateelazycat/color-rg" :branch "master")
   :init
   (setq color-rg-mac-load-path-from-shell nil))
 
