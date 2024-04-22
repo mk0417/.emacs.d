@@ -1,29 +1,7 @@
-(defvar prot-emacs-tiling-window-manager-regexp
-  (regexp-opt '("bspwm" "herbstluftwm" "i3"))
-  "Regular expression to  tiling window managers.
-See definition of `prot-emacs-with-desktop-session'.")
-
-(defmacro prot-emacs-with-desktop-session (&rest body)
-  "Expand BODY if desktop session is not a tiling window manager.
-See `prot-emacs-tiling-window-manager-regexp' for what
-constitutes a matching tiling window manager."
-  (declare (indent 0))
-  `(when-let ((session (getenv "DESKTOP_SESSION"))
-              ((not (string-match-p session prot-emacs-tiling-window-manager-regexp))))
-     ,@body))
-
 (defun prot-emacs-add-to-list (list element)
   "Add to symbol of LIST the given ELEMENT.
 Simplified version of `add-to-list'."
   (set list (cons element (symbol-value list))))
-
-(prot-emacs-with-desktop-session
-  (mapc
-   (lambda (var)
-     (prot-emacs-add-to-list var '(width . (text-pixels . 1200)))
-     (prot-emacs-add-to-list var '(height . (text-pixels . 900)))
-     (prot-emacs-add-to-list var '(scroll-bar-width  . 10)))
-   '(default-frame-alist initial-frame-alist)))
 
 (setq frame-resize-pixelwise t
       frame-inhibit-implied-resize t
