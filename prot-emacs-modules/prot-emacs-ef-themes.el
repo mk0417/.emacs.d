@@ -4,7 +4,7 @@
 ;; <https://protesilaos.com/emacs/ef-themes>.
 (use-package ef-themes
   :ensure t
-  :demand t
+  ;; :demand t
   :bind ("<f5>" . ef-themes-select)
   :config
   (setq ef-themes-variable-pitch-ui t
