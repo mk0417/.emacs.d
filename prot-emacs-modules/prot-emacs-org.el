@@ -48,12 +48,7 @@
 (use-package org
   :ensure nil
   :init
-  ;; NOTE 2023-05-20: Must be evaluated before Org is loaded,
-  ;; otherwise we have to use the Custom UI.  No thanks!
-  (setq org-export-backends '(html texinfo md latex))
-
   (setq org-directory (expand-file-name "~/Dropbox/org/"))
-
   (setq org-imenu-depth 7)
 
   (add-to-list 'safe-local-variable-values '(org-hide-leading-stars . t))
@@ -81,8 +76,14 @@
     :map narrow-map
     ("b" . org-narrow-to-block)
     ("e" . org-narrow-to-element)
-    ("s" . org-narrow-to-subtree))
+    ("s" . org-narrow-to-subtree)
+    :map ctl-x-x-map
+    ("i" . prot-org-id-headlines)
+    ("h" . prot-org-ox-html))
   :config
+  ;; My custom extras, which I use for the agenda and a few other Org features.
+  (require 'prot-org)
+
 ;;;; general settings
   (setq org-ellipsis "↴")
   (setq org-adapt-indentation nil)      ; No, non, nein, όχι!
@@ -111,6 +112,14 @@
   (setq org-use-sub-superscripts '{})
   (setq org-insert-heading-respect-content t)
   (setq org-read-date-prefer-future 'time)
+  (setq org-highlight-latex-and-related nil) ; other options affect elisp regexp in src blocks
+  (setq org-fontify-quote-and-verse-blocks t)
+  (setq org-fontify-whole-block-delimiter-line t)
+  (setq org-track-ordered-property-with-tag t)
+  (setq org-highest-priority ?A)
+  (setq org-lowest-priority ?C)
+  (setq org-default-priority ?A)
+  (setq org-priority-faces nil)
 
   ;; See my `pulsar' package, defined elsewhere in this setup.
   (with-eval-after-load 'pulsar
@@ -143,40 +152,18 @@
   (setq org-todo-keyword-faces
         '(("CANCEL" . prot/org-bold-done)))
   (setq org-use-fast-todo-selection 'expert)
-  (setq org-priority-faces nil)
+  
   (setq org-fontify-done-headline nil)
   (setq org-fontify-todo-headline nil)
-  (setq org-fontify-quote-and-verse-blocks t)
   (setq org-fontify-whole-heading-line nil)
-  (setq org-fontify-whole-block-delimiter-line t)
-  (setq org-highlight-latex-and-related nil) ; other options affect elisp regexp in src blocks
   (setq org-enforce-todo-dependencies t)
-  (setq org-enforce-todo-checkbox-dependencies t)
-  (setq org-track-ordered-property-with-tag t)
-  (setq org-highest-priority ?A)
-  (setq org-lowest-priority ?C)
-  (setq org-default-priority ?A))
+  (setq org-enforce-todo-checkbox-dependencies t))
 
 ;;;; tags
 (use-package org
   :ensure nil
   :config
-  (setq org-tag-alist ; I don't really use those, but whatever
-        '(("meeting")
-          ("admin")
-          ("emacs")
-          ("modus")
-          ("politics")
-          ("economics")
-          ("philosophy")
-          ("book")
-          ("essay")
-          ("mail")
-          ("purchase")
-          ("hardware")
-          ("software")
-          ("website")))
-
+  (setq org-tag-alist nil)
   (setq org-auto-align-tags nil)
   (setq org-tags-column 0))
 
@@ -194,8 +181,11 @@
 (use-package org
   :ensure nil
   :config
-  (setq org-link-keep-stored-after-insertion nil))
-;; TODO 2021-10-15 org-link-make-description-function
+  (require 'prot-org) ; for the above commands
+
+  (setq org-link-context-for-files t)
+  (setq org-link-keep-stored-after-insertion nil)
+  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
 
 ;;;; code blocks
 (use-package org
@@ -218,6 +208,10 @@
 ;;;; export
 (use-package org
   :ensure nil
+  :init
+  ;; NOTE 2023-05-20: Must be evaluated before Org is loaded,
+  ;; otherwise we have to use the Custom UI.  No thanks!
+  (setq org-export-backends '(html texinfo md))
   :config
   (setq org-export-with-toc t)
   (setq org-export-headline-levels 8)
@@ -225,12 +219,6 @@
   (setq org-html-htmlize-output-type nil)
   (setq org-html-head-include-default-style nil)
   (setq org-html-head-include-scripts nil))
-
-;;;; IDs
-(use-package org
-  :ensure nil
-  :config
-  (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id))
 
 ;;;; capture
 (use-package org-capture
@@ -298,14 +286,9 @@
     ("C-c a" . (lambda ()
                  "Call Org agenda with `prot-org-custom-daily-agenda' configuration."
                  (interactive)
-                 (org-agenda nil "A")))
-    :map ctl-x-x-map
-    ("i" . prot-org-id-headlines)
-    ("h" . prot-org-ox-html))
+                 (org-agenda nil "A"))))
   :config
 ;;;;; Custom agenda blocks
-
-  (require 'prot-org)
 
   (setq org-agenda-format-date #'prot-org-agenda-format-date-aligned)
 
