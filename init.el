@@ -111,7 +111,7 @@ before all other modules of my setup."
 
 ;;;; Packages
 
-(require 'package)
+;; (require 'package)
 
 (setq package-vc-register-as-project nil) ; Emacs 30
 
