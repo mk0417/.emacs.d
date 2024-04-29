@@ -1,94 +1,89 @@
 ;;;;; init-programming.el --- Programming -*- lexical-binding: t -*-
 
-;;; Install package
-;; Use my fork due to issue of current upstream
-;; https://github.com/nnicandro/emacs-jupyter/issues/433
-;; (straight-use-package '(jupyter :type git :host github :repo "mk0417/emacs-jupyter" :branch "patch-1"))
-(straight-use-package 'jupyter)
-(straight-use-package 'ess)
-
 ;;; Jupyter
-;; https://github.com/nnicandro/emacs-zmq
-;; https://github.com/nnicandro/emacs-zmq/issues/19
-;; do not download zmq module from released version that contains .so file
-;; Emacs 28 needs .dylib
-;; answer No when first installation and build it to have .dylib file
-;; (require 'jupyter)
+(use-package jupyter
+  :ensure t
+  :config
+  ;; https://github.com/nnicandro/emacs-zmq
+  ;; https://github.com/nnicandro/emacs-zmq/issues/19
+  ;; do not download zmq module from released version that contains .so file
+  ;; Emacs 28 needs .dylib
+  ;; answer No when first installation and build it to have .dylib file
+  ;; (require 'jupyter)
+  (setq jupyter-eval-use-overlays t)
+  (setq jupyter-org-auto-connect nil)
 
-(setq jupyter-eval-use-overlays t)
+  (with-eval-after-load 'org
+    (org-babel-do-load-languages 'org-babel-load-languages '((jupyter . t))))
 
-(defun p-jupyter-remove-line-overlay ()
-  (interactive)
-  (evil-open-below 0)
-  (kill-whole-line)
-  (evil-escape)
-  (previous-line))
+  (defun p-mark-paragraph ()
+    (interactive)
+    (if (region-active-p)
+        (re-search-forward "\n[ \t]*\n[ \t]*\n*" nil 1)
+      (progn
+        (skip-chars-forward " \n\t")
+        (when (re-search-backward "\n[ \t]*\n" nil 1)
+          (goto-char (match-end 0)))
+        (push-mark (point) t t)
+        (re-search-forward "\n[ \t]*\n" nil 1)
+        (previous-line)
+        (end-of-line))))
+  
+  ;; After new commits of emacs-jupyter upstream,
+  ;; jupyter-eval-region has three arguments
+  ;; (jupyter-eval-region INSERT BEG END)
+  ;; if INSERT is t, the output will replace code
+  ;; and I prefer to nil
+  (defun p-jupyter-eval-region-dwim ()
+    (interactive)
+    (p-mark-paragraph)
+    (let (beg end)
+      (setq beg (region-beginning) end (region-end))
+      (jupyter-eval-region nil beg end)))
 
-;;;###autoload
-;; After new commits of emacs-jupyter upstream,
-;; jupyter-eval-region has three arguments
-;; (jupyter-eval-region INSERT BEG END)
-;; if INSERT is t, the output will replace code
-;; and I prefer to nil
-(defun p-jupyter-eval-block ()
-  (interactive)
-  (p-select-block)
-  (let (beg end)
-    (setq beg (region-beginning) end (region-end))
-    (jupyter-eval-region nil beg end)))
-
-(autoload 'p-jupyter-eval-block "jupyter")
+  (defun p-jupyter-remove-line-overlay ()
+    (interactive)
+    (meow-open-below)
+    (kill-whole-line)
+    (meow-insert-exit)
+    (previous-line)))
 
 ;;; Python
-(with-eval-after-load 'python
+(use-package python
+  :ensure nil
+  :config
+  (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-guess-indent-offset t)
-  (add-hook 'python-mode-hook 'display-fill-column-indicator-mode))
+  (add-hook 'python-mode-hook #'display-fill-column-indicator-mode)
+  (add-hook 'python-mode-hook #'electric-pair-mode))
 
 ;;; R
-(setq-default inferior-R-args "--no-save ")
+(use-package ess 
+  :ensure t
+  :config
+  (setq ess-imenu-use-S nil)
+  (setq ess-imenu-use-p nil)
+  (setq ess-indent-offset 4)
+  (setq ess-use-flymake nil)
+  (setq ess-indent-with-fancy-comments nil)
+  (with-eval-after-load 'ess
+    ;; disable flymake
+    ;; (add-hook 'ess-r-mode-hook (lambda () (flymake-mode -1)))
+    (add-hook 'ess-mode-hook #'display-fill-column-indicator-mode)
+    (add-hook 'ess-mode-hook #'electric-pair-mode)))
 
-(with-eval-after-load 'ess
-  ;; disable flymake
-  (add-hook 'ess-r-mode-hook (lambda () (flymake-mode -1)))
-  (add-hook 'ess-mode-hook 'display-fill-column-indicator-mode)
-  (setq ess-ask-for-ess-directory nil)
-  ;; fix: Error running timer 'ess--idle-timer-function': (wrong-type-argument stringp nil)
-  ;; https://github.com/emacs-ess/ESS/issues/1102
-  (setq ess-can-eval-in-background nil))
+;;; Julia
+(use-package julia-mode
+  :ensure t
+  :config
+  (add-hook 'julia-mode-hook #'display-fill-column-indicator-mode)
+  (add-hook 'julia-mode-hook #'electric-pair-mode))
 
-;;; Keybindings
-(with-eval-after-load 'evil
-  (general-create-definer p-jupyter-leader-def
-    :prefix ";"
-    :states '(normal visual)
-    :keymaps '(python-mode-map ess-r-mode-map))
-  (p-jupyter-leader-def
-    "j"  '(:ignore t :which-key "jupyter")
-    "jj" 'jupyter-run-repl
-    "jr" 'jupyter-eval-line-or-region
-    "jf" 'jupyter-eval-defun
-    "je" 'p-jupyter-eval-block
-    "jR" 'jupyter-repl-restart-kernel
-    "jK" 'jupyter-repl-clear-cells
-    "jI" 'jupyter-repl-interrupt-kernel
-    "ji" 'jupyter-inspect-at-point
-    "jC" 'jupyter-eval-remove-overlays
-    "jc" 'p-jupyter-remove-line-overlay
-    "jw" 'jupyter-repl-pop-to-buffer)
+;;; HTML
+(use-package htmlize
+  :ensure t)
 
-  (general-create-definer p-ess-leader-def
-    :prefix ";"
-    :states '(normal visual)
-    :keymaps '(ess-mode-map))
-  (p-ess-leader-def
-    "r" '(:ignore t :which-key "ess")
-    "rp" 'ess-request-a-process
-    "ri" 'ess-interrupt
-    "ra" 'ess-cycle-assign
-    "rf" 'ess-eval-function
-    "rl" 'ess-eval-line
-    "rr" 'ess-eval-region-or-line-and-step))
+(add-hook 'mhtml-mode-hook #'turn-off-auto-fill)
 
 (provide 'init-programming)
-;;;;; init-programming.el ends here

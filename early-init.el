@@ -1,157 +1,91 @@
-;;;;; early-init.el --- Early init file -*- lexical-binding: t -*-
+;;;;; early-init.el --- Early init -*- lexical-binding: t -*-
 
-;;; Don't use package.el, use straight.el instead
-(setq package-enable-at-startup nil)
-(advice-add #'package--ensure-init-file :override #'ignore)
+(defun prot-emacs-add-to-list (list element)
+  "Add to symbol of LIST the given ELEMENT.
+Simplified version of `add-to-list'."
+  (set list (cons element (symbol-value list))))
 
-;;; Prefer loading newest compiled .el file
-(setq load-prefer-newer t)
+(setq frame-resize-pixelwise t
+      frame-inhibit-implied-resize t
+      frame-title-format '("%b")
+      ring-bell-function 'ignore
+      use-dialog-box t ; only for mouse events, which I seldom use
+      use-file-dialog nil
+      use-short-answers t
+      inhibit-splash-screen t
+      inhibit-startup-screen t
+      inhibit-x-resources t
+      inhibit-startup-echo-area-message user-login-name ; read the docstring
+      inhibit-startup-buffer-menu t)
 
-;;; Inhibit resizing frame
-(setq frame-inhibit-implied-resize t)
+;; I do not use those graphical elements by default, but I do enable
+;; them from time-to-time for testing purposes or to demonstrate
+;; something.  NEVER tell a beginner to disable any of these.  They
+;; are helpful.
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
+(tool-bar-mode -1)
 
-;;; Make the initial buffer load faster by setting its mode to fundamental-mode
-(setq initial-major-mode 'fundamental-mode)
+;; Temporarily increase the garbage collection threshold.  These
+;; changes help shave off about half a second of startup time.  The
+;; `most-positive-fixnum' is DANGEROUS AS A PERMANENT VALUE.  See the
+;; `emacs-startup-hook' a few lines below for what I actually use.
+(setq gc-cons-threshold most-positive-fixnum
+      gc-cons-percentage 0.5)
 
-(defvar p-file-name-handler-alist file-name-handler-alist)
-(setq file-name-handler-alist nil)
+;; Same idea as above for the `file-name-handler-alist' and the
+;; `vc-handled-backends' with regard to startup speed optimisation.
+;; Here I am storing the default value with the intent of restoring it
+;; via the `emacs-startup-hook'.
+(defvar prot-emacs--file-name-handler-alist file-name-handler-alist)
+(defvar prot-emacs--vc-handled-backends vc-handled-backends)
+
+(setq file-name-handler-alist nil
+      vc-handled-backends nil)
+
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (setq file-name-handler-alist p-file-name-handler-alist)))
+            (setq gc-cons-threshold (* 1000 1000 8)
+                  gc-cons-percentage 0.1
+                  file-name-handler-alist prot-emacs--file-name-handler-alist
+                  vc-handled-backends prot-emacs--vc-handled-backends)))
 
-;;; Increase the GC threshold for faster startup
-(setq gc-cons-threshold most-positive-fixnum)
-(setq gc-cons-percentage 0.6)
+(setq package-check-signature nil)
 
-;;; Do not compact font cache
-(setq inhibit-compacting-font-caches t)
+;; Initialise installed packages at this early stage, by using the
+;; available cache.  I had tried a setup with this set to nil in the
+;; early-init.el, but (i) it ended up being slower and (ii) various
+;; package commands, like `describe-package', did not have an index of
+;; packages to work with, requiring a `package-refresh-contents'.
+(setq package-enable-at-startup t)
 
-;;; Setup straight as package manager
-;; https://github.com/doomemacs/doomemacs/issues/5682
-(defvar native-comp-deferred-compilation-deny-list nil)
-(setq straight-repository-branch "develop")
-;; (setq straight-vc-git-default-clone-depth 1)
-(setq straight-vc-git-default-clone-depth '(1 single-branch))
-;; quickier init time
-;; https://emacs.stackexchange.com/questions/71302/reducing-straight-el-bloat
-(setq straight-check-for-modifications '(check-on-save find-when-checking))
+;;;; General theme code
 
-(defvar bootstrap-version)
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 6))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+(defun prot-emacs-re-enable-frame-theme (_frame)
+  "Re-enable active theme, if any, upon FRAME creation.
+Add this to `after-make-frame-functions' so that new frames do
+not retain the generic background set by the function
+`prot-emacs-avoid-initial-flash-of-light'."
+  (when-let ((theme (car custom-enabled-themes)))
+    (enable-theme theme)))
 
-;;; Native compilation settings
-(when (featurep 'native-compile)
-  ;; silence compiler warnings as they can be pretty disruptive
-  (setq native-comp-async-report-warnings-errors nil)
-  ;; Make native compilation happens asynchronously
-  (setq native-comp-deferred-compilation t)
-  (setq compilation-scroll-output t))
+;; NOTE 2023-02-05: The reason the following works is because (i) the
+;; `mode-line-format' is specified again and (ii) the
+;; `prot-emacs-theme-gsettings-dark-p' will load a dark theme.
+(defun prot-emacs-avoid-initial-flash-of-light ()
+  "Avoid flash of light when starting Emacs, if needed.
+New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
+    (setq mode-line-format nil)
+    (set-face-attribute 'default nil :background "#000000" :foreground "#ffffff")
+    (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
+    (add-hook 'after-make-frame-functions #'prot-emacs-re-enable-frame-theme))
+
+(prot-emacs-avoid-initial-flash-of-light)
+
+(add-hook 'after-init-hook (lambda () (set-frame-name "home")))
 
 ;;; No titlebar
 (add-to-list 'default-frame-alist '(undecorated . t))
 
 ;;; Maximize frame at startup
 (setq initial-frame-alist (quote ((fullscreen . maximized))))
-
-;;; Premature redisplays can substantially affect startup times and produce ugly flashes of unstyled Emacs
-;; https://github.com/doomemacs/doomemacs/blob/master/early-init.el
-(setq-default inhibit-redisplay t)
-(add-hook 'window-setup-hook
-          (lambda ()
-            (setq-default inhibit-redisplay nil)
-            (redisplay)))
-
-;;; Minimal UI
-(setq inhibit-startup-message t)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-(push '(horizontal-scroll-bars) default-frame-alist)
-(setq inhibit-startup-buffer-menu t)
-
-;;; Modus themes
-;; Load in early-init.el to avoid white screen flash
-;; https://gitlab.com/protesilaos/dotfiles/-/blob/master/emacs/.emacs.d/prot-emacs-modules/prot-emacs-modus-themes.el
-(setq modus-themes-custom-auto-reload nil)
-(setq modus-themes-mixed-fonts t)
-(setq modus-themes-variable-pitch-ui nil)
-(setq modus-themes-bold-constructs t)
-(setq modus-themes-completions '((selection . (extrabold))))
-(setq modus-themes-org-blocks 'gray-background)
-(setq modus-themes-headings
-      '((agenda-structure . (variable-pitch light 2.2))
-        (agenda-date . (variable-pitch regular 1.3))
-        (t . (regular 1.15))))
-
-(setq modus-themes-common-palette-overrides
-      '((fg-completion-match-0 fg-main)
-        (fg-completion-match-1 fg-main)
-        (fg-completion-match-2 fg-main)
-        (bg-completion-match-0 bg-cyan-intense)
-        (bg-completion-match-1 bg-green-intense)
-        (bg-completion-match-2 bg-red-intense)
-        (bg-completion bg-blue-nuanced)
-        ;; Make line numbers less intense and add a shade of cyan
-        ;; for the current line number.
-        (fg-line-number-inactive "gray50")
-        (fg-line-number-active cyan-cooler)
-        (bg-line-number-inactive unspecified)
-        (bg-line-number-active unspecified)
-        ;; Make the current line of `hl-line-mode' a fine shade of gray
-        (bg-hl-line bg-dim)
-        ;; Make the region have a cyan-green background with no
-        ;; specific foreground (use foreground of underlying text).
-        ;; "bg-sage" refers to Salvia officinalis, else the common sage.
-        (bg-region bg-sage)
-        (fg-region unspecified)
-        ;; Make matching parentheses a shade of magenta. It
-        ;; complements the region nicely.
-        (bg-paren-match bg-magenta-intense)
-        ;; Change dates to a set of more subtle combinations.
-        (date-deadline magenta-cooler)
-        (date-scheduled green-cooler)
-        (date-weekday fg-main)
-        (date-event fg-dim)
-        (date-now blue-faint)
-        ;; Make tags (Org) less colorful and tables look the same as
-        ;; the default foreground.
-        (prose-done cyan-cooler)
-        (prose-tag fg-dim)
-        (prose-table fg-main)
-        ;; Make headings less colorful
-        (fg-heading-2 blue-faint)
-        (fg-heading-3 magenta-faint)
-        (fg-heading-4 blue-faint)
-        (fg-heading-5 magenta-faint)
-        (fg-heading-6 blue-faint)
-        (fg-heading-7 magenta-faint)
-        (fg-heading-8 blue-faint)
-        ;; mode-line
-        (bg-mode-line-inactive bg-dim)
-        (border-mode-line-inactive bg-inactive)
-        ;; Make the prompts a shade of magenta (rosy), to fit in
-        ;; nicely with the overall blue-cyan-purple style of the
-        ;; other overrides. Add a nuanced background as well.
-        (bg-prompt bg-magenta-nuanced)
-        (fg-prompt magenta-cooler)
-        ;; Tweak some more constructs for stylistic constistency.
-        (name blue-warmer)
-        (identifier magenta-faint)
-        (keybind magenta-cooler)))
-
-(load-theme 'modus-vivendi t)
-
-;;; Consistent color with theme
-;; (when (featurep 'ns)
-;;   (push '(ns-transparent-titlebar . t) default-frame-alist))
-
-;;;;; early-init.el ends here
