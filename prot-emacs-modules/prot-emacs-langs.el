@@ -212,13 +212,13 @@
     ("C-c C-d C-f" . denote-dired-rename-marked-files-using-front-matter))
   :config
   ;; Remember to check the doc strings of those variables.
-  (setq denote-directory (expand-file-name "~/Documents/notes/"))
-  (setq denote-file-type 'text) ; Org is the default, set others here like I do
+  (setq denote-directory (expand-file-name "~/Dropbox/peng_notes/"))
+  ;; (setq denote-file-type 'text) ; Org is the default, set others here like I do
   ;; If you want to have a "controlled vocabulary" of keywords,
   ;; meaning that you only use a predefined set of them, then you want
   ;; `denote-infer-keywords' to be nil and `denote-known-keywords' to
   ;; have the keywords you need.
-  (setq denote-known-keywords '("emacs" "philosophy" "politics" "economics"))
+  (setq denote-known-keywords '("emacs" "economics"))
   (setq denote-infer-keywords t)
   (setq denote-sort-keywords t)
   (setq denote-excluded-directories-regexp nil)

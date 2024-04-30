@@ -78,8 +78,6 @@
    '("," . meow-beginning-of-thing)
    '("." . meow-end-of-thing)
    '("'" . meow-reverse)
-   '("[" . indent-rigidly-left-to-tab-stop)
-   '("]" . indent-rigidly-right-to-tab-stop)
    
    ;; prefix v
    '("va" . meow-bounds-of-thing)
@@ -108,6 +106,8 @@
    '("fi" . indent-region)
    '("fx" . execute-extended-command)
    '("f'" . meow-last-buffer)
+   '("fh" . indent-rigidly-left-to-tab-stop)
+   '("fl" . indent-rigidly-right-to-tab-stop)
    
    '("<escape>" . ignore))
 

@@ -4,7 +4,7 @@
 (setq debug-on-error t)
 
 ;;; No fringe
-(fringe-mode '(3 . 0))
+(fringe-mode '(0 . 0))
 
 ;;; Recentf
 (setq recentf-max-saved-items 10)
