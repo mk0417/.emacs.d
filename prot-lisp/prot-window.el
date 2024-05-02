@@ -173,14 +173,6 @@ call NAME as a function."
          nil
          :local)))))
 
-;;;###autoload (autoload 'prot-window-coach "prot-window")
-(prot-window-define-full-frame coach
-  (let ((buffer (get-buffer-create "*scratch for coach*")))
-    (with-current-buffer buffer
-      (funcall initial-major-mode))
-    (display-buffer buffer)
-    (set-frame-name "Coach")))
-
 ;; REVIEW 2023-06-25: Does this merit a user option?  I don't think I
 ;; will ever set it to the left.  It feels awkward there.
 (defun prot-window-scroll-bar-placement ()

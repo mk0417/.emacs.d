@@ -92,8 +92,9 @@
    '("vl" . "L")
    '("vr" . meow-query-replace-regexp)
    '("vs" . meow-mark-symbol)
+   '("vv" . p-mark-paragraph)
    '("vw" . meow-mark-word)
-
+   
    ;; prefix n
    '("nd" . (lambda () (interactive) (prot-pair-insert '(?\" . ?\") 1)))
    '("nf" . (lambda () (interactive) (prot-pair-insert '(?\[ . ?\]) 1)))
@@ -103,11 +104,18 @@
    '("ns" . (lambda () (interactive) (prot-pair-insert '(?\' . ?\') 1)))
    
    ;; prefix f
+   '("fb" . switch-to-buffer)
+   '("fc" . prot-comment)
+   '("fe" . eval-buffer)
+   '("ff" . find-file)
+   '("fg" . consult-ripgrep)
+   '("fh" . mark-whole-buffer)
    '("fi" . indent-region)
+   '("fl" . consult-line)
+   '("fr" . recentf)
+   '("fs" . save-buffer)
    '("fx" . execute-extended-command)
    '("f'" . meow-last-buffer)
-   '("fh" . indent-rigidly-left-to-tab-stop)
-   '("fl" . indent-rigidly-right-to-tab-stop)
    
    '("<escape>" . ignore))
 

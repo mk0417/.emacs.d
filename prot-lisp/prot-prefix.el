@@ -43,9 +43,7 @@
   :doc "Prefix keymap for buffers."
   :name "Buffer"
   :prefix 'prot-prefix-buffer
-  "D" #'kill-buffer-and-window
   "d" #'prot-simple-kill-buffer-current
-  "h" #'mark-whole-buffer
   "m" #'beframe-buffer-menu
   "b" #'switch-to-buffer
   "B" #'prot-simple-buffers-major-mode
@@ -62,8 +60,7 @@
   :doc "Prefix keymaps for files."
   :name "File"
   :prefix 'prot-prefix-file
-  "r" #'recentf
-  "s" #'save-buffer
+  "D" #'kill-buffer-and-window
   "f" #'find-file
   "F" #'find-file-other-window
   "b" #'bookmark-jump
@@ -81,6 +78,7 @@
   "s" #'emoji-search
   "l" #'emoji-list)
 
+(declare-function logos-focus-mode "logos")
 (declare-function keycast-mode-line-mode "keycast")
 (declare-function rainbow-mode "rainbow")
 (declare-function spacious-padding-mode "spacious-padding")
@@ -102,11 +100,13 @@
   :doc "Prefix keymap for windows."
   :name "Window"
   :prefix 'prot-prefix-window
-  "o" #'delete-other-windows
-  "v" #'split-window-right
   "d" #'delete-window
+  "o" #'delete-other-windows
+  "w" #'other-window
+  "u" #'winner-undo
+  "r" #'winner-redo
   "b" #'balance-windows-area
-  "t" #'toggle-window-dedicated
+  ;; "d" #'toggle-window-dedicated
   "0" #'delete-window
   "1" #'delete-other-windows
   "!" #'delete-other-windows-vertically
@@ -114,7 +114,7 @@
   "@" #'split-root-window-below
   "3" #'split-window-right
   "#" #'split-root-window-right
-  "w" #'other-window
+  ;; "o" #'other-window
   "^" #'tear-off-window
   "h" #'windmove-left
   "j" #'windmove-down
@@ -137,7 +137,6 @@
   :doc "Prefix keymap for search (and replace) commands."
   :name "Search"
   :prefix 'prot-prefix-search
-  "s" #'consult-line
   "f" #'consult-find
   "d" #'prot-simple-flush-and-diff
   "g" #'prot-search-grep
@@ -180,6 +179,8 @@
   "k" #'kill-sexp
   "DEL" #'backward-kill-sexp)
 
+(declare-function prot-simple-other-windor-or-frame "prot-simple")
+
 (defvar-keymap prot-prefix-jupyter-map
   :doc "Prefix keymap for jupyter."
   :name "Jupyter"
@@ -197,8 +198,6 @@
   "C" #'jupyter-eval-remove-overlays
   "c" #'p-jupyter-remove-line-overlay
   "w" #'jupyter-repl-pop-to-buffer)
-
-(declare-function prot-simple-other-windor-or-frame "prot-simple")
 
 ;; NOTE 2024-02-17: Some cons cells here have a symbol as a `cdr' and
 ;; some do not.  The former are those which define a prefix command
@@ -219,13 +218,12 @@
   "@" #'split-root-window-below
   "3" #'split-window-right
   "#" #'split-root-window-right
-  ;; "o" #'other-window
+  "o" #'other-window
   "O" #'prot-simple-other-windor-or-frame
   "Q" #'save-buffers-kill-emacs
   "b" (cons "Buffer" 'prot-prefix-buffer)
   "c" #'world-clock
   "f" (cons "File" 'prot-prefix-file)
-  "g" #'project-vc-dir
   "h" (cons "Help" help-map)
   "i" (cons "Insert" 'prot-prefix-insert)
   ;; "j" #'dired-jump

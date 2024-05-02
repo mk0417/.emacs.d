@@ -93,6 +93,7 @@
 
 (use-package dired-subtree
   :ensure t
+  :after dired
   :bind
   ( :map dired-mode-map
     ("<tab>" . dired-subtree-toggle)
