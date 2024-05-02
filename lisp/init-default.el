@@ -24,6 +24,9 @@
    '(fill-column-indicator
      ((t (:background unspecified :foreground "grey30"))))))
 
+(define-key minibuffer-local-map (kbd "C-k") 'delete-backward-char)
+(define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
+
 ;;; Enable push back option after deleting a file
 (when (featurep 'ns)
   ;; https://christiantietze.de/posts/2021/06/emacs-trash-file-macos/
