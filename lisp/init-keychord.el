@@ -183,9 +183,11 @@ Commands. Please ignore that."
 
 (key-chord-mode 1)
 
+(key-chord-define meow-normal-state-keymap "fd" 'meow-cancel-selection)
 (key-chord-define meow-insert-state-keymap "fd" [escape])
 
 (dolist (mode (list meow-insert-state-keymap minibuffer-local-map))
+  (key-chord-define mode ";;" (lambda () (interactive) (insert ";")))
   (key-chord-define mode "kk" "()\C-b")
   (key-chord-define mode ",," "[]\C-b")
   (key-chord-define mode "hh" "{}\C-b")

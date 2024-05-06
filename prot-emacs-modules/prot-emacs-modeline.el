@@ -26,8 +26,11 @@
                          (propertize "%]" 'face 'prot-modeline-indicator-red)
                          '(" " (:eval (get-jupyter-repl-interaction-indicator))))))
 
+  (setq-default mode-line-format '((:eval (meow-indicator)) ...))
+  
   (setq-default mode-line-format
                 '("%e"
+                  (:eval (meow-indicator))
                   prot-modeline-kbd-macro
                   prot-modeline-narrow
                   prot-modeline-buffer-status

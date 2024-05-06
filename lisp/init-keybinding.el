@@ -4,6 +4,8 @@
   :ensure t
   :config
   (meow-global-mode 1)
+  (setq meow-use-clipboard t)
+  
   (meow-thing-register 'angle
                        '(pair ("<") (">"))
                        '(pair ("<") (">")))
@@ -34,11 +36,12 @@
    '("?" . meow-cheatsheet))
 
   (meow-normal-define-key
-   '("a" . meow-append)
+   '("a" . meow-beginning-of-thing)
    '("b" . meow-back-word)
    '("c" . meow-search)
    '("d" . meow-kill)
-   '("e" . meow-block)
+   '("e" . meow-end-of-thing)
+   '("g" . meow-block)
    '("h" . meow-left)
    '("i" . meow-insert)
    '("j" . meow-next)
@@ -55,11 +58,14 @@
    '("x" . meow-delete)
    '("y" . meow-clipboard-save)
    '("B" . meow-back-symbol)
+   '("D" . meow-backward-delete)
    '("E" . meow-to-block)
    '("H" . meow-left-expand)
+   '("I" . meow-append)
    '("J" . meow-next-expand)
    '("K" . meow-prev-expand)
    '("L" . meow-right-expand)
+   '("M" . meow-paren-mode)
    '("O" . meow-open-above)
    '("P" . meow-yank-pop)
    '("R" . undo-redo)
@@ -75,24 +81,21 @@
    '("7" . meow-expand-7)
    '("8" . meow-expand-8)
    '("9" . meow-expand-9)
-   '("," . meow-beginning-of-thing)
-   '("." . meow-end-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("," . meow-inner-of-thing)
    '("'" . meow-reverse)
    
    ;; prefix v
-   '("va" . meow-bounds-of-thing)
+   '("va" . meow-find)
    '("vc" . meow-save-char)
    '("ve" . meow-swap-grab)
-   '("vf" . meow-visit)
    '("vg" . meow-grab)
-   '("vh" . "H")
-   '("vi" . meow-inner-of-thing)
-   '("vj" . "J")
-   '("vk" . "K")
-   '("vl" . "L")
+   '("vp" . p-mark-paragraph)
    '("vr" . meow-query-replace-regexp)
    '("vs" . meow-mark-symbol)
-   '("vv" . p-mark-paragraph)
+   '("vk" . (lambda () (interactive) (meow-till 1 40)))
+   '("vf" . (lambda () (interactive) (meow-till 1 91)))
+   '("vv" . meow-visit)
    '("vw" . meow-mark-word)
    
    ;; prefix n
