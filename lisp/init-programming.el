@@ -55,6 +55,7 @@
   (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-guess-indent-offset t)
+  (add-hook 'python-mode-hook (lambda () (setq tab-width 4)))
   (add-hook 'python-mode-hook #'display-fill-column-indicator-mode)
   (add-hook 'python-mode-hook #'electric-pair-mode))
 
