@@ -53,6 +53,7 @@
    '("q" . meow-join)
    '("r" . meow-replace)
    '("s" . meow-change)
+   '("t" . meow-append)
    '("u" . undo-only)
    '("w" . meow-next-word)
    '("x" . meow-delete)
@@ -61,7 +62,6 @@
    '("D" . meow-backward-delete)
    '("E" . meow-to-block)
    '("H" . meow-left-expand)
-   '("I" . meow-append)
    '("J" . meow-next-expand)
    '("K" . meow-prev-expand)
    '("L" . meow-right-expand)
@@ -97,6 +97,10 @@
    '("vf" . (lambda () (interactive) (meow-till 1 91)))
    '("vv" . meow-visit)
    '("vw" . meow-mark-word)
+   '("vh" . meow-left-expand)
+   '("vj" . meow-next-expand )
+   '("vk" . meow-prev-expand)
+   '("vl" . meow-right-expand)
    
    ;; prefix n
    '("nd" . (lambda () (interactive) (prot-pair-insert '(?\" . ?\") 1)))
