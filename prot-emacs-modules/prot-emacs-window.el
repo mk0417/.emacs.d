@@ -187,7 +187,7 @@
   :ensure t
   :hook (after-init . beframe-mode)
   :config
-  (setq beframe-functions-in-frames '(project-prompt-project-dir))
+  ;; (setq beframe-functions-in-frames '(project-prompt-project-dir))
 
   ;; I use this instead of :bind because I am binding a keymap and the
   ;; way `use-package' does it is by wrapping a lambda around it that
