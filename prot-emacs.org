@@ -292,7 +292,7 @@ Simplified version of `add-to-list'."
 (prot-emacs-with-desktop-session
   (mapc
    (lambda (var)
-     (prot-emacs-add-to-list var '(width . (text-pixels . 1200)))
+     (prot-emacs-add-to-list var '(width . (text-pixels . 800)))
      (prot-emacs-add-to-list var '(height . (text-pixels . 900)))
      (prot-emacs-add-to-list var '(scroll-bar-width  . 10)))
    '(default-frame-alist initial-frame-alist)))
@@ -1971,8 +1971,8 @@ Bruno Boal is the lead developer and I am a co-maintainer.
            (modus-themes-p
             '( :night     (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)
                :morning   (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
-               :afternoon (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)
-               :evening   (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)))))
+               :afternoon (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
+               :evening   (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)))))
 
     (when (or modus-themes-p ef-themes-p)
       (theme-buffet-timer-hours 1))))
@@ -2519,6 +2519,41 @@ configurable amount of time ([[#h:ddb1070d-2f91-4224-ad43-ef03f038f787][The =pro
   (("<insert>" . prot-prefix)
    ("<f2>" . prot-prefix)
    ("C-z" . prot-prefix)))
+#+end_src
+
+*** The =prot-emacs-essentials.el= configuration to track recently visited files
+:PROPERTIES:
+:CUSTOM_ID: h:f9aa7523-d88a-4080-add6-073f36cb8b9a
+:END:
+
+Emacs can keep track of recently visited files. Then we can revisit
+them with the command ~recent-open~, which provides minibuffer
+completion ([[#h:15edf2c3-4419-4101-928a-6e224958a741][The =prot-emacs-completion.el= module]]).
+
+Recent files are also available in the ~consult-buffer~ interface,
+which makes it a one-stop-shop for opening buffers, recent files, or
+bookmarks ([[#h:22e97b4c-d88d-4deb-9ab3-f80631f9ff1d][The =prot-emacs-completion.el= settings for ~consult~]]).
+This can be better than having to remember if something is a buffer or
+is stored by bookmarks/recentf. Same idea for using one command
+instead of three (or more).
+
+I generally do not rely on ~recentf-mode~, as most of my work is done
+in projects, which I switch to directly. Though I sometimes need to
+revisit a file that I do not need to keep track of.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
+(use-package recentf
+  :ensure nil
+  :hook (after-init . recentf-mode)
+  :config
+  (setq recentf-max-saved-items 100)
+  (setq recentf-max-menu-items 25) ; I don't use the `menu-bar-mode', but this is good to know
+  (setq recentf-save-file-modes nil)
+  (setq recentf-keep nil)
+  (setq recentf-auto-cleanup nil)
+  (setq recentf-initialize-file-name-history nil)
+  (setq recentf-filename-handlers nil)
+  (setq recentf-show-file-shortcuts-flag nil))
 #+end_src
 
 *** The =prot-emacs-essentials.el= mouse configurations
@@ -5508,6 +5543,7 @@ need it.
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 (use-package dired-subtree
   :ensure t
+  :after dired
   :bind
   ( :map dired-mode-map
     ("<tab>" . dired-subtree-toggle)
@@ -5667,13 +5703,15 @@ a package for Emacs 29.
 (use-package mandoura
   ;; The :vc keyword is part of Emacs 30.  Read the manual for what keywords it reads: (info "(emacs) Fetching Package Sources")
   :vc ( :url "https://github.com/protesilaos/mandoura")
+  :commands (mandoura-play-playlist)
+  :after dired
   :bind
   ( :map global-map
     ("M-<AudioPlay>" . mandoura-return-track-title-and-time)
     ("M-<XF86AudioPlay>" . mandoura-return-track-title-and-time)
     :map dired-mode-map
-    ("M-<return>" . mandoura-play-files)
-    ("M-RET" . mandoura-play-files))
+    ("M-<return>" . mandoura-play-playlist)
+    ("M-RET" . mandoura-play-playlist))
   :config
   (setq mandoura-saved-playlist-directory "~/Music/playlists/"))
 #+end_src
@@ -9212,10 +9250,22 @@ love letters, respectively.
   :after notmuch
   :config
   (setq notmuch-indicator-args
-        '((:terms "tag:unread and tag:inbox" :label "[A] " :face prot-modeline-indicator-green)
-          (:terms "tag:unread and tag:inbox and not tag:package and not tag:coach" :label "[U] " :face prot-modeline-indicator-cyan)
-          (:terms "tag:unread and tag:package" :label "[P] " :face prot-modeline-indicator-magenta)
-          (:terms "tag:unread and tag:coach" :label "[C] " :face prot-modeline-indicator-red))
+        '(( :terms "tag:unread and tag:inbox"
+            :label "[A] "
+            :label-face prot-modeline-indicator-green
+            :counter-face prot-modeline-indicator-green)
+          ( :terms "tag:unread and tag:inbox and not tag:package and not tag:coach"
+            :label "[U] "
+            :label-face prot-modeline-indicator-cyan
+            :counter-face prot-modeline-indicator-cyan)
+          ( :terms "tag:unread and tag:package"
+            :label "[P] "
+            :label-face prot-modeline-indicator-magenta
+            :counter-face prot-modeline-indicator-magenta)
+          ( :terms "tag:unread and tag:coach"
+            :label "[C] "
+            :label-face prot-modeline-indicator-red
+            :counter-face prot-modeline-indicator-red))
 
         notmuch-indicator-refresh-count (* 60 3)
         notmuch-indicator-hide-empty-counters t

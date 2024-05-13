@@ -7,10 +7,10 @@
 (fringe-mode '(0 . 0))
 
 ;;; Recentf
-(setq recentf-max-saved-items 10)
-(recentf-mode 1)
-(add-to-list 'recentf-exclude "/var/folders/.*") 
-(add-to-list 'recentf-exclude "/private/var/folders/.*")
+;; (setq recentf-max-saved-items 10)
+;; (recentf-mode 1)
+;; (add-to-list 'recentf-exclude "/var/folders/.*") 
+;; (add-to-list 'recentf-exclude "/private/var/folders/.*")
 
 ;;; Line number
 (when (fboundp 'display-line-numbers-mode)
