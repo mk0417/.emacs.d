@@ -72,17 +72,14 @@
            :left-fringe-width 20
            :right-fringe-width 20))
 
-  ;; ;; Read the doc string of `spacious-padding-subtle-mode-line' as
-  ;; ;; it is very flexible.
-  ;;
-  ;; (setq spacious-padding-subtle-mode-line
-  ;;       `( :mode-line-active ,(if (or (eq prot-emacs-load-theme-family 'modus)
-  ;;                                     (eq prot-emacs-load-theme-family 'standard))
-  ;;                                 'default
-  ;;                               'help-key-binding)
-  ;;          :mode-line-inactive vertical-border))
-
-  (setq spacious-padding-subtle-mode-line nil))
+  ;; Read the doc string of `spacious-padding-subtle-mode-line' as
+  ;; it is very flexible.
+  (setq spacious-padding-subtle-mode-line
+        `( :mode-line-active ,(if (or (eq prot-emacs-load-theme-family 'modus)
+                                      (eq prot-emacs-load-theme-family 'standard))
+                                  'default
+                                'help-key-binding)
+           :mode-line-inactive vertical-border)))
 
 ;;;; Rainbow mode for colour previewing (rainbow-mode.el)
 (use-package rainbow-mode
@@ -114,10 +111,13 @@
            :blink-cursor-mode -1)
           (bar
            :cursor-type (bar . 2)
-           :blink-cursor-interval 0.5)
+           :blink-cursor-interval 0.8)
           (bar-no-other-window
            :inherit bar
            :cursor-in-non-selected-windows nil)
+          (bar-no-blink
+           :cursor-type (bar . 2)
+           :blink-cursor-mode -1)
           (underscore
            :cursor-type (hbar . 3)
            :blink-cursor-blinks 50)

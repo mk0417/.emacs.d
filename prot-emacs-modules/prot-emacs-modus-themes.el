@@ -23,15 +23,22 @@
           (agenda-date . (variable-pitch regular 1.3))
           (t . (regular 1.15))))
 
-  (setq modus-themes-common-palette-overrides
-        `((bg-hl-line bg-dim)
-          (bg-line-number-active bg-hl-line)
-          (bg-line-number-inactive unspecified)))
-  
   ;; (setq modus-themes-common-palette-overrides nil)
-  ;; '((bg-mode-line-active bg-cyan-subtle)
-  ;;   (keybind yellow-warmer)))
 
+  ;; I only want the overrides for those two Modus themes.  The rest
+  ;; have their own styles already.
+  (let ((overrides '((bg-hl-line bg-dim)
+                     (bg-line-number-active bg-hl-line)
+                     (bg-line-number-inactive unspecified)
+                     (cursor blue-intense)
+                     (keybind green-cooler)
+                     (comment red-faint)
+                     (bg-paren-match unspecified)
+                     (fg-paren-match magenta-intense)
+                     (underline-paren-match magenta-intense))))
+    (setq modus-operandi-palette-overrides overrides
+          modus-vivendi-palette-overrides overrides))
+  
   (modus-themes-load-theme (cadr modus-themes-to-toggle)))
 
 ;; NOTE: For testing purposes
