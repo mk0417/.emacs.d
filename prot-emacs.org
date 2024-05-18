@@ -1825,7 +1825,7 @@ I also take care to make it work with my customised mode line
                                       (eq prot-emacs-load-theme-family 'standard))
                                   'default
                                 'help-key-binding)
-           :mode-line-inactive vertical-border)))
+           :mode-line-inactive window-divider)))
 #+end_src
 
 *** The =prot-emacs-theme.el= section for ~rainbow-mode~
@@ -9269,11 +9269,11 @@ love letters, respectively.
             :label "[U] "
             :label-face prot-modeline-indicator-cyan
             :counter-face prot-modeline-indicator-cyan)
-          ( :terms "tag:unread and tag:package"
+          ( :terms "tag:unread and tag:package and tag:inbox"
             :label "[P] "
             :label-face prot-modeline-indicator-magenta
             :counter-face prot-modeline-indicator-magenta)
-          ( :terms "tag:unread and tag:coach"
+          ( :terms "tag:unread and tag:coach and tag:inbox"
             :label "[C] "
             :label-face prot-modeline-indicator-red
             :counter-face prot-modeline-indicator-red))
