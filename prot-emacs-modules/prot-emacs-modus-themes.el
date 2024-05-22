@@ -32,7 +32,7 @@
                      (bg-line-number-inactive unspecified)
                      (cursor blue-intense)
                      (keybind green-cooler)
-                     (comment red-faint)
+                     ;; (comment red-faint)
                      (bg-paren-match unspecified)
                      (fg-paren-match magenta-intense)
                      (underline-paren-match magenta-intense))))
