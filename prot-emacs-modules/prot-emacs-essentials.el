@@ -173,7 +173,8 @@
   :ensure nil
   :hook (after-init . recentf-mode)
   :config
-  (add-to-list 'recentf-exclude "/var/folders/.*") 
+  (add-to-list 'recentf-exclude "/var/folders/.*")
+  (add-to-list 'recentf-exclude "/private/var/folders/.*")
   (setq recentf-max-saved-items 100)
   (setq recentf-max-menu-items 25) ; I don't use the `menu-bar-mode', but this is good to know
   (setq recentf-save-file-modes nil)
