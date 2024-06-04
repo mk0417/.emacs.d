@@ -111,7 +111,8 @@
    '("ns" . (lambda () (interactive) (prot-pair-insert '(?\' . ?\') 1)))
    
    ;; prefix f
-   '("fb" . switch-to-buffer)
+   '("fa" . lsp-bridge-find-def)
+   '("fb" . lsp-bridge-find-def-return)
    '("fc" . prot-comment)
    '("fe" . eval-buffer)
    '("ff" . find-file)
@@ -124,7 +125,6 @@
    '("fs" . save-buffer)
    '("fw" . mark-whole-buffer)
    '("fx" . execute-extended-command)
-   '("f'" . meow-last-buffer)
    
    '("<escape>" . ignore))
 

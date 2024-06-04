@@ -210,6 +210,7 @@
   :doc "Prefix keymap with multiple subkeymaps."
   :name "Prot Prefix"
   :prefix 'prot-prefix
+  "'" (lambda () (interactive) (switch-to-buffer nil))
   "0" #'delete-window
   "1" #'delete-other-windows
   "!" #'delete-other-windows-vertically
