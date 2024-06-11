@@ -9,7 +9,7 @@
 ;;; Recentf
 ;; (setq recentf-max-saved-items 10)
 ;; (recentf-mode 1)
-;; (add-to-list 'recentf-exclude "/var/folders/.*") 
+;; (add-to-list 'recentf-exclude "/var/folders/.*")
 ;; (add-to-list 'recentf-exclude "/private/var/folders/.*")
 
 ;;; Line number
@@ -35,5 +35,21 @@
     (shell-command (concat "trash -vF \"" path "\"" "| sed -e 's/^/Trashed: /'")
                    nil
                    "*Trash Error Buffer*")))
+
+;;; Whitespace
+(setq-default show-trailing-whitespace nil)
+
+(defun p-show-trailing-whitespace ()
+  "Enable display of trailing whitespace in this buffer."
+  (setq-local show-trailing-whitespace t))
+
+(dolist (hook '(prog-mode-hook text-mode-hook conf-mode-hook))
+  (add-hook hook 'p-show-trailing-whitespace))
+
+(use-package whitespace-cleanup-mode
+  :ensure t
+  :hook (after-init . global-whitespace-cleanup-mode)
+  :config
+  (global-set-key [remap just-one-space] 'cycle-spacing))
 
 (provide 'init-default)
