@@ -2396,6 +2396,7 @@ this via some hook.
     ("<prior>" . prot-simple-multi-line-above) ; overrides `scroll-down-command'
     ("<C-return>" . prot-simple-new-line-below)
     ("<C-S-return>" . prot-simple-new-line-above)
+    ("C-x x a" . prot-simple-auto-fill-visual-line-mode) ; auto-fill/visual-line toggle
     ;; Commands for text insertion or manipulation
     ("C-=" . prot-simple-insert-date)
     ("C-<" . prot-simple-escape-url-dwim)
@@ -5672,8 +5673,8 @@ are where we need to be.
   ;; :hook (dired-mode . (lambda ()
   ;;                       (when (string-match-p "Pictures" default-directory)
   ;;                         (dired-preview-mode 1))))
-
-  :hook (dired-mode . dired-preview-mode)
+  :defer 1
+  :hook (after-init . dired-preview-global-mode)
   :config
   ;; These are all set to their default values.  I keep them here for
   ;; reference.
@@ -7792,6 +7793,12 @@ As for my workflow, here is an overview:
   )
 #+end_src
 
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
+(use-package prot-coach
+  :ensure nil
+  :commands (prot-coach-done-sessions-with-person))
+#+end_src
+
 *** The =prot-emacs-org.el= call to ~provide~
 :PROPERTIES:
 :CUSTOM_ID: h:62eb7ca3-2f79-45a6-a018-38238b486e98
@@ -8436,10 +8443,9 @@ facilities to rename files, regardless of file type.
 (use-package denote
   :ensure t
   :hook
-  ;; If you use Markdown or plain text files you want to buttonise
-  ;; existing buttons upon visiting the file (Org renders links as
-  ;; buttons right away).
-  ((find-file . denote-link-buttonize-buffer)
+  ;; If you use Markdown or plain text files you want to fontify links
+  ;; upon visiting the file (Org renders links as buttons right away).
+  ;; ((text-mode . denote-fontify-links-mode)
 
    ;; Highlight Denote file names in Dired buffers.  Below is the
    ;; generic approach, which is great if you rename files Denote-style
@@ -8450,7 +8456,7 @@ facilities to rename files, regardless of file type.
    ;; following instead:
    ;;
    ;;  (dired-mode . denote-dired-mode-in-directories)
-   (dired-mode . denote-dired-mode))
+   ((dired-mode . denote-dired-mode))
   :bind
   ;; Denote DOES NOT define any key bindings.  This is for the user to
   ;; decide.  For example:
@@ -10195,6 +10201,7 @@ account default : pub
 (use-package prot-eww
   :ensure nil
   :after eww
+  :hook (eww-mode . prot-eww-set-bookmark-handler)
   :config
   (setq prot-eww-save-history-file
         (locate-user-emacs-file "prot-eww-visited-history"))
@@ -10205,6 +10212,7 @@ account default : pub
 
   (define-prefix-command 'prot-eww-map)
   (define-key global-map (kbd "C-c w") 'prot-eww-map)
+
   (prot-emacs-keybind prot-eww-map
     "b" #'prot-eww-visit-bookmark
     "e" #'prot-eww-browse-dwim
@@ -15974,6 +15982,17 @@ This command can then be followed by the standard
   "Kill from point to the beginning of the line."
   (interactive)
   (kill-line 0))
+
+;;;###autoload
+(define-minor-mode prot-simple-auto-fill-visual-line-mode
+  "Enable `visual-line-mode' and disable `auto-fill-mode' in the current buffer."
+  :global nil
+  (if prot-simple-auto-fill-visual-line-mode
+      (progn
+        (auto-fill-mode -1)
+        (visual-line-mode 1))
+    (auto-fill-mode 1)
+    (visual-line-mode -1)))
 
 ;;;; Commands for text insertion or manipulation
 

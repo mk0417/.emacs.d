@@ -185,7 +185,7 @@ as it can combine URLs in the Gopher or Gemini protocols."
   "Browse the history under point."
   (interactive)
   (let ((history (get-text-property (line-beginning-position)
-                                     'prot-eww-history)))
+                                    'prot-eww-history)))
     (unless history
       (user-error "No history on the current line"))
     (quit-window)
@@ -547,8 +547,8 @@ trailing hyphen."
     (prot-eww--sluggify
      (read-string "Set downloaded file name: " (plist-get eww-data :title)))))
   (let* ((path (thread-last eww-download-directory
-                 (expand-file-name
-                  (concat (format-time-string "%Y%m%d_%H%M%S") "--" name ".html"))))
+                            (expand-file-name
+                             (concat (format-time-string "%Y%m%d_%H%M%S") "--" name ".html"))))
          (out (prot-common-shell-command-with-exit-code-and-output
                "wget" "-q" (format "%s" (plist-get eww-data :url))
                "-O" (format "%s" (shell-quote-argument path)))))
