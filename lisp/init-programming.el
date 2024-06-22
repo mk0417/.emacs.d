@@ -28,7 +28,7 @@
         (re-search-forward "\n[ \t]*\n" nil 1)
         (previous-line)
         (end-of-line))))
-  
+
   ;; After new commits of emacs-jupyter upstream,
   ;; jupyter-eval-region has three arguments
   ;; (jupyter-eval-region INSERT BEG END)
@@ -67,7 +67,7 @@
   (add-hook 'python-mode-hook #'display-fill-column-indicator-mode))
 
 ;;; R
-(use-package ess 
+(use-package ess
   :ensure t
   :config
   (setq ess-imenu-use-S nil)

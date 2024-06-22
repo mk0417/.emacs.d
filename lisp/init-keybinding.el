@@ -5,7 +5,7 @@
   :config
   (meow-global-mode 1)
   (setq meow-use-clipboard t)
-  
+
   (meow-thing-register 'angle
                        '(pair ("<") (">"))
                        '(pair ("<") (">")))
@@ -37,7 +37,7 @@
 
   (meow-normal-define-key
    '("a" . meow-beginning-of-thing)
-   '("b" . meow-back-word)
+   '("b" . meow-next-symbol)
    '("c" . meow-search)
    '("d" . meow-kill)
    '("e" . meow-end-of-thing)
@@ -58,7 +58,6 @@
    '("w" . meow-next-word)
    '("x" . (lambda () (interactive) (meow-right-expand) (meow-kill)))
    '("y" . meow-clipboard-save)
-   '("B" . meow-back-symbol)
    '("D" . meow-backward-delete)
    '("E" . meow-to-block)
    '("H" . meow-left-expand)
@@ -70,7 +69,6 @@
    '("P" . meow-yank-pop)
    '("R" . undo-redo)
    '("S" . meow-goto-line)
-   '("W" . meow-next-symbol)
    '("X" . meow-delete)
    '("0" . meow-expand-0)
    '("1" . meow-expand-1)
@@ -85,7 +83,7 @@
    '("." . meow-bounds-of-thing)
    '("," . meow-inner-of-thing)
    '("'" . meow-reverse)
-   
+
    ;; prefix v
    '("va" . meow-find)
    '("vb" . (lambda () (interactive) (meow-till 1 40)))
@@ -99,10 +97,8 @@
    '("vl" . meow-right-expand)
    '("vp" . p-mark-paragraph)
    '("vr" . meow-query-replace-regexp)
-   '("vs" . meow-mark-symbol)
    '("vv" . meow-visit)
-   '("vw" . meow-mark-word)
-   
+
    ;; prefix n
    '("nd" . (lambda () (interactive) (prot-pair-insert '(?\" . ?\") 1)))
    '("nf" . (lambda () (interactive) (prot-pair-insert '(?\[ . ?\]) 1)))
@@ -110,7 +106,7 @@
    '("nk" . (lambda () (interactive) (prot-pair-insert '(?\( . ?\)) 1)))
    '("nn" . prot-pair-delete)
    '("ns" . (lambda () (interactive) (prot-pair-insert '(?\' . ?\') 1)))
-   
+
    ;; prefix f
    '("fa" . lsp-bridge-find-def)
    '("fb" . lsp-bridge-find-def-return)
@@ -126,7 +122,7 @@
    '("fs" . save-buffer)
    '("fw" . mark-whole-buffer)
    '("fx" . execute-extended-command)
-   
+
    '("<escape>" . ignore))
 
   (define-key meow-insert-state-keymap (kbd "C-g") 'meow-insert-exit)
