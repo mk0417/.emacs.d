@@ -159,6 +159,14 @@
   :after (:any modus-themes ef-themes)
   :defer 1
   :config
+  (defun suppress-theme-buffet-startup-message (orig-fun &rest args)
+    "Suppress the startup message from theme-buffet timers."
+    (let ((inhibit-message t))
+      (apply orig-fun args)))
+
+  (advice-add 'theme-buffet-timer-mins :around #'suppress-theme-buffet-startup-message)
+  (advice-add 'theme-buffet-timer-hours :around #'suppress-theme-buffet-startup-message)
+
   (let ((modus-themes-p (featurep 'modus-themes))
         (ef-themes-p (featurep 'ef-themes)))
     (setq theme-buffet-menu 'end-user)
