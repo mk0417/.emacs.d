@@ -37,8 +37,8 @@
 
   (meow-normal-define-key
    '("a" . meow-beginning-of-thing)
-   '("b" . meow-next-symbol)
-   '("c" . meow-search)
+   '("b" . meow-back-word)
+   '("c" . meow-change)
    '("d" . meow-kill)
    '("e" . meow-end-of-thing)
    '("g" . meow-block)
@@ -52,12 +52,13 @@
    '("p" . meow-yank)
    '("q" . meow-join)
    '("r" . meow-replace)
-   '("s" . meow-change)
+   '("s" . meow-next-symbol)
    '("t" . meow-append)
    '("u" . undo-only)
    '("w" . meow-next-word)
    '("x" . (lambda () (interactive) (meow-right-expand) (meow-kill)))
    '("y" . meow-clipboard-save)
+   '("z" . meow-search)
    '("D" . meow-backward-delete)
    '("E" . meow-to-block)
    '("H" . meow-left-expand)
@@ -68,7 +69,8 @@
    '("O" . meow-open-above)
    '("P" . meow-yank-pop)
    '("R" . undo-redo)
-   '("S" . meow-goto-line)
+   '("S" . meow-mark-symbol)
+   '("W" . meow-mark-word)
    '("X" . meow-delete)
    '("0" . meow-expand-0)
    '("1" . meow-expand-1)
@@ -97,6 +99,7 @@
    '("vl" . meow-right-expand)
    '("vp" . p-mark-paragraph)
    '("vr" . meow-query-replace-regexp)
+   '("vs" . meow-mark-symbol)
    '("vv" . meow-visit)
 
    ;; prefix n
