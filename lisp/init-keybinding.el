@@ -90,7 +90,7 @@
    '("va" . meow-find)
    '("vb" . (lambda () (interactive) (meow-till 1 40)))
    '("vc" . meow-save-char)
-   '("ve" . meow-swap-grab)
+   '("ve" . meow-end-kmacro)
    '("vf" . (lambda () (interactive) (meow-till 1 91)))
    '("vg" . meow-grab)
    '("vh" . meow-left-expand)
@@ -99,8 +99,9 @@
    '("vl" . meow-right-expand)
    '("vp" . p-mark-paragraph)
    '("vr" . meow-query-replace-regexp)
-   '("vs" . meow-mark-symbol)
+   '("vs" . meow-start-kmacro-or-insert-counter)
    '("vv" . meow-visit)
+   '("vx" . meow-swap-grab)
 
    ;; prefix n
    '("nd" . (lambda () (interactive) (prot-pair-insert '(?\" . ?\") 1)))
