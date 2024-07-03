@@ -44,6 +44,7 @@
   :name "Buffer"
   :prefix 'prot-prefix-buffer
   "d" #'prot-simple-kill-buffer-current
+  "D" #'kill-buffer-and-window
   "m" #'beframe-buffer-menu
   "b" #'switch-to-buffer
   "B" #'prot-simple-buffers-major-mode
