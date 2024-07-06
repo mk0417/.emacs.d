@@ -8596,7 +8596,7 @@ facilities to rename files, regardless of file type.
   :ensure t
   :after denote
   :config
-  (consult-denote-mode 1)
+  (consult-denote-mode 1))
 #+end_src
 
 *** TODO The =prot-emacs-langs.el= settings for ~logos~ (writing extras and file navigation)
@@ -10421,8 +10421,7 @@ files. The user must handle this step by invoking the command
 
 (use-package nerd-icons-completion
   :ensure t
-  :config
-  (nerd-icons-completion-mode 1))
+  :hook (marginalia-mode . nerd-icons-completion-marginalia-setup))
 
 (use-package nerd-icons-corfu
   :ensure t
