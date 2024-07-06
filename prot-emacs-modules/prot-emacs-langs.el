@@ -1,5 +1,3 @@
-;;;;; prot-emacs-langs.el --- Langs -*- lexical-binding: t -*-
-
 ;;;; Tabs, indentation, and the TAB key
 (use-package emacs
   :ensure nil
@@ -154,18 +152,18 @@
   :hook
   ;; If you use Markdown or plain text files you want to fontify links
   ;; upon visiting the file (Org renders links as buttons right away).
-  ;; ((text-mode . denote-fontify-links-mode)
+  ((text-mode . denote-fontify-links-mode-maybe)
 
-  ;; Highlight Denote file names in Dired buffers.  Below is the
-  ;; generic approach, which is great if you rename files Denote-style
-  ;; in lots of places as I do.
-  ;;
-  ;; If you only want the `denote-dired-mode' in select directories,
-  ;; then modify the variable `denote-dired-directories' and use the
-  ;; following instead:
-  ;;
-  ;;  (dired-mode . denote-dired-mode-in-directories)
-  ((dired-mode . denote-dired-mode))
+   ;; Highlight Denote file names in Dired buffers.  Below is the
+   ;; generic approach, which is great if you rename files Denote-style
+   ;; in lots of places as I do.
+   ;;
+   ;; If you only want the `denote-dired-mode' in select directories,
+   ;; then modify the variable `denote-dired-directories' and use the
+   ;; following instead:
+   ;;
+   ;;  (dired-mode . denote-dired-mode-in-directories)
+   (dired-mode . denote-dired-mode))
   :bind
   ;; Denote DOES NOT define any key bindings.  This is for the user to
   ;; decide.  For example:
@@ -260,6 +258,12 @@
                    :immediate-finish nil
                    :kill-buffer t
                    :jump-to-captured t))))
+
+(use-package consult-denote
+  :ensure t
+  :after denote
+  :config
+  (consult-denote-mode 1))
 
 ;;; Custom extensions for "focus mode" (logos.el)
 ;; Read the manual: <https://protesilaos.com/emacs/logos>.
