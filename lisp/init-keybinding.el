@@ -95,12 +95,14 @@
    '("vg" . meow-grab)
    '("vh" . meow-left-expand)
    '("vj" . meow-next-expand )
+   '("vk" . meow-start-kmacro-or-insert-counter)
    '("vk" . meow-prev-expand)
    '("vl" . meow-right-expand)
    '("vp" . p-mark-paragraph)
    '("vr" . meow-query-replace-regexp)
-   '("vs" . meow-start-kmacro-or-insert-counter)
+   '("vs" . meow-mark-symbol)
    '("vv" . meow-visit)
+   '("vw" . meow-mark-word)
    '("vx" . meow-swap-grab)
 
    ;; prefix n
