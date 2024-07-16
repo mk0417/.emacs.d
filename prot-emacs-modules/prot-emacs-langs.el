@@ -77,6 +77,11 @@
   :config
   (setq markdown-fontify-code-blocks-natively t))
 
+;;; csv-mode
+(use-package csv-mode
+  :ensure t
+  :commands (csv-align-mode))
+
 ;;; Flyspell and prot-spell.el (spell check)
 (use-package flyspell
   :ensure nil
