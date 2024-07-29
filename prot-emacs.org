@@ -5680,6 +5680,8 @@ are where we need to be.
   ;;                         (dired-preview-mode 1))))
   :defer 1
   :hook (after-init . dired-preview-global-mode)
+  :bind (:map dired-preview-mode-map ("C-c C-o" . prot/dired-preview-open))
+  :commands (prot/dired-preview-open)
   :config
   ;; These are all set to their default values.  I keep them here for
   ;; reference.
@@ -5695,7 +5697,20 @@ are where we need to be.
                 "zip\\|"
                 "iso\\|"
                 "epub\\|"
-                "\\)")))
+                "\\)"))
+
+  (defun prot/dired-preview-open ()
+    (interactive)
+    (dired-preview-with-window
+     (when-let ((file buffer-file-name))
+       (cond
+        ((or (and ready-player-supported-media
+                  (string-match-p (concat "\\." (regexp-opt ready-player-supported-media t) "\\'") file))
+             (string-match-p dired-preview-ignored-extensions-regexp file)
+             (string-match-p dired-preview-image-extensions-regexp file))
+         (call-process "open" nil 0 nil file))
+        (t
+         (find-file file)))))))
 #+end_src
 
 *** The =prot-emacs-dired.el= section about multimedia previews (~ready-player~)
@@ -5717,7 +5732,20 @@ rendered using ~ready-player~.
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 (use-package ready-player
   :ensure t
-  :hook (dired-mode . ready-player-mode))
+  :hook (dired-mode . ready-player-mode)
+  :after dired-preview
+  :commands (prot/ready-player-dired-preview-play-toggle)
+  :bind (:map dired-preview-mode-map ("C-c C-p" . prot/ready-player-dired-preview-play-toggle))
+  :config
+  (defun prot/ready-player-dired-preview-play-toggle ()
+    "Call `ready-player-toggle-play-stop' on the currently previewed media file."
+    (interactive)
+    (dired-preview-with-window
+     (if-let ((file buffer-file-name)
+              (media (concat "\\." (regexp-opt ready-player-supported-media t) "\\'"))
+              (_ (string-match-p media file)))
+         (call-interactively #'ready-player-toggle-play-stop)
+       (user-error "Cannot do something useful with `ready-player' here")))))
 #+end_src
 
 *** The =prot-emacs-dired.el= section about =trashed.el=
@@ -6306,12 +6334,18 @@ leads to the current heading. Same idea for programming modes. Neat!
 ;;; Header line context of symbol/heading (breadcrumb.el)
 (use-package breadcrumb
   :ensure t
-  :hook (after-init . breadcrumb-mode)
+  :functions (breadcrumb-local-mode)
+  :hook ((text-mode prog-mode) . prot/breadcrumb-local-mode)
   :config
   (setq breadcrumb-project-max-length 0.5)
   (setq breadcrumb-project-crumb-separator "/")
   (setq breadcrumb-imenu-max-length 1.0)
-  (setq breadcrumb-imenu-crumb-separator " > "))
+  (setq breadcrumb-imenu-crumb-separator " > ")
+
+  (defun prot/breadcrumb-local-mode ()
+    "Enable `breadcrumb-local-mode' if the buffer is visiting a file."
+    (when buffer-file-name
+      (breadcrumb-local-mode 1))))
 #+end_src
 
 *** The =prot-emacs-window.el= ~provide~ form
