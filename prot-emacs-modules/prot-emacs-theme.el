@@ -1,5 +1,3 @@
-;;;;; prot-emacs-theme.el --- Theme -*- lexical-binding: t -*-
-
 ;;; Theme setup and related
 
 ;;;; Load the desired theme module
@@ -177,18 +175,18 @@
            ((and modus-themes-p ef-themes-p)
             '( :night     (modus-vivendi ef-dark ef-winter ef-autumn ef-night ef-duo-dark ef-symbiosis)
                :morning   (modus-operandi ef-light ef-cyprus ef-spring ef-frost ef-duo-light)
-               :afternoon (ef-arbutus ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light ef-reverie)
-               :evening   (ef-rosa ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark ef-dream)))
+               :afternoon (modus-operandi-tinted ef-arbutus ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light ef-reverie)
+               :evening   (modus-vivendi-tinted ef-rosa ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark ef-dream)))
            (ef-themes-p
             '( :night     (ef-dark ef-winter ef-autumn ef-night ef-duo-dark ef-symbiosis)
                :morning   (ef-light ef-cyprus ef-spring ef-frost ef-duo-light)
                :afternoon (ef-arbutus ef-day ef-kassio ef-summer ef-elea-light ef-maris-light ef-melissa-light ef-trio-light ef-reverie)
                :evening   (ef-rosa ef-elea-dark ef-maris-dark ef-melissa-dark ef-trio-dark ef-dream)))
            (modus-themes-p
-            '( :night     (modus-vivendi)
-               :morning   (modus-operandi)
-               :afternoon (modus-operandi)
-               :evening   (modus-vivendi)))))
+            '( :night     (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)
+               :morning   (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
+               :afternoon (modus-operandi modus-operandi-tinted modus-operandi-tritanopia modus-operandi-deuteranopia)
+               :evening   (modus-vivendi modus-vivendi-tinted modus-vivendi-tritanopia modus-vivendi-deuteranopia)))))
 
     (when (or modus-themes-p ef-themes-p)
       (theme-buffet-timer-hours 1))))
@@ -218,11 +216,7 @@
   (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
   (setq fontaine-presets
-        '((small
-           :default-family "Iosevka Comfy Motion"
-           :default-height 80
-           :variable-pitch-family "Iosevka Comfy Duo")
-          (regular) ; like this it uses all the fallback values and is named `regular'
+        '((regular) ; like this it uses all the fallback values and is named `regular'
           (medium
            :default-weight semilight
            :default-height 115
@@ -230,13 +224,6 @@
           (large
            :inherit medium
            :default-height 150)
-          (live-stream
-           :default-family "Iosevka Comfy Wide Motion"
-           :default-height 150
-           :default-weight medium
-           :fixed-pitch-family "Iosevka Comfy Wide Motion"
-           :variable-pitch-family "Iosevka Comfy Wide Duo"
-           :bold-weight extrabold)
           (presentation
            :default-height 180)
           (jumbo
