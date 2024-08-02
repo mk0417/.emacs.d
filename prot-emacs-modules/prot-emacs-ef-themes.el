@@ -1,5 +1,3 @@
-;;;;; prot-emacs-ef-themes.el --- EF-themes -*- lexical-binding: t -*-
-
 ;;; The Ef (εὖ) themes
 
 ;; The themes are customisable.  Read the manual:
@@ -29,9 +27,7 @@
   ;; that (it can be called interactively as well).  I just check with
   ;; my desktop environment to determine if the choice should be about
   ;; a light or a dark theme.  Those functions are in my init.el.
-  (if (prot-emacs-theme-environment-dark-p)
-      (ef-themes-load-random 'dark)
-    (ef-themes-load-random 'light)))
+  (ef-themes-load-random 'light))
 
 ;; NOTE: For testing purposes
 (prot-emacs-comment
