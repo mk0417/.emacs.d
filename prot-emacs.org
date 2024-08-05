@@ -2349,7 +2349,7 @@ here:
 (use-package prot-common
   :ensure nil
   :functions (prot-common-truncate-lines-silently)
-  :hook ((fundamental-mode text-mode prog-mode) . prot-common-truncate-lines-silently)
+  :hook ((fundamental-mode text-mode prog-mode dired-mode) . prot-common-truncate-lines-silently)
   :config
   ;; NEVER tell me which key can call a command that I specifically
   ;; invoked with M-x: I have a good reason to use it that way.
@@ -5680,11 +5680,7 @@ are where we need to be.
   ;;                         (dired-preview-mode 1))))
   :defer 1
   :hook (after-init . dired-preview-global-mode)
-  :bind (:map dired-preview-mode-map ("C-c C-o" . prot/dired-preview-open))
-  :commands (prot/dired-preview-open)
   :config
-  ;; These are all set to their default values.  I keep them here for
-  ;; reference.
   (setq dired-preview-max-size (* (expt 2 20) 10))
   (setq dired-preview-delay 0.5)
   (setq dired-preview-ignored-extensions-regexp
@@ -5696,21 +5692,18 @@ are where we need to be.
                 "rar\\|"
                 "zip\\|"
                 "iso\\|"
-                "epub\\|"
+                "epub"
                 "\\)"))
 
-  (defun prot/dired-preview-open ()
-    (interactive)
-    (dired-preview-with-window
-     (when-let ((file buffer-file-name))
-       (cond
-        ((or (and ready-player-supported-media
-                  (string-match-p (concat "\\." (regexp-opt ready-player-supported-media t) "\\'") file))
-             (string-match-p dired-preview-ignored-extensions-regexp file)
-             (string-match-p dired-preview-image-extensions-regexp file))
-         (call-process "open" nil 0 nil file))
-        (t
-         (find-file file)))))))
+  (defun prot/dired-preview-display-buffer ()
+    `((display-buffer-in-side-window)
+      (side . bottom)
+      (window-height . 0.2)
+      (preserve-size . (t . t))
+      (window-parameters . ((mode-line-format . none)))))
+
+  (setq dired-preview-display-action-alist-function
+        #'prot/dired-preview-display-buffer))
 #+end_src
 
 *** The =prot-emacs-dired.el= section about multimedia previews (~ready-player~)
