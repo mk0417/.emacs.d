@@ -5695,15 +5695,13 @@ are where we need to be.
                 "epub"
                 "\\)"))
 
-  (defun prot/dired-preview-display-buffer ()
-    `((display-buffer-in-side-window)
-      (side . bottom)
-      (window-height . 0.2)
-      (preserve-size . (t . t))
-      (window-parameters . ((mode-line-format . none)))))
-
-  (setq dired-preview-display-action-alist-function
-        #'prot/dired-preview-display-buffer))
+  (setq dired-preview-display-action-alist
+        '((display-buffer-in-side-window)
+          (side . bottom)
+          (window-height . 0.2)
+          (preserve-size . (t . t))
+          (window-parameters . ((mode-line-format . none)
+                                (header-line-format . none))))))
 #+end_src
 
 *** The =prot-emacs-dired.el= section about multimedia previews (~ready-player~)
@@ -6327,7 +6325,7 @@ leads to the current heading. Same idea for programming modes. Neat!
 ;;; Header line context of symbol/heading (breadcrumb.el)
 (use-package breadcrumb
   :ensure t
-  :functions (breadcrumb-local-mode)
+  :functions (prot/breadcrumb-local-mode)
   :hook ((text-mode prog-mode) . prot/breadcrumb-local-mode)
   :config
   (setq breadcrumb-project-max-length 0.5)
@@ -8672,7 +8670,7 @@ preview of the file-to-linked/opened and by adding more sources to the
   (consult-denote-mode 1))
 #+end_src
 
-*** TODO The =prot-emacs-langs.el= settings for ~logos~ (writing extras and file navigation)
+*** The =prot-emacs-langs.el= settings for ~logos~ (writing extras and file navigation)
 :PROPERTIES:
 :CUSTOM_ID: h:137c67f1-b112-42b7-aec9-c44ef4a6241a
 :END:
@@ -8684,7 +8682,8 @@ or not. It also provides some optional aesthetic tweaks which come into
 effect when the buffer-local ~logos-focus-mode~ is enabled. The manual
 shows how to extend the code to achieve the desired result.
 
-(all my videos since early 2022 use ~logos~).
+I use ~logos~ to do video presentations that involve "slides". Each
+heading/section becomes its own "slide" simply by narrowing to it.
 
 + Package name (GNU ELPA): ~logos~
 + Official manual: <https://protesilaos.com/emacs/logos>
@@ -9367,16 +9366,36 @@ nicer.
           notmuch-wash-citation-lines-suffix count)))
 #+end_src
 
-**** TODO The =prot-emacs-notmuch.el= section about hooks and key bindings
+**** The =prot-emacs-notmuch.el= section about hooks and key bindings
 :PROPERTIES:
 :CUSTOM_ID: h:6148eea6-7859-4b53-95ce-7e198fc831e0
 :END:
+
+Here I set up the following:
+
+- Remind me when I am mentioning an attachment but do not include one.
+  This is done by reading the contents of the message in search for
+  the ~notmuch-mua-attachment-regexp~ ([[#h:b91c062d-add7-42e6-b425-4fa287763b1b][The =prot-emacs-notmuch.el= section about email composition settings]]).
+
+- Do not use a ~header-line~ when showing a message. It adds visual
+  clutter.
+
+- Do not activate the ~notmuch-hl-line-mode~ because I want the
+  generic ~hl-line-mode~ to take effect instead. This is because I use
+  my ~lin~ package to remap buffer-locally the line highlight to be a
+  bit more noticeable in major modes where line selection is the main
+  action ([[#h:bf5b4d08-8f33-4a8c-8ecd-fca19bf2497a][The =prot-emacs-theme.el= section for ~lin~]]).
+
+- Define key bindings that make sense to me. The most important change
+  here is the flipped meaning of the =r= and =R= keys, as I want to
+  reply to all recipients by default. I define some more key bindings
+  in the section about my custom extensions for Notmuch ([[#h:dbd2b775-8f51-451a-8e24-9c8424fd2e89][The =prot-emacs-notmuch.el= custom extensions (per =prot-notmuch.el=)]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-notmuch.el"
 ;;;; Hooks and key bindings
 (use-package notmuch
   :hook
-  (notmuch-mua-send . notmuch-mua-attachment-check)
+  (notmuch-mua-send . notmuch-mua-attachment-check) ; also see `notmuch-mua-attachment-regexp'
   (notmuch-show . (lambda () (setq-local header-line-format nil)))
   :config
   (remove-hook 'notmuch-show-hook #'notmuch-show-turn-on-visual-line-mode)
@@ -9386,20 +9405,30 @@ nicer.
     ("C-c m" . notmuch)
     ("C-x m" . notmuch-mua-new-mail) ; override `compose-mail'
     :map notmuch-search-mode-map ; I normally don't use the tree view, otherwise check `notmuch-tree-mode-map'
+    ("a" . nil) ; the default is too easy to hit accidentally and I do not archive stuff
+    ("A" . nil)
     ("/" . notmuch-search-filter) ; alias for l
     ("r" . notmuch-search-reply-to-thread) ; easier to reply to all by default
     ("R" . notmuch-search-reply-to-thread-sender)
     :map notmuch-show-mode-map
+    ("a" . nil) ; the default is too easy to hit accidentally and I do not archive stuff
+    ("A" . nil)
     ("r" . notmuch-show-reply) ; easier to reply to all by default
     ("R" . notmuch-show-reply-sender)
     :map notmuch-hello-mode-map
     ("C-<tab>" . nil)))
 #+end_src
 
-**** TODO The =prot-emacs-notmuch.el= custom extensions (per =prot-notmuch.el=)
+**** The =prot-emacs-notmuch.el= custom extensions (per =prot-notmuch.el=)
 :PROPERTIES:
 :CUSTOM_ID: h:dbd2b775-8f51-451a-8e24-9c8424fd2e89
 :END:
+
+My =prot-notmuch.el= extension defines a few useful extras for my
+email setup ([[#h:92ee86b8-0ead-4080-963f-3fbc9f931e3e][The =prot-notmuch.el= library]]). These are commands to
+quickly perform a tagging operation, such as to mark a messge for
+deletion and remove it from the inbox. The key bindings here extend
+those that are for the base Notmuch package ([[#h:6148eea6-7859-4b53-95ce-7e198fc831e0][The =prot-emacs-notmuch.el= section about hooks and key bindings]]).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-notmuch.el"
 ;;; My own tweaks for notmuch (prot-notmuch.el)
@@ -9408,14 +9437,10 @@ nicer.
   :after notmuch
   :bind
   ( :map notmuch-search-mode-map
-    ("a" . nil) ; the default is too easy to hit accidentally
-    ("A" . nil)
     ("D" . prot-notmuch-search-delete-thread)
     ("S" . prot-notmuch-search-spam-thread)
     ("g" . prot-notmuch-refresh-buffer)
     :map notmuch-show-mode-map
-    ("a" . nil) ; the default is too easy to hit accidentally
-    ("A" . nil)
     ("D" . prot-notmuch-show-delete-message)
     ("S" . prot-notmuch-show-spam-message)
     :map notmuch-show-stash-map
@@ -9439,10 +9464,21 @@ nicer.
   (add-to-list 'notmuch-tag-formats '("package" (concat tag "🗂️"))))
 #+end_src
 
-**** TODO The =prot-emacs-notmuch.el= glue code for ~org-capture~ (=ol-notmuch.el=)
+**** The =prot-emacs-notmuch.el= glue code for ~org-capture~ (=ol-notmuch.el=)
 :PROPERTIES:
 :CUSTOM_ID: h:49890997-448e-408d-bebe-2003259bb125
 :END:
+
+This package provides the glue code between Notmuch and Org capture:
+
+- [[#h:b26c6297-ebe8-4f99-b069-df53cfd90520][The =prot-emacs-email.el= submodule for ~notmuch~ (=prot-emacs-notmuch.el=)]].
+- [[#h:f8f06938-0dfe-45c3-b4cf-996d36cba82d][The =prot-emacs-org.el= Org capture templates (~org-capture~)]].
+
+In simple terms, I can create links that point to emails. When I
+follow the link, it opens in a fully fledged Notmuch buffer. This is
+how I build up my agenda of appointments. It highlights the power of
+Emacs' interconnectedness, as I go from my email to the agenda, to
+editing, file management, and related.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-notmuch.el"
 ;;; Glue code for notmuch and org-link (ol-notmuch.el)
@@ -9451,18 +9487,19 @@ nicer.
   :after notmuch)
 #+end_src
 
-**** TODO The =prot-emacs-notmuch.el= section about the ~notmuch-indicator~
+**** The =prot-emacs-notmuch.el= section about the ~notmuch-indicator~
 :PROPERTIES:
 :CUSTOM_ID: h:0f12f144-ca9f-4d07-8563-c33b3521bfb5
 :END:
 
-This is a simple package that renders an indicator with an email count
-of the ~notmuch~ index on the Emacs mode line. The underlying mechanism
-is that of ~notmuch-count(1)~, which is used to find the number of items
-that match the given search terms. In practice, the user can define one
-or more searches and display their counters. These form a listing which
-realistically is like: =@50 😱1000 💕0= for unread messages, bills, and
-love letters, respectively.
+This is a simple package of mine that renders an indicator with an
+email count of the ~notmuch~ index on the Emacs mode line. The
+underlying mechanism is that of ~notmuch-count(1)~, which is used to
+find the number of items that match the given search terms. In
+practice, the user can define one or more searches and display their
+counters. These form a listing which realistically is like: =@50
+😱1000 💕0= for unread messages, bills, and love letters,
+respectively.
 
 + Package name (GNU ELPA): ~notmuch-indicator~
 + Official manual: <https://protesilaos.com/emacs/notmuch-indicator>
