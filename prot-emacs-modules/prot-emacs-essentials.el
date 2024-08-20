@@ -29,6 +29,7 @@
   ;; elsewhere later in the configuration.
   :bind
   ( :map global-map
+    ("<f2>" . toggle-input-method)  ; F2 overrides that two-column gimmick.  Sorry, but no!
     ("<insert>" . nil)
     ("<menu>" . nil)
     ("C-z" . nil) ; I have a window manager, thanks!
@@ -165,9 +166,7 @@
 (use-package prot-prefix
   :ensure nil
   :bind-keymap
-  ;; F2 overrides that two-column gimmick.  Sorry, but no.
   (("<insert>" . prot-prefix)
-   ("<f2>" . prot-prefix)
    ("C-z" . prot-prefix)))
 
 (use-package recentf
@@ -389,7 +388,7 @@
   ;; Set this to t if you want to always treat the letter casing
   ;; literally.  Otherwise each command accepts a `C-u' prefix
   ;; argument to do this on-demand.
- (setq substitute-fixed-letter-case nil)
+  (setq substitute-fixed-letter-case nil)
 
   ;; C-c s is occupied by `prot-scratch-buffer'.
   (define-key global-map (kbd "C-c r") #'substitute-prefix-map))
