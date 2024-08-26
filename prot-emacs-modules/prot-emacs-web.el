@@ -1,5 +1,3 @@
-;;;;; prot-emacs-web.el --- Web -*- lexical-binding: t -*-
-
 ;;;; `browse-url'
 (use-package browse-url
   :ensure nil
@@ -7,6 +5,16 @@
   :config
   (setq browse-url-browser-function 'eww-browse-url)
   (setq browse-url-secondary-browser-function 'browse-url-default-browser))
+
+;;;; `goto-addr'
+(use-package goto-addr
+  :ensure nil
+  :defer t
+  :config
+  (setq goto-address-url-face 'link)
+  (setq goto-address-url-mouse-face 'highlight)
+  (setq goto-address-mail-face nil)
+  (setq goto-address-mail-mouse-face 'highlight))
 
 ;;;; `shr' (Simple HTML Renderer)
 (use-package shr
@@ -20,6 +28,7 @@
   (setq shr-width fill-column)          ; check `prot-eww-readable'
   (setq shr-max-width fill-column)
   (setq shr-discard-aria-hidden t)
+  (setq shr-fill-text nil)              ; Emacs 31
   (setq shr-cookie-policy nil))
 
 ;;;; `url-cookie'
