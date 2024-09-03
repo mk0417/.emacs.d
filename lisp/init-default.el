@@ -52,4 +52,12 @@
   :config
   (global-set-key [remap just-one-space] 'cycle-spacing))
 
+;;; Better default
+;; https://emacs-china.org/t/topic/25811/7
+(setq-default bidi-display-reordering nil)
+(setq bidi-inhibit-bpa t
+      long-line-threshold 1000
+      large-hscroll-threshold 1000
+      syntax-wholeline-max 1000)
+
 (provide 'init-default)

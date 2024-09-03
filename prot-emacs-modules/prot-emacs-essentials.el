@@ -1,5 +1,3 @@
-;;;;; prot-emacs-essentials.el --- Essentials -*- lexical-binding: t -*-
-
 ;;; Essential configurations
 (use-package emacs
   :ensure nil

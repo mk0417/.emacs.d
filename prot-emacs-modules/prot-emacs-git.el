@@ -1,5 +1,3 @@
-;;;;; prot-emacs-git.el --- Git -*- lexical-binding: t -*-
-
 ;;;; `ediff'
 (use-package ediff
   :ensure nil
@@ -192,5 +190,10 @@
 
   (setq agitate-log-edit-informative-show-root-log nil
         agitate-log-edit-informative-show-files nil))
+
+(use-package transient
+  :defer t
+  :config
+  (setq transient-show-popup 0.5))
 
 (provide 'prot-emacs-git)
