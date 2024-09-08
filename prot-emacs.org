@@ -1708,8 +1708,8 @@ are called. The pulse effect is added there (~pulsar-after-function-hook~).
   (setopt pulsar-pulse t
           pulsar-delay 0.055
           pulsar-iterations 10
-          pulsar-face 'pulsar-magenta
-          pulsar-highlight-face 'pulsar-cyan)
+          pulsar-face 'pulsar-cyan
+          pulsar-highlight-face 'pulsar-magenta)
 
   (pulsar-global-mode 1)
   :hook
@@ -1769,7 +1769,7 @@ vertical axis.
   ;; Or `setopt' on Emacs 29: (setopt lin-face 'lin-yellow)
   ;;
   ;; I still prefer `setq' for consistency.
-  (setq lin-face 'lin-magenta))
+  (setq lin-face 'lin-blue))
 #+end_src
 
 *** The =prot-emacs-theme.el= section for ~spacious-padding~
@@ -2050,9 +2050,10 @@ The next section defines some complementary functionality
 
   (setq fontaine-presets
         '((small
-           :default-family "Iosevka Comfy Motion"
+           :default-family "Iosevka Comfy Wide Motion"
            :default-height 80
-           :variable-pitch-family "Iosevka Comfy Duo")
+           :fixed-pitch-family "Iosevka Comfy Wide Motion"
+           :variable-pitch-family "Iosevka Comfy Wide Duo")
           (regular) ; like this it uses all the fallback values and is named `regular'
           (medium
            :default-weight semilight
@@ -2303,6 +2304,8 @@ key bindings.
     ("<f2>" . toggle-input-method)  ; F2 overrides that two-column gimmick.  Sorry, but no!
     ("<insert>" . nil)
     ("<menu>" . nil)
+    ("C-x C-d" . nil) ; never use it
+    ("C-x C-v" . nil) ; never use it
     ("C-z" . nil) ; I have a window manager, thanks!
     ("C-x C-z" . nil) ; same idea as above
     ("C-x C-c" . nil) ; avoid accidentally exiting Emacs
@@ -8643,8 +8646,8 @@ facilities to rename files, regardless of file type.
 
   (setq denote-backlinks-show-context nil)
 
-  (setq denote-rename-buffer-format "[D] %t %b")
-  (setq denote-buffer-has-backlinks-string "(<--->)")
+  (setq denote-rename-buffer-format "[D] %t%b")
+  (setq denote-buffer-has-backlinks-string " (<--->)")
 
   ;; Automatically rename Denote buffers when opening them so that
   ;; instead of their long file name they have a literal "[D]"

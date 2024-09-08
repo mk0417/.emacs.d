@@ -18,8 +18,8 @@
   (setopt pulsar-pulse t
           pulsar-delay 0.055
           pulsar-iterations 10
-          pulsar-face 'pulsar-magenta
-          pulsar-highlight-face 'pulsar-cyan)
+          pulsar-face 'pulsar-cyan
+          pulsar-highlight-face 'pulsar-magenta)
 
   (pulsar-global-mode 1)
   :hook
@@ -48,7 +48,7 @@
   ;; Or `setopt' on Emacs 29: (setopt lin-face 'lin-yellow)
   ;;
   ;; I still prefer `setq' for consistency.
-  (setq lin-face 'lin-magenta))
+  (setq lin-face 'lin-blue))
 
 ;;;; Increase padding of windows/frames
 ;; Yet another one of my packages:
