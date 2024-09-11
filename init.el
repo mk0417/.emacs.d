@@ -1,5 +1,3 @@
-;;;;; init.el --- Init -*- lexical-binding: t -*-
-
 ;; For those who use my dotfiles and need an easy way to write their
 ;; own extras on top of what I already load: search below for the files
 ;; prot-emacs-pre-custom.el and prot-emacs-post-custom.el
@@ -100,8 +98,9 @@ before all other modules of my setup."
    (put command 'disabled t))
  '(eshell project-eshell overwrite-mode iconify-frame diary))
 
-;; Always start with *scratch*
 (setq initial-buffer-choice t)
+(setq initial-major-mode 'lisp-interaction-mode)
+(setq initial-scratch-message nil)
 
 (mapc
  (lambda (string)
@@ -147,6 +146,7 @@ before all other modules of my setup."
     modus-themes
     ;; notmuch-indicator
     pulsar
+    show-font
     spacious-padding
     ;; standard-themes
     substitute
