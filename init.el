@@ -114,6 +114,8 @@ before all other modules of my setup."
 
 ;;;; Packages
 
+(setq package-check-signature nil)
+
 (setq package-vc-register-as-project nil) ; Emacs 30
 
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
