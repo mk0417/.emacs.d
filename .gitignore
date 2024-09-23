@@ -5,6 +5,7 @@
 /elpa
 /url
 /tree-sitter
+/request
 .bookmarks.el
 .DS_Store
 custom.el

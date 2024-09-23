@@ -94,4 +94,10 @@
 
 (add-hook 'mhtml-mode-hook #'turn-off-auto-fill)
 
+;;; Quarto
+(use-package quarto-mode
+  :ensure t
+  :config
+  (add-hook 'poly-quarto-mode-hook #'display-fill-column-indicator-mode))
+
 (provide 'init-programming)
