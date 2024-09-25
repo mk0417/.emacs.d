@@ -96,8 +96,6 @@
 
 ;;; Quarto
 (use-package quarto-mode
-  :ensure t
-  :config
-  (add-hook 'poly-quarto-mode-hook #'display-fill-column-indicator-mode))
+  :ensure t)
 
 (provide 'init-programming)

@@ -186,6 +186,7 @@
   :doc "Prefix keymap for jupyter."
   :name "Jupyter"
   :prefix 'prot-prefix-jupyter
+  "p" #'quarto-preview
   "R" #'run-ess-r
   "l" #'ess-eval-line
   "s" #'ess-eval-region
