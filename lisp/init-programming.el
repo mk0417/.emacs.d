@@ -95,7 +95,9 @@
 (add-hook 'mhtml-mode-hook #'turn-off-auto-fill)
 
 ;;; Quarto
-(use-package quarto-mode
-  :ensure t)
+(defun p-quarto-render ()
+  (interactive)
+  (let ((file (file-name-nondirectory (buffer-file-name))))
+    (shell-command (concat "quarto render " file))))
 
 (provide 'init-programming)
