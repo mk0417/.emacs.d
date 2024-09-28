@@ -319,6 +319,7 @@ making an abbreviation to a function."
 
 (require 'init-env)
 (require 'init-default)
+(require 'init-functions)
 (require 'init-programming)
 (require 'init-lsp)
 (require 'init-keybinding)

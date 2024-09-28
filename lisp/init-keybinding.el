@@ -127,6 +127,7 @@
    '("fp" . consult-ripgrep)
    '("fr" . recentf)
    '("fs" . save-buffer)
+   '("fv" . p-open-html-in-browser)
    '("fw" . mark-whole-buffer)
    '("fx" . execute-extended-command)
 

@@ -95,6 +95,8 @@
 (add-hook 'mhtml-mode-hook #'turn-off-auto-fill)
 
 ;;; Quarto
+(add-to-list 'auto-mode-alist '("\\.qmd\\'" . markdown-mode))
+
 (defun p-quarto-render ()
   (interactive)
   (let ((file (file-name-nondirectory (buffer-file-name))))
