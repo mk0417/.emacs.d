@@ -207,7 +207,7 @@
 
   ;; Scrolling behaviour
   (setq-default scroll-preserve-screen-position t
-                scroll-conservatively 1 ; affects `scroll-step'
+                ;; scroll-conservatively 1 ; affects `scroll-step'
                 scroll-margin 0
                 next-screen-context-lines 0))
 

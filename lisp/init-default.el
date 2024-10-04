@@ -53,11 +53,29 @@
   (global-set-key [remap just-one-space] 'cycle-spacing))
 
 ;;; Better default
-;; https://emacs-china.org/t/topic/25811/7
+;; https://github.com/manateelazycat/lazycat-emacs/blob/master/site-lisp/config/init-generic.el
+(setq process-adaptive-read-buffering nil)
+(setq inhibit-compacting-font-caches t)
+(setq confirm-kill-processes nil)
+
 (setq-default bidi-display-reordering nil)
+(setq-default bidi-paragraph-direction 'left-to-right)
 (setq bidi-inhibit-bpa t
       long-line-threshold 1000
       large-hscroll-threshold 1000
       syntax-wholeline-max 1000)
+
+(setq scroll-step 1
+      scroll-conservatively 10000)
+
+;; Disable garbage collection when entering commands.
+(defun max-gc-limit ()
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun reset-gc-limit ()
+  (setq gc-cons-threshold 800000))
+
+(add-hook 'minibuffer-setup-hook #'max-gc-limit)
+(add-hook 'minibuffer-exit-hook #'reset-gc-limit)
 
 (provide 'init-default)
