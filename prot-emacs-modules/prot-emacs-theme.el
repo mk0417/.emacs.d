@@ -217,7 +217,9 @@
   (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
   (setq fontaine-presets
-        '((regular) ; like this it uses all the fallback values and is named `regular'
+        '((small
+           :default-height 80)
+          (regular) ; like this it uses all the fallback values and is named `regular'
           (medium
            :default-weight semilight
            :default-height 115
