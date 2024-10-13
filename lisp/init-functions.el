@@ -38,7 +38,7 @@ When called in emacs lisp, if Fname is given, open that."
        ((eq system-type 'berkeley-unix)
         (mapc (lambda (xfpath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" xfpath))) xfileList))))))
 
-(defun p-open-html-in-browser()
+(defun p-open-current-dir-quarto-html-in-browser()
   (interactive)
   (let ((file (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))
     (p-open-in-external-app (concat file ".html"))))

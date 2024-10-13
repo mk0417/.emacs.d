@@ -11,6 +11,7 @@
 (setq lsp-bridge-enable-mode-line nil)
 (setq lsp-bridge-enable-diagnostics nil)
 (setq lsp-bridge-symbols-enable-which-func t)
+(setq lsp-bridge-markdown-lsp-server 'marksman)
 (setq acm-enable-yas nil)
 (setq acm-enable-tempel nil)
 (setq acm-enable-tabnine nil)
