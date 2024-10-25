@@ -62,8 +62,8 @@
   "Return a Dired buffer for files matching REGEXP.
 Perform the search recursively from the current directory."
   (interactive (list (prot-dired-regexp-prompt)))
-  (if-let ((files (prot-dired--get-files regexp))
-           (relative-paths (mapcar #'file-relative-name files)))
+  (if-let* ((files (prot-dired--get-files regexp))
+            (relative-paths (mapcar #'file-relative-name files)))
       (dired (cons (format "prot-flat-dired for `%s'" regexp) relative-paths))
     (error "No files matching `%s'" regexp)))
 

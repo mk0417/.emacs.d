@@ -325,7 +325,7 @@ Specific to the current window's mode line.")
 (defun prot-modeline--buffer-name ()
   "Return `buffer-name', truncating it if necessary.
 See `prot-modeline-string-cut-middle'."
-  (when-let ((name (buffer-name)))
+  (when-let* ((name (buffer-name)))
     (prot-modeline-string-cut-middle name)))
 
 (defun prot-modeline-buffer-name ()
@@ -372,7 +372,7 @@ face.  Let other buffers have no face.")
 
 (defun prot-modeline-major-mode-help-echo ()
   "Return `help-echo' value for `prot-modeline-major-mode'."
-  (if-let ((parent (get major-mode 'derived-mode-parent)))
+  (if-let* ((parent (get major-mode 'derived-mode-parent)))
       (format "Symbol: `%s'.  Derived from: `%s'" major-mode parent)
     (format "Symbol: `%s'." major-mode)))
 
@@ -402,9 +402,9 @@ face.  Let other buffers have no face.")
 
 (defun prot-modeline--vc-branch-name (file backend)
   "Return capitalized VC branch name for FILE with BACKEND."
-  (when-let ((rev (vc-working-revision file backend))
-             (branch (or (vc-git--symbolic-ref file)
-                         (substring rev 0 7))))
+  (when-let* ((rev (vc-working-revision file backend))
+              (branch (or (vc-git--symbolic-ref file)
+                          (substring rev 0 7))))
     (capitalize branch)))
 
 ;; NOTE 2023-07-27: This is a good idea, but it hardcodes Git, whereas
@@ -475,7 +475,7 @@ than `split-width-threshold'."
 
 (defun prot-modeline--vc-get-face (key)
   "Get face from KEY in `prot-modeline--vc-faces'."
-   (alist-get key prot-modeline--vc-faces 'up-to-date))
+  (alist-get key prot-modeline--vc-faces 'up-to-date))
 
 (defun prot-modeline--vc-face (file backend)
   "Return VC state face for FILE with BACKEND."
