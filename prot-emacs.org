@@ -8776,7 +8776,7 @@ facilities to rename files, regardless of file type.
   (defun prot/denote-add-text-front-matter-separator ()
     "Add separator equal to the length of the title.
 Do this when the `denote-file-type' is `text'."
-    (when (or (eq denote-file-type 'text)
+    (when (and (eq denote-file-type 'text)
               ;; Not `string=' because there may be a .gpg extension as well.
               (string-match-p (file-name-extension buffer-file-name) "txt"))
       (save-excursion
@@ -9250,14 +9250,16 @@ the accounts I set.
   :defer t
   :config
   (let ((prv (prot-common-auth-get-field "prv" :user))
+        (gml (prot-common-auth-get-field "gml" :user))
         (pub (prot-common-auth-get-field "pub" :user))
         (inf (prot-common-auth-get-field "inf" :user)))
     (setq notmuch-identities
           (mapcar (lambda (str)
                     (format "%s <%s>" user-full-name str))
-                  (list prv pub inf))
+                  (list prv gml pub inf))
           notmuch-fcc-dirs
           `((,prv . "prv/Sent")
+            (,gml . "\"gml/[Gmail]/Sent Mail\"")
             (,inf . "inf/Sent")
             (,pub . "pub/Sent")))))
 #+end_src
@@ -13298,7 +13300,7 @@ Specific to the current window's mode line.")
                  (buffer-narrowed-p)
                  (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
         (propertize " Narrow " 'face 'prot-modeline-indicator-cyan-bg)))
-  "Mode line construct to report the multilingual environment.")
+  "Mode line construct to report the narrowed state of the current buffer.")
 
 ;;;; Input method
 
