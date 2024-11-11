@@ -33,7 +33,6 @@
                 ("M-s c" . embrace-change)
                 ("M-s d" . embrace-delete)))
 
-    "File containing my stock preamble for LaTeX documents")
   (defun TeX-insert-smallmatrix () (interactive)
          (insert "[\\begin{smallmatrix}  \\end{smallmatrix}]")
          (backward-char 19))
