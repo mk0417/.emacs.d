@@ -322,6 +322,7 @@ making an abbreviation to a function."
 (require 'init-functions)
 (require 'init-programming)
 (require 'init-lsp)
+(require 'init-latex)
 (require 'init-keybinding)
 (require 'init-keychord)
 
