@@ -55,7 +55,9 @@
   "r" #'prot-simple-rename-file-and-buffer
   "n" #'next-buffer
   "p" #'previous-buffer
-  "v" #'prot-simple-buffers-vc-root)
+  "v" #'prot-simple-buffers-vc-root
+  "a" #'beginning-of-buffer
+  "e" #'end-of-buffer)
 
 (defvar-keymap prot-prefix-file-map
   :doc "Prefix keymaps for files."

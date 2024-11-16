@@ -75,6 +75,7 @@
   (setq ess-indent-offset 4)
   (setq ess-use-flymake nil)
   (setq ess-indent-with-fancy-comments nil)
+
   (with-eval-after-load 'ess
     ;; disable flymake
     ;; (add-hook 'ess-r-mode-hook (lambda () (flymake-mode -1)))
