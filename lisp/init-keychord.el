@@ -214,6 +214,7 @@ Commands. Please ignore that."
   (key-chord-define mode ";j" "%>%")
   (key-chord-define mode ";l" "|>")
   (key-chord-define mode ";m" "%*%")
+  (key-chord-define mode ";r" ":=")
   (key-chord-define mode ";g" "=>")
   (key-chord-define mode ";k" "->")
   (key-chord-define mode ";f" "5")
