@@ -106,12 +106,14 @@
    '("vx" . meow-swap-grab)
 
    ;; prefix n
+   '("na" . p-add-space-around-equal-at-point)
    '("nd" . (lambda () (interactive) (prot-pair-insert '(?\" . ?\") 1)))
    '("nf" . (lambda () (interactive) (prot-pair-insert '(?\[ . ?\]) 1)))
    '("nh" . (lambda () (interactive) (prot-pair-insert '(?\{ . ?\}) 1)))
    '("nk" . (lambda () (interactive) (prot-pair-insert '(?\( . ?\)) 1)))
    '("nn" . prot-pair-delete)
    '("ns" . (lambda () (interactive) (prot-pair-insert '(?\' . ?\') 1)))
+   '("nx" . p-remove-space-around-equal-at-point)
 
    ;; prefix f
    '("fa" . lsp-bridge-find-def)

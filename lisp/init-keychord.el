@@ -206,6 +206,7 @@ Commands. Please ignore that."
   (key-chord-define mode "ww" "?")
   (key-chord-define mode "bb" "~")
   (key-chord-define mode ",d" "==")
+  (key-chord-define mode ",n" "NULL")
   (key-chord-define mode ";c" "^")
   (key-chord-define mode ";x" "<")
   (key-chord-define mode ";d" ">")

@@ -43,4 +43,19 @@ When called in emacs lisp, if Fname is given, open that."
   (let ((file (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))
     (p-open-in-external-app (concat file ".html"))))
 
+(defun p-add-space-around-equal-at-point ()
+  (interactive)
+  (save-excursion
+    (when (thing-at-point-looking-at "\\s-*\\(=\\)\\s-*")
+      (replace-match " \\1 "))))
+
+(defun p-remove-space-around-equal-at-point ()
+  (interactive)
+  (save-excursion
+    (when (thing-at-point-looking-at "\\s-*\\(=\\)\\s-*")
+      (replace-match "\\1")))
+  (when (looking-at "=")
+    (search-forward "=" nil t)
+    (backward-char)))
+
 (provide 'init-functions)
