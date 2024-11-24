@@ -7720,36 +7720,16 @@ As for my workflow, here is an overview:
                     ":END:\n\n"
                     "%a\n%i%?")
            :empty-lines-after 1)
-          ;; ("e" "Email note (unprocessed)" entry ; Also see `org-capture-templates-contexts'
-          ;;  (file+headline "tasks.org" "Unprocessed")
-          ;;  ,(concat "* TODO %:subject :mail:\n"
-          ;;           ":PROPERTIES:\n"
-          ;;           ":CAPTURED: %U\n"
-          ;;           ":END:\n\n"
-          ;;           "%a\n%i%?")
-          ;;  :empty-lines-after 1)
-          ("w" "Add to the wishlist (may do some day)" entry
-           (file+headline "tasks.org" "Wishlist")
-           ,(concat "* %^{Title}\n"
+          ("w" "Wishlist" entry
+           (file+olp "tasks.org" "All tasks" "Wishlist")
+           ,(concat "* %^{Title} %^g\n"
                     ":PROPERTIES:\n"
                     ":CAPTURED: %U\n"
                     ":END:\n\n"
                     "%a%?")
            :empty-lines-after 1)
-          ("c" "Clock in and do immediately" entry
-           (file+headline "tasks.org" "Clocked tasks")
-           ,(concat "* TODO %^{Title}\n"
-                    ":PROPERTIES:\n"
-                    ":EFFORT: %^{Effort estimate in minutes|5|10|15|30|45|60|90|120}\n"
-                    ":END:\n\n"
-                    "%a\n")
-           :prepend t
-           :clock-in t
-           :clock-keep t
-           :immediate-finish t
-           :empty-lines-after 1)
-          ("t" "Time-sensitive task" entry
-           (file+headline "tasks.org" "Tasks with a date")
+          ("t" "Task to do" entry
+           (file+headline "tasks.org" "All tasks")
            ,(concat "* TODO %^{Title} %^g\n"
                     "%^{How time sensitive it is|SCHEDULED|SCHEDULED|DEADLINE}: %^t\n"
                     ":PROPERTIES:\n"
@@ -7757,6 +7737,26 @@ As for my workflow, here is an overview:
                     ":END:\n\n"
                     "%a%?")
            :empty-lines-after 1)
+          ("s" "Select file and heading to add to" entry
+           (function prot-org-capture-select-project)
+           "* TODO %^{Title} %^g\n%?"
+           :empty-lines-after 1)
+
+          ;; NOTE 2024-11-24: I am not using this, but am keeping it
+          ;; here because the approach is good.
+          
+          ;; ("c" "Clock in and do immediately" entry
+          ;;  (file+headline "tasks.org" "Clocked tasks")
+          ;;  ,(concat "* TODO %^{Title}\n"
+          ;;           ":PROPERTIES:\n"
+          ;;           ":EFFORT: %^{Effort estimate in minutes|5|10|15|30|45|60|90|120}\n"
+          ;;           ":END:\n\n"
+          ;;           "%a\n")
+          ;;  :prepend t
+          ;;  :clock-in t
+          ;;  :clock-keep t
+          ;;  :immediate-finish t
+          ;;  :empty-lines-after 1)
           ("p" "Private lesson or service" entry
            (file "coach.org")
            #'prot-org-capture-coach
@@ -9219,7 +9219,7 @@ directory being part of the ~load-path~).
   :commands (notmuch notmuch-mua-new-mail))
 #+end_src
 
-**** The =prot-emacs-notmuch.el= section about the acount settings
+**** The =prot-emacs-notmuch.el= section about the account settings
 :PROPERTIES:
 :CUSTOM_ID: h:2fca749c-a84e-415c-9ac0-b1518d06fa51
 :END:
@@ -9263,15 +9263,17 @@ Now the actual code I use:
   :config
   (let ((prv (prot-common-auth-get-field "prv" :user))
         (pub (prot-common-auth-get-field "pub" :user))
-        (inf (prot-common-auth-get-field "inf" :user)))
+        (inf (prot-common-auth-get-field "inf" :user))
+        (box (prot-common-auth-get-field "mailbox" :user)))
     (setq notmuch-identities
           (mapcar (lambda (str)
                     (format "%s <%s>" user-full-name str))
-                  (list prv pub inf))
+                  (list prv pub inf box))
           notmuch-fcc-dirs
           `((,prv . "mailbox/Sent")
             (,inf . "mailbox/Sent")
-            (,pub . "mailbox/Sent")))))
+            (,pub . "mailbox/Sent")
+            (,box . "mailbox/Sent")))))
 #+end_src
 
 **** The =prot-emacs-notmuch.el= section about the general user interface
@@ -9369,11 +9371,14 @@ form part of the search terms or tags.
             :query "tag:inbox"
             :sort-order newest-first
             :key ,(kbd "i"))
-          ( :name "💬 unread (inbox)"
+          ( :name "📚 all unread (inbox)"
             :query "tag:unread and tag:inbox"
             :sort-order newest-first
             :key ,(kbd "u"))
-          ;; My packages
+          ( :name "💬 unread other (inbox)"
+            :query "tag:unread and tag:inbox and not tag:package and not tag:coach"
+            :sort-order newest-first
+            :key ,(kbd "o"))
           ( :name "🗂️ unread packages"
             :query "tag:unread and tag:package"
             :sort-order newest-first
@@ -14180,6 +14185,82 @@ DEADLINE: %%^T
 ;; Same source as above
 (advice-add 'org-capture-place-template :around 'prot-org--capture-no-delete-windows)
 (advice-add 'org-add-log-note :around 'prot-org--capture-no-delete-windows)
+
+;;;;; Custom function to select a project to add to
+
+(defun prot-org--get-outline (&optional file)
+  "Return `outline-regexp' headings and line numbers of current file or FILE."
+  (with-current-buffer (find-file-noselect file)
+    (let ((outline-regexp (format "^\\(?:%s\\)" (or (bound-and-true-p outline-regexp) "[*\^L]+")))
+          candidates)
+      (save-excursion
+        (goto-char (point-min))
+        (while (if (bound-and-true-p outline-search-function)
+                   (funcall outline-search-function)
+                 (re-search-forward outline-regexp nil t))
+          (push
+           ;; NOTE 2024-11-24: The -5 (minimum width) is a sufficiently high number to keep the
+           ;; alignment consistent in most cases.  Larger files will simply shift the heading text
+           ;; in minibuffer, but this is not an issue anymore.
+           (format "%-5s\t%s"
+                   (line-number-at-pos (point))
+                   (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
+           candidates)
+          (goto-char (1+ (line-end-position)))))
+      (if candidates
+          (nreverse candidates)
+        (user-error "No outline")))))
+
+(defvar prot-org-outline-history nil
+  "Minibuffer history for `prot-org-outline-prompt'.")
+
+(defun prot-org-outline-prompt (&optional file)
+  "Prompt for outline among headings retrieved by `prot-org--get-outline'.
+With optional FILE use the outline of it, otherwise use that of
+the current file."
+  (let ((current-file (or file buffer-file-name))
+        (default (car prot-org-outline-history)))
+    (completing-read
+     (format-prompt
+      (format "Select heading inside `%s': "
+              (propertize (file-name-nondirectory current-file) 'face 'error))
+      default)
+     (prot-common-completion-table-no-sort 'imenu (prot-org--get-outline current-file))
+     nil :require-match nil 'prot-org-outline-history default)))
+
+(defvar prot-org-file-history nil
+  "Minibuffer history of `prot-org-file-prompt'.")
+
+(defun prot-org--not-useful-p (file)
+  "Return non-nil if FILE is not a useful Org file for `org-capture'."
+  (or (string-match-p "\\.org_archive\\'" file)
+      (backup-file-name-p file)
+      (not (string-match-p "\\.org\\'" file))))
+
+(defun prot-org-file-prompt ()
+  "Select a file in the `org-directory'."
+  (if-let ((dir org-directory)
+           (files (directory-files-recursively org-directory ".*" nil))
+           (files (seq-remove #'prot-org--not-useful-p files)))
+      (let ((default (car prot-org-file-history)))
+        (completing-read
+         (format-prompt "Select file" default)
+         files nil :require-match nil 'prot-org-file-history default))
+    (user-error "There are no files in the `org-directory'")))
+
+;;;###autoload
+(defun prot-org-capture-select-project ()
+  "Like `prot-org-select-project' but specifically for `org-capture'."
+  (declare (interactive-only t))
+  (interactive)
+  (pcase-let* ((file (prot-org-file-prompt))
+               (line-with-heading (prot-org-outline-prompt file))
+               (`(,line ,text) (split-string line-with-heading "\t"))
+               (line (string-to-number line)))
+    ;; NOTE 2024-11-24: `with-current-buffer' does not work with `org-capture'.
+    (find-file file)
+    (goto-char (point-min))
+    (forward-line (1- line))))
 
 ;;;; org-agenda
 
