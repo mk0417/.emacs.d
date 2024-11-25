@@ -224,6 +224,7 @@
            ,(concat "* %^{Title}\n"
                     ":PROPERTIES:\n"
                     ":CAPTURED: %U\n"
+                    ":CUSTOM_ID: h:%(format-time-string \"%Y%m%dT%H%M%S\")\n"
                     ":END:\n\n"
                     "%a\n%i%?")
            :empty-lines-after 1)
@@ -232,6 +233,7 @@
            ,(concat "* %^{Title} %^g\n"
                     ":PROPERTIES:\n"
                     ":CAPTURED: %U\n"
+                    ":CUSTOM_ID: h:%(format-time-string \"%Y%m%dT%H%M%S\")\n"
                     ":END:\n\n"
                     "%a%?")
            :empty-lines-after 1)
@@ -241,12 +243,17 @@
                     "%^{How time sensitive it is|SCHEDULED|SCHEDULED|DEADLINE}: %^t\n"
                     ":PROPERTIES:\n"
                     ":CAPTURED: %U\n"
+                    ":CUSTOM_ID: h:%(format-time-string \"%Y%m%dT%H%M%S\")\n"
                     ":END:\n\n"
                     "%a%?")
            :empty-lines-after 1)
           ("s" "Select file and heading to add to" entry
            (function prot-org-capture-select-project)
-           "* TODO %^{Title} %^g\n%?"
+           ,(concat "* TODO %^{Title}%?\n"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %U\n"
+                    ":CUSTOM_ID: h:%(format-time-string \"%Y%m%dT%H%M%S\")\n"
+                    ":END:\n\n")
            :empty-lines-after 1)
 
           ;; NOTE 2024-11-24: I am not using this, but am keeping it

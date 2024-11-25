@@ -114,9 +114,9 @@ the current file."
 
 (defun prot-org-file-prompt ()
   "Select a file in the `org-directory'."
-  (if-let ((dir org-directory)
-           (files (directory-files-recursively org-directory ".*" nil))
-           (files (seq-remove #'prot-org--not-useful-p files)))
+  (if-let* ((dir org-directory)
+            (files (directory-files-recursively org-directory ".*" nil))
+            (files (seq-remove #'prot-org--not-useful-p files)))
       (let ((default (car prot-org-file-history)))
         (completing-read
          (format-prompt "Select file" default)
@@ -362,6 +362,21 @@ create a new one."
   "Add missing CUSTOM_ID to headline at point."
   (interactive)
   (prot-org--id-get))
+
+;;;###autoload
+(defun prot-org-get-dotemacs-link ()
+  "Get URL to current heading in my dotemacs file."
+  (declare (interactive-only t))
+  (interactive)
+  (if (and (derived-mode-p 'org-mode)
+           (string-match-p "prot-emacs\\.org\\'" buffer-file-name))
+      (if-let* ((id (org-entry-get (point) "CUSTOM_ID"))
+                (url (concat "https://protesilaos.com/emacs/dotemacs#" id)))
+          (progn
+            (kill-new url)
+            (message "Copied %s" (propertize url 'face 'success)))
+        (error "No CUSTOM_ID for the current entry"))
+    (user-error "You are not in the right file")))
 
 (provide 'prot-org)
 ;;; prot-org.el ends here
