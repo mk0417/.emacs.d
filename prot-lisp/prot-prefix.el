@@ -43,6 +43,7 @@
   :doc "Prefix keymap for buffers."
   :name "Buffer"
   :prefix 'prot-prefix-buffer
+  "o" (lambda () (interactive) (switch-to-buffer "*Ollama*"))
   "d" #'prot-simple-kill-buffer-current
   "D" #'kill-buffer-and-window
   "m" #'beframe-buffer-menu
