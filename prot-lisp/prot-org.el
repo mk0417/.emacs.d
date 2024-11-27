@@ -120,7 +120,8 @@ the current file."
       (let ((default (car prot-org-file-history)))
         (completing-read
          (format-prompt "Select file" default)
-         files nil :require-match nil 'prot-org-file-history default))
+         (prot-common-completion-table 'file files)
+         nil :require-match nil 'prot-org-file-history default))
     (user-error "There are no files in the `org-directory'")))
 
 ;;;###autoload
@@ -136,6 +137,9 @@ the current file."
     (find-file file)
     (goto-char (point-min))
     (forward-line (1- line))))
+
+(defalias 'prot-org-goto-heading-in-file 'prot-org-capture-select-project
+  "Alias for `prot-org-capture-select-project'.")
 
 ;;;; org-agenda
 
