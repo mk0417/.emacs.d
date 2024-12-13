@@ -4,22 +4,14 @@
 ;; http://xahlee.info/emacs/emacs/emacs_env_var_paths.html
 (let ((emacs-init-env-path
        (list "/opt/homebrew/Caskroom/miniforge/base/bin"
-             "/opt/homebrew/Caskroom/miniforge/base/bin/jupyter"
-             "/opt/homebrew/Caskroom/mambaforge/base/bin"
-             "/opt/homebrew/Caskroom/mambaforge/base/bin/jupyter"
-             "/opt/homebrew/Cellar/aspell"
              "/opt/homebrew/bin/"
-             "/opt/homebrew/bin/julia"
              "/bin"
              "/sbin"
              "/usr/bin"
              "/usr/sbin"
              "/usr/local/bin"
              "/usr/local/sbin"
-             "/Applications/Stata/StataMP.app/Contents/MacOS/"
-             "/Applications/Stata/StataMP.app/Contents/MacOS/stata"
-             "/Library/TeX/texbin"
-             "/Applications/Emacs.app/Contents/MacOS/bin")))
+             "/Library/TeX/texbin")))
   (setenv "PATH" (mapconcat 'identity emacs-init-env-path ":"))
   (setq exec-path (append emacs-init-env-path (list "." exec-directory))))
 
