@@ -2356,11 +2356,6 @@ key bindings.
   (setq echo-keystrokes-help nil) ; Emacs 30
   (setq epa-keys-select-method 'minibuffer) ; Emacs 30
 
-  (add-to-list 'save-some-buffers-action-alist
-               (list "d"
-                     (lambda (buffer) (diff-buffer-with-file (buffer-file-name buffer)))
-                     "show diff between the buffer and its file"))
-
   ;; Keys I unbind here are either to avoid accidents or to bind them
   ;; elsewhere later in the configuration.
   :bind
@@ -16437,7 +16432,8 @@ When called interactively without a prefix numeric argument, N is
 (defun prot-simple-copy-line ()
   "Copy the current line to the `kill-ring'."
   (interactive)
-  (copy-region-as-kill (line-beginning-position) (line-end-position)))
+  (copy-region-as-kill (line-beginning-position) (line-end-position))
+  (setq this-command 'kill-line))
 
 (make-obsolete 'prot-simple-copy-line-or-region 'prot-simple-copy-line "2023-09-26")
 
@@ -16448,7 +16444,9 @@ When the region is active, use `kill-ring-save' between the BEG and END
 positions.  Otherwise, copy the current line."
   (interactive "r")
   (if (region-active-p)
-      (kill-ring-save beg end)
+      (progn
+        (kill-ring-save beg end)
+        (setq this-command 'kill-region))
     (prot-simple-copy-line)))
 
 (defun prot-simple--duplicate-buffer-substring (boundaries)
