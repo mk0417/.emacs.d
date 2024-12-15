@@ -55,6 +55,9 @@
   (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-guess-indent-offset t)
+  (setq elpy-shell-echo-output nil
+        python-shell-interpreter "ipython"
+        python-shell-interpreter-args "--simple-prompt -c exec('__import__(\\'readline\\')') -i")
   (add-hook 'python-mode-hook #'electric-pair-mode)
   ;; https://www.topbug.net/blog/2016/09/29/emacs-disable-certain-pairs-for-electric-pair-mode/
   (add-hook
