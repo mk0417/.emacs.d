@@ -1,5 +1,3 @@
-;;;;; prot-emacs-which-key.el --- Which-key -*- lexical-binding: t -*-
-
 (use-package which-key
   :ensure nil ; built into Emacs 30
   :hook (after-init . which-key-mode)

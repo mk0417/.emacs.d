@@ -1,6 +1,6 @@
 ;;; prot-prefix.el --- Prefix keymap for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023  Protesilaos Stavrou
+;; Copyright (C) 2023-2024  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -43,6 +43,8 @@
   :doc "Prefix keymap for buffers."
   :name "Buffer"
   :prefix 'prot-prefix-buffer
+  "a" #'beginning-of-buffer
+  "e" #'end-of-buffer
   "o" (lambda () (interactive) (switch-to-buffer "*Ollama*"))
   "d" #'prot-simple-kill-buffer-current
   "D" #'kill-buffer-and-window
@@ -56,9 +58,7 @@
   "r" #'prot-simple-rename-file-and-buffer
   "n" #'next-buffer
   "p" #'previous-buffer
-  "v" #'prot-simple-buffers-vc-root
-  "a" #'beginning-of-buffer
-  "e" #'end-of-buffer)
+  "v" #'prot-simple-buffers-vc-root)
 
 (defvar-keymap prot-prefix-file-map
   :doc "Prefix keymaps for files."
@@ -82,7 +82,6 @@
   "s" #'emoji-search
   "l" #'emoji-list)
 
-(declare-function logos-focus-mode "logos")
 (declare-function keycast-mode-line-mode "keycast")
 (declare-function rainbow-mode "rainbow")
 (declare-function spacious-padding-mode "spacious-padding")
@@ -183,6 +182,8 @@
   "k" #'kill-sexp
   "DEL" #'backward-kill-sexp)
 
+(declare-function winner-undo "winner")
+(declare-function winner-redo "winner")
 (declare-function prot-simple-other-windor-or-frame "prot-simple")
 
 (defvar-keymap prot-prefix-jupyter-map
@@ -244,6 +245,7 @@
   "v" (cons "Version Control" 'vc-prefix-map)
   "w" (cons "Window" 'prot-prefix-window)
   "x" (cons "S-EXP" 'prot-prefix-expression)
+  "d" #'dired-jump
   "j" (cons "Jupyter" 'prot-prefix-jupyter))
 
 ;; ;; NOTE 2024-02-17: This is not needed anymore, because I bind a cons

@@ -159,8 +159,7 @@ before all other modules of my setup."
     substitute
     ;; sxhkdrc-mode
     theme-buffet
-    ;; tmr
-    )
+    tmr)
   "List of symbols representing the packages I develop/maintain.")
 
 ;; Also read: <https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/>

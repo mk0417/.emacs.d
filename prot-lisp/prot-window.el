@@ -1,6 +1,6 @@
 ;;; prot-window.el --- Display-buffer and window-related extensions for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023  Protesilaos Stavrou
+;; Copyright (C) 2023-2024  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -173,6 +173,14 @@ call NAME as a function."
          nil
          :local)))))
 
+;;;###autoload (autoload 'prot-window-coach "prot-window")
+(prot-window-define-full-frame coach
+  (let ((buffer (get-buffer-create "*scratch for coach*")))
+    (with-current-buffer buffer
+      (funcall initial-major-mode))
+    (display-buffer buffer)
+    (set-frame-name "Coach")))
+
 ;; REVIEW 2023-06-25: Does this merit a user option?  I don't think I
 ;; will ever set it to the left.  It feels awkward there.
 (defun prot-window-scroll-bar-placement ()
@@ -217,6 +225,12 @@ Also see `prot-window-delete-popup-frame'." command)
 
 ;;;###autoload (autoload 'prot-window-popup-org-capture "prot-window")
 (prot-window-define-with-popup-frame org-capture)
+
+(declare-function tmr "tmr" (time &optional description acknowledgep))
+(defvar tmr-timer-created-functions)
+
+;;;###autoload (autoload 'prot-window-popup-tmr "prot-window")
+(prot-window-define-with-popup-frame tmr)
 
 (provide 'prot-window)
 ;;; prot-window.el ends here

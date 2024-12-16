@@ -1,5 +1,3 @@
-;;;;; prot-emacs-search.el --- Search -*- lexical-binding: t -*-
-
 ;;; Isearch, occur, grep, and extras (prot-search.el)
 (use-package isearch
   :ensure nil

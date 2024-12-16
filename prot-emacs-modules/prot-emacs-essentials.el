@@ -472,6 +472,24 @@ to be cycling through the edits."
   (with-eval-after-load 'pulsar
     (add-hook 'vundo-post-exit-hook #'pulsar-pulse-line-green)))
 
+;;; TMR May Ring (tmr is used to set timers)
+;; Read the manual: <https://protesilaos.com/emacs/tmr>.
+(use-package tmr
+  :ensure t
+  :bind
+  (("C-c t t" . tmr)
+   ("C-c t T" . tmr-with-description)
+   ("C-c t l" . tmr-tabulated-view) ; "list timers" mnemonic
+   ("C-c t c" . tmr-clone)
+   ("C-c t k" . tmr-cancel)
+   ("C-c t s" . tmr-reschedule)
+   ("C-c t e" . tmr-edit-description)
+   ("C-c t r" . tmr-remove)
+   ("C-c t R" . tmr-remove-finished))
+  :config
+  (setq tmr-notification-urgency 'normal
+        tmr-description-list 'tmr-description-history))
+
 ;;; Laptop settings
 (use-package battery
   :ensure nil

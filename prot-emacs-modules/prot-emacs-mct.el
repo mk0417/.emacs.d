@@ -1,5 +1,3 @@
-;;;;; prot-emacs-mct.el --- MCT -*- lexical-binding: t -*-
-
 ;;; Minibuffer and Completions in Tandem or Minibuffer Confines Transcended (mct)
 ;; Read the manual: <https://protesilaos.com/emacs/mct>.
 (use-package mct
@@ -49,6 +47,8 @@
         (goto-char (1- (point)))
         (when (search-backward "/" (minibuffer-prompt-end) t)
           (delete-region (1+ (point)) (point-max)))))
-     (t (call-interactively 'backward-delete-char)))))
+     (t (call-interactively 'backward-delete-char))))
+
+  (define-key minibuffer-local-filename-completion-map (kbd "DEL") #'prot/mct-backward-updir))
 
 (provide 'prot-emacs-mct)

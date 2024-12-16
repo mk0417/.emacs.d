@@ -1,5 +1,3 @@
-;;;;; prot-emacs-dired.el --- Dired -*- lexical-binding: t -*-
-
 ;;; Dired file manager and prot-dired.el extras
 (use-package dired
   :ensure nil

@@ -43,7 +43,88 @@
 
 ;;;; org-capture
 
+(defvar prot-org--capture-coach-person-history nil)
+
 (declare-function message-fetch-field "message" (header &optional first))
+(declare-function notmuch-show-get-header "notmuch-show")
+
+(defun prot-org--capture-coach-person-message-from ()
+  "Return default value for `prot-org--capture-coach-person-prompt'."
+  (when-let* ((from (cond
+                     ((derived-mode-p 'message-mode)
+                      (message-fetch-field "To"))
+                     ((derived-mode-p 'notmuch-show-mode)
+                      (notmuch-show-get-header :From)))))
+    (string-clean-whitespace (car (split-string from "<")))))
+
+(defun prot-org--capture-coach-person-message-from-and-subject ()
+  "Return default value for `prot-org--capture-coach-person-prompt'."
+  (cond
+   ((derived-mode-p 'message-mode)
+    (message-fetch-field "Subject"))
+   ((derived-mode-p 'notmuch-show-mode)
+    (notmuch-show-get-header :Subject))))
+
+(defun prot-org--capture-coach-person-prompt ()
+  "Prompt for person for use in `prot-org-capture-coach'."
+  (completing-read "Person to coach: "
+                   prot-org--capture-coach-person-history
+                   nil nil nil
+                   'prot-org--capture-coach-person-history
+                   (prot-org--capture-coach-person-message-from)))
+
+(defvar prot-org--capture-coach-description-history nil)
+
+(defun prot-org--capture-coach-description-prompt ()
+  "Prompt for description in `prot-org-capture-coach'."
+  (read-string "Description: "
+               nil
+               'prot-org--capture-coach-description-history
+               (prot-org--capture-coach-person-message-from-and-subject)))
+
+(defun prot-org--capture-coach-date-prompt-range ()
+  "Prompt for Org date and return it as a +1h range.
+For use in `prot-org-capture-coach'."
+  (let ((date (org-read-date :with-time)))
+    ;; We cannot use this here, unfortunately, as the Org agenda
+    ;; interprets it both as a deadline and an event with the date
+    ;; range.
+    ;;
+    ;; (format "DEADLINE: <%s>--<%s>\n" date
+    (format "<%s>--<%s>\n" date
+            (org-read-date
+             :with-time nil "++1h" nil
+             (org-encode-time (org-parse-time-string date))))))
+
+(defun prot-org-capture-coach ()
+  "Contents of an Org capture template for my coaching lessons."
+  (let ((identifier (format-time-string "%Y%m%dT%H%M%S")))
+    (format "* COACH %s %s :lesson:
+DEADLINE: %%^T
+:PROPERTIES:
+:CAPTURED: %%U
+:CUSTOM_ID: h:%s
+:APPT_WARNTIME: 20
+:END:
+
+%%a%%?"
+            (prot-org--capture-coach-person-prompt)
+            (prot-org--capture-coach-description-prompt)
+            identifier
+            identifier)))
+
+(defun prot-org-capture-coach-clock ()
+  "Contents of an Org capture for my clocked coaching services."
+  (format "* COACH %s %s :service:
+:PROPERTIES:
+:CAPTURED: %%U
+:CUSTOM_ID: h:%s
+:END:
+
+%%a%%?"
+          (prot-org--capture-coach-person-prompt)
+          (prot-org--capture-coach-description-prompt)
+          (format-time-string "%Y%m%dT%H%M%S")))
 
 (declare-function cl-letf "cl-lib")
 
@@ -213,11 +294,71 @@ When called interactively WHOLE-BUFFER is a prefix argument."
   (call-interactively 'prot-org-select-heading-in-file)
   (call-interactively 'prot-org-clock-report-current-subtree-or-file))
 
+;;;;; Coaching-related Org custom clocking
+
 ;; TODO 2024-12-15: This sort of thing must exist in Org, but I did
 ;; not find it.
 (defun prot-org--timestamp-to-time (string)
   "Return time object of STRING timestamp."
   (org-timestamp-to-time (org-timestamp-from-string string)))
+
+(defun prot-org-coach--get-entries (todo-keyword string since)
+  "Get Org entries matching TODO-KEYWORD followed by STRING in the heading.
+Limit entries to those whole deadline/scheduled is equal or greater to
+SINCE date.
+
+Each entry is a plist of :heading, :contents, :started, :closed."
+  (or (delq nil
+            (org-map-entries
+             (lambda ()
+               (when-let* ((case-fold-search t)
+                           (started (prot-org--timestamp-to-time (or (org-entry-get nil "DEADLINE") (org-entry-get nil "SCHEDULED"))))
+                           (closed (prot-org--timestamp-to-time (org-entry-get nil "CLOSED")))
+                           ((re-search-forward (format "\\<%s\\>.*\\<%s\\>" todo-keyword string) (line-end-position) t 1))
+                           ((org-time-less-p since started)))
+                 (list
+                  :heading (org-get-heading :no-tags :no-todo :no-priority :no-comment)
+                  :contents (org-get-entry)
+                  :started started
+                  :closed closed)))))
+      (user-error "No entries with heading matching `\\<%s\\>.*\\<%s\\>'" todo-keyword string)))
+
+(defvar prot-org-coach--name-history nil
+  "Minibuffer history of `prot-org-coach--name-prompt'.")
+
+(defun prot-org-coach--name-prompt ()
+  "Prompt for name of person."
+  (let ((default (car prot-org-coach--name-history)))
+    (read-string
+     (format-prompt "Name of person" default)
+     nil 'prot-org-coach--name-history default)))
+
+;;;###autoload
+(defun prot-org-coach-report (name since)
+  "Produce clock report for coaching with person of NAME.
+SINCE is the date (of time 00:00) to count from until now."
+  (interactive
+   (list
+    (prot-org-coach--name-prompt)
+    (format "[%s]" (org-read-date))))
+  (if-let* ((since-object (prot-org--timestamp-to-time since))
+            (entries (prot-org-coach--get-entries "done" name since-object))
+            (buffer (get-buffer-create "*prot-org-coach-entries*")))
+      (with-current-buffer (pop-to-buffer buffer)
+        (erase-buffer)
+        (org-mode)
+        (dolist (entry entries)
+          (insert (format "* %s\n%s\n\n" (plist-get entry :heading) (plist-get entry :contents)))
+          (org-clock-in nil (plist-get entry :started))
+          (org-clock-out nil t (plist-get entry :closed)))
+        (goto-char (point-min))
+        (save-excursion
+          (insert (format "%s\n\n" prot-org-clock--template-no-effort)))
+        (save-excursion
+          (goto-char (line-end-position))
+          (insert (format " :tstart %S" since)))
+        (org-dblock-update))
+    (user-error "No entries for name `%s'" name)))
 
 ;;;; org-agenda
 

@@ -140,7 +140,8 @@
   ;;       '((sequence "TODO(t)" "MAYBE(m)" "WAIT(w@/!)" "|" "CANCEL(c@)" "DONE(d!)")
   ;;         (sequence "COACH(k)" "|" "COACHED(K!)")))
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "|" "CANCEL(c@)" "DONE(d!)")))
+        '((sequence "TODO(t)" "|" "CANCEL(c@)" "DONE(d!)")
+          (sequence "COACH(k)" "|" "COACHED(K!)")))
 
   (defface prot/org-bold-done
     '((t :inherit (bold org-done)))
@@ -240,7 +241,6 @@
           ("t" "Task to do" entry
            (file+headline "tasks.org" "All tasks")
            ,(concat "* TODO %^{Title} %^g\n"
-                    "%^{How time sensitive it is|SCHEDULED|SCHEDULED|DEADLINE}: %^t\n"
                     ":PROPERTIES:\n"
                     ":CAPTURED: %U\n"
                     ":CUSTOM_ID: h:%(format-time-string \"%Y%m%dT%H%M%S\")\n"
@@ -271,7 +271,29 @@
           ;;  :clock-keep t
           ;;  :immediate-finish t
           ;;  :empty-lines-after 1)
-          )))
+          ("p" "Private lesson or service" entry
+           (file "coach.org")
+           #'prot-org-capture-coach
+           :prepend t
+           :empty-lines 1)
+          ("P" "Private service clocked" entry
+           (file+headline "coach.org" "Clocked services")
+           #'prot-org-capture-coach-clock
+           :prepend t
+           :clock-in t
+           :clock-keep t
+           :immediate-finish t
+           :empty-lines 1)))
+
+  ;; NOTE 2024-11-10: I realised that I was not using this enough, so
+  ;; I decided to simplify my setup.  Keeping it here, in case I need
+  ;; it again.
+
+  ;; (setq org-capture-templates-contexts
+  ;;       '(("e" ((in-mode . "notmuch-search-mode")
+  ;;               (in-mode . "notmuch-show-mode")
+  ;;               (in-mode . "notmuch-tree-mode")))))
+  )
 
 ;;;; agenda
 (use-package org-agenda

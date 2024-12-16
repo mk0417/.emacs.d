@@ -1,5 +1,3 @@
-;;;;; prot-emacs-vertico.el --- Vertico -*- lexical-binding: t -*-
-
 ;;; Vertical completion layout (vertico)
 (use-package vertico
   :ensure t

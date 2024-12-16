@@ -155,7 +155,7 @@ The DWIM behaviour of this command is as follows:
 ;; (defun prot-simple--number-replace (number amount operation)
 ;;   "Perform OPERATION on NUMBER at point by AMOUNT."
 ;;   (when-let* ((bounds (bounds-of-thing-at-point 'number))
-;;              (replacement (prot-simple--number-operate number amount operation)))
+;;               (replacement (prot-simple--number-operate number amount operation)))
 ;;     (delete-region (car bounds) (cdr bounds))
 ;;     (save-excursion
 ;;       (insert (number-to-string replacement)))))
@@ -479,8 +479,8 @@ demarcated by BEG and END."
 ;; line in the region."
 ;;   (interactive (list (prot-simple-line-prefix-infer-or-prompt)))
 ;;   (if-let* ((region-p (region-active-p))
-;;            (beg (region-beginning))
-;;            (end (line-number-at-pos (region-end))))
+;;             (beg (region-beginning))
+;;             (end (line-number-at-pos (region-end))))
 ;;       (progn
 ;;         (goto-char beg)
 ;;         (push-mark (point))

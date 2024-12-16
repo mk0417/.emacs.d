@@ -1,5 +1,3 @@
-;;;;; prot-emacs-modus-themes.el --- Modus themes -*- lexical-binding: t -*-
-
 ;;; The Modus themes
 
 ;; The themes are highly customisable.  Read the manual:
@@ -13,6 +11,9 @@
   :config
   (setq modus-themes-custom-auto-reload nil
         modus-themes-to-toggle '(modus-operandi modus-vivendi)
+        ;; modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted)
+        ;; modus-themes-to-toggle '(modus-operandi-deuteranopia modus-vivendi-deuteranopia)
+        ;; modus-themes-to-toggle '(modus-operandi-tritanopia modus-vivendi-tritanopia)
         modus-themes-to-rotate modus-themes-items
         modus-themes-mixed-fonts t
         modus-themes-variable-pitch-ui t
@@ -26,19 +27,6 @@
           (t . (regular 1.15))))
 
   (setq modus-themes-common-palette-overrides nil)
-
-  ;; I only want the overrides for those two Modus themes.  The rest
-  ;; have their own styles already.
-  ;; (let ((overrides '((bg-hl-line bg-dim)
-  ;;                    (bg-line-number-active bg-hl-line)
-  ;;                    (bg-line-number-inactive unspecified)
-  ;;                    (cursor blue-intense)
-  ;;                    (keybind green-cooler)
-  ;;                    (bg-paren-match unspecified)
-  ;;                    (fg-paren-match magenta-intense)
-  ;;                    (underline-paren-match magenta-intense))))
-  ;;   (setq modus-operandi-palette-overrides overrides
-  ;;         modus-vivendi-palette-overrides overrides))
 
   (modus-themes-load-theme (car modus-themes-to-toggle)))
 
@@ -93,11 +81,11 @@
     ;;   (setq modus-operandi-palette-overrides overrides
     ;;         modus-vivendi-palette-overrides overrides))
 
+
     ;; ;; Make the active mode line have a pseudo 3D effect (this assumes
     ;; ;; you are using the default mode line and not an extra package).
     ;; (custom-set-faces
     ;;  '(mode-line ((t :box (:style unspecified)))))
-
 
     (if (prot-emacs-theme-environment-dark-p)
         (modus-themes-load-theme (cadr modus-themes-to-toggle))

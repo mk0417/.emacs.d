@@ -1,6 +1,6 @@
 ;;; prot-marginalia.el --- Code for my custom mode line -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023  Protesilaos Stavrou
+;; Copyright (C) 2023-2024  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -66,7 +66,7 @@
               (pkg (intern-soft package))
               (desc (or (when (package-desc-p pkg) pkg)
                         (car (alist-get pkg pkg-alist))
-                        (if-let (built-in (assq pkg package--builtins))
+                        (if-let* ((built-in (assq pkg package--builtins)))
                             (package--from-builtin built-in)
                           (car (alist-get pkg package-archive-contents))))))
     (prot-marginalia-display (package-desc-summary desc))))
