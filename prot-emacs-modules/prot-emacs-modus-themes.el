@@ -40,7 +40,7 @@
   ;;   (setq modus-operandi-palette-overrides overrides
   ;;         modus-vivendi-palette-overrides overrides))
 
-  (modus-themes-load-theme (cadr modus-themes-to-toggle)))
+  (modus-themes-load-theme (car modus-themes-to-toggle)))
 
 ;; NOTE: For testing purposes
 (prot-emacs-comment
