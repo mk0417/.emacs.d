@@ -327,6 +327,15 @@ making an abbreviation to a function."
 (require 'init-keybinding)
 (require 'init-keychord)
 
+(add-hook 'emacs-startup-hook
+          (lambda ()
+            (let* ((source-file "~/Dropbox/emacs-zmq.dylib")
+                   (elpa-dir "~/.emacs.d/elpa/")
+                   (zmq-dir (car (directory-files elpa-dir t "^zmq-[0-9]+\\.[0-9]+$")))
+                   (destination-file (expand-file-name (file-name-nondirectory source-file) zmq-dir)))
+              (unless (file-exists-p destination-file)
+                (copy-file source-file destination-file t)))))
+
 ;; For those who use my dotfiles and need an easy way to write their
 ;; own extras on top of what I already load.  The file must exist at
 ;; ~/.emacs.d/prot-emacs-post-custom.el

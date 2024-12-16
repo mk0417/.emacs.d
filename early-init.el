@@ -76,7 +76,7 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
   (set-face-attribute 'mode-line nil :background "#000000" :foreground "#ffffff" :box 'unspecified)
   (add-hook 'after-make-frame-functions #'prot-emacs-re-enable-frame-theme))
 
-(prot-emacs-avoid-initial-flash-of-light)
+;; (prot-emacs-avoid-initial-flash-of-light)
 
 (add-hook 'after-init-hook (lambda () (set-frame-name "home")))
 
