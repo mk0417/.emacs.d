@@ -56,19 +56,19 @@
 (use-package spacious-padding
   :ensure t
   :if (display-graphic-p)
-  ;; :hook (after-init . spacious-padding-mode)
+  :hook (after-init . spacious-padding-mode)
   :bind ("<f8>" . spacious-padding-mode)
   :init
   ;; These are the defaults, but I keep it here for visiibility.
   (setq spacious-padding-widths
-        '( :internal-border-width 30
-           :header-line-width 4
-           :mode-line-width 6
+        '( :internal-border-width 10
+           :header-line-width 3
+           :mode-line-width 3
            :tab-width 4
-           :right-divider-width 30
+           :right-divider-width 20
            :scroll-bar-width 8
-           :left-fringe-width 20
-           :right-fringe-width 20))
+           :left-fringe-width 4
+           :right-fringe-width 4))
 
   ;; (setq spacious-padding-subtle-mode-line
   ;;       `( :mode-line-active ,(if (or (eq prot-emacs-load-theme-family 'modus)
