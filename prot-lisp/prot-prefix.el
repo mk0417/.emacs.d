@@ -103,9 +103,10 @@
   :doc "Prefix keymap for windows."
   :name "Window"
   :prefix 'prot-prefix-window
+  "w" #'split-window-below
+  "v" #'split-window-right
   "d" #'delete-window
   "o" #'delete-other-windows
-  "w" #'other-window
   "u" #'winner-undo
   "r" #'winner-redo
   "b" #'balance-windows-area
@@ -218,6 +219,8 @@
   :name "Prot Prefix"
   :prefix 'prot-prefix
   "'" (lambda () (interactive) (switch-to-buffer nil))
+  "d" #'dired-jump
+  "j" (cons "Jupyter" 'prot-prefix-jupyter)
   "0" #'delete-window
   "1" #'delete-other-windows
   "!" #'delete-other-windows-vertically
@@ -244,9 +247,7 @@
   "u" #'universal-argument
   "v" (cons "Version Control" 'vc-prefix-map)
   "w" (cons "Window" 'prot-prefix-window)
-  "x" (cons "S-EXP" 'prot-prefix-expression)
-  "d" #'dired-jump
-  "j" (cons "Jupyter" 'prot-prefix-jupyter))
+  "x" (cons "S-EXP" 'prot-prefix-expression))
 
 ;; ;; NOTE 2024-02-17: This is not needed anymore, because I bind a cons
 ;; ;; cell to the key.  The `car' of it is the description, which
