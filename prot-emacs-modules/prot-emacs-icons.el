@@ -4,6 +4,7 @@
 
 (use-package nerd-icons-completion
   :ensure t
+  :if (display-graphic-p)
   :after marginalia
   ;; FIXME 2024-09-01: For some reason this stopped working because it
   ;; macroexpands to `marginalia-mode' instead of
@@ -15,6 +16,7 @@
 
 (use-package nerd-icons-dired
   :ensure t
+  :if (display-graphic-p)
   :hook
   (dired-mode . nerd-icons-dired-mode))
 
