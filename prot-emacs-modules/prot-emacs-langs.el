@@ -61,9 +61,14 @@
   :ensure nil
   :functions (eglot-ensure)
   :commands (eglot)
+  :hook (python-mode . eglot-ensure)
   :config
   (setq eglot-sync-connect nil)
-  (setq eglot-autoshutdown t))
+  (setq eglot-autoshutdown t)
+  (setq eglot-ignored-server-capabilities '(:inlayHintProvider))
+  (with-eval-after-load 'eglot
+    (add-to-list 'eglot-server-programs '(python-mode . ("basedpyright-langserver" "--stdio")))
+    (add-to-list 'eglot-stay-out-of 'flymake)))
 
 ;;;; Handle performance for very long lines (so-long.el)
 (use-package so-long

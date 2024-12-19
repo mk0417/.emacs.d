@@ -3,6 +3,7 @@
 ;;; Jupyter
 (use-package jupyter
   :ensure t
+  :commands (jupyter-run-repl)
   :config
   ;; https://github.com/nnicandro/emacs-zmq
   ;; https://github.com/nnicandro/emacs-zmq/issues/19
@@ -57,7 +58,7 @@
   (setq python-indent-guess-indent-offset t)
   (setq elpy-shell-echo-output nil
         python-shell-interpreter "ipython"
-        python-shell-interpreter-args "--simple-prompt -c exec('__import__(\\'readline\\')') -i")
+        python-shell-interpreter-args "-i")
   (add-hook 'python-mode-hook #'electric-pair-mode)
   ;; https://www.topbug.net/blog/2016/09/29/emacs-disable-certain-pairs-for-electric-pair-mode/
   (add-hook
