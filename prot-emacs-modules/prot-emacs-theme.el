@@ -61,14 +61,14 @@
   :init
   ;; These are the defaults, but I keep it here for visiibility.
   (setq spacious-padding-widths
-        '( :internal-border-width 10
-           :header-line-width 3
-           :mode-line-width 3
-           :tab-width 4
+        '( :internal-border-width 12
+           :header-line-width 2
+           :mode-line-width 1
+           :tab-width 2
            :right-divider-width 20
-           :scroll-bar-width 8
-           :left-fringe-width 4
-           :right-fringe-width 4))
+           :scroll-bar-width 2
+           :left-fringe-width 2
+           :right-fringe-width 2))
 
   ;; (setq spacious-padding-subtle-mode-line
   ;;       `( :mode-line-active ,(if (or (eq prot-emacs-load-theme-family 'modus)

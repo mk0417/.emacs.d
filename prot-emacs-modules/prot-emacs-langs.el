@@ -209,7 +209,7 @@
   :config
   ;; Remember to check the doc strings of those variables.
   (setq denote-directory (expand-file-name "~/Dropbox/peng_notes/"))
-  (setq denote-file-type 'text) ; Org is the default file type
+  ;; (setq denote-file-type 'text) ; Org is the default file type
 
   ;; If you want to have a "controlled vocabulary" of keywords,
   ;; meaning that you only use a predefined set of them, then you want
