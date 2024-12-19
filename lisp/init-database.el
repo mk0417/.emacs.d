@@ -1,4 +1,4 @@
-;;; init-default.el --- Databases -*- lexical-binding: t -*-
+;;; init-database.el --- Databases -*- lexical-binding: t -*-
 
 (setq sql-postgres-login-params
       '((user)
