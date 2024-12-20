@@ -65,7 +65,7 @@
   :config
   (setq eglot-sync-connect nil)
   (setq eglot-autoshutdown t)
-  (setq eglot-ignored-server-capabilities '(:inlayHintProvider))
+  (setq eglot-ignored-server-capabilities '(:inlayHintProvider :documentHighlightProvider))
   (with-eval-after-load 'eglot
     (add-to-list 'eglot-server-programs '(python-mode . ("basedpyright-langserver" "--stdio")))
     (add-to-list 'eglot-stay-out-of 'flymake)))

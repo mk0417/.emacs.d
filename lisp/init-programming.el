@@ -3,7 +3,6 @@
 ;;; Jupyter
 (use-package jupyter
   :ensure t
-  :commands (jupyter-run-repl)
   :config
   ;; https://github.com/nnicandro/emacs-zmq
   ;; https://github.com/nnicandro/emacs-zmq/issues/19
@@ -52,23 +51,21 @@
 ;;; Python
 (use-package python
   :ensure nil
+  :hook
+  ((python-mode-hook . electric-pair-mode)
+   (python-mode-hook . (lambda () (setq tab-width 4)))
+   (python-mode-hook . display-fill-column-indicator-mode)
+   ;; https://www.topbug.net/blog/2016/09/29/emacs-disable-certain-pairs-for-electric-pair-mode/
+   (python-mode-hook . (lambda ()
+                         (setq-local electric-pair-inhibit-predicate
+                                     `(lambda (c)
+                                        (if (member c '(?{ ?\[ ?\()) t (,electric-pair-inhibit-predicate c)))))))
   :config
   (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset-verbose nil)
   (setq python-indent-guess-indent-offset t)
-  (setq elpy-shell-echo-output nil
-        python-shell-interpreter "ipython"
-        python-shell-interpreter-args "-i")
-  (add-hook 'python-mode-hook #'electric-pair-mode)
-  ;; https://www.topbug.net/blog/2016/09/29/emacs-disable-certain-pairs-for-electric-pair-mode/
-  (add-hook
-   'python-mode-hook
-   (lambda ()
-     (setq-local electric-pair-inhibit-predicate
-                 `(lambda (c)
-                    (if (member c '(?{ ?\[ ?\()) t (,electric-pair-inhibit-predicate c))))))
-  (add-hook 'python-mode-hook (lambda () (setq tab-width 4)))
-  (add-hook 'python-mode-hook #'display-fill-column-indicator-mode))
+  (setq python-shell-interpreter "ipython"
+        python-shell-interpreter-args "-i"))
 
 ;;; R
 (use-package ess
@@ -79,7 +76,6 @@
   (setq ess-indent-offset 4)
   (setq ess-use-flymake nil)
   (setq ess-indent-with-fancy-comments nil)
-
   (with-eval-after-load 'ess
     ;; disable flymake
     ;; (add-hook 'ess-r-mode-hook (lambda () (flymake-mode -1)))
@@ -89,9 +85,9 @@
 ;;; Julia
 (use-package julia-mode
   :ensure t
-  :config
-  (add-hook 'julia-mode-hook #'display-fill-column-indicator-mode)
-  (add-hook 'julia-mode-hook #'electric-pair-mode))
+  :hook
+  ((julia-mode-hook . display-fill-column-indicator-mode)
+   (julia-mode-hook . electric-pair-mode)))
 
 ;;; HTML
 (use-package htmlize

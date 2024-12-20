@@ -2,8 +2,6 @@
 
 ;; https://github.com/xahlee/xah-fly-keys/blob/master/xah-fly-keys.el
 (defun p-open-in-external-app (&optional Fname)
-  "Open the current file or dired marked files in external app.
-When called in emacs lisp, if Fname is given, open that."
   (interactive)
   (let (xfileList xdoIt)
     (setq xfileList
