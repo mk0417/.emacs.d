@@ -13,6 +13,12 @@
   (setq jupyter-eval-use-overlays t)
   (setq jupyter-org-auto-connect nil)
 
+  (defun p-remove-jupyter-completion ()
+    (setq-local completion-at-point-functions
+                (delq 'jupyter-completion-at-point completion-at-point-functions)))
+
+  (add-hook 'jupyter-repl-interaction-mode-hook #'p-remove-jupyter-completion)
+
   (with-eval-after-load 'org
     (org-babel-do-load-languages 'org-babel-load-languages '((jupyter . t))))
 
