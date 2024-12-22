@@ -91,9 +91,13 @@
 ;;; Julia
 (use-package julia-mode
   :ensure t
-  :hook
-  ((julia-mode-hook . display-fill-column-indicator-mode)
-   (julia-mode-hook . electric-pair-mode)))
+  :config
+  (add-hook 'julia-mode-hook #'display-fill-column-indicator-mode)
+  (add-hook 'julia-mode-hook #'electric-pair-mode))
+
+(use-package eglot-jl
+  :ensure t
+  :hook (julia-mode-hook . eglot-jl-init))
 
 ;;; HTML
 (use-package htmlize
