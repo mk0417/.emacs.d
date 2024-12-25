@@ -61,8 +61,7 @@
   :ensure nil
   :functions (eglot-ensure)
   :commands (eglot)
-  :hook ((python-mode . eglot-ensure)
-         (julia-mode . eglot-ensure))
+  :hook ((python-mode ess-mode julia-mode) . eglot-ensure)
   :config
   (setq eglot-sync-connect nil)
   (setq eglot-autoshutdown t)

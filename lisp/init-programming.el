@@ -3,6 +3,7 @@
 ;;; Jupyter
 (use-package jupyter
   :ensure t
+  :hook (jupyter-repl-interaction-mode . p-remove-jupyter-completion)
   :config
   ;; https://github.com/nnicandro/emacs-zmq
   ;; https://github.com/nnicandro/emacs-zmq/issues/19
@@ -17,23 +18,10 @@
     (setq-local completion-at-point-functions
                 (delq 'jupyter-completion-at-point completion-at-point-functions)))
 
-  (add-hook 'jupyter-repl-interaction-mode-hook #'p-remove-jupyter-completion)
+  ;; (add-hook 'jupyter-repl-interaction-mode-hook #'p-remove-jupyter-completion)
 
   (with-eval-after-load 'org
     (org-babel-do-load-languages 'org-babel-load-languages '((jupyter . t))))
-
-  (defun p-mark-paragraph ()
-    (interactive)
-    (if (region-active-p)
-        (re-search-forward "\n[ \t]*\n[ \t]*\n*" nil 1)
-      (progn
-        (skip-chars-forward " \n\t")
-        (when (re-search-backward "\n[ \t]*\n" nil 1)
-          (goto-char (match-end 0)))
-        (push-mark (point) t t)
-        (re-search-forward "\n[ \t]*\n" nil 1)
-        (previous-line)
-        (end-of-line))))
 
   ;; After new commits of emacs-jupyter upstream,
   ;; jupyter-eval-region has three arguments
@@ -58,11 +46,11 @@
 (use-package python
   :ensure nil
   :hook
-  ((python-mode-hook . electric-pair-mode)
-   (python-mode-hook . (lambda () (setq tab-width 4)))
-   (python-mode-hook . display-fill-column-indicator-mode)
+  ((python-mode . electric-pair-mode)
+   (python-mode . (lambda () (setq tab-width 4)))
+   (python-mode . display-fill-column-indicator-mode)
    ;; https://www.topbug.net/blog/2016/09/29/emacs-disable-certain-pairs-for-electric-pair-mode/
-   (python-mode-hook . (lambda ()
+   (python-mode . (lambda ()
                          (setq-local electric-pair-inhibit-predicate
                                      `(lambda (c)
                                         (if (member c '(?{ ?\[ ?\()) t (,electric-pair-inhibit-predicate c)))))))
@@ -76,28 +64,26 @@
 ;;; R
 (use-package ess
   :ensure t
+  :hook
+  ((ess-mode . display-fill-column-indicator-mode)
+   (ess-mode . electric-pair-mode))
   :config
   (setq ess-imenu-use-S nil)
   (setq ess-imenu-use-p nil)
   (setq ess-indent-offset 4)
   (setq ess-use-flymake nil)
-  (setq ess-indent-with-fancy-comments nil)
-  (with-eval-after-load 'ess
-    ;; disable flymake
-    ;; (add-hook 'ess-r-mode-hook (lambda () (flymake-mode -1)))
-    (add-hook 'ess-mode-hook #'display-fill-column-indicator-mode)
-    (add-hook 'ess-mode-hook #'electric-pair-mode)))
+  (setq ess-indent-with-fancy-comments nil))
 
 ;;; Julia
 (use-package julia-mode
   :ensure t
-  :config
-  (add-hook 'julia-mode-hook #'display-fill-column-indicator-mode)
-  (add-hook 'julia-mode-hook #'electric-pair-mode))
+  :hook
+  ((julia-mode . display-fill-column-indicator-mode)
+   (julia-mode . electric-pair-mode)))
 
 (use-package eglot-jl
   :ensure t
-  :hook (julia-mode-hook . eglot-jl-init))
+  :hook (julia-mode . eglot-jl-init))
 
 ;;; HTML
 (use-package htmlize

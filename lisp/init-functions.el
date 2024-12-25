@@ -1,5 +1,18 @@
 ;;; init-functions.el --- My functions -*- lexical-binding: t -*-
 
+(defun p-mark-paragraph ()
+  (interactive)
+  (if (region-active-p)
+      (re-search-forward "\n[ \t]*\n[ \t]*\n*" nil 1)
+    (progn
+      (skip-chars-forward " \n\t")
+      (when (re-search-backward "\n[ \t]*\n" nil 1)
+        (goto-char (match-end 0)))
+      (push-mark (point) t t)
+      (re-search-forward "\n[ \t]*\n" nil 1)
+      (previous-line)
+      (end-of-line))))
+
 ;; https://github.com/xahlee/xah-fly-keys/blob/master/xah-fly-keys.el
 (defun p-open-in-external-app (&optional Fname)
   (interactive)
@@ -41,19 +54,22 @@
   (let ((file (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))
     (p-open-in-external-app (concat file ".html"))))
 
-(defun p-add-space-around-equal-at-point ()
+(defun p-add-space-around ()
   (interactive)
-  (save-excursion
-    (when (thing-at-point-looking-at "\\s-*\\(=\\)\\s-*")
-      (replace-match " \\1 "))))
+  (when-let* ((char (char-after))) ;; Get the character at point
+    (save-excursion
+      (while (looking-back "\\s-" 1) (delete-char -1))
+      (insert " ")
+      (forward-char 1)
+      (while (looking-at "\\s-") (delete-char 1))
+      (insert " "))))
 
-(defun p-remove-space-around-equal-at-point ()
+(defun p-remove-space-around ()
   (interactive)
-  (save-excursion
-    (when (thing-at-point-looking-at "\\s-*\\(=\\)\\s-*")
-      (replace-match "\\1")))
-  (when (looking-at "=")
-    (search-forward "=" nil t)
-    (backward-char)))
+  (when-let* ((char (char-after)))
+    (save-excursion
+      (while (looking-back "\\s-" 1) (delete-char -1))
+      (forward-char 1)
+      (while (looking-at "\\s-") (delete-char 1)))))
 
 (provide 'init-functions)
