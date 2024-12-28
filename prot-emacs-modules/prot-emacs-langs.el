@@ -63,6 +63,7 @@
   :commands (eglot)
   :hook ((python-mode ess-mode julia-mode) . eglot-ensure)
   :config
+  (setq eglot-connect-timeout 60)
   (setq eglot-sync-connect nil)
   (setq eglot-autoshutdown t)
   (setq eglot-ignored-server-capabilities '(:inlayHintProvider :documentHighlightProvider))
