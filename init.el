@@ -324,6 +324,7 @@ making an abbreviation to a function."
 (require 'init-latex)
 (require 'init-llm)
 (require 'init-database)
+(require 'init-vc)
 (require 'init-keybinding)
 (require 'init-keychord)
 (require 'init-abbrev)
