@@ -1816,16 +1816,11 @@ I also take care to make it work with my customised mode line
            :left-fringe-width 20
            :right-fringe-width 20))
 
-  ;; (setq spacious-padding-subtle-mode-line
-  ;;       `( :mode-line-active ,(if (or (eq prot-emacs-load-theme-family 'modus)
-  ;;                                     (eq prot-emacs-load-theme-family 'standard))
-  ;;                                 'default
-  ;;                               'help-key-binding)
-  ;;          :mode-line-inactive window-divider))
-
   ;; Read the doc string of `spacious-padding-subtle-mode-line' as
   ;; it is very flexible.
-  (setq spacious-padding-subtle-mode-line nil))
+  (setq spacious-padding-subtle-mode-line
+        '( :mode-line-active spacious-padding-subtle-mode-line-active
+           :mode-line-inactive spacious-padding-subtle-mode-line-inactive)))
 #+end_src
 
 *** The =prot-emacs-theme.el= section for ~rainbow-mode~
@@ -4862,6 +4857,8 @@ The extras I provide for ~vertico~ are in [[#h:3796a4c9-8659-4782-8aaa-3cf4e9509
     ("<up>" . prot-vertico-private-previous)
     ("C-l" . vertico-multiform-vertical))
   :config
+  (setq vertico-multiform-commands
+        `(("consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\)" ,@prot-vertico-multiform-maximal)))
   (setq vertico-multiform-categories
         `(;; Maximal
           (embark-keybinding ,@prot-vertico-multiform-maximal)
@@ -4871,7 +4868,6 @@ The extras I provide for ~vertico~ are in [[#h:3796a4c9-8659-4782-8aaa-3cf4e9509
           (unicode-name ,@prot-vertico-multiform-maximal)
           ;; Minimal
           (file ,@prot-vertico-multiform-minimal
-                (vertico-preselect . prompt)
                 (vertico-sort-function . prot-vertico-sort-directories-first))
           (t ,@prot-vertico-multiform-minimal)))
 
@@ -9456,7 +9452,8 @@ confirmation where needed.
   :config
   (setq notmuch-mua-compose-in 'current-window)
   (setq notmuch-mua-hidden-headers nil)
-  (setq notmuch-address-command 'internal) ; NOTE 2024-01-09: I am not using this and must review it.
+  (setq notmuch-address-command 'internal)
+  (setq notmuch-address-use-company nil)
   (setq notmuch-always-prompt-for-sender t)
   (setq notmuch-mua-cite-function 'message-cite-original-without-signature)
   (setq notmuch-mua-reply-insert-header-p-function 'notmuch-show-reply-insert-header-p-never)
@@ -9467,7 +9464,27 @@ confirmation where needed.
   (setq notmuch-mua-attachment-regexp   ; see `notmuch-mua-send-hook'
         (concat "\\b\\(attache\?ment\\|attached\\|attach\\|"
                 "pi[èe]ce\s+jointe?\\|"
-                "συνημμ[εέ]νο\\|επισυν[αά]πτω\\)\\b")))
+                "συνημμ[εέ]νο\\|επισυν[αά]πτω\\)\\b"))
+
+  (defun prot-notmuch-message-tab ()
+    "Override for `message-tab' to enforce header line check.
+More specifically, perform address completion when on a relevant header
+line, because `message-tab' sometimes (not sure when/how) fails to do
+that and instead tries to complete against dictionary entries."
+    (interactive nil message-mode)
+    (cond
+     ((save-excursion
+        (goto-char (line-beginning-position))
+        (looking-at notmuch-address-completion-headers-regexp))
+      (notmuch-address-expand-name)
+      ;; Completion was performed; nothing else to do.
+      nil)
+     (message-tab-body-function (funcall message-tab-body-function))
+     (t (funcall (or (lookup-key text-mode-map "\t")
+                     (lookup-key global-map "\t")
+                     'indent-relative)))))
+
+  (advice-add #'message-tab :override #'prot-notmuch-message-tab))
 #+end_src
 
 **** The =prot-emacs-notmuch.el= section about reading messages
@@ -17256,7 +17273,8 @@ function.  Then you can control the buffer's specifics via
                              :prompt    ""
                              :separator ""
                              :ellipsis  ""
-                             :no-match  "")))
+                             :no-match  ""))
+    (vertico-preselect . prompt))
   "List of configurations for minimal Vertico multiform.
 The minimal view is intended to be more private or less
 revealing.  This is important when, for example, a prompt shows
@@ -17270,6 +17288,7 @@ automatically.")
 
 (defvar prot-vertico-multiform-maximal
   '((vertico-count . 10)
+    (vertico-preselect . directory)
     (vertico-resize . t))
   "List of configurations for maximal Vertico multiform.")
 
@@ -17289,7 +17308,7 @@ automatically.")
 This is done to accommodate `prot-vertico-multiform-minimal'."
   (interactive)
   (if vertico-unobtrusive-mode
-      (let ((vertico--index 0))
+      (progn
         (vertico-multiform-vertical)
         (vertico-next 1))
     (vertico-next 1)))
@@ -17311,7 +17330,7 @@ This is done to accommodate `prot-vertico-multiform-minimal'."
   (if (and vertico-unobtrusive-mode (> vertico--total 1))
       (progn
         (minibuffer-complete)
-        (vertico-multiform-vertical))
+        (prot-vertico-private-next))
     (vertico-insert)))
 
 (provide 'prot-vertico)

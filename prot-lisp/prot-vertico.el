@@ -40,7 +40,8 @@
                              :prompt    ""
                              :separator ""
                              :ellipsis  ""
-                             :no-match  "")))
+                             :no-match  ""))
+    (vertico-preselect . prompt))
   "List of configurations for minimal Vertico multiform.
 The minimal view is intended to be more private or less
 revealing.  This is important when, for example, a prompt shows
@@ -54,6 +55,7 @@ automatically.")
 
 (defvar prot-vertico-multiform-maximal
   '((vertico-count . 10)
+    (vertico-preselect . directory)
     (vertico-resize . t))
   "List of configurations for maximal Vertico multiform.")
 
@@ -73,7 +75,7 @@ automatically.")
 This is done to accommodate `prot-vertico-multiform-minimal'."
   (interactive)
   (if vertico-unobtrusive-mode
-      (let ((vertico--index 0))
+      (progn
         (vertico-multiform-vertical)
         (vertico-next 1))
     (vertico-next 1)))
@@ -95,7 +97,7 @@ This is done to accommodate `prot-vertico-multiform-minimal'."
   (if (and vertico-unobtrusive-mode (> vertico--total 1))
       (progn
         (minibuffer-complete)
-        (vertico-multiform-vertical))
+        (prot-vertico-private-next))
     (vertico-insert)))
 
 (provide 'prot-vertico)
