@@ -27,7 +27,7 @@ before all other modules of my setup."
                  (const :tag "The `standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
-(defcustom prot-emacs-completion-ui 'mct
+(defcustom prot-emacs-completion-ui 'vertico
   "Choose minibuffer completion UI between `mct' or `vertico'.
 If the value is nil, the default completion user interface is
 used.  On Emacs 30, this is close the experience with `mct'.

@@ -2018,10 +2018,8 @@ Also check my ~show-font~ package ([[#h:60a005be-77bd-49f1-a865-78d7cf75bd2a][Th
 ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
 (use-package fontaine
   :ensure t
-  :if (display-graphic-p)
   :hook
-  ;; Persist the latest font preset when closing/starting Emacs and
-  ;; while switching between themes.
+  ;; Persist the latest font preset when closing/starting Emacs.
   ((after-init . fontaine-mode)
    (after-init . (lambda ()
                    ;; Set last preset or fall back to desired style from `fontaine-presets'.
@@ -4851,6 +4849,8 @@ The extras I provide for ~vertico~ are in [[#h:3796a4c9-8659-4782-8aaa-3cf4e9509
     ("M-," . vertico-quick-insert)
     ("M-." . vertico-quick-exit)
     :map vertico-multiform-map
+    ("RET" . prot-vertico-private-exit)
+    ("<return>" . prot-vertico-private-exit)
     ("C-n" . prot-vertico-private-next)
     ("<down>" . prot-vertico-private-next)
     ("C-p" . prot-vertico-private-previous)
@@ -17332,6 +17332,28 @@ This is done to accommodate `prot-vertico-multiform-minimal'."
         (minibuffer-complete)
         (prot-vertico-private-next))
     (vertico-insert)))
+
+(defun prot-vertico-private-exit ()
+  "Exit with the candidate if `prot-vertico-multiform-minimal'.
+If there are more candidates that match the given input, expand the
+minibuffer to show the remaining candidates and select the first one.
+Else do `vertico-exit'."
+  (interactive)
+  (cond
+   ((= vertico--total 1)
+    (minibuffer-complete)
+    (vertico-exit))
+   ((and vertico-unobtrusive-mode
+         (or (string-empty-p (car vertico--input))
+             minibuffer-default
+             (eq vertico-preselect 'directory)
+             (eq vertico-preselect 'prompt)))
+    (vertico-exit-input))
+   ((and vertico-unobtrusive-mode (> vertico--total 1))
+    (minibuffer-complete)
+    (prot-vertico-private-next))
+   (t
+    (vertico-exit))))
 
 (provide 'prot-vertico)
 ;;; prot-vertico.el ends here

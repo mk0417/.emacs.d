@@ -100,5 +100,27 @@ This is done to accommodate `prot-vertico-multiform-minimal'."
         (prot-vertico-private-next))
     (vertico-insert)))
 
+(defun prot-vertico-private-exit ()
+  "Exit with the candidate if `prot-vertico-multiform-minimal'.
+If there are more candidates that match the given input, expand the
+minibuffer to show the remaining candidates and select the first one.
+Else do `vertico-exit'."
+  (interactive)
+  (cond
+   ((= vertico--total 1)
+    (minibuffer-complete)
+    (vertico-exit))
+   ((and vertico-unobtrusive-mode
+         (or (string-empty-p (car vertico--input))
+             minibuffer-default
+             (eq vertico-preselect 'directory)
+             (eq vertico-preselect 'prompt)))
+    (vertico-exit-input))
+   ((and vertico-unobtrusive-mode (> vertico--total 1))
+    (minibuffer-complete)
+    (prot-vertico-private-next))
+   (t
+    (vertico-exit))))
+
 (provide 'prot-vertico)
 ;;; prot-vertico.el ends here
