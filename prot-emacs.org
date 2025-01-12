@@ -6154,11 +6154,6 @@ to a certain height.
             ;; below current window
             ("\\(\\*Capture\\*\\|CAPTURE-.*\\)"
              (display-buffer-reuse-mode-window display-buffer-below-selected))
-            ("\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
-             (display-buffer-reuse-mode-window display-buffer-below-selected)
-             (window-height . 0.1)
-             (dedicated . t)
-             (preserve-size . (t . t)))
             ((derived-mode . reb-mode) ; M-x re-builder
              (display-buffer-reuse-mode-window display-buffer-below-selected)
              (window-height . 4) ; note this is literal lines, not relative
@@ -6170,6 +6165,7 @@ to a certain height.
                     (derived-mode . log-view-mode)
                     (derived-mode . help-mode) ; See the hooks for `visual-line-mode'
                     "\\*\\(|Buffer List\\|Occur\\|vc-change-log\\|eldoc.*\\).*"
+                    "\\*\\vc-\\(incoming\\|outgoing\\|git : \\).*"
                     prot-window-shell-or-term-p
                     ;; ,world-clock-buffer-name
                     ))
@@ -17347,13 +17343,13 @@ Else do `vertico-exit'."
     (minibuffer-complete)
     (vertico-exit))
    ((and vertico-unobtrusive-mode
-         (or (string-empty-p (car vertico--input))
-             minibuffer-default
+         (string-empty-p (minibuffer-contents))
+         (or minibuffer-default
              (eq vertico-preselect 'directory)
              (eq vertico-preselect 'prompt)))
     (vertico-exit-input))
    ((and vertico-unobtrusive-mode (> vertico--total 1))
-    (minibuffer-complete)
+    (minibuffer-complete-and-exit)
     (prot-vertico-private-next))
    (t
     (vertico-exit))))
