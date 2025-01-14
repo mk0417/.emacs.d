@@ -503,6 +503,6 @@ to be cycling through the edits."
          ((eq battery-status-function #'battery-linux-proc-acpi)
 	      "⏻%b%p%%,%d°C ")
 	     (battery-status-function
-	      "⏻ %b%p%% "))))
+	      "⏻%b%p%% "))))
 
 (provide 'prot-emacs-essentials)
