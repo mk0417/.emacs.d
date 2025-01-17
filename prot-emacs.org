@@ -6129,7 +6129,7 @@ to a certain height.
              (display-buffer-no-window)
              (allow-no-window . t))
             ;; bottom side window
-            ("\\*Org \\(Select\\|Note\\)\\*" ; the `org-capture' key selection and `org-add-log-note'
+            ("\\*\\(Org \\(Select\\|Note\\)\\|Agenda Commands\\)\\*" ; the `org-capture' key selection and `org-add-log-note'
              (display-buffer-in-side-window)
              (dedicated . t)
              (side . bottom)
@@ -17343,8 +17343,9 @@ Else do `vertico-exit'."
     (minibuffer-complete)
     (vertico-exit))
    ((and vertico-unobtrusive-mode
-         (string-empty-p (minibuffer-contents))
-         (or minibuffer-default
+         (not minibuffer--require-match)
+         (or (string-empty-p (minibuffer-contents))
+             minibuffer-default
              (eq vertico-preselect 'directory)
              (eq vertico-preselect 'prompt)))
     (vertico-exit-input))
