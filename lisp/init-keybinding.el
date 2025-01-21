@@ -116,8 +116,8 @@
    '("nx" . p-remove-space-around)
 
    ;; prefix f
-   ;; '("fa" . lsp-bridge-find-def)
-   ;; '("fb" . lsp-bridge-find-def-return)
+   '("fa" . lsp-bridge-find-def)
+   '("fb" . lsp-bridge-find-def-return)
    '("fc" . prot-comment)
    '("fe" . eval-buffer)
    '("ff" . find-file)
