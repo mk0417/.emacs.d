@@ -51,9 +51,9 @@
    (python-mode . display-fill-column-indicator-mode)
    ;; https://www.topbug.net/blog/2016/09/29/emacs-disable-certain-pairs-for-electric-pair-mode/
    (python-mode . (lambda ()
-                         (setq-local electric-pair-inhibit-predicate
-                                     `(lambda (c)
-                                        (if (member c '(?{ ?\[ ?\()) t (,electric-pair-inhibit-predicate c)))))))
+                    (setq-local electric-pair-inhibit-predicate
+                                `(lambda (c)
+                                   (if (member c '(?{ ?\[ ?\()) t (,electric-pair-inhibit-predicate c)))))))
   :config
   (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset-verbose nil)
@@ -81,9 +81,9 @@
   ((julia-mode . display-fill-column-indicator-mode)
    (julia-mode . electric-pair-mode)))
 
-;; (use-package eglot-jl
-;;   :ensure t
-;;   :hook (julia-mode . eglot-jl-init))
+(use-package eglot-jl
+  :ensure t
+  :hook (julia-mode . eglot-jl-init))
 
 ;;; HTML
 (use-package htmlize
