@@ -2046,9 +2046,7 @@ Also check my ~show-font~ package ([[#h:60a005be-77bd-49f1-a865-78d7cf75bd2a][Th
            :variable-pitch-family "Iosevka Comfy Wide Motion Duo"
            :bold-weight extrabold)
           (small
-           :default-height 80
-           :default-weight light
-           :bold-weight extrabold)
+           :default-height 80)
           (regular) ; like this it uses all the fallback values and is named `regular'
           (medium
            :default-weight semilight
@@ -2180,7 +2178,7 @@ To actually set fonts, I use my ~fontaine~ package ([[#h:cb41fef0-41a5-4a85-9552
 (use-package show-font
   :ensure t
   :if (display-graphic-p)
-  :commands (show-font-select-preview show-font-list)
+  :commands (show-font-select-preview show-font-list show-font-tabulated)
   :config
   ;; These are the defaults, but I keep them here for easier access.
   (setq show-font-pangram 'prot)
@@ -2412,7 +2410,17 @@ here:
 (use-package prot-common
   :ensure nil
   :functions (prot-common-truncate-lines-silently)
-  :hook ((fundamental-mode text-mode prog-mode dired-mode) . prot-common-truncate-lines-silently)
+  :hook ((text-mode prog-mode dired-mode prot/fundamental-mode) . prot-common-truncate-lines-silently)
+  :init
+  (defvar prot/fundamental-mode-hook nil
+    "Normal hook for `fundamental-mode' (which is missing by default).")
+
+  (defun prot/fundamental-mode-run-hook (&rest args)
+    "Apply ARGS and then run `prot/fundamental-mode-hook'."
+    (apply args)
+    (run-hooks 'prot/fundamental-mode-hook))
+
+  (advice-add #'fundamental-mode :around #'prot/fundamental-mode-run-hook)
   :config
   ;; NEVER tell me which key can call a command that I specifically
   ;; invoked with M-x: I have a good reason to use it that way.
@@ -9685,19 +9693,23 @@ respectively.
   :config
   (setq notmuch-indicator-args
         '(( :terms "tag:unread and tag:inbox"
-            :label "[A] "
+            ;; :label "[A] "
+            :label "📥 "
             :label-face prot-modeline-indicator-green
             :counter-face prot-modeline-indicator-green)
           ( :terms "tag:unread and tag:inbox and not tag:package and not tag:coach"
-            :label "[U] "
+            ;; :label "[U] "
+            :label "💬 "
             :label-face prot-modeline-indicator-cyan
             :counter-face prot-modeline-indicator-cyan)
           ( :terms "tag:unread and tag:package and tag:inbox"
-            :label "[P] "
+            ;; :label "[P] "
+            :label "📦 "
             :label-face prot-modeline-indicator-magenta
             :counter-face prot-modeline-indicator-magenta)
           ( :terms "tag:unread and tag:coach and tag:inbox"
-            :label "[C] "
+            ;; :label "[C] "
+            :label "🏆 "
             :label-face prot-modeline-indicator-red
             :counter-face prot-modeline-indicator-red))
 
@@ -16239,6 +16251,15 @@ Used by `prot-simple-inset-date'."
   (push-mark (car bounds))
   (goto-char (cdr bounds))
   (activate-mark))
+
+;;;###autoload
+(defun prot-simple-sudo ()
+  "Find the current file or directory using SUDO."
+  (interactive)
+  (let ((destination (or buffer-file-name default-directory)))
+    (if (string= (file-remote-p destination 'method) "sudo")
+        (user-error "Already using `sudo'")
+      (find-file (format "/sudo::/%s" destination)))))
 
 ;;;###autoload
 (defun prot-simple-mark-sexp ()
