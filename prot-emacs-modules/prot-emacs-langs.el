@@ -63,6 +63,8 @@
   :commands (eglot)
   :hook ((python-mode ess-mode julia-mode) . eglot-ensure)
   :config
+  (fset #'jsonrpc--log-event #'ignore)
+  (setq jsonrpc-event-hook nil)
   (setq eglot-connect-timeout 90)
   (setq eglot-sync-connect nil)
   (setq eglot-autoshutdown t)
