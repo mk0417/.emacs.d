@@ -78,6 +78,7 @@
     ("s" . org-narrow-to-subtree)
     :map ctl-x-x-map
     ("i" . prot-org-id-headlines)
+    ("r" . prot-org-id-headlines-readable)
     ("h" . prot-org-ox-html))
   :config
   ;; My custom extras, which I use for the agenda and a few other Org features.
