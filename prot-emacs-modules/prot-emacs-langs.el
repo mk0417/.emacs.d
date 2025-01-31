@@ -61,7 +61,7 @@
   :ensure nil
   :functions (eglot-ensure)
   :commands (eglot)
-  :hook ((python-mode ess-mode julia-mode) . eglot-ensure)
+  ;; :hook ((python-mode ess-mode julia-mode) . eglot-ensure)
   :config
   (fset #'jsonrpc--log-event #'ignore)
   (setq jsonrpc-event-hook nil)

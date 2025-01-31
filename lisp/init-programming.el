@@ -81,9 +81,9 @@
   ((julia-mode . display-fill-column-indicator-mode)
    (julia-mode . electric-pair-mode)))
 
-(use-package eglot-jl
-  :ensure t
-  :hook (julia-mode . eglot-jl-init))
+;; (use-package eglot-jl
+;;   :ensure t
+;;   :hook (julia-mode . eglot-jl-init))
 
 ;;; HTML
 (use-package htmlize
