@@ -10385,6 +10385,9 @@ change the XDG directory but then you know what you are doing). Just
 as with ~mbsync~, I retrieve the user name and password via commands
 that read from the =~/.authinfo= file ([[#h:bf540a85-12a6-4005-bf00-2ff3370e5adb][Contents of my =.mbsyncrc=]]).
 
+# I know about the Org '#+include' directive but this file rarely
+# changes so I do not mind copying it here directly.
+
 #+begin_example sh
 # See my mbsync config, which is reflected here.
 # https://github.com/protesilaos/dotfiles
@@ -10432,31 +10435,64 @@ account default : gandi
 :CUSTOM_ID: h:f23d9cef-ab7b-4486-a070-9c7ae664eadf
 :END:
 
-*** TODO The =prot-emacs-web.el= settings about following links (~browse-url~)
+*** The =prot-emacs-web.el= settings about following links (~browse-url~)
 :PROPERTIES:
 :CUSTOM_ID: h:edb70963-d590-4959-bc59-1e5435c8e78a
 :END:
+
+The built-in ~browse-url~ package makes it possible to open a web page
+from inside Emacs. Where that web page is opened depends either on the
+specific command used to pick a web browser or on the value of the
+user option ~browse-url-browser-function~. In the latter case, Emacs
+will use whichever browser the user specifies (well, technically, it
+will call the given function which is responsible for setting up the
+browser).
+
+I generally prefer to open links inside of Emacs using the EWW
+browser ([[#h:b09b4fce-31fe-4381-a49a-6a7206ac5f1b][The =prot-emacs-web.el= settings about the web browser (~eww~)]]).
+Emacs it can render HTML well, although it does not handle CSS and
+JavaScript ([[#h:60483672-aeb6-427b-bbef-54a5c31e39ab][The =prot-emacs-web.el= settings about the Simple HTML Renderer (~shr~)]]).
+If the page cannot be displayed properly because it depends on some
+JavaScript functionality, then I use the command ~eww-browse-with-external-browser~,
+which is bound to ~&~ by default, to open the page in whichever
+browser I have specified in the ~browse-url-secondary-browser-function~.
+
+Overall, this approach works nicely with email in Emacs as well as
+with RSS and IRC clients:
+
+- [[#h:755e195b-9471-48c7-963b-33055969b4e2][The =prot-emacs-email.el= module]]
+- [[#h:adc258d3-f444-4bb5-8a8d-43025a689167][The =prot-emacs-web.el= RSS/Atom reader (~elfeed~)]]
+- [[#h:b9e6834b-e636-414e-8c50-9e04ba77a0a3][The =prot-emacs-web.el= settings for the IRC client]]
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-web.el" :mkdirp yes
 ;;;; `browse-url'
 (use-package browse-url
   :ensure nil
-  :defer 1
+  :commands
+  ( browse-url browse-url-at-point browse-url-at-mouse browse-url-of-file
+    browse-url-firefox browse-url-chromium browse-url-epiphany)
   :config
   (setq browse-url-browser-function 'eww-browse-url)
   (setq browse-url-secondary-browser-function 'browse-url-default-browser))
 #+end_src
 
-*** TODO The =prot-emacs-web.el= settings about buttonising links (~goto-addr~)
+*** The =prot-emacs-web.el= settings about buttonising links (~goto-addr~)
 :PROPERTIES:
 :CUSTOM_ID: h:7639683b-4b6f-42ee-9ae0-76eeec6fee9a
 :END:
+
+The built-in ~goto-addr~ is used to turn any plain text web URL into a
+clickable button. All we need is to enable the ~goto-addr-mode~ (or
+its programming variant ~goto-addr-prog-mode~). I personally do not
+use this directly, though there are other packages that may request
+the functionality. As such, I define the configurations I prefer to
+have, which are strictly stylistic.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-web.el"
 ;;;; `goto-addr'
 (use-package goto-addr
   :ensure nil
-  :defer t
+  :commands (goto-addr-mode goto-addr-prog-mode)
   :config
   (setq goto-address-url-face 'link)
   (setq goto-address-url-mouse-face 'highlight)
@@ -10464,10 +10500,35 @@ account default : gandi
   (setq goto-address-mail-mouse-face 'highlight))
 #+end_src
 
-*** TODO The =prot-emacs-web.el= settings about the Simple HTML Renderer (~shr~)
+*** The =prot-emacs-web.el= settings about the Simple HTML Renderer (~shr~)
 :PROPERTIES:
 :CUSTOM_ID: h:60483672-aeb6-427b-bbef-54a5c31e39ab
 :END:
+
+Emacs can render HTML and is thus capable of displaying web pages and
+richly formatted emails. The core funtionality is handled by the
+built-in Simple HTML Renderer (~shr~). Other tools are available to
+navigate to web pages:
+
+- [[#h:edb70963-d590-4959-bc59-1e5435c8e78a][The =prot-emacs-web.el= settings about following links (~browse-url~)]]
+- [[#h:7639683b-4b6f-42ee-9ae0-76eeec6fee9a][The =prot-emacs-web.el= settings about buttonising links (~goto-addr~)]]
+- [[#h:b09b4fce-31fe-4381-a49a-6a7206ac5f1b][The =prot-emacs-web.el= settings about the web browser (~eww~)]]
+
+What Emacs cannot do as of this writing (2025-02-03) is parse CSS and
+run JavaScript. This means that modern web pages will generally not
+work as expected or not load any contents at all. This should not be a
+problem for HTML email, but it makes much of the World Wide Web
+unusable.
+
+For me, this limitation is not a real problem as the stuff I read is
+fine without the bells and whistles of CSS and JavaScript. What I have
+here are settings to make HTML look the way I prefer. The two most
+important variables in this regard are ~shr-use-colors~ and
+~shr-use-fonts~ because (i) I want web pages to always use my theme
+colours instead of hardcoding their own and (ii) I do not want SHR to
+render text in ~variable-pitch~ because for me the right way to opt in
+to this feature is by enabling ~variable-pitch-mode~ in the given
+buffer (as I do, for example, via the ~text-mode-hook~ ([[#h:60d6aae2-6e4b-402c-b6a8-411fc49a6857][The =prot-emacs-theme.el= section about ~variable-pitch-mode~ and font resizing]])).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-web.el"
 ;;;; `shr' (Simple HTML Renderer)
@@ -10476,10 +10537,10 @@ account default : gandi
   :defer t
   :config
   (setq shr-use-colors nil)             ; t is bad for accessibility
-  (setq shr-use-fonts nil)              ; t is not for me
+  (setq shr-use-fonts nil)              ; t is superfluous, given `variable-pitch-mode'
   (setq shr-max-image-proportion 0.6)
   (setq shr-image-animate nil)          ; No GIFs, thank you!
-  (setq shr-width fill-column)          ; check `prot-eww-readable'
+  (setq shr-width fill-column)
   (setq shr-max-width fill-column)
   (setq shr-discard-aria-hidden t)
   (setq shr-fill-text nil)              ; Emacs 31
