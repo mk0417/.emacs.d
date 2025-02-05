@@ -2037,46 +2037,36 @@ Also check my ~show-font~ package ([[#h:60a005be-77bd-49f1-a865-78d7cf75bd2a][Th
   ;; completeness.
   (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
+  ;; The font family is my design: <https://github.com/protesilaos/aporetic>.
   (setq fontaine-presets
-        '((tiny
-           :default-family "Iosevka Comfy Wide"
-           :default-height 70
-           :default-weight light
-           :fixed-pitch-family "Iosevka Comfy Wide"
-           :variable-pitch-family "Iosevka Comfy Wide Motion Duo"
-           :bold-weight extrabold)
-          (small
+        '((small
            :default-height 80)
           (regular) ; like this it uses all the fallback values and is named `regular'
           (medium
-           :default-weight semilight
+           :default-family "Aporetic Serif Mono"
            :default-height 115
-           :bold-weight extrabold)
-          (live-stream
-           :default-family "Iosevka Comfy Wide Motion"
-           :default-height 130
-           :default-weight light
-           :fixed-pitch-family "Iosevka Comfy Wide Motion"
-           :variable-pitch-family "Iosevka Comfy Wide Duo"
-           :bold-weight extrabold)
+           :fixed-pitch-family "Aporetic Serif Mono"
+           :variable-pitch-family "Aporetic Sans")
           (large
            :inherit medium
            :default-height 150)
           (presentation
+           :inherit medium
            :default-height 180)
           (jumbo
+           :inherit medium
            :default-height 260)
           (t
            ;; I keep all properties for didactic purposes, but most can be
            ;; omitted.  See the fontaine manual for the technicalities:
            ;; <https://protesilaos.com/emacs/fontaine>.
-           :default-family "Iosevka Comfy"
+           :default-family "Aporetic Sans Mono"
            :default-weight regular
            :default-slant normal
            :default-width normal
            :default-height 100
 
-           :fixed-pitch-family "Iosevka Comfy"
+           :fixed-pitch-family "Aporetic Sans Mono"
            :fixed-pitch-weight nil
            :fixed-pitch-slant nil
            :fixed-pitch-width nil
@@ -2088,7 +2078,7 @@ Also check my ~show-font~ package ([[#h:60a005be-77bd-49f1-a865-78d7cf75bd2a][Th
            :fixed-pitch-serif-width nil
            :fixed-pitch-serif-height 1.0
 
-           :variable-pitch-family "Iosevka Comfy Motion Duo"
+           :variable-pitch-family "Aporetic Serif"
            :variable-pitch-weight nil
            :variable-pitch-slant nil
            :variable-pitch-width nil
@@ -2245,10 +2235,38 @@ adjust the current buffer's text size ([[#h:6b6778af-8bd2-4f97-a794-e23774aa6cf3
    ("C-x C-0" . global-text-scale-adjust)))
 #+end_src
 
+**** Information about my Aporetic fonts
+:PROPERTIES:
+:CUSTOM_ID: h:448972b2-ed15-4c1b-bb36-3906118c0978
+:END:
+
+[ This is the successor of my discontinued /Iosevka Comfy/ fonts
+  ([[#h:3b989679-7e3f-4f03-b4bb-611006ea01ce][Information about my Iosevka Comfy fonts]]). ]
+
+/Aporetic/ is a family of fonts that is designed for reading comfort.
+It has a consistent rounded style with open shapes. /Aporetic/ fonts
+come in monospaced and proportionately spaced sizes as well as serif
+and sans-serif variants. Thus:
+
+- Aporetic Sans
+- Aporetic Serif
+- Aporetic Sans Mono
+- Aporetic Serif Mono
+
+Sources:
+
++ Git repository: <https://github.com/protesilaos/aporetic>.
++ Sample pictures: <https://protesilaos.com/emacs/aporetic-fonts-pictures>
++ Backronym: Aporetic's Predecessor Objects' Reserved Eponym Truly Included "Comfy".
+
 **** Information about my Iosevka Comfy fonts
 :PROPERTIES:
 :CUSTOM_ID: h:3b989679-7e3f-4f03-b4bb-611006ea01ce
 :END:
+
+[ As of 2025-02-04, the Iosevka Comfy project is discontinued. The
+  main reason is that "Iosevka" is a reserved name. See my Aporetic
+  fonts instead ([[#h:448972b2-ed15-4c1b-bb36-3906118c0978][Information about my Aporetic fonts]]). ]
 
 /Iosevka Comfy/ is a customised build of the Iosevka typeface, with a
 consistent rounded style and overrides for almost all individual
@@ -4651,10 +4669,10 @@ completion styles where I configure pattern-matching algorithms
 accordingly ([[#h:14b09958-279e-4069-81e3-5a16c9b69892][The =prot-emacs-completion.el= settings for completion styles]]).
 
 The out-of-the-box settings of ~marginalia~ are perfectly usable.
-Though there are some categories that I either do not want to annotate
-(like =file=) or that I want to tweak their presentation of. You will
-thus notice how my =prot-marginalia.el= configures the user option
-~marginalia-annotator-registry~ ([[#h:92085a6d-213f-400d-be83-763eb80a3877][The =prot-marginalia.el= library]]).
+We can always write our own functions or opt out of some annotations
+by modifying the user option ~marginalia-annotator-registry~. I used
+to do that, but ultimately decided that I did not need to make any
+changes.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;; Detailed completion annotations (marginalia.el)
@@ -4663,23 +4681,6 @@ thus notice how my =prot-marginalia.el= configures the user option
   :hook (after-init . marginalia-mode)
   :config
   (setq marginalia-max-relative-age 0)) ; absolute time
-
-;;;; Custom completion annotations
-(use-package prot-marginalia
-  :ensure nil
-  :after marginalia
-  :config
-  (setq marginalia-annotator-registry
-        '((bookmark prot-marginalia-bookmark)
-          (buffer prot-marginalia-buffer)
-          (command marginalia-annotate-command)
-          (function prot-marginalia-symbol)
-          (symbol prot-marginalia-symbol)
-          (variable prot-marginalia-symbol)
-          (face marginalia-annotate-face)
-          (imenu marginalia-annotate-imenu)
-          (package prot-marginalia-package)
-          (unicode-name marginalia-annotate-char))))
 #+end_src
 
 *** The =prot-emacs-completion.el= setting to load a minibuffer UI submodule
@@ -5790,7 +5791,9 @@ are where we need to be.
   ;;         (preserve-size . (t . t))
   ;;         (window-parameters . ((mode-line-format . none)
   ;;                               (header-line-format . none)))))
-  )
+
+  (setq dired-preview-display-action-alist
+        #'dired-preview-display-action-alist-below))
 #+end_src
 
 *** The =prot-emacs-dired.el= section about multimedia previews (~ready-player~)
@@ -10547,16 +10550,27 @@ buffer (as I do, for example, via the ~text-mode-hook~ ([[#h:60d6aae2-6e4b-402c-
   (setq shr-cookie-policy nil))
 #+end_src
 
-*** TODO The =prot-emacs-web.el= settings about browser cookies
+*** The =prot-emacs-web.el= settings about browser cookies
 :PROPERTIES:
 :CUSTOM_ID: h:399f1ec8-30e6-40c3-931b-e7c7409716c8
 :END:
+
+The built-in ~url-cookie~ provides functionality to handle cookies in
+web pages. For example, we can use the command ~url-cookie-list~ to
+produce a listing of all the cookies that are set by the current web
+page. Personally, I prefer to reject all cookies when I browse the web
+through Emacs, so I set the variable ~url-cookie-untrusted-urls~ to
+not trust any page. Whatever we set here will affect the behaviour of
+~eww~, though not of external browsers:
+
+- [[#h:edb70963-d590-4959-bc59-1e5435c8e78a][The =prot-emacs-web.el= settings about following links (~browse-url~)]]
+- [[#h:b09b4fce-31fe-4381-a49a-6a7206ac5f1b][The =prot-emacs-web.el= settings about the web browser (~eww~)]]
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-web.el"
 ;;;; `url-cookie'
 (use-package url-cookie
   :ensure nil
-  :defer t
+  :commands (url-cookie-list)
   :config
   (setq url-cookie-untrusted-urls '(".*")))
 #+end_src
@@ -10570,9 +10584,14 @@ buffer (as I do, for example, via the ~text-mode-hook~ ([[#h:60d6aae2-6e4b-402c-
 ;;;; `eww' (Emacs Web Wowser)
 (use-package eww
   :ensure nil
+  :after prot-simple
   :commands (eww)
   :bind
-  ( :map eww-link-keymap
+  ( :map eww-mode-map
+    ("S" . nil) ; unmap `eww-list-buffers'
+    ("b" . prot-simple-buffers-major-mode) ; a general version to show buffer of current mode
+    ("m" . bookmark-set)
+    :map eww-link-keymap
     ("v" . nil) ; stop overriding `eww-view-source'
     :map eww-mode-map
     ("L" . eww-list-bookmarks)
@@ -10583,19 +10602,12 @@ buffer (as I do, for example, via the ~text-mode-hook~ ([[#h:60d6aae2-6e4b-402c-
     :map eww-bookmark-mode-map
     ("d" . eww-bookmark-kill)) ; same
   :config
-  (setq eww-restore-desktop t)
-  (setq eww-desktop-remove-duplicates t)
+  (setq eww-auto-rename-buffer 'title)
   (setq eww-header-line-format nil)
-  (setq eww-search-prefix "https://duckduckgo.com/html/?q=")
-  (setq eww-download-directory (expand-file-name "~/Documents/eww-downloads"))
-  (setq eww-suggest-uris
-        '(eww-links-at-point
-          thing-at-point-url-at-point))
   (setq eww-bookmarks-directory (locate-user-emacs-file "eww-bookmarks/"))
   (setq eww-history-limit 150)
   (setq eww-use-external-browser-for-content-type
         "\\`\\(video/\\|audio\\)") ; On GNU/Linux check your mimeapps.list
-  (setq eww-browse-url-new-window-is-tab nil)
   (setq eww-form-checkbox-selected-symbol "[X]")
   (setq eww-form-checkbox-symbol "[ ]")
   ;; NOTE `eww-retrieve-command' is for Emacs28.  I tried the following
@@ -10608,7 +10620,16 @@ buffer (as I do, for example, via the ~text-mode-hook~ ([[#h:60d6aae2-6e4b-402c-
   ;;
   ;; '("wget" "--quiet" "--output-document=-")
   ;; '("chromium" "--headless" "--dump-dom")
-  (setq eww-retrieve-command nil))
+  (setq eww-retrieve-command nil)
+
+  ;; NOTE 2025-02-03: Emacs has a robust framework for writing
+  ;; bookmarks, which `eww' supports.  Though `eww' also defines its
+  ;; own parallel bookmark data, which I do not want to use.  So here
+  ;; I disable all the relevant commands.
+  (mapc
+   (lambda (command)
+     (put command 'disabled t))
+   '(eww-list-bookmarks eww-add-bookmark eww-bookmark-mode)))
 #+end_src
 
 *** TODO The =prot-emacs-web.el= extras for ~eww~ (=prot-eww.el=)
@@ -12817,110 +12838,6 @@ As a final step, save `prot-eww-visited-history' to a file (see
 
 (provide 'prot-eww)
 ;;; prot-eww.el ends here
-#+end_src
-
-** The =prot-marginalia.el= library
-:PROPERTIES:
-:CUSTOM_ID: h:92085a6d-213f-400d-be83-763eb80a3877
-:END:
-
-#+begin_src emacs-lisp :tangle "prot-lisp/prot-marginalia.el" :mkdirp yes
-;;; prot-marginalia.el --- Code for my custom mode line -*- lexical-binding: t -*-
-
-;; Copyright (C) 2023-2024  Protesilaos Stavrou
-
-;; Author: Protesilaos Stavrou <info@protesilaos.com>
-;; URL: https://protesilaos.com/emacs/dotemacs
-;; Version: 0.1.0
-;; Package-Requires: ((emacs "30.1"))
-
-;; This file is NOT part of GNU Emacs.
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or (at
-;; your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-;;
-;; Remember that every piece of Elisp that I write is for my own
-;; educational and recreational purposes.  I am not a programmer and I
-;; do not recommend that you copy any of this if you are not certain of
-;; what it does.
-
-;;; Code:
-
-(require 'bookmark)
-(require 'package)
-
-(defun prot-marginalia-truncate (string)
-  "Truncate STRING to `fill-column', if necessary."
-  (if (> (length string) fill-column)
-      (concat (substring string 0 fill-column) "...")
-    string))
-
-(defun prot-marginalia-display (string)
-  "Propertize the display of STRING for completion annotation purposes."
-  (when (stringp string)
-    (format "%s%s"
-            (propertize " " 'display `(space :align-to 40))
-            (propertize (prot-marginalia-truncate string)
-                        'face 'completions-annotations))))
-
-(defun prot-marginalia-bookmark (bookmark)
-  "Annotate BOOKMARK with its file path."
-  (when-let* ((bm (assoc bookmark (bound-and-true-p bookmark-alist)))
-              (path (bookmark-get-filename bookmark)))
-    (prot-marginalia-display path)))
-
-(defun prot-marginalia-buffer (buffer)
-  "Annotate BUFFER with the return value of function `buffer-file-name'."
-  (if-let* ((name (buffer-file-name (get-buffer buffer))))
-      (prot-marginalia-display (abbreviate-file-name name))
-    (prot-marginalia-display (format "%s" (buffer-local-value 'major-mode (get-buffer buffer))))))
-
-(defun prot-marginalia-package (package)
-  "Annotate PACKAGE with its summary."
-  (when-let* ((pkg-alist (bound-and-true-p package-alist))
-              (pkg (intern-soft package))
-              (desc (or (when (package-desc-p pkg) pkg)
-                        (car (alist-get pkg pkg-alist))
-                        (if-let* ((built-in (assq pkg package--builtins)))
-                            (package--from-builtin built-in)
-                          (car (alist-get pkg package-archive-contents))))))
-    (prot-marginalia-display (package-desc-summary desc))))
-
-(defun prot-marginalia--get-symbol-doc (symbol)
-  "Return documentation string according to SYMBOL type."
-  (cond
-   ((or (functionp symbol) (macrop symbol))
-    (documentation symbol))
-   (t
-    (get symbol 'variable-documentation))))
-
-(defun prot-marginalia--first-line-documentation (symbol)
-  "Return first line of SYMBOL documentation string."
-  (when-let* ((doc-string (prot-marginalia--get-symbol-doc symbol))
-              ((stringp doc-string))
-              ((not (string-empty-p doc-string))))
-    (car (split-string doc-string "[?!.\n]"))))
-
-(defun prot-marginalia-symbol (symbol)
-  "Annotate SYMBOL with its documentation string."
-  (when-let* ((sym (intern-soft symbol))
-              (doc-string (prot-marginalia--first-line-documentation sym)))
-    (prot-marginalia-display doc-string)))
-
-(provide 'prot-marginalia)
-;;; prot-marginalia.el ends here
 #+end_src
 
 ** The =prot-modeline.el= library
