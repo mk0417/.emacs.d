@@ -54,7 +54,7 @@ that adds functionality on top of what the major mode provides."
   :group 'prot-emacs
   :type 'boolean)
 
-(defcustom prot-emacs-load-which-key nil
+(defcustom prot-emacs-load-which-key t
   "When non-nil, display key binding hints after a short delay.
 This user option must be set in the `prot-emacs-pre-custom.el'
 file.  If that file exists in the Emacs directory, it is loaded
@@ -62,7 +62,7 @@ before all other modules of my setup."
   :group 'prot-emacs
   :type 'boolean)
 
-(defcustom prot-emacs-load-icons nil
+(defcustom prot-emacs-load-icons t
   "When non-nil, enable iconography in various contexts.
 This installs and uses the `nerd-icons' package and its variants.
 NOTE that you still need to invoke `nerd-icons-install-fonts'
@@ -312,9 +312,10 @@ making an abbreviation to a function."
 (require 'prot-emacs-org)
 (require 'prot-emacs-langs)
 (require 'prot-emacs-web)
-(require 'prot-emacs-which-key)
-;; (when prot-emacs-load-icons
-;;   (require 'prot-emacs-icons))
+(when prot-emacs-load-which-key
+  (require 'prot-emacs-which-key))
+(when prot-emacs-load-icons
+  (require 'prot-emacs-icons))
 
 (require 'init-env)
 (require 'init-default)
