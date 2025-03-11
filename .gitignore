@@ -10,6 +10,7 @@
 .DS_Store
 custom.el
 recentf
+recentf.eld
 bookmarks
 fontaine-latest-state.eld
 cursory-latest-state.eld
