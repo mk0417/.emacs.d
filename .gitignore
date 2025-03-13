@@ -9,10 +9,11 @@
 .bookmarks.el
 .DS_Store
 custom.el
+bookmarks
+savehist
+tramp
 recentf
 recentf.eld
-bookmarks
+projects.eld
 fontaine-latest-state.eld
 cursory-latest-state.eld
-tramp
-savehist
