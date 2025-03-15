@@ -8757,8 +8757,8 @@ affects.
 :CUSTOM_ID: h:e86a66dc-7ef9-4f09-ad7e-946de2034e8d
 :END:
 
-This is another one of my packages and is extended by my
-~consult-denote~ package ([[#h:ee82e629-fb05-4c75-9175-48a760a25691][The =prot-emacs-langs.el= integration between Consult and Denote (~consult-denote~)]]).
+This is another one of my packages and is extended by several other
+packages further below.
 
 Denote is a simple note-taking tool for Emacs. It is based on the idea
 that notes should follow a predictable and descriptive file-naming
@@ -8795,7 +8795,6 @@ facilities to rename files, regardless of file type.
   ;; If you use Markdown or plain text files you want to fontify links
   ;; upon visiting the file (Org renders links as buttons right away).
   ((text-mode . denote-fontify-links-mode-maybe)
-
    ;; Highlight Denote file names in Dired buffers.  Below is the
    ;; generic approach, which is great if you rename files Denote-style
    ;; in lots of places as I do.
@@ -8812,7 +8811,7 @@ facilities to rename files, regardless of file type.
   ( :map global-map
     ("C-c n n" . denote)
     ("C-c n N" . denote-type)
-    ("C-c n o" . denote-sort-dired) ; "order" mnemonic
+    ("C-c n d" . denote-sort-dired)
     ;; Note that `denote-rename-file' can work from any context, not
     ;; just Dired buffers.  That is why we bind it here to the
     ;; `global-map'.
@@ -8829,9 +8828,6 @@ facilities to rename files, regardless of file type.
     ("C-c n b" . denote-backlinks)
     ;; Also see `denote-rename-file' further above.
     ("C-c n R" . denote-rename-file-using-front-matter)
-    :map org-mode-map
-    ("C-c n d l" . denote-org-extras-dblock-insert-links)
-    ("C-c n d b" . denote-org-extras-dblock-insert-backlinks)
     ;; Key bindings specifically for Dired.
     :map dired-mode-map
     ("C-c C-d C-i" . denote-dired-link-marked-notes)
@@ -8847,16 +8843,13 @@ facilities to rename files, regardless of file type.
   ;; meaning that you only use a predefined set of them, then you want
   ;; `denote-infer-keywords' to be nil and `denote-known-keywords' to
   ;; have the keywords you need.
-  (setq denote-known-keywords '("emacs" "philosophy" "politics" "economics"))
+  (setq denote-known-keywords '("emacs" "philosophy" "politics"))
   (setq denote-infer-keywords t)
   (setq denote-sort-keywords t)
-
   (setq denote-excluded-directories-regexp nil)
   (setq denote-date-format nil) ; read its doc string
   (setq denote-rename-confirmations nil) ; CAREFUL with this if you are not familiar with Denote!
-
   (setq denote-backlinks-show-context nil)
-
   (setq denote-rename-buffer-format "[D] %t%b")
   (setq denote-buffer-has-backlinks-string " (<--->)")
 
@@ -8890,6 +8883,8 @@ preview of the file-to-linked/opened and by adding more sources to the
   Unambiguous Targets...denote.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
+;;;; Integrate Consult with Denote
+
 (when prot-emacs-completion-extras
   (use-package consult-denote
     :ensure t
@@ -8898,6 +8893,193 @@ preview of the file-to-linked/opened and by adding more sources to the
      ("C-c n g" . consult-denote-grep))
     :config
     (consult-denote-mode 1)))
+#+end_src
+
+**** The =prot-emacs-langs.el= extension for Denote Org extras (~denote-org~)
+:PROPERTIES:
+:CUSTOM_ID: h:b30cdbfe-71a1-46ed-b243-32c270963d68
+:END:
+
+This is another one of my packages. With ~denote-org~, users have
+Org-specific extensions such as dynamic blocks, links to headings, and
+splitting an Org subtree into its own standalone file. This package's
+official manual covers the technicalities.
+
++ Package name (GNU ELPA): ~denote-org~ (⚠️ Not available yet)
++ Official manual: <https://protesilaos.com/emacs/denote-org>
++ Git repository: <https://github.com/protesilaos/denote-org>
++ Backronym: Denote... Ordinarily Restricts Gyrations.
+
+Watch:
+
+- [[https://protesilaos.com/codelog/2023-11-25-emacs-denote-org-dynamic-blocks/][Denote Org dynamic blocks]] (2023-11-25)
+- [[https://protesilaos.com/codelog/2023-12-04-emacs-denote-sort-mechanism/][The new Denote sort mechanism (Dired, Org dynamic blocks)]] (2023-12-04)
+- [[https://protesilaos.com/codelog/2024-07-30-emacs-denote-exclude-dirs-org-blocks/][Exclude directories in Denote's Org dynamic blocks]] (2024-07-30)
+- [[https://protesilaos.com/codelog/2024-01-20-emacs-denote-link-org-headings/][Denote links to Org headings]] (2024-01-20)
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
+;;;; Denote Org extras (denote-org)
+
+(use-package denote-org
+  :ensure t
+  :commands
+  ( denote-org-link-to-heading
+    denote-org-backlinks-for-heading
+
+    denote-org-extract-org-subtree
+
+    denote-org-convert-links-to-file-type
+    denote-org-convert-links-to-denote-type
+
+    denote-org-dblock-insert-files
+    denote-org-dblock-insert-links
+    denote-org-dblock-insert-backlinks
+    denote-org-dblock-insert-missing-links
+    denote-org-dblock-insert-files-as-headings))
+#+end_src
+
+**** The =prot-emacs-langs.el= extension for Denote sequence notes or folgezettel (~denote-sequence~)
+:PROPERTIES:
+:CUSTOM_ID: h:020e7df6-0a7b-4c71-9188-f871bca2bf48
+:END:
+
+This is another one of my packages. The ~denote-sequence~ package
+provides an optional extension to ~denote~ for naming files with a
+sequencing scheme. The idea is to establish hiearchical relationships
+between files, such that the contents of one logically follow or
+complement those of another.
+
++ Package name (GNU ELPA): ~denote-sequence~ (⚠️ Not available yet)
++ Official manual: <https://protesilaos.com/emacs/denote-sequence>
++ Git repository: <https://github.com/protesilaos/denote-sequence>
++ Backronym: Denote... Sequences Efficiently Queue Unsorted Entries
+  Notwithstanding Curation Efforts.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
+;;;; Denote Sequence notes or folgezettel (denote-sequence)
+
+(use-package denote-sequence
+  :ensure t
+  :bind
+  ( :map global-map
+    ;; Here we make "C-c n s" a prefix for all "[n]otes with [s]equence".
+    ;; This is just for demonstration purposes: use the key bindings
+    ;; that work for you.  Also check the commands:
+    ;;
+    ;; - `denote-sequence-new-parent'
+    ;; - `denote-sequence-new-sibling'
+    ;; - `denote-sequence-new-child'
+    ;; - `denote-sequence-new-child-of-current'
+    ;; - `denote-sequence-new-sibling-of-current'
+    ("C-c n s s" . denote-sequence)
+    ("C-c n s f" . denote-sequence-find)
+    ("C-c n s l" . denote-sequence-link)
+    ("C-c n s d" . denote-sequence-dired)
+    ("C-c n s r" . denote-sequence-reparent)
+    ("C-c n s c" . denote-sequence-convert))
+  :config
+  ;; The default sequence scheme is `numeric'.
+  (setq denote-sequence-scheme 'alphanumeric))
+#+end_src
+
+**** The =prot-emacs-langs.el= extension for Denote Markdown extras (~denote-markdown~)
+:PROPERTIES:
+:CUSTOM_ID: h:523bf4f8-fb4e-42e9-bf64-d7c7ebbfbab5
+:END:
+
+This is another one of my packages. It provides some convenience
+functions to better integrate Markdown with Deonte. This is mostly
+about converting links from one type to another so that they can work
+in different applications (because Markdown does not have a
+standardised way to define custom link types).
+
++ Package name (GNU ELPA): ~denote-markdown~ (⚠️ Not available yet)
++ Official manual: <https://protesilaos.com/emacs/denote-markdown>
++ Git repository: <https://github.com/protesilaos/denote-markdown>
++ Backronyms: Denote... Markdown's Ambitious Reimplimentations
+  Knowingly Dilute Obvious Widespread Norms; Denote... Markup
+  Agnosticism Requires Knowhow to Do Only What's Necessary.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
+;;;; Denote Markdown extras (denote-markdown)
+
+(use-package denote-markdown
+  :ensure t
+  :commands ( denote-markdown-convert-links-to-file-paths
+              denote-markdown-convert-links-to-denote-type
+              denote-markdown-convert-links-to-obsidian-type
+              denote-markdown-convert-obsidian-links-to-denote-type ))
+#+end_src
+
+**** The =prot-emacs-langs.el= extension for Denote Journal extras (~denote-journal~)
+:PROPERTIES:
+:CUSTOM_ID: h:5812a834-f294-4714-85a5-f8466ececaa8
+:END:
+
+This is another one of my packages. The ~denote-journal~ package makes
+it easier to use Denote for journaling. While it is possible to use
+the generic ~denote~ command (and related) to maintain a journal, this
+package defines extra functionality to streamline the journaling
+workflow.
+
++ Package name (GNU ELPA): `denote-journal` (⚠️ Not available yet)
++ Official manual: <https://protesilaos.com/emacs/denote-journal>
++ Git repository: <https://github.com/protesilaos/denote-journal>
++ Backronym: Denote... Journaling Obviously Utilises Reasonableness
+  Notwithstanding Affectionate Longing.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
+;;;; Denote Journal extras (denote-journal)
+
+(use-package denote-journal
+  :ensure t
+  :commands ( denote-journal-new-entry
+              denote-journal-new-or-existing-entry
+              denote-journal-link-or-create-entry )
+  :config
+  ;; Use the "journal" subdirectory of the `denote-directory'.  Set this
+  ;; to nil to use the `denote-directory' instead.
+  (setq denote-journal-directory (expand-file-name "journal" denote-directory))
+  ;; Default keyword for new journal entries. It can also be a list of
+  ;; strings.
+  (setq denote-journal-keyword "journal")
+  ;; Read the doc string of `denote-journal-title-format'.
+  (setq denote-journal-title-format 'day-date-month-year))
+#+end_src
+
+**** The =prot-emacs-langs.el= extension for Denote Silo extras (~denote-silo~)
+:PROPERTIES:
+:CUSTOM_ID: h:87b9b59c-6adb-4d40-a4ae-90705d193932
+:END:
+
+This is another package of mine. It makes it easier to work with
+multiple "silos", as explained in the Denote manual. In short, a
+"silo" is a localised ~denote-directory~ that is not connected to the
+default/global ~denote-directory~ and other silos.
+
++ Package name (GNU ELPA): ~denote-silo~ (⚠️ Not available yet)
++ Official manual: <https://protesilaos.com/emacs/denote-silo>
++ Git repository: <https://github.com/protesilaos/denote-silo>
++ Backronym: Denote... Silos Insulate Localised Objects.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
+;;;; Denote Silo extras (denote-silo)
+
+(use-package denote-silo
+  :ensure t
+  ;; Bind these commands to key bindings of your choice.
+  :commands ( denote-silo-create-note
+              denote-silo-open-or-create
+              denote-silo-select-silo-then-command
+              denote-silo-dired
+              denote-silo-cd )
+  :config
+  ;; Add your silos to this list.  By default, it only includes the
+  ;; value of the variable `denote-directory'.
+  (setq denote-silo-directories
+        (list denote-directory
+              "~/Documents/books/"
+              "~/Documents/denote-test-silo/")))
 #+end_src
 
 *** The =prot-emacs-langs.el= settings for ~logos~ (writing extras and buffer navigation)
@@ -9469,15 +9651,11 @@ form part of the search terms or tags.
             :query "tag:inbox"
             :sort-order newest-first
             :key ,(kbd "i"))
-          ( :name "📚 all unread (inbox)"
+          ( :name "💬 all unread (inbox)"
             :query "tag:unread and tag:inbox"
             :sort-order newest-first
             :key ,(kbd "u"))
-          ( :name "💬 unread other (inbox)"
-            :query "tag:unread and tag:inbox and not tag:package and not tag:coach"
-            :sort-order newest-first
-            :key ,(kbd "o"))
-          ( :name "🗂️ unread packages"
+          ( :name "🛠️ unread packages"
             :query "tag:unread and tag:package"
             :sort-order newest-first
             :key ,(kbd "p"))
@@ -9795,18 +9973,13 @@ respectively.
   :config
   (setq notmuch-indicator-args
         '(( :terms "tag:unread and tag:inbox"
-            ;; :label "[A] "
-            :label "📥 "
-            :label-face prot-modeline-indicator-green
-            :counter-face prot-modeline-indicator-green)
-          ( :terms "tag:unread and tag:inbox and not tag:package and not tag:coach"
             ;; :label "[U] "
             :label "💬 "
             :label-face prot-modeline-indicator-cyan
             :counter-face prot-modeline-indicator-cyan)
           ( :terms "tag:unread and tag:package and tag:inbox"
             ;; :label "[P] "
-            :label "📦 "
+            :label "🛠️ "
             :label-face prot-modeline-indicator-magenta
             :counter-face prot-modeline-indicator-magenta)
           ( :terms "tag:unread and tag:coach and tag:inbox"
