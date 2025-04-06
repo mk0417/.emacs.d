@@ -329,7 +329,7 @@ making an abbreviation to a function."
 (require 'init-programming)
 (require 'init-lsp)
 (require 'init-latex)
-;; (require 'init-llm)
+(require 'init-llm)
 (require 'init-database)
 (require 'init-vc)
 (require 'init-keybinding)

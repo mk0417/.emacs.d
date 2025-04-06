@@ -207,6 +207,16 @@
   "c" #'p-jupyter-remove-line-overlay
   "w" #'jupyter-repl-pop-to-buffer)
 
+(defvar-keymap prot-prefix-llm-map
+  :doc "Prefix keymap for LLM."
+  :name "LLM"
+  :prefix 'prot-prefix-llm
+  "g" #'gptel
+  "s" #'gptel-send
+  "M" #'gptel-mode
+  "r" #'gptel-rewrite
+  "m" #'gptel-menu)
+
 ;; NOTE 2024-02-17: Some cons cells here have a symbol as a `cdr' and
 ;; some do not.  The former are those which define a prefix command
 ;; (per `define-prefix-command').  This is a symbol that references
@@ -221,6 +231,7 @@
   "'" (lambda () (interactive) (switch-to-buffer nil))
   "d" #'dired-jump
   "j" (cons "Jupyter" 'prot-prefix-jupyter)
+  "a" (cons "LLM" 'prot-prefix-llm)
   "0" #'delete-window
   "1" #'delete-other-windows
   "!" #'delete-other-windows-vertically
