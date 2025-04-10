@@ -241,8 +241,23 @@ positions.  Otherwise, copy the current line."
       (region-beginning)
       (region-end))))
   (if (and beg end)
-      (kill-ring-save beg end)
-    (prot-simple-copy-line)))
+      (copy-region-as-kill beg end)
+    (prot-simple-copy-line))
+  (setq this-command 'kill-ring-save))
+
+;;;###autoload
+(defun prot-simple-kill-region (&optional beg end)
+  "Do `kill-region' when the region is active, else `kill-ring-save' symbol at point."
+  (interactive
+   (when (region-active-p)
+     (list
+      (region-beginning)
+      (region-end))))
+  (if (and beg end)
+      (kill-region beg end)
+    (prot-simple-mark-sexp)
+    (copy-region-as-kill (region-beginning) (region-end)))
+  (setq this-command 'kill-ring-save))
 
 (defun prot-simple--duplicate-buffer-substring (boundaries)
   "Duplicate buffer substring between BOUNDARIES.
@@ -264,7 +279,8 @@ BOUNDARIES is a cons cell representing buffer positions."
   (prot-simple--duplicate-buffer-substring
    (if (region-active-p)
        (cons (region-beginning) (region-end))
-     (cons (line-beginning-position) (line-end-position)))))
+     (cons (line-beginning-position) (line-end-position))))
+  (setq this-command 'yank))
 
 ;;;###autoload
 (defun prot-simple-yank-replace-line-or-region ()
@@ -275,7 +291,8 @@ This command can then be followed by the standard
   (if (use-region-p)
       (delete-region (region-beginning) (region-end))
     (delete-region (line-beginning-position) (line-end-position)))
-  (yank))
+  (yank)
+  (setq this-command 'yank))
 
 ;;;###autoload
 (defun prot-simple-multi-line-below ()
@@ -295,7 +312,8 @@ This command can then be followed by the standard
 (defun prot-simple-kill-line-backward ()
   "Kill from point to the beginning of the line."
   (interactive)
-  (kill-line 0))
+  (kill-line 0)
+  (setq this-command 'kill-line))
 
 ;;;###autoload
 (defun prot-simple-delete-line ()
@@ -305,7 +323,8 @@ This command can then be followed by the standard
         (end (line-end-position)))
     (if (eq point end)
         (delete-region point (+ end 1))
-      (delete-region point end))))
+      (delete-region point end)))
+  (setq this-command 'kill-whole-line))
 
 ;;;###autoload
 (defun prot-simple-delete-line-backward ()
@@ -315,7 +334,8 @@ This command can then be followed by the standard
         (beg (line-beginning-position)))
     (if (eq point beg)
         (delete-region (- beg 1) point)
-      (delete-region point beg))))
+      (delete-region point beg)))
+  (setq this-command 'kill-whole-line))
 
 ;;;###autoload
 (define-minor-mode prot-simple-auto-fill-visual-line-mode
