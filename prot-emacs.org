@@ -1716,22 +1716,23 @@ are called. The pulse effect is added there (~pulsar-after-function-hook~).
 (use-package pulsar
   :ensure t
   :config
-  (setopt pulsar-pulse t
-          pulsar-delay 0.055
-          pulsar-iterations 10
-          pulsar-face 'pulsar-green
-          pulsar-highlight-face 'pulsar-magenta)
+  (setq pulsar-pulse t
+        pulsar-delay 0.055
+        pulsar-iterations 5
+        pulsar-face 'pulsar-green
+        pulsar-region-face 'pulsar-cyan
+        pulsar-highlight-face 'pulsar-magenta)
   ;; Pulse after `pulsar-pulse-region-functions'.
   (setq pulsar-pulse-region-functions pulsar-pulse-region-common-functions)
-
-  ;; Pulse after `pulsar-pulse-functions'.  The default value of that
-  ;; user option is comprehensive.
-  (pulsar-global-mode 1)
   :hook
   ;; There are convenience functions/commands which pulse the line using
   ;; a specific colour: `pulsar-pulse-line-red' is one of them.
   ((next-error . (pulsar-pulse-line-red pulsar-recenter-top pulsar-reveal-entry))
-   (minibuffer-setup . pulsar-pulse-line-red))
+   (minibuffer-setup . pulsar-pulse-line-red)
+   ;; Pulse right after the use of `pulsar-pulse-functions' and
+   ;; `pulsar-pulse-region-functions'.  The default value of the
+   ;; former user option is comprehensive.
+   (after-init . pulsar-global-mode))
   :bind
   ;; pulsar does not define any key bindings.  This is just my personal
   ;; preference.  Remember to read the manual on the matter.  Evaluate:
@@ -2454,7 +2455,7 @@ here:
 (use-package prot-common
   :ensure nil
   :functions (prot-common-truncate-lines-silently)
-  :hook ((text-mode prog-mode dired-mode prot/fundamental-mode hexl-mode) . prot-common-truncate-lines-silently)
+  :hook ((text-mode prog-mode dired-mode prot/fundamental-mode hexl-mode comint-mode) . prot-common-truncate-lines-silently)
   :init
   (defvar prot/fundamental-mode-hook nil
     "Normal hook for `fundamental-mode' (which is missing by default).")
@@ -4331,7 +4332,9 @@ templates to have a real need for it---but it works).
 
   (with-eval-after-load 'org
     (prot-emacs-abbrev org-mode-abbrev-table
-      ";dev" "{{{development-version}}}")
+      ";dev" "{{{development-version}}}"
+      ";key" #'prot-abbrev-org-macro-key
+      ";cmd" #'prot-abbrev-org-macro-key-command)
     (abbrev-table-put org-mode-abbrev-table :regexp "\\(?:^\\|[\t\s]+\\)\\(?1:[:;_].*\\|.*\\)"))
 
   (with-eval-after-load 'message
@@ -5747,6 +5750,9 @@ are where we need to be.
   ;;                         (dired-preview-mode 1))))
   :defer 1
   :hook (after-init . dired-preview-global-mode)
+  :bind
+  ( :map dired-mode-map
+    ("V" . dired-preview-mode))
   :config
   (setq dired-preview-max-size (* (expt 2 20) 10))
   (setq dired-preview-delay 0.5)
@@ -6900,18 +6906,18 @@ Control framework and its accoutrements (`diff-mode.el`,
         agitate-log-edit-informative-show-files nil))
 #+end_src
 
-*** The =prot-emacs-git.el= section about ~magit~ (great Git client)
+*** The =prot-emacs-git.el= section about ~magit~ (great Git interface)
 :PROPERTIES:
 :CUSTOM_ID: h:b08af527-9ebf-4425-ac3a-24b4f371a4fd
 :END:
 
 The ~magit~ package, maintained by Jonas Bernoulli, is the best
-front-end to ~git~ I have ever used. Not only is it excellent at
+interface to ~git~ I have ever used. Not only is it excellent at
 getting the job done, it also helps you learn more about what ~git~
 has to offer.
 
-At the core of its interface is ~transient~. This is a library that
-was originally developed as Magit-specific code that was then
+At the core of its interaction model is ~transient~. This is a library
+that was originally developed as Magit-specific code that was then
 abstracted away and ultimately incorporated into Emacs version 29.
 With ~transient~, we get a window pop up with keys and commands
 corresponding to them. The window is interactive, as the user can set
@@ -7084,6 +7090,11 @@ The ~calendar~ is technically independent of Org, though it tightly
 integrates with it. We witness this when we are setting timestamps,
 such as while setting a =SCHEDULED= or =DEADLINE= entry for a given
 heading. All I do here is set some stylistic preferences.
+
+My ~denote-journal~ package also integrates with the ~calendar~ to (i)
+show days that have a journal entry and (ii) provide commands to
+create a journal entry for the given date or visit an existing one
+([[#h:5812a834-f294-4714-85a5-f8466ececaa8][The =prot-emacs-langs.el= extension for Denote Journal extras (~denote-journal~)]]).
 
 Note that Emacs also has a ~diary~ command. I used it for a while, but
 Org is far more capable, so I switched to it completely.
@@ -8988,7 +8999,10 @@ This is another one of my packages. The ~denote-journal~ package makes
 it easier to use Denote for journaling. While it is possible to use
 the generic ~denote~ command (and related) to maintain a journal, this
 package defines extra functionality to streamline the journaling
-workflow.
+workflow. It also integrates with the built-in ~calendar~, to (i)
+highlight days that have a journal entry and (ii) provide commands
+that can be used from inside the ~calendar~ buffer to either visit a
+journal entry for the current date or create a new entry ([[#h:94d48381-1711-4d6b-8449-918bc1e3836c][The =prot-emacs-org.el= section on the ~calendar~]]).
 
 + Package name (GNU ELPA): ~denote-journal~
 + Official manual: <https://protesilaos.com/emacs/denote-journal>
@@ -11252,6 +11266,40 @@ Use completion among previous entries, retrieving their data from
   "Insert message to update NAME.html page, by prompting for NAME."
   (insert (format "Update %s.html" (prot-abbrev-update-html-prompt))))
 
+(defvar prot-abbrev-org-macro-key-history nil
+  "Minibuffer history for `prot-abbrev-org-macro-key-prompt'.")
+
+(defun prot-abbrev-org-macro-key-prompt ()
+  "Minibuffer prompt for `prot-abbrev-org-macro-key'.
+Use completion among previous entries, retrieving their data from
+`prot-abbrev-org-macro-key-history'."
+  (completing-read
+   "Key binding: "
+   prot-abbrev-org-macro-key-history
+   nil nil nil 'prot-abbrev-org-macro-key-history))
+
+(defvar prot-abbrev-org-macro-key-symbol-history nil
+  "Minibuffer history for `prot-abbrev-org-macro-key-symbol-prompt'.")
+
+(defun prot-abbrev-org-macro-key-symbol-prompt ()
+  "Minibuffer prompt for `prot-abbrev-org-macro-key'.
+Use completion among previous entries, retrieving their data from
+`prot-abbrev-org-macro-key-symbol-history'."
+  (completing-read
+   "Command name: "
+   prot-abbrev-org-macro-key-symbol-history
+   nil nil nil 'prot-abbrev-org-macro-key-symbol-history))
+
+(defun prot-abbrev-org-macro-key-command ()
+  "Insert {{{kbd(KEY)}}} (~SYMBOL~) by prompting for KEY and SYMBOL."
+  (insert (format "{{{kbd(%s)}}} (~%s~)"
+                  (prot-abbrev-org-macro-key-prompt)
+                  (prot-abbrev-org-macro-key-symbol-prompt))))
+
+(defun prot-abbrev-org-macro-key ()
+  "Insert {{{kbd(KEY)}}} by prompting for KEY."
+  (insert (format "{{{kbd(%s)}}}" (prot-abbrev-org-macro-key-prompt))))
+
 (provide 'prot-abbrev)
 ;;; prot-abbrev.el ends here
 #+end_src
@@ -12199,8 +12247,7 @@ Add this to `dired-mode-hook'."
   "Personal extensions for Elfeed."
   :group 'elfeed)
 
-(defcustom prot-elfeed-feeds-file
-  (thread-last user-emacs-directory (expand-file-name "feeds.el.gpg"))
+(defcustom prot-elfeed-feeds-file (expand-file-name "~/feeds.el.gpg")
   "Path to file with `elfeed-feeds'."
   :type 'string
   :group 'prot-elfeed)
@@ -12975,11 +13022,12 @@ than `split-width-threshold'."
 
 (defun prot-modeline--vc-get-face (key)
   "Get face from KEY in `prot-modeline--vc-faces'."
-  (alist-get key prot-modeline--vc-faces 'up-to-date))
+  (alist-get key prot-modeline--vc-faces 'vc-up-to-date-state))
 
 (defun prot-modeline--vc-face (file backend)
   "Return VC state face for FILE with BACKEND."
-  (prot-modeline--vc-get-face (vc-state file backend)))
+  (when-let* ((key (vc-state file backend)))
+    (prot-modeline--vc-get-face key)))
 
 (defvar-local prot-modeline-vc-branch
     '(:eval

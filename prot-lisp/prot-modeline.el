@@ -262,30 +262,30 @@ Also see `prot-modeline-string-abbreviate'."
 ;;;; Keyboard macro indicator
 
 (defvar-local prot-modeline-kbd-macro
-    '(:eval
-      (when (and (mode-line-window-selected-p) defining-kbd-macro)
-        (propertize " KMacro " 'face 'prot-modeline-indicator-blue-bg)))
+  '(:eval
+    (when (and (mode-line-window-selected-p) defining-kbd-macro)
+      (propertize " KMacro " 'face 'prot-modeline-indicator-blue-bg)))
   "Mode line construct displaying `mode-line-defining-kbd-macro'.
 Specific to the current window's mode line.")
 
 ;;;; Narrow indicator
 
 (defvar-local prot-modeline-narrow
-    '(:eval
-      (when (and (mode-line-window-selected-p)
-                 (buffer-narrowed-p)
-                 (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
-        (propertize " Narrow " 'face 'prot-modeline-indicator-cyan-bg)))
+  '(:eval
+    (when (and (mode-line-window-selected-p)
+               (buffer-narrowed-p)
+               (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
+      (propertize " Narrow " 'face 'prot-modeline-indicator-cyan-bg)))
   "Mode line construct to report the narrowed state of the current buffer.")
 
 ;;;; Input method
 
 (defvar-local prot-modeline-input-method
-    '(:eval
-      (when current-input-method-title
-        (propertize (format " %s " current-input-method-title)
-                    'face 'prot-modeline-indicator-green-bg
-                    'mouse-face 'mode-line-highlight)))
+  '(:eval
+    (when current-input-method-title
+      (propertize (format " %s " current-input-method-title)
+                  'face 'prot-modeline-indicator-green-bg
+                  'mouse-face 'mode-line-highlight)))
   "Mode line construct to report the multilingual environment.")
 
 ;;;; Buffer status
@@ -293,21 +293,21 @@ Specific to the current window's mode line.")
 ;; TODO 2023-07-05: What else is there beside remote files?  If
 ;; nothing, this must be renamed accordingly.
 (defvar-local prot-modeline-buffer-status
-    '(:eval
-      (when (file-remote-p default-directory)
-        (propertize " @ "
-                    'face 'prot-modeline-indicator-red-bg
-                    'mouse-face 'mode-line-highlight)))
+  '(:eval
+    (when (file-remote-p default-directory)
+      (propertize " @ "
+                  'face 'prot-modeline-indicator-red-bg
+                  'mouse-face 'mode-line-highlight)))
   "Mode line construct for showing remote file name.")
 
 ;;;; Dedicated window
 
 (defvar-local prot-modeline-window-dedicated-status
-    '(:eval
-      (when (window-dedicated-p)
-        (propertize " = "
-                    'face 'prot-modeline-indicator-gray-bg
-                    'mouse-face 'mode-line-highlight)))
+  '(:eval
+    (when (window-dedicated-p)
+      (propertize " = "
+                  'face 'prot-modeline-indicator-gray-bg
+                  'mouse-face 'mode-line-highlight)))
   "Mode line construct for dedicated window indicator.")
 
 ;;;; Buffer name and modified status
@@ -349,11 +349,11 @@ See `prot-modeline-string-cut-middle'."
     'face 'font-lock-doc-face)))
 
 (defvar-local prot-modeline-buffer-identification
-    '(:eval
-      (propertize (prot-modeline-buffer-name)
-                  'face (prot-modeline-buffer-identification-face)
-                  'mouse-face 'mode-line-highlight
-                  'help-echo (prot-modeline-buffer-name-help-echo)))
+  '(:eval
+    (propertize (prot-modeline-buffer-name)
+                'face (prot-modeline-buffer-identification-face)
+                'mouse-face 'mode-line-highlight
+                'help-echo (prot-modeline-buffer-name-help-echo)))
   "Mode line construct for identifying the buffer being displayed.
 Propertize the current buffer with the `mode-line-buffer-id'
 face.  Let other buffers have no face.")
@@ -380,23 +380,23 @@ face.  Let other buffers have no face.")
     (format "Symbol: `%s'." major-mode)))
 
 (defvar-local prot-modeline-major-mode
-    (list
-     (propertize "%[" 'face 'prot-modeline-indicator-red)
-     '(:eval
-       (concat
-        (prot-modeline-major-mode-indicator)
-        " "
-        (propertize
-         (prot-modeline-string-abbreviate-but-last
-          (prot-modeline-major-mode-name)
-          2)
-         'mouse-face 'mode-line-highlight
-         'help-echo (prot-modeline-major-mode-help-echo))))
-     (propertize "%]" 'face 'prot-modeline-indicator-red))
+  (list
+   (propertize "%[" 'face 'prot-modeline-indicator-red)
+   '(:eval
+     (concat
+      (prot-modeline-major-mode-indicator)
+      " "
+      (propertize
+       (prot-modeline-string-abbreviate-but-last
+        (prot-modeline-major-mode-name)
+        2)
+       'mouse-face 'mode-line-highlight
+       'help-echo (prot-modeline-major-mode-help-echo))))
+   (propertize "%]" 'face 'prot-modeline-indicator-red))
   "Mode line construct for displaying major modes.")
 
 (defvar-local prot-modeline-process
-    (list '("" mode-line-process))
+  (list '("" mode-line-process))
   "Mode line construct for the running process indicator.")
 
 ;;;; Git branch and diffstat
@@ -478,21 +478,22 @@ than `split-width-threshold'."
 
 (defun prot-modeline--vc-get-face (key)
   "Get face from KEY in `prot-modeline--vc-faces'."
-  (alist-get key prot-modeline--vc-faces 'up-to-date))
+  (alist-get key prot-modeline--vc-faces 'vc-up-to-date-state))
 
 (defun prot-modeline--vc-face (file backend)
   "Return VC state face for FILE with BACKEND."
-  (prot-modeline--vc-get-face (vc-state file backend)))
+  (when-let* ((key (vc-state file backend)))
+    (prot-modeline--vc-get-face key)))
 
 (defvar-local prot-modeline-vc-branch
-    '(:eval
-      (when-let* (((mode-line-window-selected-p))
-                  (file (or buffer-file-name default-directory))
-                  (backend (or (vc-backend file) 'Git))
-                  ;; ((vc-git-registered file))
-                  (branch (prot-modeline--vc-branch-name file backend))
-                  (face (prot-modeline--vc-face file backend)))
-        (prot-modeline--vc-details file branch face)))
+  '(:eval
+    (when-let* (((mode-line-window-selected-p))
+                (file (or buffer-file-name default-directory))
+                (backend (or (vc-backend file) 'Git))
+                ;; ((vc-git-registered file))
+                (branch (prot-modeline--vc-branch-name file backend))
+                (face (prot-modeline--vc-face file backend)))
+      (prot-modeline--vc-details file branch face)))
   "Mode line construct to return propertized VC branch.")
 
 ;;;; Eglot
@@ -502,18 +503,18 @@ than `split-width-threshold'."
         (delete '(eglot--managed-mode (" [" eglot--mode-line-format "] ")) mode-line-misc-info)))
 
 (defvar-local prot-modeline-eglot
-    `(:eval
-      (when (and (featurep 'eglot) (mode-line-window-selected-p))
-        '(eglot--managed-mode eglot--mode-line-format)))
+  `(:eval
+    (when (and (featurep 'eglot) (mode-line-window-selected-p))
+      '(eglot--managed-mode eglot--mode-line-format)))
   "Mode line construct displaying Eglot information.
 Specific to the current window's mode line.")
 
 ;;;; Miscellaneous
 
 (defvar-local prot-modeline-misc-info
-    '(:eval
-      (when (mode-line-window-selected-p)
-        mode-line-misc-info))
+  '(:eval
+    (when (mode-line-window-selected-p)
+      mode-line-misc-info))
   "Mode line construct displaying `mode-line-misc-info'.
 Specific to the current window's mode line.")
 
