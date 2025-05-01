@@ -88,25 +88,26 @@
 
    ;; prefix v
    '("va" . meow-find)
-   '("vb" . (lambda () (interactive) (meow-till 1 40)))
    '("vc" . meow-save-char)
+   '("vd" . forward-paragraph)
    '("ve" . meow-end-kmacro)
-   '("vf" . (lambda () (interactive) (meow-till 1 91)))
    '("vg" . meow-grab)
    '("vh" . meow-left-expand)
    '("vj" . meow-next-expand )
-   '("vk" . meow-start-kmacro-or-insert-counter)
    '("vk" . meow-prev-expand)
    '("vl" . meow-right-expand)
+   '("vm" . meow-start-kmacro-or-insert-counter)
    '("vp" . p-mark-paragraph)
    '("vr" . meow-query-replace-regexp)
    '("vs" . meow-mark-symbol)
+   '("vu" . backward-paragraph)
    '("vv" . meow-visit)
    '("vw" . meow-mark-word)
    '("vx" . meow-swap-grab)
 
    ;; prefix n
    '("na" . p-add-space-around)
+   '("nc" . p-insert-dash-line)
    '("nd" . (lambda () (interactive) (prot-pair-insert '(?\" . ?\") 1)))
    '("nf" . (lambda () (interactive) (prot-pair-insert '(?\[ . ?\]) 1)))
    '("nh" . (lambda () (interactive) (prot-pair-insert '(?\{ . ?\}) 1)))
@@ -114,6 +115,8 @@
    '("nn" . prot-pair-delete)
    '("ns" . (lambda () (interactive) (prot-pair-insert '(?\' . ?\') 1)))
    '("nx" . p-remove-space-around)
+   '("n." . p-move-to-next-bracket)
+   '("n," . p-move-to-prev-bracket)
 
    ;; prefix f
    '("fa" . lsp-bridge-find-def)

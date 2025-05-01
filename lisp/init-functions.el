@@ -72,4 +72,22 @@
       (forward-char 1)
       (while (looking-at "\\s-") (delete-char 1)))))
 
+(defvar p-brackets '( "“”" "()" "[]" "{}"))
+(defconst p-left-brackets (mapcar (lambda (x) (substring x 0 1)) p-brackets))
+(defconst p-right-brackets (mapcar (lambda (x) (substring x 1 2)) p-brackets))
+
+(defun p-move-to-prev-bracket ()
+  (interactive)
+  (re-search-backward (regexp-opt p-left-brackets) nil t))
+
+(defun p-move-to-next-bracket ()
+  (interactive)
+  (re-search-forward (regexp-opt p-right-brackets) nil t))
+
+(defun p-insert-dash-line ()
+  (interactive)
+  (insert "\n------------------------------\n")
+  (backward-char)
+  (comment-line 1))
+
 (provide 'init-functions)
