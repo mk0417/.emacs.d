@@ -149,4 +149,11 @@
   :bind-keymap
   ((";" . prot-prefix)))
 
+(use-package emacs
+  :ensure nil
+  :demand t
+  :bind
+  ( :map global-map
+    ("s-m" . ns-do-hide-emacs)))
+
 (provide 'init-keybinding)
