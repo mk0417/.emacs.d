@@ -36,6 +36,7 @@
   (defun TeX-insert-smallmatrix () (interactive)
          (insert "[\\begin{smallmatrix}  \\end{smallmatrix}]")
          (backward-char 19))
+
   (defun TeX-insert-bmatrix () (interactive)
          (insert "\\begin{bmatrix}  \\end{bmatrix}")
          (backward-char 14))
@@ -100,6 +101,7 @@ environments."
         ('user-error
          (dotimes (_ (max 0 total))
            (LaTeX-find-matching-begin))))))
+
   (defun LaTeX-forward-environment (&optional N do-push-mark)
     "Move to the \\end of the next \\begin,
 or to the \\end of the current environment
@@ -127,6 +129,7 @@ but mark is only pushed if region isn't active."
               (error "Unmatched \\begin?"))
           (when (looking-at "\\[") (forward-sexp 1))
           (when (looking-at "{") (forward-sexp 1))))))
+
   (defun LaTeX-backward-environment (&optional N do-push-mark)
     "Move to the \\begin of the next \\end,
 or to the \\begin of the current environment
