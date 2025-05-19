@@ -82,7 +82,7 @@
 
 (defun p-move-to-next-bracket ()
   (interactive)
-  (re-search-forward (regexp-opt p-right-brackets) nil t))
+  (re-search-forward (regexp-opt p-left-brackets) nil t))
 
 (defun p-insert-dash-line ()
   (interactive)
@@ -153,5 +153,74 @@ Version: 2023-07-12"
     (forward-paragraph)
     (skip-chars-backward "\n\t ")
     (indent-region start (point))))
+
+(defun p-flip-quotes ()
+  (interactive)
+  (if (use-region-p)
+      (let ((beg (region-beginning))
+            (end (region-end)))
+        (save-excursion
+          (goto-char beg)
+          (while (re-search-forward "\\(['\"]\\)\\(.*?\\)\\1" end t)
+            (let* ((quote (match-string 1))
+                   (content (match-string 2))
+                   (new-quote (if (string= quote "\"") "'" "\"")))
+              (replace-match (concat new-quote content new-quote) t t)))))
+    (let* ((syntax (syntax-ppss))
+           (start (nth 8 syntax)))
+      (cond
+       ((nth 3 syntax)
+        (let* ((quote-char (char-after start))
+               (new-quote (if (eq quote-char ?\") "'" "\""))
+               (end (save-excursion (goto-char start) (forward-sexp) (point))))
+          (save-excursion
+            (goto-char start)
+            (delete-char 1)
+            (insert new-quote)
+            (goto-char (1- end))
+            (delete-char 1)
+            (insert new-quote))))
+       (t
+        (save-excursion
+          (let ((found nil))
+            (when (re-search-backward "'" (line-beginning-position) t)
+              (let ((left (point)))
+                (forward-char)
+                (when (re-search-forward "'" (line-end-position) t)
+                  (let ((right (point)))
+                    (setq found t)
+                    (goto-char left)
+                    (delete-char 1)
+                    (insert "\"")
+                    (goto-char (1- right)) ;; adjust because left was changed
+                    (delete-char 1)
+                    (insert "\"")))))
+            (unless found
+              (message "Not inside or near a recognizable quote.")))))))))
+
+(defun p-flip-brackets ()
+  (interactive)
+  (let* ((syntax (syntax-ppss)))
+    (if-let* ((start (nth 1 syntax)))
+        (let* ((open-char (char-after start))
+               (close-pos (save-excursion
+                            (goto-char start)
+                            (forward-sexp)
+                            (point)))
+               (close-char (char-before close-pos)))
+          (when (and (memq open-char '(?\( ?\[))
+                     (memq close-char '(?\) ?\])))
+            (let ((new-open (if (eq open-char ?\() "["
+                              (if (eq open-char ?\[) "(")))
+                  (new-close (if (eq close-char ?\)) "]"
+                               (if (eq close-char ?\]) ")"))))
+              (save-excursion
+                (goto-char start)
+                (delete-char 1)
+                (insert new-open)
+                (goto-char (1- close-pos)) ;; end moves because of earlier insert
+                (delete-char 1)
+                (insert new-close)))))
+      (message "Not inside parentheses or brackets."))))
 
 (provide 'init-functions)

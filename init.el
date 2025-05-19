@@ -335,6 +335,7 @@ making an abbreviation to a function."
 (require 'init-keybinding)
 (require 'init-keychord)
 (require 'init-abbrev)
+(require 'cursor-chg)
 
 (add-hook 'emacs-startup-hook
           (lambda ()

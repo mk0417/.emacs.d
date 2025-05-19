@@ -119,6 +119,8 @@
    '("nx" . p-remove-space-around)
    '("n." . p-move-to-next-bracket)
    '("n," . p-move-to-prev-bracket)
+   '("ni" . p-flip-quotes)
+   '("nj" . p-flip-brackets)
 
    ;; prefix f
    '("fa" . lsp-bridge-find-def)
