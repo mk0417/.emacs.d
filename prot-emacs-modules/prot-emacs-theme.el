@@ -2,10 +2,11 @@
 
 ;;;; Load the desired theme module
 ;; These all reference my packages: `modus-themes', `ef-themes',
-;; `standard-themes'.
+;; `doric-themes', `standard-themes'.
 (when prot-emacs-load-theme-family
   (require
    (pcase prot-emacs-load-theme-family
+     ('doric 'prot-emacs-doric-themes)
      ('ef 'prot-emacs-ef-themes)
      ('modus 'prot-emacs-modus-themes)
      ('standard 'prot-emacs-standard-themes))))
@@ -66,12 +67,12 @@
   :init
   ;; These are the defaults, but I keep it here for visiibility.
   (setq spacious-padding-widths
-        '( :internal-border-width 12
+        `( :internal-border-width 12
            :header-line-width 2
            :mode-line-width 1
-           :tab-width 2
+           :tab-width 4
            :right-divider-width 20
-           :scroll-bar-width 2
+           :scroll-bar-width ,(if x-toolkit-scroll-bars 8 6)
            :left-fringe-width 2
            :right-fringe-width 2))
 
@@ -228,10 +229,8 @@
            :fixed-pitch-family "Aporetic Serif Mono"
            :variable-pitch-family "Aporetic Sans")
           (large
-           :inherit medium
            :default-height 150)
           (presentation
-           :inherit medium
            :default-height 180)
           (jumbo
            :inherit medium

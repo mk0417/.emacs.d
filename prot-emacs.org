@@ -269,38 +269,6 @@ constitutes a matching tiling window manager."
      ,@body))
 #+end_src
 
-** The =early-init.el= code to set frame parameters
-:PROPERTIES:
-:CUSTOM_ID: h:0403b581-142b-4613-bc81-51c5dccd831d
-:END:
-
-Here I am setting parameters for the size of the Emacs frame: the
-first as well as any future one. In a tiling window manager, these
-parameters are not relevant, since all windows are forcibly made to
-fit into rectangles (tiles) that fill up the entire screen. So I use
-the ~prot-emacs-with-desktop-session~ macro that I described above to
-set these parameters only when I am in a regular desktop environment
-([[#h:1e1b1503-0952-43f9-8bfe-4252fe874cd1][The early-init.el macro to run code only in a Desktop Environment]]).
-
-The ~initial-frame-alist~ is about the first frame that is produced
-when starting Emacs. The ~default-frame-alist~ is for all frames after
-that.
-
-#+begin_src emacs-lisp :tangle "early-init.el"
-(defun prot-emacs-add-to-list (list element)
-  "Add to symbol of LIST the given ELEMENT.
-Simplified version of `add-to-list'."
-  (set list (cons element (symbol-value list))))
-
-(prot-emacs-with-desktop-session
-  (mapc
-   (lambda (var)
-     (prot-emacs-add-to-list var '(width . (text-pixels . 800)))
-     (prot-emacs-add-to-list var '(height . (text-pixels . 900)))
-     (prot-emacs-add-to-list var '(scroll-bar-width  . 10)))
-   '(default-frame-alist initial-frame-alist)))
-#+end_src
-
 ** The =early-init.el= basic frame settings
 :PROPERTIES:
 :CUSTOM_ID: h:a1288a07-93f6-4e14-894e-707d5ad8b6dc
@@ -314,7 +282,7 @@ I never want.
 
 #+begin_src emacs-lisp :tangle "early-init.el"
 (setq frame-resize-pixelwise t
-      frame-inhibit-implied-resize t
+      frame-inhibit-implied-resize 'force
       frame-title-format '("%b")
       ring-bell-function 'ignore
       use-dialog-box t ; only for mouse events, which I seldom use
@@ -325,14 +293,63 @@ I never want.
       inhibit-x-resources t
       inhibit-startup-echo-area-message user-login-name ; read the docstring
       inhibit-startup-buffer-menu t)
+#+end_src
 
-;; I do not use those graphical elements by default, but I do enable
-;; them from time-to-time for testing purposes or to demonstrate
-;; something.  NEVER tell a beginner to disable any of these.  They
-;; are helpful.
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
+** The =early-init.el= code to set frame parameters
+:PROPERTIES:
+:CUSTOM_ID: h:0403b581-142b-4613-bc81-51c5dccd831d
+:END:
+
+Here I am setting parameters for the size of the Emacs frame: the
+first as well as any future one. In a tiling window manager, the width
+and height parameters are not important, since all windows are
+forcibly made to fit into rectangles (tiles). Though the other
+parameters are still relevant.
+
+The ~initial-frame-alist~ is about the first frame that is produced
+when starting Emacs. This is why it has to be defined in the
+=early-init.el= file: the code here runs before the first frame is
+drawn. The ~default-frame-alist~ is for all subsequent frames. We
+could, in principle, define it outside the =early-init.el=, though it
+makes sense to have it here.
+
+I choose to run Emacs without a menu bar and tool bar. Those are
+especially useful for new users, though I have no need for them. They
+take up valuable screen real estate and distact me.
+
+I feel the same way about scroll bars, but only when those are managed
+by a graphical toolkit. This is about how we build Emacs ([[#h:64c1c9f5-1218-4ff3-8e35-41e56c74f038][Details of
+my Emacs build]]). The default is to rely on the GTK toolkit, whose
+style usually does not match whatever theme I am using in Emacs. This
+is not the case when I build Emacs without a toolkit, which is my
+preferred configuration. Without a toolkit, scroll bars are drawn
+directly by Eamcs and we may thus change their colour and adjust their
+width.
+
+When I am enabling scroll bars, I want them to not show up in the
+minibuffer, hence the function ~prot-emacs-no-minibuffer-scroll-bar~.
+
+#+begin_src emacs-lisp :tangle "early-init.el"
+(dolist (variable '(initial-frame-alist default-frame-alist))
+  (set variable `((width . (text-pixels . 1200))
+                  (height . (text-pixels . 900))
+                  (horizontal-scroll-bars . nil)
+                  (menu-bar-lines . 0) ; alternative to disabling `menu-bar-mode'
+                  (tool-bar-lines . 0) ; alternative to disabling `tool-bar-mode'
+                  ,@(if x-toolkit-scroll-bars
+                        (list
+                         '(vertical-scroll-bars . nil)
+                         '(scroll-bar-width . 12))
+                      (list
+                       '(vertical-scroll-bars . right)
+                       '(scroll-bar-width . 6))))))
+
+(defun prot-emacs-no-minibuffer-scroll-bar (frame)
+  "Remove the minibuffer scroll bars from FRAME."
+  (when scroll-bar-mode
+    (set-window-scroll-bars (minibuffer-window frame) nil nil nil nil :persistent)))
+
+(add-hook 'after-make-frame-functions #'prot-emacs-no-minibuffer-scroll-bar)
 #+end_src
 
 ** The =early-init.el= tweaks to startup time and garbage collection
@@ -404,6 +421,7 @@ accordingly. This is done in the sections about themes:
 
 - [[#h:36af519a-67e1-42b6-a38a-2052638108f9][The =prot-emacs-modus-themes.el= module]]
 - [[#h:2b2a27a1-6d2e-4b59-bf60-94682e173f2f][The =prot-emacs-ef-themes.el= module]]
+- [[#h:334ecb7f-91e0-40db-bd47-418ea0e580e9][The =prot-emacs-doric-themes.el= module]]
 - [[#h:0c7a240c-211f-4571-a5ba-433e510f487f][The =prot-emacs-standard-themes.el= module]]
 
 #+begin_src emacs-lisp :tangle "early-init.el"
@@ -540,15 +558,7 @@ directory as the init.el."
 :CUSTOM_ID: h:5612b5b8-45a5-4a79-a25b-6fa3d9146c39
 :END:
 
-I am the developer/maintainer of three distinct theme packages. You
-can read more about them (and see pictures) on their respective web
-pages:
-
-- <https://protesilaos.com/emacs/modus-themes>
-- <https://protesilaos.com/emacs/ef-themes>
-- <https://protesilaos.com/emacs/standard-themes>
-
-In short:
+I am the developer/maintainer of four distinct theme packages:
 
 - Modus themes :: They conform with the highest accessibility standard
   for colour contrast (WCAG AAA). They are elegant and designed with
@@ -558,6 +568,8 @@ In short:
 - Ef themes :: Highly legible (WCAG AA or WCAG AAA) and more colourful
   than the Modus themes. The collection of palettes is also wider to
   match a broad variety of preferences.
+- Doric themes :: Minimalist themes that use few colours while
+  remaining highly usable.
 - Standard themes :: A re-imagination of the default Emacs looks. They
   bring consistency and customisability to those who like how Emacs
   is out-of-the-box.
@@ -568,9 +580,9 @@ these options come into effect ([[#h:5a41861f-4c38-45ac-8da2-51d77c0b4a73][The i
 #+begin_src emacs-lisp :tangle "init.el"
 (defcustom prot-emacs-load-theme-family 'modus
   "Set of themes to load.
-Valid values are the symbols `ef', `modus', and `standard', which
-reference the `ef-themes', `modus-themes', and `standard-themes',
-respectively.
+Valid values are the symbols `doric', `ef', `modus', and `standard',
+which reference the `doric-themes', `ef-themes', `modus-themes', and
+`standard-themes', respectively.
 
 A nil value does not load any of the above (use Emacs without a
 theme).
@@ -580,6 +592,7 @@ file.  If that file exists in the Emacs directory, it is loaded
 before all other modules of my setup."
   :group 'prot-emacs
   :type '(choice :tag "Set of themes to load" :value modus
+                 (const :tag "The `doric-themes' module" doric)
                  (const :tag "The `ef-themes' module" ef)
                  (const :tag "The `modus-themes' module" modus)
                  (const :tag "The `standard-themes' module" standard)
@@ -970,6 +983,7 @@ packages will rely on ~package-archive-priorities~.
     denote-silo
     denote-sequence
     dired-preview
+    doric-themes
     ef-themes
     fontaine
     lin
@@ -1276,10 +1290,11 @@ only place where they are used.
 
 ;;;; Load the desired theme module
 ;; These all reference my packages: `modus-themes', `ef-themes',
-;; `standard-themes'.
+;; `doric-themes', `standard-themes'.
 (when prot-emacs-load-theme-family
   (require
    (pcase prot-emacs-load-theme-family
+     ('doric 'prot-emacs-doric-themes)
      ('ef 'prot-emacs-ef-themes)
      ('modus 'prot-emacs-modus-themes)
      ('standard 'prot-emacs-standard-themes))))
@@ -1573,6 +1588,61 @@ Note that the ~prot-emacs-comment~ is there for my testing purposes
 (provide 'prot-emacs-ef-themes)
 #+end_src
 
+**** The =prot-emacs-doric-themes.el= module
+:PROPERTIES:
+:CUSTOM_ID: h:334ecb7f-91e0-40db-bd47-418ea0e580e9
+:END:
+
+This is one of the components of the =prot-emacs-theme.el= module
+([[#h:3f1a33e4-762e-4cf3-a0ae-4c2954d9cbb8][The =prot-emacs-theme.el= section to load a theme (~prot-emacs-load-theme-family~)]]).
+It sets up one of the theme-related packages available for my setup.
+
+The ~doric-themes~ are my most minimalist themes. They use few colours
+and will appear mostly monochromatic in many contexts. Styles involve
+the careful use of typography, such as italics and bold italics.
+
+If you want maximalist themes in terms of colour, check my ~ef-themes~
+package ([[#h:2b2a27a1-6d2e-4b59-bf60-94682e173f2f][The =prot-emacs-ef-themes.el= module]]). For something
+in-between, which I would consider the best "default theme" for a text
+editor, opt for my ~modus-themes~ ([[#h:36af519a-67e1-42b6-a38a-2052638108f9][The =prot-emacs-modus-themes.el= module]]).
+
++ Package name (GNU ELPA): ~doric-themes~
++ Sample pictures: <https://protesilaos.com/emacs/doric-themes-pictures>
++ Git repository: <https://github.com/protesilaos/doric-themes>
++ Backronym: Doric Only Really Intensifies Conservatively ... themes.
+
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-doric-themes.el"
+;;; The Doric themes
+
+(use-package doric-themes
+  :ensure nil
+  :load-path "~/Git/Projects/doric-themes/" ; I will update this when the package is on GNU ELPA
+  :demand t
+  :config
+  ;; These are the default values.
+  (setq doric-themes-to-toggle '(doric-light doric-dark))
+  (setq doric-themes-to-rotate doric-themes-collection)
+
+  (with-eval-after-load 'lin
+    (setq lin-face 'hl-line)
+    (lin-global-mode -1)
+    (global-hl-line-mode 1))
+
+  (global-display-line-numbers-mode 1)
+
+  (doric-themes-load-random
+   (if (prot-emacs-theme-environment-dark-p)
+       'dark
+     'light))
+
+  :bind
+  (("<f5>" . doric-themes-toggle)
+   ("C-<f5>" . doric-themes-select)
+   ("M-<f5>" . doric-themes-rotate)))
+#+end_src
+
+
 **** The =prot-emacs-standard-themes.el= module
 :PROPERTIES:
 :CUSTOM_ID: h:0c7a240c-211f-4571-a5ba-433e510f487f
@@ -1829,12 +1899,12 @@ I also take care to make it work with my customised mode line
   :init
   ;; These are the defaults, but I keep it here for visiibility.
   (setq spacious-padding-widths
-        '( :internal-border-width 30
+        `( :internal-border-width 30
            :header-line-width 4
            :mode-line-width 6
            :tab-width 4
            :right-divider-width 30
-           :scroll-bar-width 8
+           :scroll-bar-width ,(if x-toolkit-scroll-bars 8 6)
            :left-fringe-width 20
            :right-fringe-width 20))
 
@@ -2073,10 +2143,8 @@ Also check my ~show-font~ package ([[#h:60a005be-77bd-49f1-a865-78d7cf75bd2a][Th
            :fixed-pitch-family "Aporetic Serif Mono"
            :variable-pitch-family "Aporetic Sans")
           (large
-           :inherit medium
            :default-height 150)
           (presentation
-           :inherit medium
            :default-height 180)
           (jumbo
            :inherit medium
@@ -3663,9 +3731,8 @@ with my customised mode line ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =pr
   (dolist (input '(self-insert-command org-self-insert-command))
     (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
 
-  (dolist (event '( mouse-event-p mouse-movement-p mwheel-scroll handle-select-window
-                    mouse-set-point mouse-drag-region))
-    (add-to-list 'keycast-substitute-alist `(,event nil))))
+  (dolist (event '("<mouse-event>" "<mouse-movement>" "<mouse-2>" "<drag-mouse-1>" "<wheel-up>" "<wheel-down>" "<double-wheel-up>" "<double-wheel-down>" "<triple-wheel-up>" "<triple-wheel-down>" "<wheel-left>" "<wheel-right>" handle-select-window mouse-set-point  mouse-drag-region))
+    (add-to-list 'keycast-substitute-alist `(,event nil nil))))
 #+end_src
 
 *** The =prot-emacs-essentials.el= call to ~provide~
@@ -3836,27 +3903,35 @@ first as ~basic~ will never match something like =~/.l/s/fo= for
   ;; - `consult-kmacro'
   ;; - `consult-location'
   ;; - `embark-keybinding'
-  ;;
   (setq completion-category-overrides
-        ;; NOTE 2021-10-25: I am adding `basic' because it works better as a
-        ;; default for some contexts.  Read:
-        ;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50387>.
-        ;;
-        ;; `partial-completion' is a killer app for files, because it
-        ;; can expand ~/.l/s/fo to ~/.local/share/fonts.
-        ;;
-        ;; If `basic' cannot match my current input, Emacs tries the
-        ;; next completion style in the given order.  In other words,
-        ;; `orderless' kicks in as soon as I input a space or one of its
-        ;; style dispatcher characters.
-        '((file (styles . (basic partial-completion orderless)))
-          (bookmark (styles . (basic substring)))
-          (library (styles . (basic substring)))
-          (embark-keybinding (styles . (basic substring)))
-          (imenu (styles . (basic substring orderless)))
-          (consult-location (styles . (basic substring orderless)))
-          (kill-ring (styles . (emacs22 orderless)))
-          (eglot (styles . (emacs22 substring orderless))))))
+        (if prot-emacs-completion-ui
+            ;; NOTE 2021-10-25: I am adding `basic' because it works better as a
+            ;; default for some contexts.  Read:
+            ;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50387>.
+            ;;
+            ;; `partial-completion' is a killer app for files, because it
+            ;; can expand ~/.l/s/fo to ~/.local/share/fonts.
+            ;;
+            ;; If `basic' cannot match my current input, Emacs tries the
+            ;; next completion style in the given order.  In other words,
+            ;; `orderless' kicks in as soon as I input a space or one of its
+            ;; style dispatcher characters.
+            '((file (styles . (basic partial-completion orderless)))
+              (bookmark (styles . (basic substring)))
+              (library (styles . (basic substring)))
+              (embark-keybinding (styles . (basic substring)))
+              (imenu (styles . (basic substring orderless)))
+              (consult-location (styles . (basic substring orderless)))
+              (kill-ring (styles . (emacs22 orderless)))
+              (eglot (styles . (emacs22 substring orderless))))
+          '((file (styles . (basic partial-completion orderless)) (eager-display . t))
+            (bookmark (styles . (basic substring)))
+            (library (styles . (basic substring)))
+            (embark-keybinding (styles . (basic substring)) (eager-display . t))
+            (imenu (styles . (basic substring orderless)) (eager-display . t))
+            (consult-location (styles . (basic substring orderless)) (eager-display . t))
+            (kill-ring (styles . (emacs22 orderless)) (eager-display . t))
+            (eglot (styles . (emacs22 substring orderless)))))))
 #+end_src
 
 *** The =prot-emacs-completion.el= for the ~orderless~ completion style
@@ -3896,6 +3971,7 @@ Still, they do have their uses.
   ;; Remember to check my `completion-styles' and the
   ;; `completion-category-overrides'.
   (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
+  (setq orderless-smart-case nil)
 
   ;; SPC should never complete: use it for `orderless' groups.
   ;; The `?' is a regexp construct.
@@ -4016,15 +4092,15 @@ experience.
   helpful for demonstration purposes but also to double check that I
   did not mistype something (I cannot touch-type, so this happens a lot).
 
-- The ~minibuffer-prompt-properties~ and advice to ~completing-read-multiple~
-  make it so that (i) the minibuffer prompt is not accessible with
-  regular motions to avoid mistakes and (ii) prompts that complete
-  multiple targets show an indicator about this fact. With regard to
-  the latter in particular, we have prompts like that of Org to set
-  tags for a heading (with =C-c C-q= else =M-x org-set-tags-command=)
-  where more than one candidate can be provided using completion,
-  provided each candidate is separated by the ~crm-separator~ (a comma
-  by default, though Org uses =:= in that scenario).
+- The ~minibuffer-prompt-properties~ and ~crm-prompt~ make it so that
+  (i) the minibuffer prompt is not accessible with regular motions to
+  avoid mistakes and (ii) prompts that complete multiple targets show
+  an indicator about this fact. With regard to the latter in
+  particular, we have prompts like that of Org to set tags for a
+  heading (with =C-c C-q= else =M-x org-set-tags-command=) where more
+  than one candidate can be provided using completion, provided each
+  candidate is separated by the ~crm-separator~ (a comma by default,
+  though Org uses =:= in that scenario).
 
   Remember that when using completion in the minibuffer, you can hit
   =TAB= to expand the selected choice without exiting with it. For
@@ -4063,25 +4139,7 @@ experience.
   (setq minibuffer-prompt-properties
         '(read-only t cursor-intangible t face minibuffer-prompt))
 
-  ;; MCT has a variant of this built-in.
-  (unless (eq prot-emacs-completion-ui 'mct)
-    ;; Add prompt indicator to `completing-read-multiple'.  We display
-    ;; [`completing-read-multiple': <separator>], e.g.,
-    ;; [`completing-read-multiple': ,] if the separator is a comma.  This
-    ;; is adapted from the README of the `vertico' package by Daniel
-    ;; Mendler.  I made some small tweaks to propertize the segments of
-    ;; the prompt.
-    (defun crm-indicator (args)
-      (cons (format "[`completing-read-multiple': %s]  %s"
-                    (propertize
-                     (replace-regexp-in-string
-                      "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                      crm-separator)
-                     'face 'error)
-                    (car args))
-            (cdr args)))
-
-    (advice-add #'completing-read-multiple :filter-args #'crm-indicator))
+  (setq crm-prompt (format "%s %%p" (propertize "[%d]" 'face 'shadow))) ; Emacs 31
 
   (file-name-shadow-mode 1))
 #+end_src
@@ -4104,24 +4162,45 @@ completion (such as the ~corfu~ package).
 (use-package minibuffer
   :ensure nil
   :demand t
+  :hook (minibuffer-setup . prot-common-truncate-lines-silently)
   :config
-  (setq completions-format 'one-column)
-  (setq completion-show-help nil)
+  (setq completion-auto-deselect nil)
   (setq completion-auto-help 'always)
-  (setq completion-auto-select nil)
-  (setq completions-detailed t)
+  (setq completion-auto-select 'second-tab)
+  (setq completion-show-help nil)
   (setq completion-show-inline-help nil)
-  (setq completions-max-height 6)
-  (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
+  (setq completions-detailed t)
+  (setq completions-format 'one-column)
+  (setq completions-header-format "")
+  ;; (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
   (setq completions-highlight-face 'completions-highlight)
-  (setq minibuffer-completion-auto-choose t)
-  (setq minibuffer-visible-completions t) ; Emacs 30
+  (setq completions-max-height 10)
   (setq completions-sort 'historical)
+  ;; This one is for Emacs 31.  It relies on what I am doing with the `completion-category-overrides'.
+  (setq completion-eager-display 'auto)
+
+  (setq minibuffer-completion-auto-choose t)
+  (setq minibuffer-visible-completions nil) ; Emacs 30
 
   (unless prot-emacs-completion-ui
     (prot-emacs-keybind minibuffer-local-completion-map
       "<up>" #'minibuffer-previous-line-completion
       "<down>" #'minibuffer-next-line-completion)
+
+    (prot-emacs-keybind completion-in-region-mode-map
+      "<up>" #'minibuffer-previous-completion
+      "<down>" #'minibuffer-next-completion
+      "RET" #'minibuffer-choose-completion)
+
+    (defun prot/completions-tweak-style ()
+      "Tweak the style of the Completions buffer."
+      (setq-local mode-line-format nil)
+      (setq-local cursor-in-non-selected-windows nil)
+      (when (and completions-header-format
+                 (not (string-blank-p completions-header-format)))
+        (setq-local display-line-numbers-offset -1)))
+
+    (add-hook 'completion-list-mode-hook #'prot/completions-tweak-style)
 
     (add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently)))
 #+end_src
@@ -4391,24 +4470,25 @@ Also see [[#h:567bb00f-1d82-4746-93e5-e0f60721728a][the =prot-emacs-completion.e
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 ;;; Corfu (in-buffer completion popup)
-(use-package corfu
-  :ensure t
-  :if (display-graphic-p)
-  :hook (after-init . global-corfu-mode)
-  ;; I also have (setq tab-always-indent 'complete) for TAB to complete
-  ;; when it does not need to perform an indentation change.
-  :bind (:map corfu-map ("<tab>" . corfu-complete))
-  :config
-  (setq corfu-preview-current nil)
-  (setq corfu-min-width 20)
+(when prot-emacs-completion-ui
+  (use-package corfu
+    :ensure t
+    :if (display-graphic-p)
+    :hook (after-init . global-corfu-mode)
+    ;; I also have (setq tab-always-indent 'complete) for TAB to complete
+    ;; when it does not need to perform an indentation change.
+    :bind (:map corfu-map ("<tab>" . corfu-complete))
+    :config
+    (setq corfu-preview-current nil)
+    (setq corfu-min-width 20)
 
-  (setq corfu-popupinfo-delay '(1.25 . 0.5))
-  (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+    (setq corfu-popupinfo-delay '(1.25 . 0.5))
+    (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
 
-  ;; Sort by input history (no need to modify `corfu-sort-function').
-  (with-eval-after-load 'savehist
-    (corfu-history-mode 1)
-    (add-to-list 'savehist-additional-variables 'corfu-history)))
+    ;; Sort by input history (no need to modify `corfu-sort-function').
+    (with-eval-after-load 'savehist
+      (corfu-history-mode 1)
+      (add-to-list 'savehist-additional-variables 'corfu-history))))
 #+end_src
 
 *** The =prot-emacs-completion.el= settings for ~consult~
@@ -4612,6 +4692,7 @@ Embark the way it is intended, so I decided to only focus on
 (when prot-emacs-completion-extras
   (use-package embark
     :ensure t
+    :hook (embark-collect-mode . prot-common-truncate-lines-silently)
     :bind
     ( :map minibuffer-local-map
       ("C-c C-c" . embark-collect)
@@ -6021,8 +6102,10 @@ infer in most cases.
         '(face
           tabs
           spaces
+          newline
           tab-mark
           space-mark
+          newline-mark
           trailing
           missing-newline-at-eof
           space-after-tab::tab
@@ -6420,7 +6503,7 @@ the placement of a window in the given direction.
   (setq windmove-create-window nil)) ; Emacs 27.1
 #+end_src
 
-*** The =prot-emacs-window.el= use of contextual header line (~breadcrumb~)
+*** COMMENT The =prot-emacs-window.el= use of contextual header line (~breadcrumb~)
 :PROPERTIES:
 :CUSTOM_ID: h:29ced61b-4b5a-4f63-af00-fe311468d1cd
 :END:
@@ -6448,6 +6531,41 @@ leads to the current heading. Same idea for programming modes. Neat!
     "Enable `breadcrumb-local-mode' if the buffer is visiting a file."
     (when buffer-file-name
       (breadcrumb-local-mode 1))))
+#+end_src
+
+*** Show the name of the current function or heading (~which-function-mode~)
+:PROPERTIES:
+:CUSTOM_ID: h:03696edd-8637-4eb6-bfeb-23e828569523
+:END:
+
+The built-in ~which-key-mode~ displays the name of the current
+function/variable defition or heading. It makes it easier to figure
+out where you are in the file you are editing. This is especially
+useful when combined with search-driven navigation: you just land on a
+certain line and need to have a sense of the context.
+
+By the default, the information is displayed on the mode line, though
+this can be controlled by the user option ~which-func-display~. I
+prefer to keep it to the mode line, though it is possible to place it
+on the header line or both it and the mode line.
+
+The ~which-func-format~ controls what the indicator looks like. This
+is a bit more advanced in terms of the data structure it uses. All I
+did what to take the original value and make some minor tweaks to it.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
+;;; Show the name of the current definition or heading for context (which-function-mode)
+(use-package which-func
+  :ensure nil
+  :hook (after-init . which-function-mode)
+  :config
+  (setq which-func-modes '(prog-mode org-mode))
+  (setq which-func-display 'mode) ; Emacs 30
+  (setq which-func-unknown "")
+  (setq which-func-format
+        '((:propertize which-func-current
+		               face italic
+		               mouse-face mode-line-highlight))))
 #+end_src
 
 *** The =prot-emacs-window.el= ~provide~ form
@@ -6989,7 +7107,7 @@ cases, a combination of =vc= and the command-line will suffice
     ("M-w" . nil))
   :init
   (setq magit-define-global-key-bindings nil)
-  (setq magit-section-visibility-indicator '("⮧"))
+  (setq magit-section-visibility-indicator '(magit-fringe-bitmap> . magit-fringe-bitmapv))
   :config
   (setq git-commit-summary-max-length 50)
   ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
@@ -8828,7 +8946,7 @@ facilities to rename files, regardless of file type.
   (setq denote-date-format nil) ; read its doc string
   (setq denote-rename-confirmations nil) ; CAREFUL with this if you are not familiar with Denote!
   (setq denote-backlinks-show-context nil)
-  (setq denote-rename-buffer-format "[D] %D%b")
+  (setq denote-rename-buffer-format "%D%b")
   (setq denote-buffer-has-backlinks-string " (<--->)")
 
   ;; Automatically rename Denote buffers when opening them so that
@@ -10042,7 +10160,7 @@ test it for my themes and (ii) help others who are using it.
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-mu4e.el" :mkdirp yes
 ;; This is deprecated code as I stopped using mu4e a long time ago.  I
 ;; keep it here for when I need to test it for my themes (`ef-themes',
-;; `modus-themes', `standard-themes').
+;; `modus-themes', `standard-themes', `doric-themes').
 
 (use-package mu4e
   :ensure nil
@@ -10287,7 +10405,7 @@ I keep this here in case I need to test the setup.
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-gnus.el" :mkdirp yes
 ;; This is deprecated code as I stopped using Gnus a long time ago.  I
 ;; keep it here for when I need to test it for my themes (`ef-themes',
-;; `modus-themes', `standard-themes').
+;; `modus-themes', `standard-themes', `doric-themes').
 
 
 (use-package gnus
@@ -11006,7 +11124,7 @@ file to provide only these commands:
   (setq elfeed-search-trailing-width 25)
   (setq elfeed-show-truncate-long-urls t)
   (setq elfeed-show-unique-buffers t)
-  (setq elfeed-search-date-format '("%F %R" 16 :left))
+  (setq elfeed-search-date-format '("%F %R" 20 :left))
 
   (prot-emacs-keybind elfeed-search-mode-map
     "w" #'elfeed-search-yank
@@ -12034,50 +12152,39 @@ Restore the buffer with \\<dired-mode-map>`\\[revert-buffer]'."
   (dired-do-kill-lines)
   (add-to-history 'prot-dired--limit-hist regexp))
 
-(defvar prot-dired--find-grep-hist '()
-  "Minibuffer history for `prot-dired-grep-marked-files'.")
+(defvar prot-dired-grep-marked-files-history nil
+  "Minibuffer history for `prot-dired-grep-marked-files-prompt'.")
+
+(defun prot-dired-grep-marked-files-prompt ()
+  "Prompt for string to search for with `prot-dired-grep-marked-files'."
+  (read-string
+   "grep for PATTERN in marked files: "
+   nil 'prot-dired-grep-marked-files-history))
 
 ;; Also see `prot-search-grep' from prot-search.el.
 ;;;###autoload
-(defun prot-dired-grep-marked-files (regexp &optional arg)
-  "Run `find' with `grep' for REGEXP on marked files.
-When no files are marked or when just a single one is marked,
-search the entire directory instead.
-
-With optional prefix ARG target a single marked file.
-
-We assume that there is no point in marking a single file and
-running find+grep on its contents.  Visit it and call `occur' or
-run grep directly on it without the whole find part."
+(defun prot-dired-grep-marked-files (files regexp)
+  "Run `find' with `grep' for REGEXP on marked FILES."
   (interactive
-   (list
-    (read-string "grep for PATTERN (marked files OR current directory): " nil 'prot-dired--find-grep-hist)
-    current-prefix-arg)
+   (if-let* ((marks (dired-get-marked-files 'no-dir))
+             (_ (> (length marks) 1)))
+       (list
+        marks
+        (prot-dired-grep-marked-files-prompt))
+     (user-error "Mark multiple files"))
    dired-mode)
-  (when-let* ((marks (dired-get-marked-files 'no-dir))
-              (files (mapconcat #'identity marks " "))
-              (args (if (or arg (length> marks 1))
-                        ;; Thanks to Sean Whitton for pointing out an
-                        ;; earlier superfluity of mine: we do not need
-                        ;; to call grep through find when we already
-                        ;; know the files we want to search in.  Check
-                        ;; Sean's dotfiles:
-                        ;; <https://git.spwhitton.name/dotfiles>.
-                        ;;
-                        ;; Any other errors or omissions are my own.
-                        (format "grep -nH --color=auto %s %s" (shell-quote-argument regexp) files)
-                      (concat
-                       "find . -not " (shell-quote-argument "(")
-                       " -wholename " (shell-quote-argument "*/.git*")
-                       " -prune " (shell-quote-argument ")")
-                       " -type f"
-                       " -exec grep -nHE --color=auto " regexp " "
-                       (shell-quote-argument "{}")
-                       " " (shell-quote-argument ";") " "))))
+  (let ((buffer-name (format "*prot-dired-grep-marked for `%s'*" regexp)))
     (compilation-start
-     args
+     (concat
+      "find . -not " (shell-quote-argument "(")
+      " -wholename " (shell-quote-argument "*/.git*")
+      " -prune " (shell-quote-argument ")")
+      " -type f"
+      " -exec grep -nHER --color=auto " regexp " "
+      (shell-quote-argument "{}")
+      " " (shell-quote-argument ";") " ")
      'grep-mode
-     (lambda (mode) (format "*prot-dired-find-%s for '%s'" mode regexp))
+     (lambda (_mode) buffer-name)
      t)))
 
 ;;;; Subdir extras and Imenu setup
@@ -12150,10 +12257,10 @@ For more on such headings, read `dired-maybe-insert-subdir'."
 When items are marked, insert those which are subsirectories of
 the current directory.  Ignore regular files.
 
-If no marks are active and point is on a subdirectory line,
+If no files are active and point is on a subdirectory line,
 insert it directly.
 
-If no marks are active and point is not on a subdirectory line,
+If no files are active and point is not on a subdirectory line,
 prompt for a subdirectory using completion.
 
 With optional ARG as a single prefix (`\\[universal-argument]')

@@ -46,25 +46,34 @@
   ;; - `embark-keybinding'
   ;;
   (setq completion-category-overrides
-        ;; NOTE 2021-10-25: I am adding `basic' because it works better as a
-        ;; default for some contexts.  Read:
-        ;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50387>.
-        ;;
-        ;; `partial-completion' is a killer app for files, because it
-        ;; can expand ~/.l/s/fo to ~/.local/share/fonts.
-        ;;
-        ;; If `basic' cannot match my current input, Emacs tries the
-        ;; next completion style in the given order.  In other words,
-        ;; `orderless' kicks in as soon as I input a space or one of its
-        ;; style dispatcher characters.
-        '((file (styles . (basic partial-completion orderless)))
-          (bookmark (styles . (basic substring)))
-          (library (styles . (basic substring)))
-          (embark-keybinding (styles . (basic substring)))
-          (imenu (styles . (basic substring orderless)))
-          (consult-location (styles . (basic substring orderless)))
-          (kill-ring (styles . (emacs22 orderless)))
-          (eglot (styles . (emacs22 substring orderless))))))
+        (if prot-emacs-completion-ui
+            ;; NOTE 2021-10-25: I am adding `basic' because it works better as a
+            ;; default for some contexts.  Read:
+            ;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50387>.
+            ;;
+            ;; `partial-completion' is a killer app for files, because it
+            ;; can expand ~/.l/s/fo to ~/.local/share/fonts.
+            ;;
+            ;; If `basic' cannot match my current input, Emacs tries the
+            ;; next completion style in the given order.  In other words,
+            ;; `orderless' kicks in as soon as I input a space or one of its
+            ;; style dispatcher characters.
+            '((file (styles . (basic partial-completion orderless)))
+              (bookmark (styles . (basic substring)))
+              (library (styles . (basic substring)))
+              (embark-keybinding (styles . (basic substring)))
+              (imenu (styles . (basic substring orderless)))
+              (consult-location (styles . (basic substring orderless)))
+              (kill-ring (styles . (emacs22 orderless)))
+              (eglot (styles . (emacs22 substring orderless))))
+          '((file (styles . (basic partial-completion orderless)) (eager-display . t))
+            (bookmark (styles . (basic substring)))
+            (library (styles . (basic substring)))
+            (embark-keybinding (styles . (basic substring)) (eager-display . t))
+            (imenu (styles . (basic substring orderless)) (eager-display . t))
+            (consult-location (styles . (basic substring orderless)) (eager-display . t))
+            (kill-ring (styles . (emacs22 orderless)) (eager-display . t))
+            (eglot (styles . (emacs22 substring orderless)))))))
 
 ;;; Orderless completion style (and prot-orderless.el)
 (use-package orderless
@@ -75,6 +84,7 @@
   ;; Remember to check my `completion-styles' and the
   ;; `completion-category-overrides'.
   (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
+  (setq orderless-smart-case nil)
 
   ;; SPC should never complete: use it for `orderless' groups.
   ;; The `?' is a regexp construct.
@@ -125,25 +135,7 @@
   (setq minibuffer-prompt-properties
         '(read-only t cursor-intangible t face minibuffer-prompt))
 
-  ;; MCT has a variant of this built-in.
-  (unless (eq prot-emacs-completion-ui 'mct)
-    ;; Add prompt indicator to `completing-read-multiple'.  We display
-    ;; [`completing-read-multiple': <separator>], e.g.,
-    ;; [`completing-read-multiple': ,] if the separator is a comma.  This
-    ;; is adapted from the README of the `vertico' package by Daniel
-    ;; Mendler.  I made some small tweaks to propertize the segments of
-    ;; the prompt.
-    (defun crm-indicator (args)
-      (cons (format "[`completing-read-multiple': %s]  %s"
-                    (propertize
-                     (replace-regexp-in-string
-                      "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                      crm-separator)
-                     'face 'error)
-                    (car args))
-            (cdr args)))
-
-    (advice-add #'completing-read-multiple :filter-args #'crm-indicator))
+  (setq crm-prompt (format "%s %%p" (propertize "[%d]" 'face 'shadow))) ; Emacs 31
 
   (file-name-shadow-mode 1))
 
@@ -151,23 +143,43 @@
   :ensure nil
   :demand t
   :config
-  (setq completions-format 'one-column)
-  (setq completion-show-help nil)
+  (setq completion-auto-deselect nil)
   (setq completion-auto-help 'always)
-  (setq completion-auto-select nil)
-  (setq completions-detailed t)
+  (setq completion-auto-select 'second-tab)
+  (setq completion-show-help nil)
   (setq completion-show-inline-help nil)
-  (setq completions-max-height 6)
-  (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
+  (setq completions-detailed t)
+  (setq completions-format 'one-column)
+  (setq completions-header-format "")
+  ;; (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
   (setq completions-highlight-face 'completions-highlight)
-  (setq minibuffer-completion-auto-choose t)
-  (setq minibuffer-visible-completions t) ; Emacs 30
+  (setq completions-max-height 10)
   (setq completions-sort 'historical)
+  ;; This one is for Emacs 31.  It relies on what I am doing with the `completion-category-overrides'.
+  (setq completion-eager-display 'auto)
+
+  (setq minibuffer-completion-auto-choose t)
+  (setq minibuffer-visible-completions nil) ; Emacs 30
 
   (unless prot-emacs-completion-ui
     (prot-emacs-keybind minibuffer-local-completion-map
       "<up>" #'minibuffer-previous-line-completion
       "<down>" #'minibuffer-next-line-completion)
+
+    (prot-emacs-keybind completion-in-region-mode-map
+      "<up>" #'minibuffer-previous-completion
+      "<down>" #'minibuffer-next-completion
+      "RET" #'minibuffer-choose-completion)
+
+    (defun prot/completions-tweak-style ()
+      "Tweak the style of the Completions buffer."
+      (setq-local mode-line-format nil)
+      (setq-local cursor-in-non-selected-windows nil)
+      (when (and completions-header-format
+                 (not (string-blank-p completions-header-format)))
+        (setq-local display-line-numbers-offset -1)))
+
+    (add-hook 'completion-list-mode-hook #'prot/completions-tweak-style)
 
     (add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently)))
 
@@ -302,24 +314,25 @@ Development continues on GitHub with GitLab as a mirror."))
   (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save))
 
 ;;; Corfu (in-buffer completion popup)
-;; (use-package corfu
-;;   :ensure t
-;;   :if (display-graphic-p)
-;;   :hook (after-init . global-corfu-mode)
-;;   ;; I also have (setq tab-always-indent 'complete) for TAB to complete
-;;   ;; when it does not need to perform an indentation change.
-;;   :bind (:map corfu-map ("<tab>" . corfu-complete))
-;;   :config
-;;   (setq corfu-preview-current nil)
-;;   (setq corfu-min-width 20)
+;; (when prot-emacs-completion-ui
+;;   (use-package corfu
+;;     :ensure t
+;;     :if (display-graphic-p)
+;;     :hook (after-init . global-corfu-mode)
+;;     ;; I also have (setq tab-always-indent 'complete) for TAB to complete
+;;     ;; when it does not need to perform an indentation change.
+;;     :bind (:map corfu-map ("<tab>" . corfu-complete))
+;;     :config
+;;     (setq corfu-preview-current nil)
+;;     (setq corfu-min-width 20)
 ;;
-;;   (setq corfu-popupinfo-delay '(1.25 . 0.5))
-;;   (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+;;     (setq corfu-popupinfo-delay '(1.25 . 0.5))
+;;     (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
 ;;
-;;   ;; Sort by input history (no need to modify `corfu-sort-function').
-;;   (with-eval-after-load 'savehist
-;;     (corfu-history-mode 1)
-;;     (add-to-list 'savehist-additional-variables 'corfu-history)))
+;;     ;; Sort by input history (no need to modify `corfu-sort-function').
+;;     (with-eval-after-load 'savehist
+;;       (corfu-history-mode 1)
+;;       (add-to-list 'savehist-additional-variables 'corfu-history))))
 
 ;;; Enhanced minibuffer commands (consult.el)
 (when prot-emacs-completion-extras
@@ -370,6 +383,7 @@ Development continues on GitHub with GitLab as a mirror."))
 (when prot-emacs-completion-extras
   (use-package embark
     :ensure t
+    :hook (embark-collect-mode . prot-common-truncate-lines-silently)
     :bind
     ( :map minibuffer-local-map
       ("C-c C-c" . embark-collect)
