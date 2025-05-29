@@ -3,8 +3,8 @@
 ;;; Produce backtraces when errors occur: can be helpful to diagnose startup issues
 (setq debug-on-error t)
 
-;;; No fringe
-(fringe-mode '(0 . 0))
+;;; Fringe
+(fringe-mode '(3 . 0))
 
 ;;; Recentf
 ;; (setq recentf-max-saved-items 10)

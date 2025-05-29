@@ -62,7 +62,7 @@
 (use-package spacious-padding
   :ensure t
   :if (display-graphic-p)
-  :hook (after-init . spacious-padding-mode)
+  ;; :hook (after-init . spacious-padding-mode)
   :bind ("<f8>" . spacious-padding-mode)
   :init
   ;; These are the defaults, but I keep it here for visiibility.
@@ -73,17 +73,18 @@
            :tab-width 4
            :right-divider-width 20
            :scroll-bar-width ,(if x-toolkit-scroll-bars 8 6)
-           :left-fringe-width 2
-           :right-fringe-width 2))
+           :left-fringe-width 3
+           :right-fringe-width 3))
 
   ;; (setq spacious-padding-subtle-mode-line nil)
 
   ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
   ;; is very flexible.  Here we make the mode lines be a single
   ;; overline.
-  (setq spacious-padding-subtle-mode-line
-        '( :mode-line-active spacious-padding-subtle-mode-line-active
-           :mode-line-inactive spacious-padding-subtle-mode-line-inactive)))
+  ;; (setq spacious-padding-subtle-mode-line
+  ;;       '( :mode-line-active spacious-padding-subtle-mode-line-active
+  ;;          :mode-line-inactive spacious-padding-subtle-mode-line-inactive))
+  )
 
 ;;;; Rainbow mode for colour previewing (rainbow-mode.el)
 (use-package rainbow-mode
