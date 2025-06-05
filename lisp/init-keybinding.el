@@ -138,6 +138,8 @@
    '("fs" . save-buffer)
    '("fw" . mark-whole-buffer)
    '("fx" . execute-extended-command)
+   '("fj" . gptel)
+   '("fk" . p-gpt-rewrite-english)
 
    '("<escape>" . ignore))
 
