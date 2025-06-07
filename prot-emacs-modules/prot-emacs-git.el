@@ -192,6 +192,7 @@
   (setq agitate-log-edit-informative-show-root-log nil
         agitate-log-edit-informative-show-files nil))
 
+;;; Interactive and powerful git front-end (Magit)
 (use-package transient
   :defer t
   :config

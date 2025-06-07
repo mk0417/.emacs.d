@@ -1,10 +1,14 @@
 ;;; prot-abbrev.el --- Functions for use with abbrev-mode -*- lexical-binding: t -*-
+
 ;; Copyright (C) 2025-2025  Protesilaos Stavrou
+
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "30.1"))
+
 ;; This file is NOT part of GNU Emacs.
+
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of the License, or (at
@@ -17,6 +21,7 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 ;;; Commentary:
 ;;
 ;; Functions for use with `abbrev-mode'.
@@ -102,7 +107,7 @@ Use completion among previous entries, retrieving their data from
 
 (defun prot-abbrev-org-macro-key ()
   "Insert {{{kbd(KEY)}}} by prompting for KEY."
-  (insert (format "{{{kbd(%s)}}}" (prot-abbrev-org-macro-ke
+  (insert (format "{{{kbd(%s)}}}" (prot-abbrev-org-macro-key-prompt))))
 
-                                   (provide 'prot-abbrev)
+(provide 'prot-abbrev)
 ;;; prot-abbrev.el ends here

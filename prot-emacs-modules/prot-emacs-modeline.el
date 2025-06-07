@@ -1,5 +1,3 @@
-;;;;; prot-emacs-modeline.el --- Modeline -*- lexical-binding: t -*-
-
 ;;; Mode line
 (use-package prot-modeline
   :ensure nil

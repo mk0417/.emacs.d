@@ -14,6 +14,13 @@
   :config
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
 
+;; (use-package nerd-icons-corfu
+;;   :ensure t
+;;   :if (display-graphic-p)
+;;   :after corfu
+;;   :config
+;;   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
 (use-package nerd-icons-dired
   :ensure t
   :if (display-graphic-p)

@@ -31,7 +31,7 @@
   ;;         (comment magenta-faint)
   ;;         (bg-paren-match bg-magenta-subtle)
   ;;         (fg-paren-match magenta)))
-  ;; (setq modus-themes-common-palette-overrides nil)
+  (setq modus-themes-common-palette-overrides nil)
 
   (modus-themes-load-theme (car modus-themes-to-toggle)))
 

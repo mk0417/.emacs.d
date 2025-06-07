@@ -44,7 +44,6 @@
   ;; - `consult-kmacro'
   ;; - `consult-location'
   ;; - `embark-keybinding'
-  ;;
   (setq completion-category-overrides
         (if prot-emacs-completion-ui
             ;; NOTE 2021-10-25: I am adding `basic' because it works better as a
@@ -142,6 +141,7 @@
 (use-package minibuffer
   :ensure nil
   :demand t
+  :hook (minibuffer-setup . prot-common-truncate-lines-silently)
   :config
   (setq completion-auto-deselect nil)
   (setq completion-auto-help 'always)

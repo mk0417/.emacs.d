@@ -22,14 +22,13 @@
           consult-location
           embark-keybinding
           imenu
-          ;; file
+          file
           project-file
           buffer
           kill-ring
           consult-location))
   (setq mct-remove-shadowed-file-names t)
-  ;; (setq mct-completion-window-size (cons #'mct-frame-height-third 1))
-  (setq mct-completion-window-size (cons 10 1))
+  (setq mct-completion-window-size (cons #'mct-frame-height-third 1))
   (setq mct-live-completion 'visible)
   (setq completions-sort #'mct-sort-multi-category)
 

@@ -129,7 +129,6 @@
 
     ("C-S-w" . prot-simple-copy-line)
     ("C-S-y" . prot-simple-yank-replace-line-or-region)
-
     ("<C-return>" . prot-simple-new-line-below)
     ("<C-S-return>" . prot-simple-new-line-above)
     ("C-x x a" . prot-simple-auto-fill-visual-line-mode) ; auto-fill/visual-line toggle
@@ -206,8 +205,6 @@
   :ensure nil
   :hook (after-init . recentf-mode)
   :config
-  (add-to-list 'recentf-exclude "/var/folders/.*")
-  (add-to-list 'recentf-exclude "/private/var/folders/.*")
   (setq recentf-max-saved-items 100)
   (setq recentf-max-menu-items 25) ; I don't use the `menu-bar-mode', but this is good to know
   (setq recentf-save-file-modes nil)
@@ -457,17 +454,70 @@ word.  Fall back to regular `expreg-expand'."
   :ensure t
   :bind
   (("C-c t t" . tmr)
-   ("C-c t T" . tmr-with-description)
-   ("C-c t l" . tmr-tabulated-view) ; "list timers" mnemonic
-   ("C-c t c" . tmr-clone)
-   ("C-c t k" . tmr-cancel)
-   ("C-c t s" . tmr-reschedule)
-   ("C-c t e" . tmr-edit-description)
-   ("C-c t r" . tmr-remove)
-   ("C-c t R" . tmr-remove-finished))
+   ("C-c t T" . tmr-with-details)
+   ("C-c t l" . tmr-list-timers))
   :config
   (setq tmr-notification-urgency 'normal
         tmr-description-list 'tmr-description-history))
+
+;;; Shell (M-x shell)
+(use-package shell
+  :ensure nil
+  :bind
+  ( :map shell-mode-map
+    ("C-c C-k" . comint-clear-buffer)
+    ("C-c C-w" . comint-write-output))
+  :config
+  ;; Check my .bashrc which handles `comint-terminfo-terminal':
+  ;;
+  ;; # Default pager.  The check for the terminal is useful for Emacs with
+  ;; # M-x shell (which is how I usually interact with bash these days).
+  ;; #
+  ;; # The COLORTERM is documented in (info "(emacs) General Variables").
+  ;; # I found the reference to `dumb-emacs-ansi' in (info "(emacs)
+  ;; # Connection Variables").
+  ;; if [ "$TERM" = "dumb" ] && [ "$INSIDE_EMACS" ] || [ "$TERM" = "dumb-emacs-ansi" ] && [ "$INSIDE_EMACS" ]
+  ;; then
+  ;;     export PAGER="cat"
+  ;;     alias less="cat"
+  ;;     export TERM=dumb-emacs-ansi
+  ;;     export COLORTERM=1
+  ;; else
+  ;;     # Quit once you try to scroll past the end of the file.
+  ;;     export PAGER="less --quit-at-eof"
+  ;; fi
+
+  (setq shell-command-prompt-show-cwd t) ; Emacs 27.1
+  (setq ansi-color-for-comint-mode t)
+  (setq shell-input-autoexpand 'input)
+  (setq shell-highlight-undef-enable t) ; Emacs 29.1
+  (setq shell-has-auto-cd nil) ; Emacs 29.1
+  (setq shell-get-old-input-include-continuation-lines t) ; Emacs 30.1
+  (setq shell-kill-buffer-on-exit t) ; Emacs 29.1
+  (setq shell-completion-fignore '("~" "#" "%"))
+  (setq-default comint-scroll-to-bottom-on-input t)
+  (setq-default comint-scroll-to-bottom-on-output nil)
+  (setq-default comint-input-autoexpand 'input)
+  (setq comint-prompt-read-only t)
+  (setq comint-buffer-maximum-size 9999)
+  (setq comint-completion-autolist t)
+  (setq comint-input-ignoredups t)
+  (setq tramp-default-remote-shell "/bin/bash")
+
+  (setq shell-font-lock-keywords
+        '(("[ \t]\\([+-][^ \t\n]+\\)" 1 font-lock-builtin-face)
+          ("^[^ \t\n]+:.*" . font-lock-string-face)
+          ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))
+
+  ;; Support for OS-specific escape sequences such as what `ls
+  ;; --hyperlink' uses.  I normally don't use those, but I am checking
+  ;; this to see if there are any obvious advantages/disadvantages.
+  (add-hook 'comint-output-filter-functions 'comint-osc-process-output))
+
+(use-package prot-shell
+  :ensure nil
+  :bind (("<f1>" . prot-shell)) ; I don't use F1 for help commands
+  :hook (shell-mode . prot-shell-mode))
 
 ;;; Laptop settings
 (use-package battery

@@ -44,6 +44,11 @@
   (setq use-hard-newlines nil)
   (setq adaptive-fill-mode t))
 
+;;;; Arch Linux and AUR package scripts (sh-mode)
+(use-package sh-script
+  :ensure nil
+  :mode ("PKGBUILD" . sh-mode))
+
 ;;;; SystemD and other configuration files (conf-mode)
 (use-package conf-mode
   :ensure nil
@@ -57,21 +62,13 @@
   (setq eldoc-message-function #'message)) ; don't use mode line for M-x eval-expression, etc.
 
 ;;;; Eglot (built-in client for the language server protocol)
-(use-package eglot
-  :ensure nil
-  :functions (eglot-ensure)
-  :commands (eglot)
-  ;; :hook ((python-mode ess-mode julia-mode) . eglot-ensure)
-  :config
-  (fset #'jsonrpc--log-event #'ignore)
-  (setq jsonrpc-event-hook nil)
-  (setq eglot-connect-timeout 90)
-  (setq eglot-sync-connect nil)
-  (setq eglot-autoshutdown t)
-  (setq eglot-ignored-server-capabilities '(:inlayHintProvider :documentHighlightProvider))
-  (with-eval-after-load 'eglot
-    (add-to-list 'eglot-server-programs '(python-mode . ("basedpyright-langserver" "--stdio")))
-    (add-to-list 'eglot-stay-out-of 'flymake)))
+;; (use-package eglot
+;;   :ensure nil
+;;   :functions (eglot-ensure)
+;;   :commands (eglot)
+;;   :config
+;;   (setq eglot-sync-connect nil)
+;;   (setq eglot-autoshutdown t))
 
 ;;;; Handle performance for very long lines (so-long.el)
 (use-package so-long
@@ -89,6 +86,14 @@
 (use-package csv-mode
   :ensure t
   :commands (csv-align-mode))
+
+;;; SXHKDRC mode (one of my many packages)
+(use-package sxhkdrc-mode
+  :ensure t
+  ;; By default, it only applies to the sxhkdrc file, but I have other
+  ;; relevant entries as well.  I separate my keys into different
+  ;; modules and load only what I need.
+  :mode "sxhkdrc_.*")
 
 ;;; Flyspell and prot-spell.el (spell check)
 (use-package flyspell
@@ -219,7 +224,7 @@
   ;; meaning that you only use a predefined set of them, then you want
   ;; `denote-infer-keywords' to be nil and `denote-known-keywords' to
   ;; have the keywords you need.
-  (setq denote-known-keywords '("emacs" "economics"))
+  (setq denote-known-keywords '("emacs"))
   (setq denote-infer-keywords t)
   (setq denote-sort-keywords t)
   (setq denote-excluded-directories-regexp nil)
@@ -363,6 +368,8 @@ retroactively follow that order."
               "~/Dropbox/peng_notes/books/"
               "~/Dropbox/peng_notes/denote-test-silo/")))
 
+;;; Custom extensions for "focus mode" (logos.el)
+;; Read the manual: <https://protesilaos.com/emacs/logos>.
 (use-package olivetti
   :ensure t
   :commands (olivetti-mode)
@@ -370,5 +377,45 @@ retroactively follow that order."
   (setq olivetti-body-width 0.7)
   (setq olivetti-minimum-body-width 80)
   (setq olivetti-recall-visual-line-mode-entry-state t))
+
+;; (use-package logos
+;;   :ensure t
+;;   :bind
+;;   (("C-x n n" . logos-narrow-dwim)
+;;    ("C-x ]" . logos-forward-page-dwim)
+;;    ("C-x [" . logos-backward-page-dwim)
+;;    ;; I don't think I ever saw a package bind M-] or M-[...
+;;    ("M-]" . logos-forward-page-dwim)
+;;    ("M-[" . logos-backward-page-dwim)
+;;    ("<f9>" . logos-focus-mode))
+;;   :config
+;;   (setq logos-outlines-are-pages t)
+;;   (setq logos-outline-regexp-alist
+;;         `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos-page-delimiter))
+;;           (org-mode . ,(format "\\(^\\*+ +\\|^-\\{5\\}$\\|%s\\)" logos-page-delimiter))
+;;           (markdown-mode . ,(format "\\(^\\#+ +\\|^[*-]\\{5\\}$\\|^\\* \\* \\*$\\|%s\\)" logos-page-delimiter))
+;;           (conf-toml-mode . "^\\[")))
+;;
+;;   ;; These apply when `logos-focus-mode' is enabled.  Their value is
+;;   ;; buffer-local.
+;;   (setq-default logos-hide-mode-line t)
+;;   (setq-default logos-hide-header-line t)
+;;   (setq-default logos-hide-buffer-boundaries t)
+;;   (setq-default logos-hide-fringe t)
+;;   (setq-default logos-variable-pitch t) ; see my `fontaine' configurations
+;;   (setq-default logos-buffer-read-only nil)
+;;   (setq-default logos-scroll-lock nil)
+;;   (setq-default logos-olivetti t)
+;;
+;;   (add-hook 'enable-theme-functions #'logos-update-fringe-in-buffers)
+;;
+;; ;;;; Extra tweaks
+;;   ;; place point at the top when changing pages, but not in `prog-mode'
+;;   (defun prot/logos--recenter-top ()
+;;     "Use `recenter' to reposition the view at the top."
+;;     (unless (derived-mode-p 'prog-mode)
+;;       (recenter 1))) ; Use 0 for the absolute top
+;;
+;;   (add-hook 'logos-page-motion-hook #'prot/logos--recenter-top))
 
 (provide 'prot-emacs-langs)
