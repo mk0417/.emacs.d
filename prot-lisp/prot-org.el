@@ -99,7 +99,7 @@ For use in `prot-org-capture-coach'."
 (defun prot-org-capture-coach ()
   "Contents of an Org capture template for my coaching lessons."
   (let ((identifier (format-time-string "%Y%m%dT%H%M%S")))
-    (format "* COACH %s %s :lesson:
+    (format "* TODO %s %s :coaching:
 DEADLINE: %%^T
 :PROPERTIES:
 :CAPTURED: %%U
@@ -115,7 +115,7 @@ DEADLINE: %%^T
 
 (defun prot-org-capture-coach-clock ()
   "Contents of an Org capture for my clocked coaching services."
-  (format "* COACH %s %s :service:
+  (format "* TODO %s %s :service:
 :PROPERTIES:
 :CAPTURED: %%U
 :CUSTOM_ID: h:%s
@@ -495,6 +495,13 @@ continue, per `org-agenda-skip-function'."
                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done)))))
   "Custom agenda for use in `org-agenda-custom-commands'.")
 
+(defun prot-org-agenda-set-outline ()
+  "Set `outline-regexp' for my Org agenda buffers."
+  (when (derived-mode-p 'org-agenda-mode)
+    (setq-local outline-regexp "^\\([\s\t]+\\)\\([A-Z]+ \\|[0-9]+:[0-9]+ \\)\\(Deadline\\|Scheduled\\)")))
+
+(add-hook 'org-agenda-mode-hook #'prot-org-agenda-set-outline)
+
 ;;;;; agenda appointments
 
 (defvar prot-org-agenda-after-edit-hook nil
@@ -584,10 +591,11 @@ create a new one."
     (downcase)
     (concat "h:")))
 
-(defun prot-org--id-get-readable ()
-  "Like `prot-org--id-get' but use the heading wording to create and ID."
+(defun prot-org--id-get-readable (&optional force)
+  "Like `prot-org--id-get' but use the heading wording to create and ID.
+With optional FORCE, update the value even if one exists."
   (let* ((pos (point))
-         (id (org-entry-get pos "CUSTOM_ID")))
+         (id (unless force (org-entry-get pos "CUSTOM_ID"))))
     (or (and id (stringp id) (string-match-p "\\S-" id))
         (and (setq id (prot-org--heading-to-id))
              (org-entry-put pos "CUSTOM_ID" id)))
@@ -602,12 +610,14 @@ create a new one."
   (org-map-entries (lambda () (prot-org--id-get))))
 
 ;;;###autoload
-(defun prot-org-id-headlines-readable ()
+(defun prot-org-id-headlines-readable (&optional force)
   "Like `prot-org-id-headlines' but with readable IDs.
 A readable identifier is one derived from the text of the heading.  In
-theory, this may not be unique."
-  (interactive)
-  (org-map-entries (lambda () (prot-org--id-get-readable))))
+theory, this may not be unique.
+
+With optional FORCE, update the value even if one exists."
+  (interactive "P")
+  (org-map-entries (lambda () (prot-org--id-get-readable force))))
 
 ;;;###autoload
 (defun prot-org-id-headline (&optional readable)

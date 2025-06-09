@@ -1931,6 +1931,18 @@ to activate ~rainbow-mode~ if I am editing a theme file.
                 ((derived-mode-p 'emacs-lisp-mode))
                 ((string-match-p "-theme" file)))
       (rainbow-mode 1)))
+  :config
+  (defun prot/rainbow-colorize-match (color &optional match)
+  "Like `rainbow-colorize-match' but works with `hl-line-mode'."
+  (let ((match (or match 0)))
+    (put-text-property
+     (match-beginning match) (match-end match)
+     'face `((:background ,(if (> 0.5 (rainbow-x-color-luminance color))
+                               "white" "black"))
+             (:foreground ,color)
+             (:inverse-video t)))))
+
+  (advice-add #'rainbow-colorize-match :override #'prot/rainbow-colorize-match)
   :bind ( :map ctl-x-x-map
           ("c" . rainbow-mode)) ; C-x x c
   :hook (emacs-lisp-mode . prot/rainbow-mode-in-themes))
@@ -2614,7 +2626,7 @@ this via some hook.
     ;; Commands for windows and pages
     ("C-x o" . prot-simple-other-window)
     ("C-x n k" . prot-simple-delete-page-delimiters)
-    ("M-r" . rotate-windows) ; Emacs 31 override `move-to-window-line-top-bottom'
+    ("M-r" . window-layout-transpose) ; Emacs 31 override `move-to-window-line-top-bottom'
     ("M-S-r" . rotate-windows-back) ; Emacs 31
     ;; Commands for buffers
     ("<C-f2>" . prot-simple-rename-file-and-buffer)
@@ -2765,7 +2777,7 @@ revisit a file that I do not need to keep track of.
   (setq recentf-show-file-shortcuts-flag nil))
 #+end_src
 
-*** The =prot-emacs-essentials.el= mouse configurations
+*** The =prot-emacs-essentials.el= mouse configurations and scroll behaviour
 :PROPERTIES:
 :CUSTOM_ID: h:982ad7cd-01b9-4178-be58-0e24251d3608
 :END:
@@ -7539,20 +7551,22 @@ the capture phase ([[#h:f8f06938-0dfe-45c3-b4cf-996d36cba82d][The =prot-emacs-or
   (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-refile-use-cache t)
   (setq org-reverse-note-order nil)
-  ;; ;; NOTE 2023-04-07: Leaving this here for demo purposes.
-  ;; (setq org-todo-keywords
-  ;;       '((sequence "TODO(t)" "MAYBE(m)" "WAIT(w@/!)" "|" "CANCEL(c@)" "DONE(d!)")
-  ;;         (sequence "COACH(k)" "|" "COACHED(K!)")))
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "|" "CANCEL(c@)" "DONE(d!)")
-          (sequence "COACH(k)" "|" "COACHED(K!)")))
 
-  (defface prot/org-bold-done
-    '((t :inherit (bold org-done)))
-    "Face for bold DONE-type Org keywords.")
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "MAYBE(m)" "|" "CANCELED(c@)" "DONE(d!)")))
+
+  (defface prot/org-todo-alternative
+    '((t :inherit (italic org-todo)))
+    "Face for alternative TODO-type Org keywords.")
+
+  (defface prot/org-done-alternative
+    '((t :inherit (italic org-done)))
+    "Face for alternative DONE-type Org keywords.")
 
   (setq org-todo-keyword-faces
-        '(("CANCEL" . prot/org-bold-done)))
+        '(("MAYBE" . prot/org-todo-alternative)
+          ("CANCELED" . prot/org-done-alternative)))
+
   (setq org-use-fast-todo-selection 'expert)
 
   (setq org-fontify-done-headline nil)
@@ -8016,7 +8030,10 @@ from it and thus keeps me focused.
     ("C-c a" . (lambda ()
                  "Call Org agenda with `prot-org-custom-daily-agenda' configuration."
                  (interactive)
-                 (org-agenda nil "A"))))
+                 (org-agenda nil "A")))
+    :map org-agenda-mode-map
+    ("n" . org-agenda-next-item)
+    ("p" . org-agenda-previous-item))
   :config
 ;;;;; Custom agenda blocks
 
@@ -13719,7 +13736,7 @@ For use in `prot-org-capture-coach'."
 (defun prot-org-capture-coach ()
   "Contents of an Org capture template for my coaching lessons."
   (let ((identifier (format-time-string "%Y%m%dT%H%M%S")))
-    (format "* COACH %s %s :lesson:
+    (format "* TODO %s %s :coaching:
 DEADLINE: %%^T
 :PROPERTIES:
 :CAPTURED: %%U
@@ -13735,7 +13752,7 @@ DEADLINE: %%^T
 
 (defun prot-org-capture-coach-clock ()
   "Contents of an Org capture for my clocked coaching services."
-  (format "* COACH %s %s :service:
+  (format "* TODO %s %s :service:
 :PROPERTIES:
 :CAPTURED: %%U
 :CUSTOM_ID: h:%s
@@ -14115,6 +14132,13 @@ continue, per `org-agenda-skip-function'."
                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done)))))
   "Custom agenda for use in `org-agenda-custom-commands'.")
 
+(defun prot-org-agenda-set-outline ()
+  "Set `outline-regexp' for my Org agenda buffers."
+  (when (derived-mode-p 'org-agenda-mode)
+    (setq-local outline-regexp "^\\([\s\t]+\\)\\([A-Z]+ \\|[0-9]+:[0-9]+ \\)\\(Deadline\\|Scheduled\\)")))
+
+(add-hook 'org-agenda-mode-hook #'prot-org-agenda-set-outline)
+
 ;;;;; agenda appointments
 
 (defvar prot-org-agenda-after-edit-hook nil
@@ -14204,10 +14228,11 @@ create a new one."
     (downcase)
     (concat "h:")))
 
-(defun prot-org--id-get-readable ()
-  "Like `prot-org--id-get' but use the heading wording to create and ID."
+(defun prot-org--id-get-readable (&optional force)
+  "Like `prot-org--id-get' but use the heading wording to create and ID.
+With optional FORCE, update the value even if one exists."
   (let* ((pos (point))
-         (id (org-entry-get pos "CUSTOM_ID")))
+         (id (unless force (org-entry-get pos "CUSTOM_ID"))))
     (or (and id (stringp id) (string-match-p "\\S-" id))
         (and (setq id (prot-org--heading-to-id))
              (org-entry-put pos "CUSTOM_ID" id)))
@@ -14222,12 +14247,14 @@ create a new one."
   (org-map-entries (lambda () (prot-org--id-get))))
 
 ;;;###autoload
-(defun prot-org-id-headlines-readable ()
+(defun prot-org-id-headlines-readable (&optional force)
   "Like `prot-org-id-headlines' but with readable IDs.
 A readable identifier is one derived from the text of the heading.  In
-theory, this may not be unique."
-  (interactive)
-  (org-map-entries (lambda () (prot-org--id-get-readable))))
+theory, this may not be unique.
+
+With optional FORCE, update the value even if one exists."
+  (interactive "P")
+  (org-map-entries (lambda () (prot-org--id-get-readable force))))
 
 ;;;###autoload
 (defun prot-org-id-headline (&optional readable)
