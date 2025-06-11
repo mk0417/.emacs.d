@@ -8,14 +8,12 @@
     (require 'gptel)
     (unless (use-region-p)
       (user-error "Please select a region of text to rewrite"))
-
     (let* ((start (region-beginning))
            (end (region-end))
            (text (buffer-substring-no-properties start end))
            (prompt (format "Please rewrite and improve the following English text:\n\n%s" text)))
       (setq gptel-model "google/gemini-2.0-flash-exp:free")
-      (gptel-request
-          prompt
+      (gptel-request prompt
         :callback (lambda (response _)
                     (when (and response (not (string-blank-p response)))
                       (save-excursion
