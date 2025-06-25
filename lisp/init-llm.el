@@ -12,7 +12,7 @@
            (end (region-end))
            (text (buffer-substring-no-properties start end))
            (prompt (format "Please rewrite and improve the following English text:\n\n%s" text)))
-      (setq gptel-model "google/gemini-2.0-flash-exp:free")
+      (setq gptel-model "meta-llama/llama-4-maverick:free")
       (gptel-request prompt
         :callback (lambda (response _)
                     (when (and response (not (string-blank-p response)))
@@ -24,14 +24,14 @@
   (setq open-router-key (with-temp-buffer
                           (insert-file-contents "~/.llm_key/openrouter.txt")
                           (string-trim (buffer-string))))
-  (setq gptel-model "google/gemini-2.0-flash-exp:free"
+  (setq gptel-model "meta-llama/llama-4-maverick:free"
         gptel-backend
         (gptel-make-openai "OpenRouter"
           :host "openrouter.ai"
           :endpoint "/api/v1/chat/completions"
           :stream t
           :key open-router-key
-          :models '(google/gemini-2.0-flash-exp:free
+          :models '(meta-llama/llama-4-maverick:free
                     deepseek/deepseek-chat-v3-0324:free))))
 
 (provide 'init-llm)
