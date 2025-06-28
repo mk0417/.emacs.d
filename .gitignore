@@ -6,6 +6,7 @@
 /url
 /tree-sitter
 /request
+/eln-cache
 .bookmarks.el
 .DS_Store
 custom.el

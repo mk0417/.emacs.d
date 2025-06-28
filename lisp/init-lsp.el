@@ -28,6 +28,7 @@
         markdown-mode-hook
         html-mode-hook))
 
+(setq lsp-bridge-python-lsp-server 'basedpyright)
 (setq lsp-bridge-multi-lang-server-mode-list '(((python-mode) . nil)))
 
 (global-lsp-bridge-mode)
