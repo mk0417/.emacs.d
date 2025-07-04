@@ -2436,25 +2436,24 @@ key bindings.
   :config
 ;;;; General settings and common custom functions (prot-simple.el)
   (setq blink-matching-paren nil)
+  (setq custom-unlispify-tag-names nil)
   (setq delete-pair-blink-delay 0.1) ; Emacs28 -- see `prot-simple-delete-pair-dwim'
   (setq delete-pair-push-mark t) ; Emacs 31
-  (setq help-window-select t)
-  (setq next-error-recenter '(4)) ; center of the window
-  (setq find-library-include-other-files nil) ; Emacs 29
-  (setq remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
-  (setq remote-file-name-inhibit-auto-save t)                 ; Emacs 30
-  (setq tramp-connection-timeout (* 60 10)) ; seconds
-  (setq save-interprogram-paste-before-kill t)
-  (setq mode-require-final-newline 'visit-save)
-  (setq-default truncate-partial-width-windows nil)
-  (setq eval-expression-print-length nil)
-  (setq kill-do-not-save-duplicates t)
-  (setq duplicate-line-final-position -1 ; both are Emacs 29
-        duplicate-region-final-position -1)
-  (setq scroll-error-top-bottom t)
   (setq echo-keystrokes-help nil) ; Emacs 30
   (setq epa-keys-select-method 'minibuffer) ; Emacs 30
+  (setq eval-expression-print-length nil)
+  (setq find-library-include-other-files nil) ; Emacs 29
+  (setq help-window-select t)
+  (setq kill-do-not-save-duplicates t)
+  (setq mode-require-final-newline 'visit-save)
+  (setq next-error-recenter '(4)) ; center of the window
+  (setq remote-file-name-inhibit-auto-save t)                 ; Emacs 30
+  (setq remote-file-name-inhibit-delete-by-moving-to-trash t) ; Emacs 30
+  (setq save-interprogram-paste-before-kill t)
+  (setq scroll-error-top-bottom t)
+  (setq tramp-connection-timeout (* 60 10)) ; seconds
   (setq trusted-content '("~/Git/Projects/")) ; Emacs 30
+  (setq-default truncate-partial-width-windows nil)
 
   ;; Keys I unbind here are either to avoid accidents or to bind them
   ;; elsewhere later in the configuration.
@@ -5429,6 +5428,7 @@ Note the use of the ~let~ to decide whether I use the ~grep~ or ~rg~
 (use-package grep
   :ensure nil
   :commands (grep lgrep rgrep)
+  :hook (grep-mode . prot-common-truncate-lines-silently)
   :config
   (setq grep-save-buffers nil)
   (setq grep-use-headings t) ; Emacs 30
@@ -5440,7 +5440,8 @@ Note the use of the ~let~ to decide whether I use the ~grep~ or ~rg~
           (if rgp
               "/usr/bin/rg -nH --null -e <R> <F>"
             "/usr/bin/grep <X> <C> -nH --null -e <R> <F>"))
-    (setq xref-search-program (if rgp 'ripgrep 'grep))))
+    (with-eval-after-load 'xref
+      (setq xref-search-program (if rgp 'ripgrep 'grep)))))
 #+end_src
 
 *** The =prot-emacs-search.el= setup for editable grep buffers (~grep-edit-mode~ or ~wgrep~)
@@ -7018,6 +7019,8 @@ many extras on top of ~vc~ that I use daily in my workflow
   ;; This may have an effect on performance, as Emacs will not try to
   ;; check for a bunch of backends.
   (setq vc-handled-backends '(Git))
+
+  (setq vc-dir-save-some-buffers-on-revert t) ; Emacs 31
 
   ;; This one is for editing commit messages.
   (require 'log-edit)

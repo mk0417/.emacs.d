@@ -108,6 +108,7 @@
 (use-package grep
   :ensure nil
   :commands (grep lgrep rgrep)
+  :hook (grep-mode . prot-common-truncate-lines-silently)
   :config
   (setq grep-save-buffers nil)
   (setq grep-use-headings t) ; Emacs 30
@@ -119,7 +120,7 @@
           (if rgp
               "/usr/bin/rg -nH --null -e <R> <F>"
             "/usr/bin/grep <X> <C> -nH --null -e <R> <F>"))
-    (setq xref-search-program (if rgp 'ripgrep 'grep))))
+      (setq xref-search-program (if rgp 'ripgrep 'grep))))
 
 ;;; wgrep (writable grep)
 ;; See the `grep-edit-mode' for the new built-in feature.
