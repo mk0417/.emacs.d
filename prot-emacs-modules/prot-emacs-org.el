@@ -162,6 +162,28 @@
         '(("MAYBE" . prot/org-todo-alternative)
           ("CANCELED" . prot/org-done-alternative)))
 
+  (defface prot/org-tag-coaching
+    '((default :inherit unspecified :weight regular :slant normal)
+      (((class color) (min-colors 88) (background light))
+       :foreground "#004476")
+      (((class color) (min-colors 88) (background dark))
+       :foreground "#c0d0ef")
+      (t :foreground "cyan"))
+    "Face for coaching Org tag.")
+
+  (defface prot/org-tag-protasks
+    '((default :inherit unspecified :weight regular :slant normal)
+      (((class color) (min-colors 88) (background light))
+       :foreground "#603f00")
+      (((class color) (min-colors 88) (background dark))
+       :foreground "#deba66")
+      (t :foreground "yellow"))
+    "Face for protasks Org tag.")
+
+  (setq org-tag-faces
+        '(("coaching" . prot/org-tag-coaching)
+          ("protasks" . prot/org-tag-protasks)))
+
   (setq org-use-fast-todo-selection 'expert)
 
   (setq org-fontify-done-headline nil)
@@ -249,6 +271,18 @@
                     ":PROPERTIES:\n"
                     ":CAPTURED: %U\n"
                     ":CUSTOM_ID: h:%(format-time-string \"%Y%m%dT%H%M%S\")\n"
+                    ":END:\n\n"
+                    "%a\n%?")
+           :empty-lines-after 1)
+          ;; About "Prot Asks": <https://protesilaos.com/codelog/2025-07-10-prot-asks-chats-videos-proposal/>.
+          ("a" "Prot Asks" entry
+           (file+headline "tasks.org" "Prot Asks")
+           ,(concat "* TODO %^{Title}\n"
+                    "DEADLINE: %^T"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %U\n"
+                    ":CUSTOM_ID: h:%(format-time-string \"%Y%m%dT%H%M%S\")\n"
+                    ":APPT_WARNTIME: 20"
                     ":END:\n\n"
                     "%a\n%?")
            :empty-lines-after 1)
