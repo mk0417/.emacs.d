@@ -18,6 +18,7 @@
 (setq acm-enable-telega nil)
 (setq acm-backend-lsp-enable-auto-import nil)
 (setq acm-candidate-match-function 'orderless-flex)
+(setq lsp-bridge-multi-lang-server-mode-list '(((python-mode) . nil)))
 
 (setq lsp-bridge-default-mode-hooks
       '(python-mode-hook
@@ -27,8 +28,6 @@
         LaTeX-mode-hook
         markdown-mode-hook
         html-mode-hook))
-
-(setq lsp-bridge-multi-lang-server-mode-list '(((python-mode) . nil)))
 
 (global-lsp-bridge-mode)
 
