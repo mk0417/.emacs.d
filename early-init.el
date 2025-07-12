@@ -92,4 +92,4 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 (add-to-list 'default-frame-alist '(undecorated . t))
 
 ;;; Maximize frame at startup
-(setq initial-frame-alist (quote ((fullscreen . maximized))))
+;; (setq initial-frame-alist (quote ((fullscreen . maximized))))
