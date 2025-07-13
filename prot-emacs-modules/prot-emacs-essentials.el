@@ -529,12 +529,15 @@ word.  Fall back to regular `expreg-expand'."
   :hook (shell-mode . prot-shell-mode))
 
 ;;; Laptop settings
-(add-to-list 'default-frame-alist '(width . (text-pixels . 800)))
-(add-to-list 'default-frame-alist '(height . (text-pixels . 600)))
+(defun prot-emacs-maximize-frame (frame)
+  "Maximise the given FRAME."
+  (set-frame-parameter frame 'fullscreen 'maximized))
 
-(toggle-frame-maximized)
+(prot-emacs-maximize-frame (selected-frame))
 
-(add-hook 'after-make-frame-functions (lambda (frame) (toggle-frame-maximized frame)))
+(add-hook 'after-make-frame-functions #'prot-emacs-maximize-frame)
+
+;; (add-hook 'window-size-change-functions #'frame-hide-title-bar-when-maximized)
 
 (use-package battery
   :ensure nil
