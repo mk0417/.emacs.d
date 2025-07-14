@@ -495,6 +495,22 @@ continue, per `org-agenda-skip-function'."
                 (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done)))))
   "Custom agenda for use in `org-agenda-custom-commands'.")
 
+(defun prot-org-custom-agenda-prot-asks-get-date ()
+  "Return the timestamp of the current heading or nil.
+For use in `prot-org-custom-prot-asks-agenda'."
+  (when-let* ((timestamp (or (org-entry-get nil "DEADLINE") (org-entry-get nil "SCHEDULED")))
+              (time (prot-org--timestamp-to-time timestamp)))
+    (format-time-string "%A	%e	%B	%R" time)))
+
+(defvar prot-org-custom-prot-asks-agenda
+  '((tags-todo "protasks"
+               ((org-agenda-overriding-header "Prot Asks\n")
+                (org-agenda-prefix-format '((tags . "%(prot-org-custom-agenda-prot-asks-get-date)	")))
+                (org-agenda-sorting-strategy '(deadline-up))
+                (org-agenda-remove-tags t)
+                (org-agenda-block-separator nil))))
+  "Custom agenda for use in `org-agenda-custom-commands'.")
+
 (defun prot-org-agenda-set-outline ()
   "Set `outline-regexp' for my Org agenda buffers."
   (when (derived-mode-p 'org-agenda-mode)
