@@ -87,7 +87,8 @@
            :header-line-active spacious-padding-line-active
            :header-line-inactive spacious-padding-line-inactive))
 
-  (setq x-underline-at-descent-line (when spacious-padding-subtle-frame-lines t)))
+  (when (< emacs-major-version 29)
+    (setq x-underline-at-descent-line (when spacious-padding-subtle-frame-lines t))))
 
 ;;;; Rainbow mode for colour previewing (rainbow-mode.el)
 (use-package rainbow-mode
@@ -126,17 +127,20 @@
   :config
   (setq cursory-presets
         '((box
+           :cursor-color font-lock-preprocessor-face
            :blink-cursor-interval 1.2)
           (box-no-blink
+           :cursor-color font-lock-string-face
            :blink-cursor-mode -1)
           (bar
            :cursor-type (bar . 2)
+           :cursor-color error ; will typically be an intense red
            :blink-cursor-interval 0.8)
           (bar-no-other-window
            :inherit bar
            :cursor-in-non-selected-windows nil)
           (bar-no-blink
-           :cursor-type (bar . 2)
+           :inherit bar
            :blink-cursor-mode -1)
           (underscore
            :cursor-type (hbar . 3)
@@ -155,6 +159,7 @@
            :cursor-type (hbar . 8)
            :cursor-in-non-selected-windows (hbar . 3))
           (t ; the default values
+           :cursor-color unspecified
            :cursor-type box
            :cursor-in-non-selected-windows hollow
            :blink-cursor-mode 1
