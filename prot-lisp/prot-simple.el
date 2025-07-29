@@ -317,26 +317,60 @@ This command can then be followed by the standard
   (setq this-command 'kill-line))
 
 ;;;###autoload
+(defun prot-simple-copy-line-forward (n)
+  "Copy from point to the end of the Nth line.
+Without numberic prefix argument N, operate on the current line."
+  (interactive "p")
+  (let ((point (point))
+        (end (line-end-position n))
+        (max (point-max)))
+    (copy-region-as-kill
+     point
+     (if (> end max)
+         max
+       end)))
+  (setq this-command 'kill-ring-save))
+
+;;;###autoload
+(defun prot-simple-copy-line-backward (n)
+  "Copy from point to the beginning of the Nth line.
+Without numberic prefix argument N, operate on the current line."
+  (interactive "p")
+  (let ((point (point))
+        (beg (line-beginning-position n))
+        (min (point-min)))
+    (copy-region-as-kill
+     point
+     (if (< beg min)
+         min
+       beg)))
+  (setq this-command 'kill-ring-save))
+
+;;;###autoload
 (defun prot-simple-delete-line ()
   "Delete (not kill) from point to the end of the line."
   (interactive)
-  (let ((point (point))
-        (end (line-end-position)))
-    (if (eq point end)
-        (delete-region point (+ end 1))
-      (delete-region point end)))
-  (setq this-command 'kill-whole-line))
+  (let* ((point (point))
+         (end (line-end-position))
+         (end+ (+ end 1)))
+    (cond
+     ((> end+ (point-max)))
+     ((= point end) (delete-region point end+))
+     (t (delete-region point end))))
+  (setq this-command 'delete-region))
 
 ;;;###autoload
 (defun prot-simple-delete-line-backward ()
   "Delete (not kill) from point to the beginning of the line."
   (interactive)
-  (let ((point (point))
-        (beg (line-beginning-position)))
-    (if (eq point beg)
-        (delete-region (- beg 1) point)
-      (delete-region point beg)))
-  (setq this-command 'kill-whole-line))
+  (let* ((point (point))
+         (beg (line-beginning-position))
+         (beg- (- beg 1)))
+    (cond
+     ((< beg- (point-min)))
+     ((= point beg) (delete-region beg- point))
+     (t (delete-region beg point))))
+  (setq this-command 'delete-region))
 
 ;;;###autoload
 (define-minor-mode prot-simple-auto-fill-visual-line-mode
