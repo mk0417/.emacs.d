@@ -86,7 +86,7 @@
   :config
   ;; Remember to check my `completion-styles' and the
   ;; `completion-category-overrides'.
-  (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
+  (setq orderless-matching-styles '(orderless-prefixes orderless-regexp orderless-flex))
   (setq orderless-smart-case nil)
 
   ;; SPC should never complete: use it for `orderless' groups.
@@ -94,14 +94,6 @@
   :bind ( :map minibuffer-local-completion-map
           ("SPC" . nil)
           ("?" . nil)))
-
-(use-package prot-orderless
-  :ensure nil
-  :config
-  (setq orderless-style-dispatchers
-        '(prot-orderless-literal
-          prot-orderless-file-ext
-          prot-orderless-beg-or-end)))
 
 (setq completion-ignore-case t)
 (setq read-buffer-completion-ignore-case t)
