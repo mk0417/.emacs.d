@@ -115,7 +115,7 @@
    '("nl" . xah-shrink-whitespaces)
    '("nn" . prot-pair-delete)
    '("np" . p-format-to-left)
-   '("ns" . (lambda () (interactive) (prot-pair-insert '(?\' . ?\') 1)))
+   '("ns" . (lambda () (interactive) (prot-pair-insert ?\' 1)))
    '("nx" . p-remove-space-around)
    '("n." . p-move-to-next-bracket)
    '("n," . p-move-to-prev-bracket)
