@@ -4083,7 +4083,7 @@ literal string, initialism, et cetera, which is not as useful to me.
   :config
   ;; Remember to check my `completion-styles' and the
   ;; `completion-category-overrides'.
-  (setq orderless-matching-styles '(orderless-prefixes orderless-regexp orderless-flex))
+  (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
   (setq orderless-smart-case nil)
 
   ;; SPC should never complete: use it for `orderless' groups.
@@ -6594,7 +6594,21 @@ screen real estate ([[#h:080aa291-95b4-4d54-8783-d156b13190e9][The =prot-emacs-e
     "C-x C-b" #'beframe-buffer-menu
     ;; Not specific to Beframe, but since it renames frames (by means
     ;; of `beframe-mode') it is appropriate to have this here:
-    "C-x B" #'select-frame-by-name))
+    "C-x B" #'select-frame-by-name)
+
+  ;; Integration with the `consult-buffer' command.  It will show only
+  ;; buffers from the current frame.  To view all buffers, first input
+  ;; a space at the empty minibuffer prompt.  This enables the "hidden
+  ;; buffers" view.
+  (with-eval-after-load 'consult
+    (defun consult-beframe-buffer-list (&optional frame)
+      "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME.
+
+For use in `consult-buffer-list'."
+      (beframe-buffer-list frame :sort #'beframe-buffer-sort-visibility))
+
+    (setq consult-buffer-list #'consult-beframe-buffer-list)))
 #+end_src
 
 *** The =prot-emacs-window.el= configuration of ~undelete-frame-mode~ and ~winner-mode~
@@ -9171,13 +9185,9 @@ facilities to rename files, regardless of file type.
   (setq denote-date-format nil) ; read its doc string
   (setq denote-rename-confirmations nil) ; CAREFUL with this if you are not familiar with Denote!
   (setq denote-backlinks-show-context nil)
-  (setq denote-rename-buffer-format "%D%b")
-  (setq denote-buffer-has-backlinks-string " (<--->)")
+  (setq denote-buffer-name-prefix "[D] ") ; to identify all Denote buffers
+  (setq denote-rename-buffer-format "%D")
 
-  ;; Automatically rename Denote buffers when opening them so that
-  ;; instead of their long file name they have a literal "[D]"
-  ;; followed by the file's title.  Read the doc string of
-  ;; `denote-rename-buffer-format' for how to modify this.
   (denote-rename-buffer-mode 1)
 
   ;; EXPERIMENT 2025-04-25: This is not the default order, though
