@@ -1983,7 +1983,6 @@ such as in the difference between writing and reading.
   :config
   (setq cursory-presets
         '((box
-           :cursor-color font-lock-builtin-face
            :blink-cursor-interval 1.2)
           (box-no-blink
            :inherit box
@@ -5674,7 +5673,13 @@ we always want that as a fallback.
 
 Note that Emacs 30 (current development target as of this writing on
 2023-12-30 16:12 +0200), we have the command ~dired-do-open~, which is
-the equivalent of typing =&= and then specifying the ~xdg-open~ command.
+the equivalent of typing =&= and then specifying the ~xdg-open~
+command.
+
+Finally, when we want to open many files as a set, we have to append a
+space followed by the asterisk to the given program, like =mpv *=.
+Otherwise, Emacs will launch a separate instance for each file (thanks
+to @mac68tm on YouTube for providing this tip).
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
 (use-package dired
@@ -5682,8 +5687,8 @@ the equivalent of typing =&= and then specifying the ~xdg-open~ command.
   :commands (dired)
   :config
   (setq dired-guess-shell-alist-user ; those are the suggestions for ! and & in Dired
-        '(("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
-          ("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "mpv" "xdg-open")
+        '(("\\.\\(png\\|jpe?g\\|tiff\\)" "feh *" "feh" "xdg-open")
+          ("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "mpv *" "mpv" "xdg-open")
           (".*" "xdg-open"))))
 #+end_src
 
@@ -7779,9 +7784,10 @@ the capture phase ([[#h:f8f06938-0dfe-45c3-b4cf-996d36cba82d][The =prot-emacs-or
       (t :foreground "yellow"))
     "Face for protasks Org tag.")
 
-  (setq org-tag-faces
-        '(("coaching" . prot/org-tag-coaching)
-          ("protasks" . prot/org-tag-protasks)))
+  (when (eq prot-emacs-load-theme-family 'modus)
+    (setq org-tag-faces
+          '(("coaching" . prot/org-tag-coaching)
+            ("protasks" . prot/org-tag-protasks))))
 
   (setq org-use-fast-todo-selection 'expert)
 
@@ -9475,7 +9481,7 @@ heading/section becomes its own "slide" simply by narrowing to it.
   :ensure t
   :commands (olivetti-mode)
   :config
-  (setq olivetti-body-width 0.7)
+  (setq-default olivetti-body-width 0.7)
   (setq olivetti-minimum-body-width 80)
   (setq olivetti-recall-visual-line-mode-entry-state t))
 
