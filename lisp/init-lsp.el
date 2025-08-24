@@ -10,6 +10,7 @@
 
 (setq lsp-bridge-enable-mode-line nil)
 (setq lsp-bridge-enable-diagnostics nil)
+(setq lsp-bridge-enable-completion-in-string t)
 (setq lsp-bridge-symbols-enable-which-func t)
 (setq lsp-bridge-markdown-lsp-server 'marksman)
 (setq lsp-bridge-multi-lang-server-mode-list '(((python-mode) . nil)))
