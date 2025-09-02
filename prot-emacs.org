@@ -4287,7 +4287,7 @@ completion (such as the ~corfu~ package).
   (setq completion-eager-update t)
 
   (setq minibuffer-completion-auto-choose nil)
-  (setq minibuffer-visible-completions t) ; Emacs 30
+  (setq minibuffer-visible-completions nil) ; Emacs 30
 
   (unless prot-emacs-completion-ui
     (prot-emacs-keybind minibuffer-local-completion-map
@@ -4307,7 +4307,9 @@ completion (such as the ~corfu~ package).
       (when (and completions-header-format
                  (not (string-blank-p completions-header-format)))
         (setq-local display-line-numbers-offset -1))
-      (display-line-numbers-mode 1))
+      (display-line-numbers-mode 1)
+      (unless (eq (prot-common-completion-category) 'file)
+        (setq-local minibuffer-visible-completions t)))
 
     (add-hook 'completion-list-mode-hook #'prot/completions-tweak-style)
 
@@ -6155,7 +6157,7 @@ maximised frame, rather than many frames distribution across the
 desktop[s].
 
 The way I do it, each tab can hold its own project, thanks to some
-custom code I have ([[#h:7dcbcadf-8af6-487d-b864-e4ce56d69530][The =prot-emacs-git.el= section about =project.el=]]). 
+custom code I have ([[#h:7dcbcadf-8af6-487d-b864-e4ce56d69530][The =prot-emacs-git.el= section about =project.el=]]).
 I do not need to enforce separation between tabs, such that each sees
 only the buffers opened inside of it. The reason is that I mostly use
 the laptop for shorter coding/writing sessions and for video calls.
@@ -17479,6 +17481,28 @@ VARIANT is either `dark' or `light'."
 VARIANT is either `dark' or `light'."
   (interactive (list (prot-simple--list-accessible-colors-prompt)))
   (list-colors-display (prot-simple-accessible-colors variant)))
+
+;;;###autoload
+(defun prot-simple-update-all-my-package-repositories ()
+  "Pull or clone all `prot-emacs-my-packages'."
+  (unless (executable-find "git")
+    (user-error "Cannot find git program; install it first or add it to the $PATH; aborting"))
+  (unless (getenv "SSH_AUTH_SOCK")
+    (user-error "Cannot find $SSH_AUTH_SOCK; check your SSH connection; aborting"))
+  (dolist (package prot-emacs-my-packages)
+    (condition-case error-data
+        (let* ((common-directory (expand-file-name "~/Git/Projects/"))
+               (default-directory (expand-file-name (symbol-name package) common-directory)))
+          (if (file-directory-p default-directory)
+              (shell-command-to-string "git pull")
+            (let ((default-directory common-directory))
+              (shell-command-to-string (format "git clone git@github.com:protesilaos/%s" package)))))
+      (:success
+       (message "Updated %s repository" package))
+      ((error user-error)
+       (message "The package returned error data: %s" error-data))
+      (quit
+       (message "Aborted by the user")))))
 
 ;;;; Global minor mode to override key maps
 
