@@ -43,7 +43,7 @@ identical key presses is less than this value (as when holding a key), the
 chord will not trigger."
   :type 'float)
 
-(defcustom key-chord-typing-detection t
+(defcustom key-chord-typing-detection nil
   "If non-nil, detect typing and temporarily disable chord detection.
 This helps avoid accidental chord triggering during fast typing. This
 also dramatically improves the performance of key-chord when typing text
