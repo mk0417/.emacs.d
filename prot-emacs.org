@@ -3827,7 +3827,7 @@ with my customised mode line ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =pr
     (add-to-list 'keycast-substitute-alist `(,event nil nil))))
 #+end_src
 
-*** The =prot-emacs-essentials.el= call to ~provide~
+*** The =prot-emacs-modeline.el= call to ~provide~
 :PROPERTIES:
 :CUSTOM_ID: h:be07591f-6130-4641-9f06-a634f21bb2f6
 :END:
@@ -17773,16 +17773,16 @@ Else do `vertico-exit'."
    (t
     (vertico-exit))))
 
-(cl-defgeneric vertico--display-candidates (lines)
-  "Reverse the default vertico view of LINES."
-  (move-overlay vertico--candidates-ov (point-min) (point-min))
-  ;; (setq lines (nreverse lines))
-  (unless (eq vertico-resize t)
-    (setq lines (nconc (make-list (max 0 (- vertico-count (length lines))) "\n") lines)))
-  (let ((string (apply #'concat lines)))
-    (add-face-text-property 0 (length string) 'default 'append string)
-    (overlay-put vertico--candidates-ov 'before-string string)
-    (overlay-put vertico--candidates-ov 'after-string nil)))
+;; (cl-defgeneric vertico--display-candidates (lines)
+;;   "Reverse the default vertico view of LINES."
+;;   (move-overlay vertico--candidates-ov (point-min) (point-min))
+;;   ;; (setq lines (nreverse lines))
+;;   (unless (eq vertico-resize t)
+;;     (setq lines (nconc (make-list (max 0 (- vertico-count (length lines))) "\n") lines)))
+;;   (let ((string (apply #'concat lines)))
+;;     (add-face-text-property 0 (length string) 'default 'append string)
+;;     (overlay-put vertico--candidates-ov 'before-string string)
+;;     (overlay-put vertico--candidates-ov 'after-string nil)))
 
 (provide 'prot-vertico)
 ;;; prot-vertico.el ends here
