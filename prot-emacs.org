@@ -763,10 +763,9 @@ uses the stop sign character, resulting in a long list of lines with
 red spots everywhere, as if we have totally broken Emacs.
 
 #+begin_src emacs-lisp :tangle "init.el"
-;; Make native compilation silent and prune its cache.
+;; Make native compilation silent.
 (when (native-comp-available-p)
-  (setq native-comp-async-report-warnings-errors 'silent) ; Emacs 28 with native compilation
-  (setq native-compile-prune-cache t)) ; Emacs 29
+  (setq native-comp-async-report-warnings-errors 'silent))
 #+end_src
 
 ** The =init.el= setting to send ~custom-file~ to oblivion
@@ -1467,6 +1466,13 @@ Emacs that provide colourful ("pretty") yet legible options for users
 who want something with a bit more flair than the ~modus-themes~ (also
 designed by me).
 
+Starting with version =2.0.0=, the ~ef-themes~ are built on top of the
+~modus-themes~. This means that all customisation options of the Modus
+themes apply to the Ef themes. Same for all Modus commands that load a
+theme. Enable ~ef-themes-take-over-modus-themes-mode~ to set up this
+arrangement (or enable ~modus-themes-include-derivatives-mode~ instead
+to blend Ef and Modus into one collection).
+
 + Package name (GNU ELPA): ~ef-themes~
 + Official manual: <https://protesilaos.com/emacs/ef-themes>
 + Change log: <https://protesilaos.com/emacs/ef-themes-changelog>
@@ -1488,14 +1494,17 @@ Note that the ~prot-emacs-comment~ is there for my testing purposes
 (use-package ef-themes
   :ensure t
   :demand t
+  :init
+  (ef-themes-take-over-modus-themes-mode 1)
   :bind
   (("<f5>" . ef-themes-rotate)
-   ("C-<f5>" . ef-themes-select))
+   ("C-<f5>" . ef-themes-select)
+   ("M-<f5>" . ef-themes-load-random))
   :config
-  (setq ef-themes-variable-pitch-ui t
-        ef-themes-mixed-fonts t
-        ef-themes-to-rotate ef-themes-items
-        ef-themes-headings ; read the manual's entry of the doc string
+  (setq modus-themes-variable-pitch-ui t
+        modus-themes-mixed-fonts t
+        modus-themes-to-rotate nil ; defaults to the return value of `modus-themes-get-themes'
+        modus-themes-headings ; read the manual's entry of the doc string
         '((0 . (variable-pitch light 1.9))
           (1 . (variable-pitch light 1.8))
           (2 . (variable-pitch regular 1.7))
@@ -1509,13 +1518,13 @@ Note that the ~prot-emacs-comment~ is there for my testing purposes
           (t . (variable-pitch 1.1))))
 
   ;; The `ef-themes' provide lots of themes.  I want to pick one at
-  ;; random when I start Emacs: the `ef-themes-load-random' does just
+  ;; random when I start Emacs: the `modus-themes-load-random' does just
   ;; that (it can be called interactively as well).  I just check with
   ;; my desktop environment to determine if the choice should be about
   ;; a light or a dark theme.  Those functions are in my init.el.
   (if (prot-emacs-theme-environment-dark-p)
-      (ef-themes-load-random 'dark)
-    (ef-themes-load-random 'light)))
+      (modus-themes-load-random 'dark)
+    (modus-themes-load-random 'light)))
 
 ;; NOTE: For testing purposes
 (prot-emacs-comment
@@ -2449,7 +2458,7 @@ key bindings.
   (setq scroll-error-top-bottom t)
   (setq tramp-connection-timeout (* 60 10)) ; seconds
   (setq trusted-content '("~/Git/Projects/")) ; Emacs 30
-  (setq-default truncate-partial-width-windows nil)
+  (setq truncate-partial-width-windows nil)
 
   ;; Keys I unbind here are either to avoid accidents or to bind them
   ;; elsewhere later in the configuration.
@@ -2806,10 +2815,10 @@ demonstration.
         mouse-wheel-follow-mouse t)
 
   ;; Scrolling behaviour
-  (setq-default scroll-preserve-screen-position t
-                scroll-conservatively 1 ; affects `scroll-step'
-                scroll-margin 0
-                next-screen-context-lines 0))
+  (setq scroll-preserve-screen-position t
+        scroll-conservatively 1 ; affects `scroll-step'
+        scroll-margin 0
+        next-screen-context-lines 0))
 #+end_src
 
 *** The =prot-emacs-essentials.el= settings for ~repeat-mode~
@@ -6308,7 +6317,7 @@ of how far apart two relevant sections are in a file.
   :bind
   ("<f7>" . display-line-numbers-mode)
   :config
-  (setq-default display-line-numbers-type t)
+  (setq display-line-numbers-type t)
   ;; Those two variables were introduced in Emacs 27.1
   (setq display-line-numbers-major-tick 0)
   (setq display-line-numbers-minor-tick 0)
