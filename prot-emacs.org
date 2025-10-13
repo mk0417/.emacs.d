@@ -2588,7 +2588,8 @@ this via some hook.
     ("<next>" . prot-simple-multi-line-below) ; overrides `scroll-up-command'
     ("M-v" . prot-simple-multi-line-above) ; overrides `scroll-down-command'
     ("<prior>" . prot-simple-multi-line-above) ; overrides `scroll-down-command'
-
+    ("C-M-i" . prot-simple-indent-dwim) ; overrides `completion-at-point'
+    ("C-M-c" . completion-at-point) ; overrides `exit-recursive-edi't
     :map global-map
     ("<escape>" . prot-simple-keyboard-quit-dwim)
     ("C-g" . prot-simple-keyboard-quit-dwim)
@@ -8546,6 +8547,36 @@ are a few cases where ~setq-default~ is needed, so keep this in mind.
                 indent-tabs-mode nil))
 #+end_src
 
+*** The =prot-emacs-langs.el= settings for ~emacs-lisp-mode~
+:PROPERTIES:
+:CUSTOM_ID: h:e38f15b2-a849-47c4-9aa8-8e5fcf17f415
+:END:
+
+Most of my programming is done in Emacs Lisp. The ~emacs-lisp-mode~ is
+the major mode and ~lisp-interaction-mode~ is its derivative for use
+in the =*scratch*= buffer ([[#h:96878899-f712-4900-8ee1-de8c40a634ce][The =init.el= setting to always start with the =*scratch*= buffer]]).
+
+I do not need any special setup for them. I just want to disable some
+of the keybindings I keep typing by mistake.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
+;;;; Emacs Lisp major mode
+
+(use-package elisp-mode
+  :ensure nil
+  :bind
+  ( :map emacs-lisp-mode-map
+    ("C-c C-b" . nil) ; I do not want to byte compile the buffer
+    ("C-c C-f" . nil) ; .. nor the file
+    :map lisp-interaction-mode-map
+    ("C-c C-b" . nil)
+    ("C-c C-f" . nil))
+  :config
+  ;; Both of these are from Emacs 31.
+  (setq elisp-eldoc-funcall-with-docstring-length 'short)
+  (setq elisp-eldoc-docstring-length-limit 1000))
+#+end_src
+
 *** The =prot-emacs-langs.el= settings for "electric" behaviour
 :PROPERTIES:
 :CUSTOM_ID: h:ebbc4e05-3654-4fc4-9948-d29dffeb6356
@@ -8706,6 +8737,7 @@ need to arrange how to use this feature.
   :ensure nil
   :hook (prog-mode . eldoc-mode)
   :config
+  (setq eldoc-idle-delay 1.2)
   (setq eldoc-message-function #'message)) ; don't use mode line for M-x eval-expression, etc.
 #+end_src
 
@@ -16515,6 +16547,19 @@ Used by `prot-simple-inset-date'."
 ;;; Commands
 
 ;;;; General commands
+
+;;;###autoload
+(defun prot-simple-indent-dwim ()
+  "Indent the current defun in `prog-mode' or paragraph in `text-mode'."
+  (interactive)
+  (save-excursion
+    (cond
+     ((derived-mode-p 'prog-mode)
+      (mark-defun))
+     ((derived-mode-p 'text-mode)
+      (mark-paragraph)))
+    (indent-for-tab-command)
+    (deactivate-mark)))
 
 ;;;###autoload
 (defun prot-simple-sudo ()

@@ -8,6 +8,22 @@
   (setq-default tab-width 4
                 indent-tabs-mode nil))
 
+;;;; Emacs Lisp major mode
+
+(use-package elisp-mode
+  :ensure nil
+  :bind
+  ( :map emacs-lisp-mode-map
+    ("C-c C-b" . nil) ; I do not want to byte compile the buffer
+    ("C-c C-f" . nil) ; .. nor the file
+    :map lisp-interaction-mode-map
+    ("C-c C-b" . nil)
+    ("C-c C-f" . nil))
+  :config
+  ;; Both of these are from Emacs 31.
+  (setq elisp-eldoc-funcall-with-docstring-length 'short)
+  (setq elisp-eldoc-docstring-length-limit 1000))
+
 ;;;; Disable "electric" behaviour
 (use-package electric
   :ensure nil
@@ -59,6 +75,7 @@
   :ensure nil
   :hook (prog-mode . eldoc-mode)
   :config
+  (setq eldoc-idle-delay 1.2)
   (setq eldoc-message-function #'message)) ; don't use mode line for M-x eval-expression, etc.
 
 ;;;; Eglot (built-in client for the language server protocol)
