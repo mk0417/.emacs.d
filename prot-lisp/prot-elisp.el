@@ -35,18 +35,6 @@
 ;;; Code:
 
 ;;;###autoload
-(defun prot-elisp-eval-this-expression (expression)
-  "Do `eval-expression' on EXPRESSION.
-If EXPRESSION is not a list and is the symbol of a function, then make
-it a list before evaluation.
-
-If EXPRESSION is nil, prompt for one."
-  (interactive (list (read (thing-at-point 'sexp :no-properties))))
-  (if expression
-      (eval-expression expression)
-    (call-interactively 'eval-expression)))
-
-;;;###autoload
 (defun prot-elisp-eval-and-print-last-sexp ()
   "Evaluate and print expression before point like `eval-print-last-sexp'.
 Prepend a comment to the return value.  If there is no expression before
@@ -75,7 +63,7 @@ At all times, copy the return value to the `kill-ring'."
   (display-line-numbers-mode 1))
 
 ;;;###autoload
-(defun prot-elisp-pp-last-sexp ()
+(defun prot-elisp-pp-macroexpand-last-sexp ()
   "Like `pp-macroexpand-last-sexp' but with a generic `display-buffer'.
 Now use `display-buffer-alist' like the Lisp gods intended."
   (declare (interactive-only t))
@@ -87,7 +75,7 @@ Now use `display-buffer-alist' like the Lisp gods intended."
       (progn
         (with-current-buffer buffer
           (erase-buffer)
-          (insert (format "%s" (macroexpand-1 expression)))
+          (insert (format "%S" (macroexpand-1 expression)))
           (prot-elisp-macroexpand-mode)
           (pp-buffer))
         (display-buffer buffer))
