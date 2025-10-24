@@ -11,6 +11,8 @@
       inhibit-startup-echo-area-message user-login-name ; read the docstring
       inhibit-startup-buffer-menu t)
 
+;; (add-hook 'window-size-change-functions #'frame-hide-title-bar-when-maximized)
+
 (dolist (variable '(initial-frame-alist default-frame-alist))
   (set variable `((width . (text-pixels . 800))
                   (height . (text-pixels . 900))

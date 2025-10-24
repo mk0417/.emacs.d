@@ -534,22 +534,11 @@ word.  Fall back to regular `expreg-expand'."
   :bind (("<f1>" . prot-shell)) ; I don't use F1 for help commands
   :hook (shell-mode . prot-shell-mode))
 
-;;; Laptop settings
-(defun prot-emacs-maximize-frame (frame)
-  "Maximise the given FRAME."
-  (set-frame-parameter frame 'fullscreen 'maximized))
-
-(prot-emacs-maximize-frame (selected-frame))
-
-(add-hook 'after-make-frame-functions #'prot-emacs-maximize-frame)
-
-;; (add-hook 'window-size-change-functions #'frame-hide-title-bar-when-maximized)
-
+;;; Show battery status on the mode line with `display-battery-mode'
 (use-package battery
   :ensure nil
   :hook (after-init . display-battery-mode)
   :config
-;;;; Show battery status on the mode line (battery.el)
   (setq battery-mode-line-format
         (cond
          ((eq battery-status-function #'battery-linux-proc-acpi)
