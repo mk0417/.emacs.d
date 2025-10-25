@@ -6859,65 +6859,6 @@ This section covers my settings for version control per se, but more
 widely for tools related to checking different versions of files and
 working with so-called "projects".
 
-*** The =prot-emacs-git.el= section about ediff
-:PROPERTIES:
-:CUSTOM_ID: h:89edea05-4d94-4ea1-b2a8-5ad01422618c
-:END:
-
-[ Watch: [[https://protesilaos.com/codelog/2023-11-17-emacs-ediff-basics/][Emacs: ediff basics]] (2023-12-30) ]
-
-The built-in ~ediff~ feature provides several commands that let us
-compare files or buffers side-by-side. The defaults of ~ediff~ are bad,
-in my opinion: it puts buffers one on top of the other and places the
-"control panel" in a separate Emacs frame. The first time I tried to
-use it, I thought I broke my setup because it is unlike anything we
-normally interact with. As such, the settings I have for
-~ediff-split-window-function~ and ~ediff-window-setup-function~ are
-what I would expect Emacs maintainers to adopt as the new default. I
-strongly encourage everyone to start with them.
-
-In my workflow, the points of entry to the ~ediff~ feature are the
-commands ~ediff-files~, ~ediff-buffers~. Sometimes I use the 3-way
-variants with ~ediff-files3~ and ~ediff-buffers3~, though this is rare.
-Do watch the video I link to in the beginning of this section, as it
-covers the main functionality of this neat tool. I also show how it
-integrates with ~magit~ ([[#h:b08af527-9ebf-4425-ac3a-24b4f371a4fd][The =prot-emacs-git.el= section about ~magit~ (great Git client)]]).
-
-The =prot-ediff.el= extension contains some quality-of-life
-refinements to the core Ediff functionality ([[#h:3937b784-af0f-47c0-8c89-c74d90b00b8c][The =prot-ediff.el= library]]):
-
-- Function ~prot-ediff-store-layout~ :: Store the current frame's window configuration before Ediff is set up.
-- Function ~prot-ediff-restore-layout~ :: Restore the current frame's window configuration.
-- Command ~prot-ediff-buffers-2~ :: Produce an Ediff with the current two visible buffers.
-- Command ~prot-ediff-buffers-3~ :: Produce an Ediff with the current three visible buffers.
-
-#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el" :mkdirp yes
-;;;; `ediff'
-(use-package ediff
-  :ensure nil
-  :commands (ediff-buffers ediff-files ediff-buffers3 ediff-files3)
-  :init
-  (setq ediff-split-window-function 'split-window-horizontally)
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
-  :config
-  (setq ediff-keep-variants nil)
-  (setq ediff-make-buffers-readonly-at-startup nil)
-  (setq ediff-merge-revisions-with-ancestor t)
-  (setq ediff-show-clashes-only t))
-
-(use-package prot-ediff
-  :ensure nil
-  :bind
-  ;; The C-x v prefix is for all "version control" commands that are
-  ;; already built into Emacs.  It makes sense to extend it for this
-  ;; use-case.
-  (("C-x v 2" . prot-ediff-visible-buffers-2)
-   ("C-x v 3" . prot-ediff-visible-buffers-3))
-  :hook
-  ((ediff-before-setup . prot-ediff-store-layout)
-   (ediff-quit . prot-ediff-restore-layout)))
-#+end_src
-
 *** The =prot-emacs-git.el= section about =project.el=
 :PROPERTIES:
 :CUSTOM_ID: h:7dcbcadf-8af6-487d-b864-e4ce56d69530
@@ -7055,6 +6996,97 @@ section of this file).
   (setq diff-font-lock-syntax nil))
 #+end_src
 
+*** The =prot-emacs-git.el= section about ediff
+:PROPERTIES:
+:CUSTOM_ID: h:89edea05-4d94-4ea1-b2a8-5ad01422618c
+:END:
+
+[ Watch: [[https://protesilaos.com/codelog/2023-11-17-emacs-ediff-basics/][Emacs: ediff basics]] (2023-12-30) ]
+
+The built-in ~ediff~ feature provides several commands that let us
+compare files or buffers side-by-side. The defaults of ~ediff~ are bad,
+in my opinion: it puts buffers one on top of the other and places the
+"control panel" in a separate Emacs frame. The first time I tried to
+use it, I thought I broke my setup because it is unlike anything we
+normally interact with. As such, the settings I have for
+~ediff-split-window-function~ and ~ediff-window-setup-function~ are
+what I would expect Emacs maintainers to adopt as the new default. I
+strongly encourage everyone to start with them.
+
+In my workflow, the points of entry to the ~ediff~ feature are the
+commands ~ediff-files~, ~ediff-buffers~. Sometimes I use the 3-way
+variants with ~ediff-files3~ and ~ediff-buffers3~, though this is rare.
+Do watch the video I link to in the beginning of this section, as it
+covers the main functionality of this neat tool. I also show how it
+integrates with ~magit~ ([[#h:b08af527-9ebf-4425-ac3a-24b4f371a4fd][The =prot-emacs-git.el= section about ~magit~ (great Git client)]]).
+
+The =prot-ediff.el= extension contains some quality-of-life
+refinements to the core Ediff functionality ([[#h:3937b784-af0f-47c0-8c89-c74d90b00b8c][The =prot-ediff.el= library]]):
+
+- Function ~prot-ediff-store-layout~ :: Store the current frame's window configuration before Ediff is set up.
+- Function ~prot-ediff-restore-layout~ :: Restore the current frame's window configuration.
+- Command ~prot-ediff-buffers-2~ :: Produce an Ediff with the current two visible buffers.
+- Command ~prot-ediff-buffers-3~ :: Produce an Ediff with the current three visible buffers.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el" :mkdirp yes
+;;;; `ediff'
+(use-package ediff
+  :ensure nil
+  :commands (ediff-buffers ediff-files ediff-buffers3 ediff-files3)
+  :init
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  :config
+  (setq ediff-keep-variants nil)
+  (setq ediff-make-buffers-readonly-at-startup nil)
+  (setq ediff-merge-revisions-with-ancestor t)
+  (setq ediff-show-clashes-only t))
+
+(use-package prot-ediff
+  :ensure nil
+  :bind
+  ;; The C-x v prefix is for all "version control" commands that are
+  ;; already built into Emacs.  It makes sense to extend it for this
+  ;; use-case.
+  (("C-x v 2" . prot-ediff-visible-buffers-2)
+   ("C-x v 3" . prot-ediff-visible-buffers-3))
+  :hook
+  ((ediff-before-setup . prot-ediff-store-layout)
+   (ediff-quit . prot-ediff-restore-layout)))
+#+end_src
+
+*** The =prot-emacs-git.el= section about ~smerge-mode~
+:PROPERTIES:
+:CUSTOM_ID: h:2ed18433-8b38-4518-a464-77bc76e3a87d
+:END:
+
+When we have a merge conflict with Git, the underlying program inserts
+markers in the offending files wihch show what is coming into the
+file, what we had there, and, where applicable, what the common
+ancestor was. Emacs handles this case nicely via ~smerge-mode~. The
+differently marked regions are highlighted to show their differences
+and the user can quickly pick the upper, lower, or base region among
+them. Do =M-x describe-keymap= and then check ~smerge-mode-map~ to
+learn about all the available commands. For me, the most common
+scenario is to pick either the upper or the lower region and then move
+to the next conflict.
+
+Note that ~smerge-mode~ works with both ~vc~ and ~magit~. In the case
+of the latter, it even works in the Magit status buffer:
+
+- [[#h:50add1d8-f0f4-49be-9e57-ab280a4aa300][The =prot-emacs-git.el= section about =vc.el= and related]].
+- [[#h:b08af527-9ebf-4425-ac3a-24b4f371a4fd][The =prot-emacs-git.el= section about ~magit~ (great Git interface)]].
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
+;;;; `smerge-mode'
+(use-package smerge-mode
+  :ensure nil
+  :defer t
+  :config
+  (setq smerge-diff-buffer-name "*smerge-diff*")
+  (setq smerge-refine-shadow-cursor nil)) ; Emacs 31
+#+end_src
+
 *** The =prot-emacs-git.el= section about =vc.el= and related
 :PROPERTIES:
 :CUSTOM_ID: h:50add1d8-f0f4-49be-9e57-ab280a4aa300
@@ -7118,6 +7150,8 @@ project). Whatever VCS we use, the workflow is the same:
 - A Dired-like buffer is also available to perform these actions
   across many edited files. Check the commands, ~vc-dir~,
   ~vc-dir-root~, or even ~project-vc-dir~.
+- Merge conflicts are handled in the affected files with the help of
+  the built-in ~smerge-mode~ ([[#h:2ed18433-8b38-4518-a464-77bc76e3a87d][The =prot-emacs-git.el= section about ~smerge-mode~]]).
 
 Remember to use =C-h m= (~describe-mode~) to get help for the buffer
 you are in and to learn the relevant key bindings.
@@ -7238,6 +7272,10 @@ many extras on top of ~vc~ that I use daily in my workflow
 :PROPERTIES:
 :CUSTOM_ID: h:257b9118-4407-410e-a56a-134fd5d1a3b4
 :END:
+
+[ NOTE 2025-10-25: I plan to review this section. The ~agitate~
+  package works, though there have been a lot of refinements to Emacs
+  since I first worked on this. Maybe I do not need it anymore. ]
 
 This is an experimental package of mine whose role is to extend the
 functionality provided by the =vc= suite of tools ([[#h:50add1d8-f0f4-49be-9e57-ab280a4aa300][The =prot-emacs-git.el= section about =vc.el= and related]]),
@@ -7371,6 +7409,14 @@ The only downside of this wonderful package is that it is slow on
 Windows (based on what others have told me and showed me)... In those
 cases, a combination of =vc= and the command-line will suffice
 ([[#h:50add1d8-f0f4-49be-9e57-ab280a4aa300][The =prot-emacs-git.el= section about =vc.el= and related]]).
+Otherwise, Magit integrates nicely with the rest of the Emacs
+functionality, such as with Ediff and Smerge:
+
+- [[#h:89edea05-4d94-4ea1-b2a8-5ad01422618c][The =prot-emacs-git.el= section about ediff]].
+- [[#h:2ed18433-8b38-4518-a464-77bc76e3a87d][The =prot-emacs-git.el= section about ~smerge-mode~]].
+
+Magit is highly configurable though comes with good defaults. The
+changes I make here are not necessary.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-git.el"
 ;;; Interactive and powerful git front-end (Magit)
@@ -7381,9 +7427,11 @@ cases, a combination of =vc= and the command-line will suffice
 
 (use-package magit
   :ensure t
-  :bind
+  :bind ; also see `magit-define-global-key-bindings'
   ( :map global-map
-    ("C-c g" . magit-status)
+    ("C-c g g" . magit-status)
+    ("C-c g d" . magit-dispatch)
+    ("C-c g f" . magit-file-dispatch)
     :map magit-mode-map
     ("C-w" . nil)
     ("M-w" . nil))
@@ -7391,25 +7439,56 @@ cases, a combination of =vc= and the command-line will suffice
   (setq magit-define-global-key-bindings nil)
   (setq magit-section-visibility-indicator '(magit-fringe-bitmap> . magit-fringe-bitmapv))
   :config
-  (setq git-commit-summary-max-length 50)
-  ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
-  ;; in this list, but I realised I do not need it.  My summaries are
-  ;; always in check.  When I exceed the limit, it is for a good
-  ;; reason.
-  (setq git-commit-style-convention-checks '(non-empty-second-line))
-
-  (setq magit-diff-refine-hunk t)
-
   ;; Show icons for files in the Magit status and other buffers.
-  (with-eval-after-load 'magit
+  (with-eval-after-load 'nerd-icons
     (setq magit-format-file-function #'magit-format-file-nerd-icons)))
+
+(use-package magit-diff
+  :ensure nil ; part of `magit'
+  :defer t
+  :config
+  (setq magit-diff-refine-hunk t)
+  (setq magit-diff-refine-ignore-whitespace t))
+
+(use-package magit-log
+  :ensure nil ; part of `magit'
+  :defer t
+  :config
+  (setq magit-log-auto-more t))
 
 (use-package magit-repos
   :ensure nil ; part of `magit'
   :commands (magit-list-repositories)
   :init
   (setq magit-repository-directories
-        '(("~/Git/Projects" . 1))))
+        '(("~/Git/Projects" . 1)))
+  (setq magit-repolist-columns
+        `(("Name" 25 ,#'magit-repolist-column-ident
+           ())
+          ("Version" 15 ,#'magit-repolist-column-version
+           ((:sort magit-repolist-version<)))
+          ("Unpulled" 10 ,#'magit-repolist-column-unpulled-from-upstream
+           ((:help-echo "Upstream changes not in branch")
+            (:right-align t)
+            (:sort <)))
+          ("Unpushed" 10 ,#'magit-repolist-column-unpushed-to-upstream
+           ((:help-echo "Local changes not in upstream")
+            (:right-align t)
+            (:sort <)))
+          ("Path" 99 ,#'magit-repolist-column-path
+           ()))))
+
+(use-package git-commit
+  :ensure nil ; part of `magit'
+  :defer t
+  :config
+  (setq git-commit-summary-max-length 50)
+  ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
+  ;; in this list, but I realised I do not need it.  My summaries are
+  ;; always in check.  When I exceed the limit, it is for a good
+  ;; reason.
+  (setq git-commit-style-convention-checks '(non-empty-second-line))
+  (setq git-commit-major-mode #'log-edit-mode))
 #+end_src
 
 *** The =prot-emacs-git.el= call to ~provide~
