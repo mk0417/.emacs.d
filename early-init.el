@@ -24,16 +24,11 @@
                              (setq default-frame-alist `((horizontal-scroll-bars . nil)
                                                          (menu-bar-lines . 0) ; alternative to disabling `menu-bar-mode'
                                                          (tool-bar-lines . 0) ; alternative to disabling `tool-bar-mode'
+                                                         (vertical-scroll-bars . nil)
+                                                         (scroll-bar-width . 6)
                                                          (width . (text-pixels . 800))
                                                          (height . (text-pixels . 900))
-                                                         ,@(list '(fullscreen . maximized))
-                                                         ,@(if x-toolkit-scroll-bars
-                                                               (list
-                                                                '(vertical-scroll-bars . nil)
-                                                                '(scroll-bar-width . 12))
-                                                             (list
-                                                              '(vertical-scroll-bars . right)
-                                                              '(scroll-bar-width . 6)))))))
+                                                         ,@(list '(fullscreen . maximized))))))
 
 (defun prot-emacs-no-minibuffer-scroll-bar (frame)
   "Remove the minibuffer scroll bars from FRAME."
