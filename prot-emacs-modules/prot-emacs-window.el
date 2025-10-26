@@ -268,39 +268,4 @@ For use in `consult-buffer-list'."
   :config
   (setq windmove-create-window nil)) ; Emacs 27.1
 
-;;; Show the name of the current definition or heading for context (which-function-mode)
-(use-package which-func
-  :ensure nil
-  :hook (after-init . which-function-mode)
-  :config
-  (setq which-func-modes '(prog-mode org-mode))
-  (setq which-func-display 'mode) ; Emacs 30
-  (setq which-func-unknown "")
-
-  (defface prot/which-function-small
-    '((t :inherit mode-line-emphasis :height 0.9))
-    "Face for the `which-function-mode' indicator.")
-
-  (setq which-func-format
-        `(( :propertize
-            which-func-current
-			face prot/which-function-small
-			mouse-face mode-line-highlight
-            help-echo (format "Current definition: `%s'"
-                              (or (gethash (selected-window) which-func-table)
-                                  which-func-unknown)))))
-
-  ;; NOTE 2025-10-24: This is an experiment.  It seems to work, but there may be downsides.
-  (defun prot/which-function-lisp ()
-    "Show the complete definition of a top-level Lisp form."
-    (when (derived-mode-p 'lisp-data-mode)
-      (save-excursion
-        (beginning-of-defun)
-        (when-let* ((text (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-                    (_ (and (not (string-blank-p text))
-                            (not (string-prefix-p ";" text)))))
-          text))))
-
-  (setq which-func-functions '(prot/which-function-lisp)))
-
 (provide 'prot-emacs-window)

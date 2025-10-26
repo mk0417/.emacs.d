@@ -336,6 +336,15 @@ not show them: I do that on demand by enabling ~scroll-bar-mode~
 scroll bars, I want them to not show up in the minibuffer, hence the
 function ~prot-emacs-no-minibuffer-scroll-bar~.
 
+Because the laptop has limited screen real estate, I take care to hide
+the title bar of maximised frames by setting up the built-in function
+~frame-hide-title-bar-when-maximized~. This is the bar at the top of
+the frame which is drawn by the operating system's window manager: it
+is where the familiar buttons are to close, minimise, or maximise the
+application window. Hiding the title bar declutters the view at the
+cost of hiding the frame title. To compensate, I have my active mode
+line display the frame name ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =prot-emacs-modeline.el= module]]).
+
 #+begin_src emacs-lisp :tangle "early-init.el"
 (defvar prot-laptop-p (null (directory-empty-p "/sys/class/power_supply/"))
   "When non-nil, we assume to be working on a laptop.")
@@ -3763,7 +3772,9 @@ also avoid the repetition of global indicators, such as for the time
 or the ~notmuch-indicator~ ([[#h:0f12f144-ca9f-4d07-8563-c33b3521bfb5][The =prot-emacs-notmuch.el= section about the ~notmuch-indicator~]]).
 
 Most items that go into the ~mode-line-format~ are defined in
-[[#h:935adc09-abaa-4413-a5ab-a7a562081c20][the =prot-modeline.el= library]].
+[[#h:935adc09-abaa-4413-a5ab-a7a562081c20][the =prot-modeline.el= library]]. The frame name, in particular, is
+useful to me only when I am on the laptop, hence the option to display
+it conditionally: ~prot-modeline-show-frame-name~ ([[#h:0403b581-142b-4613-bc81-51c5dccd831d][The =early-init.el= code to set frame parameters for the desktop or laptop]]).
 
 Notice the use of ~setq-default~. This is like ~setq~ but sets the
 default value of variable that normally are buffer-local. You will
@@ -3784,6 +3795,7 @@ as soon as the given package/feature is loaded.
   :config
   (setq mode-line-compact nil) ; Emacs 28
   (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
+  (setq prot-modeline-show-frame-name (if prot-laptop-p t nil))
   (setq-default mode-line-format
                 '("%e"
                   prot-modeline-kbd-macro
@@ -3797,6 +3809,7 @@ as soon as the given package/feature is loaded.
                   prot-modeline-major-mode
                   prot-modeline-process
                   "  "
+                  prot-modeline-frame-name
                   prot-modeline-vc-branch
                   "  "
                   prot-modeline-eglot
@@ -3804,6 +3817,7 @@ as soon as the given package/feature is loaded.
                   prot-modeline-flymake
                   "  "
                   mode-line-format-right-align ; Emacs 30
+                  prot-modeline-which-function-indicator
                   prot-modeline-notmuch-indicator
                   "  "
                   prot-modeline-misc-info))
@@ -3820,6 +3834,108 @@ as soon as the given package/feature is loaded.
     (prot/modeline-spacious-indicators)
 
     (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
+#+end_src
+
+*** Show the name of the current function or heading (~which-function-mode~)
+:PROPERTIES:
+:CUSTOM_ID: h:03696edd-8637-4eb6-bfeb-23e828569523
+:END:
+
+The built-in ~which-key-mode~ displays the name of the current
+function/variable defition or heading. It makes it easier to figure
+out where you are in the file you are editing. This is especially
+useful when combined with search-driven navigation: you just land on a
+certain line and need to have a sense of the context.
+
+By the default, the information is displayed on the mode line, though
+this can be controlled by the user option ~which-func-display~. I
+prefer to keep it to the mode line, though it is possible to place it
+on the header line or both it and the mode line.
+
+The ~which-func-format~ controls what the indicator looks like. This
+is a bit more advanced in terms of the data structure it uses. All I
+did what to take the original value and make some minor tweaks to it.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-modeline.el"
+;;; Show the name of the current definition or heading for context (`which-function-mode')
+(use-package which-func
+  :ensure nil
+  :hook (after-init . which-function-mode)
+  :config
+  (setq which-func-modes '(prog-mode org-mode))
+  ;; NOTE 2025-10-26: I handle the indicator on my own via `prot-modeline-which-function-indicator'.
+  (setq which-func-display 'mode) ; Emacs 30
+  (setq which-func-unknown "")
+
+  ;; NOTE 2025-10-24: This is an experiment.  It seems to work, but there may be downsides.
+  (with-eval-after-load 'prot-modeline
+    (defun prot/which-function ()
+      "A more opinionated `which-function'."
+      (let ((name nil))
+        (cond
+         ((derived-mode-p 'lisp-data-mode)
+          (let ((text (save-excursion
+                        (beginning-of-defun)
+                        (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
+            (setq name (if (string-prefix-p ";" text)
+                           ""
+                         (prot-modeline-string-abbreviate-but-last text 1)))))
+         (t
+          (when (null name)
+            (setq name (add-log-current-defun)))
+          ;; If Imenu is loaded, try to make an index alist with it.
+          ;; If `add-log-current-defun' ran and gave nil, accept that.
+          (when (and (null name)
+                     (null add-log-current-defun-function))
+            (when (and (null name)
+                       (boundp 'imenu--index-alist)
+                       (or (null imenu--index-alist)
+                           ;; Update if outdated
+                           (/= (buffer-chars-modified-tick) imenu-menubar-modified-tick))
+                       (null which-function-imenu-failed))
+              (ignore-errors (imenu--make-index-alist t))
+              (unless imenu--index-alist
+                (setq-local which-function-imenu-failed t)))
+            ;; If we have an index alist, use it.
+            (when (and (null name)
+                       (boundp 'imenu--index-alist) imenu--index-alist)
+              (let ((alist imenu--index-alist)
+                    (minoffset (point-max))
+                    offset pair mark imstack namestack)
+                ;; Elements of alist are either ("name" . marker), or
+                ;; ("submenu" ("name" . marker) ... ). The list can be
+                ;; arbitrarily nested.
+                (while (or alist imstack)
+                  (if (null alist)
+                      (setq alist     (car imstack)
+                            namestack (cdr namestack)
+                            imstack   (cdr imstack))
+
+                    (setq pair (car-safe alist)
+                          alist (cdr-safe alist))
+
+                    (cond
+                     ((atom pair))            ; Skip anything not a cons.
+
+                     ((imenu--subalist-p pair)
+                      (setq imstack   (cons alist imstack)
+                            namestack (cons (car pair) namestack)
+                            alist     (cdr pair)))
+
+                     ((or (number-or-marker-p (setq mark (cdr pair)))
+                          (and (overlayp mark)
+                               (setq mark (overlay-start mark))))
+                      (when (and (>= (setq offset (- (point) mark)) 0)
+                                 (< offset minoffset)) ; Find the closest item.
+                        (setq minoffset offset
+                              name (if (null which-func-imenu-joiner-function)
+                                       (car pair)
+                                     (funcall
+                                      which-func-imenu-joiner-function
+                                      (reverse (cons (car pair) namestack)))))))))))))
+          (prot-modeline-string-cut-end name)))))
+
+    (advice-add #'which-function :override #'prot/which-function)))
 #+end_src
 
 *** The =prot-emacs-modeline.el= section about ~keycast~
@@ -6761,63 +6877,6 @@ leads to the current heading. Same idea for programming modes. Neat!
       (breadcrumb-local-mode 1))))
 #+end_src
 
-*** Show the name of the current function or heading (~which-function-mode~)
-:PROPERTIES:
-:CUSTOM_ID: h:03696edd-8637-4eb6-bfeb-23e828569523
-:END:
-
-The built-in ~which-key-mode~ displays the name of the current
-function/variable defition or heading. It makes it easier to figure
-out where you are in the file you are editing. This is especially
-useful when combined with search-driven navigation: you just land on a
-certain line and need to have a sense of the context.
-
-By the default, the information is displayed on the mode line, though
-this can be controlled by the user option ~which-func-display~. I
-prefer to keep it to the mode line, though it is possible to place it
-on the header line or both it and the mode line.
-
-The ~which-func-format~ controls what the indicator looks like. This
-is a bit more advanced in terms of the data structure it uses. All I
-did what to take the original value and make some minor tweaks to it.
-
-#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
-;;; Show the name of the current definition or heading for context (which-function-mode)
-(use-package which-func
-  :ensure nil
-  :hook (after-init . which-function-mode)
-  :config
-  (setq which-func-modes '(prog-mode org-mode))
-  (setq which-func-display 'mode) ; Emacs 30
-  (setq which-func-unknown "")
-
-  (defface prot/which-function-small
-    '((t :inherit mode-line-emphasis :height 0.9))
-    "Face for the `which-function-mode' indicator.")
-
-  (setq which-func-format
-        `(( :propertize
-            which-func-current
-		    face prot/which-function-small
-		    mouse-face mode-line-highlight
-            help-echo (format "Current definition: `%s'"
-                              (or (gethash (selected-window) which-func-table)
-                                  which-func-unknown)))))
-
-  ;; NOTE 2025-10-24: This is an experiment.  It seems to work, but there may be downsides.
-  (defun prot/which-function-lisp ()
-    "Show the complete definition of a top-level Lisp form."
-    (when (derived-mode-p 'lisp-data-mode)
-      (save-excursion
-        (beginning-of-defun)
-        (when-let* ((text (buffer-substring-no-properties (line-beginning-position) (line-end-position)))
-                    (_ (and (not (string-blank-p text))
-                            (not (string-prefix-p ";" text)))))
-          text))))
-
-  (setq which-func-functions '(prot/which-function-lisp)))
-#+end_src
-
 *** The =prot-emacs-window.el= ~provide~ form
 :PROPERTIES:
 :CUSTOM_ID: h:2124c200-734d-49c4-aeb1-513caaf957ae
@@ -7418,9 +7477,7 @@ changes I make here are not necessary.
   :ensure t
   :bind ; also see `magit-define-global-key-bindings'
   ( :map global-map
-    ("C-c g g" . magit-status)
-    ("C-c g d" . magit-dispatch)
-    ("C-c g f" . magit-file-dispatch)
+    ("C-c g" . magit-status)
     :map magit-mode-map
     ("C-w" . nil)
     ("M-w" . nil))
@@ -13363,6 +13420,11 @@ Modify this face to, for example, add a :box attribute to all
 relevant indicators (combines nicely with my `spacious-padding'
 package).")
 
+(defface prot-modeline-indicator-small
+  '((t :inherit bold :height 0.8))
+  "Face for modeline indicators (e.g. see my `notmuch-indicator')."
+  :group 'prot-modeline-faces)
+
 (defface prot-modeline-indicator-red
   '((default :inherit bold)
     (((class color) (min-colors 88) (background light))
@@ -13875,6 +13937,39 @@ Specific to the current window's mode line.")
   "Mode line construct displaying Eglot information.
 Specific to the current window's mode line.")
 
+;;;; Frame name
+
+(defcustom prot-modeline-show-frame-name nil
+  "When non-nil, display the current frame name."
+  :type 'boolean)
+
+(defvar-local prot-modeline-frame-name
+  '(prot-modeline-show-frame-name
+    (" "
+     (:eval (when-let* ((_ (mode-line-window-selected-p))
+                        (current-frame (selected-frame))
+                        (_ (frame-live-p current-frame))
+                        (parameters (frame-parameters))
+                        (name (alist-get 'name parameters))
+                        (indicator "√"))
+              (format "%s %s " (propertize indicator 'face 'shadow) name)))))
+  "Mode line construct to display the current frame name.")
+
+;;;; `which-function-mode' indicator
+
+(defvar-local prot-modeline-which-function-indicator
+  `(( :propertize
+      which-func-current
+      face prot-modeline-indicator-small
+      mouse-face mode-line-highlight
+      help-echo (format "Current definition: `%s'"
+                        (or (gethash (selected-window) which-func-table)
+                            which-func-unknown))))
+  "The equivalent of `which-func-format'.")
+
+(with-eval-after-load 'which-func
+  (setq mode-line-misc-info (delete (assq 'which-function-mode mode-line-misc-info) mode-line-misc-info)))
+
 ;;;; Miscellaneous
 
 (defvar-local prot-modeline-notmuch-indicator
@@ -13907,6 +14002,8 @@ Specific to the current window's mode line.")
                      prot-modeline-vc-branch
                      prot-modeline-flymake
                      prot-modeline-eglot
+                     prot-modeline-frame-name
+                     prot-modeline-which-function-indicator
                      ;; prot-modeline-align-right
                      prot-modeline-notmuch-indicator
                      prot-modeline-misc-info))
