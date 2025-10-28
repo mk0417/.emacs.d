@@ -48,13 +48,6 @@ These include packages such as `consult' and `embark'."
   :group 'prot-emacs
   :type 'boolean)
 
-(defcustom prot-emacs-treesitter-extras t
-  "When non-nil load extras for tree-sitter integration
-These include packages such as `expreg' and generally anything
-that adds functionality on top of what the major mode provides."
-  :group 'prot-emacs
-  :type 'boolean)
-
 (defcustom prot-emacs-load-which-key t
   "When non-nil, display key binding hints after a short delay.
 This user option must be set in the `prot-emacs-pre-custom.el'
@@ -331,7 +324,7 @@ making an abbreviation to a function."
 (require 'init-programming)
 (require 'init-lsp)
 (require 'init-latex)
-(require 'init-llm)
+(require 'init-ai)
 (require 'init-database)
 (require 'init-vc)
 (require 'init-keybinding)

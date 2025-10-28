@@ -689,27 +689,6 @@ These include packages such as `consult' and `embark'."
   :type 'boolean)
 #+end_src
 
-*** The =init.el= user option to load treesitter extras
-:PROPERTIES:
-:CUSTOM_ID: h:32703a47-edff-47a8-b275-3cb5b9f9e244
-:END:
-
-I configure Emacs to support the ~tree-sitter~ program, though I do
-not use anything that leverages it. I either code in Emacs Lisp or
-write prose. This user option is in place for those who want to use my
-configuration as a basis for their own setup.
-
-Remember to read how these options come into effect ([[#h:5a41861f-4c38-45ac-8da2-51d77c0b4a73][The init.el user options]]).
-
-#+begin_src emacs-lisp :tangle "init.el"
-(defcustom prot-emacs-treesitter-extras t
-  "When non-nil load extras for tree-sitter integration
-These include packages such as `expreg' and generally anything
-that adds functionality on top of what the major mode provides."
-  :group 'prot-emacs
-  :type 'boolean)
-#+end_src
-
 *** The =init.el= user option to enable ~which-key~
 :PROPERTIES:
 :CUSTOM_ID: h:24324854-1f8c-4d8b-aa7c-291de968cbf4
@@ -1680,6 +1659,25 @@ editor, opt for my ~modus-themes~ ([[#h:36af519a-67e1-42b6-a38a-2052638108f9][Th
    ("C-<f5>" . doric-themes-select)
    ("M-<f5>" . doric-themes-rotate)))
 
+;; For testing purposes
+(prot-emacs-comment
+  (:eval nil)
+  (add-to-list 'load-path "/home/prot/Git/Projects/doric-themes/")
+
+  (require 'doric-themes)
+
+  (setq doric-themes-to-toggle '(doric-light doric-dark))
+  (setq doric-themes-to-rotate doric-themes-collection)
+  (doric-themes-load-random
+   (if (prot-emacs-theme-environment-dark-p)
+       'dark
+     'light))
+
+  (prot-emacs-keybind global-map
+    "<f5>" #'doric-themes-toggle
+    "C-<f5>" #'doric-themes-select
+    "M-<f5>" #'doric-themes-rotate))
+
 (provide 'prot-emacs-doric-themes)
 #+end_src
 
@@ -2516,7 +2514,6 @@ key bindings.
     ("C-x C-z" . nil) ; same idea as above
     ("C-x C-c" . nil) ; avoid accidentally exiting Emacs
     ("C-x C-c C-c" . save-buffers-kill-emacs) ; more cumbersome, less error-prone
-    ("C-x C-r" . restart-emacs) ; override `find-file-read-only'
     ("C-h h" . nil) ; Never show that "hello" file
     ("M-`" . nil)
     ("M-o" . delete-blank-lines) ; alias for C-x C-o
@@ -2763,11 +2760,12 @@ the module to set my desired configurations.
   (setq comment-style 'multi-line)
   (setq-default comment-column 0)
 
-  (setq prot-comment-comment-keywords '("TODO" "NOTE" "XXX" "REVIEW" "FIXME"))
+  (setq prot-comment-comment-keywords '("TODO" "NOTE" "FIXME"))
   (setq prot-comment-timestamp-format-concise "%F")
   (setq prot-comment-timestamp-format-verbose "%F %T %z")
   :bind
   (("C-;" . prot-comment)
+   ("M-;" . prot-comment) ; overrides `comment-dwim'
    ("C-x C-;" . prot-comment-timestamp-keyword)))
 #+end_src
 
@@ -2795,7 +2793,7 @@ configurable amount of time ([[#h:ddb1070d-2f91-4224-ad43-ef03f038f787][The =pro
    ("C-z" . prot-prefix)))
 #+end_src
 
-*** The =prot-emacs-essentials.el= configuration to track recently visited files
+*** The =prot-emacs-essentials.el= configuration to track recently visited files (~recentf-mode~)
 :PROPERTIES:
 :CUSTOM_ID: h:f9aa7523-d88a-4080-add6-073f36cb8b9a
 :END:
@@ -2818,7 +2816,8 @@ revisit a file that I do not need to keep track of.
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 (use-package recentf
   :ensure nil
-  :hook (after-init . recentf-mode)
+  :bind
+  ("C-x C-r" . recentf-open) ; override `find-file-read-only'
   :config
   (setq recentf-max-saved-items 100)
   (setq recentf-max-menu-items 25) ; I don't use the `menu-bar-mode', but this is good to know
@@ -2827,7 +2826,8 @@ revisit a file that I do not need to keep track of.
   (setq recentf-auto-cleanup nil)
   (setq recentf-initialize-file-name-history nil)
   (setq recentf-filename-handlers nil)
-  (setq recentf-show-file-shortcuts-flag nil))
+  (setq recentf-show-file-shortcuts-flag nil)
+  (recentf-mode 1))
 #+end_src
 
 *** The =prot-emacs-essentials.el= mouse configurations and scroll behaviour
@@ -3279,147 +3279,6 @@ that and so on. Simple and super effective.
   :bind
   (("C-(" . goto-last-change)
    ("C-)" . goto-last-change-reverse)))
-#+end_src
-
-*** The =prot-emacs-essentials.el= section about ~expreg~ (tree-sitter mark syntactically)
-:PROPERTIES:
-:CUSTOM_ID: h:ceb193bf-0de3-4c43-8ab7-6daa50817754
-:END:
-
-The ~expreg~ package by Yuan Fu (aka casouri) uses the tree-sitter
-framework to incrementally expand the region from the smallest to the
-largest syntactic unit in the given context. This is a powerful
-feature, though it (i) requires Emacs to be built with tree-sitter
-support and (ii) for the user to be running a major mode that is
-designed for tree-sitter (Lisp seems to work regardless).
-
-The package offers the ~expreg-expand~ and ~expreg-contract~ commands.
-I believe I have never used the latter. I find it easier to just abort
-and start again than to have a special key for the rare scenario where
-I widened the selection more than I should. For that case, we can
-always exchange point and mark. I have explained this in my video
-about mark and register basics:
-<https://protesilaos.com/codelog/2023-06-28-emacs-mark-register-basics/>.
-
-If tree-sitter functionality is not available, then the =C-M-SPC=
-binding is taken by ~prot-simple-mark-sexp~ which is similar in spirit
-([[#h:f15bc843-2dd1-4792-95ec-9b7b6e561804][The =prot-emacs-essentials.el= section about =prot-simple.el= (custom basic commands)]]).
-
-For me, ~expreg~ is mostly an investment into the future, as I am
-monitoring developments on the tree-sitter front. My setup provides a
-user option to not load such tree-sitter extras ([[#h:32703a47-edff-47a8-b275-3cb5b9f9e244][The =init.el= user option to load treesitter extras]]).
-
-Note that in the code block below I define two small commands. Custom
-code belong in libraries, though not in cases where it is ad-hoc like
-this ([[#h:fc1ea247-5ef6-4c4e-a807-6c7b2482af90][The custom libraries of my configuration]]).
-
-#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
-;;; Mark syntactic constructs efficiently if tree-sitter is available (expreg)
-(when (and (treesit-available-p) prot-emacs-treesitter-extras)
-  (use-package expreg
-    :ensure t
-    :functions (prot/expreg-expand prot/expreg-expand-dwim)
-    ;; There is also an `expreg-contract' command, though I have no use for it.
-    :bind ("C-M-SPC" . prot/expreg-expand-dwim) ; overrides `mark-sexp'
-    :config
-    (defun prot/expreg-expand (n)
-      "Expand to N syntactic units, defaulting to 1 if none is provided interactively."
-      (interactive "p")
-      (dotimes (_ n)
-        (expreg-expand)))
-
-    (defun prot/expreg-expand-dwim ()
-      "Do-What-I-Mean `expreg-expand' to start with symbol or word.
-If over a real symbol, mark that directly, else start with a
-word.  Fall back to regular `expreg-expand'."
-      (interactive)
-      (let ((symbol (bounds-of-thing-at-point 'symbol)))
-        (cond
-         ((equal (bounds-of-thing-at-point 'word) symbol)
-          (prot/expreg-expand 1))
-         (symbol (prot/expreg-expand 2))
-         (t (expreg-expand)))))))
-#+end_src
-
-*** COMMENT The =prot-emacs-essentials.el= section about ~vundo~ (visualise undo steps)
-:PROPERTIES:
-:CUSTOM_ID: h:66ea5d9d-f60b-4d92-ba51-06c27d1be784
-:END:
-
-The ~vundo~ package by Yuan Fu (aka "casouri") builds on top of the
-standard ~undo~ infrastructure to provide a tree view of the undo
-steps. It is an essential complement to what is otherwise a powerful
-mechanism.
-
-I personally like minimalist interfaces by default, meaning that I
-prefer nothing to pop up unless it is necessary. To this end, my
-command ~prot/vundo-if-repeat-undo~ produces a visualisation of the
-undo steps only after I repeat the ~undo~ command. The assumption is
-that if I am repeating, I am already interested in something further
-back in history, at which point having a representation of it is
-helpful. I am implementing this using the advice mechanism, so that
-(i) the command calls the original function if needed, and (ii) I can
-extend the functionality to many functions without needing to rebind
-any keys.
-
-To make this feel natural, I bind keys in the ~vundo-mode-map~ that
-are consistent with the defaults for ~undo~ and ~undo-redo~. This way,
-I can keep operating on the buffer without switching contexts. The
-visualisation is a nice extra ([[#h:d3684ec0-a972-4033-a4d6-41ee16e891d9][The =init.el= macro to bind keys (~prot-emacs-keybind~)]]).
-
-I did contribute to the ~vundo~ package a while ago to define the
-~vundo-after-undo-functions~. This was an abnormal hook that we could
-employ for advanced uses, such as to display a diff with the relevant
-changes (per <https://github.com/casouri/vundo/pull/74>). It seems
-that the source code of the package now has the diffing functionality
-built-in, though the hook I introduced is no longer there. That is
-unfortunate, because we could use it for other things as well, such as
-to pulse the region.
-
-#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
-;;; Visualise undo ring (`vundo')
-(use-package vundo
-  :ensure t
-  :if (display-graphic-p)
-  :defer 1
-  :bind
-  ( :map vundo-mode-map
-    ("C-/" . vundo-backward)
-    ("C-?" . vundo-forward)
-    ("u" . vundo-backward)
-    ("U" . vundo-forward)
-    ("g" . vundo-goto-last-saved)
-    ("." . vundo-goto-last-saved)
-    ("h" . vundo-backward)
-    ("j" . vundo-next)
-    ("k" . vundo-previous)
-    ("l" . vundo-forward))
-  :config
-  (setq vundo-glyph-alist vundo-unicode-symbols)
-
-  (defvar prot/vundo-undo-functions '(undo undo-only undo-redo)
-    "List of undo functions to check if we need to visualise the undo ring.")
-
-  (defvar prot/vundo-undo-command #'undo
-    "Command to call if we are not going to visualise the undo ring.")
-
-  (defun prot/vundo-if-repeat-undo (&rest args)
-    "Use `vundo' if the last command is among `prot/vundo-undo-functions'.
-In other words, start visualising the undo ring if we are going
-to be cycling through the edits."
-    (interactive)
-    (if (and (member last-command prot/vundo-undo-functions)
-             (not undo-in-region))
-        (call-interactively 'vundo)
-      (apply args)))
-
-  (mapc
-   (lambda (fn)
-     (advice-add fn :around #'prot/vundo-if-repeat-undo))
-   prot/vundo-undo-functions)
-
-  (with-eval-after-load 'pulsar
-    (add-hook 'vundo-post-exit-hook #'pulsar-pulse-line-green)))
 #+end_src
 
 *** The =prot-emacs-essentials.el= section about ~tmr~ (set timers)
@@ -3874,12 +3733,13 @@ did what to take the original value and make some minor tweaks to it.
       (let ((name nil))
         (cond
          ((derived-mode-p 'lisp-data-mode)
-          (let ((text (save-excursion
-                        (beginning-of-defun)
-                        (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
-            (setq name (if (string-prefix-p ";" text)
-                           ""
-                         (prot-modeline-string-abbreviate-but-last text 1)))))
+          (ignore-errors
+            (let ((text (save-excursion
+                          (beginning-of-defun)
+                          (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
+              (setq name (if (string-prefix-p ";" text)
+                             ""
+                           (prot-modeline-string-abbreviate-but-last text 1))))))
          (t
           (when (null name)
             (setq name (add-log-current-defun)))
@@ -6121,33 +5981,6 @@ are where we need to be.
   (setq dired-preview-display-action-alist #'dired-preview-display-action-alist-below))
 #+end_src
 
-*** The =prot-emacs-dired.el= section about multimedia previews (~ready-player~)
-:PROPERTIES:
-:CUSTOM_ID: h:8a92d9db-b35a-4ec3-8b37-f42a80a67854
-:END:
-
-This is a neat package by Alvaro Ramirez which produces a previewable
-representation of multimedia file when we try to visit them in an
-Emacs buffer. Without ~ready-player-major-mode~, we get a bunch of
-gibberish from the binary data.
-
-While this is a standalone package, it synergises with my
-~dired-preview~ without the need to add any glue code between the two
-packages ([[#h:c345ff72-d905-482a-a885-fc111252aacf][The =prot-emacs-dired.el= section about ~dired-preview~]]).
-When I move the cursor over a multimedia file, the Dired preview
-buffer tries to visit the file at point, which is in turn rendered
-using ~ready-player~.
-
-#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-dired.el"
-(use-package ready-player
-  :ensure t
-  :mode
-  ("\\.\\(mp3\\|m4a\\|mp4\\|mkv\\|webm\\)\\'" . ready-player-major-mode)
-  :config
-  (setq ready-player-autoplay nil)
-  (setq ready-player-repeat nil))
-#+end_src
-
 *** The =prot-emacs-dired.el= section about =trashed.el=
 :PROPERTIES:
 :CUSTOM_ID: h:2e005bd1-d098-426d-91f9-2a31a6e55caa
@@ -6845,36 +6678,6 @@ the placement of a window in the given direction.
    ("C-M-S-<left>" . windmove-swap-states-left))
   :config
   (setq windmove-create-window nil)) ; Emacs 27.1
-#+end_src
-
-*** COMMENT The =prot-emacs-window.el= use of contextual header line (~breadcrumb~)
-:PROPERTIES:
-:CUSTOM_ID: h:29ced61b-4b5a-4f63-af00-fe311468d1cd
-:END:
-
-The ~breadcrumb~ package by João Távora lets us display contextual
-information about the current heading or code definition in the header
-line. The header line is displayed above the contents of each buffer
-in the given window. When we are editing an Org file, for example, we
-see the path to the file, followed by a reference to the tree that
-leads to the current heading. Same idea for programming modes. Neat!
-
-#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
-;;; Header line context of symbol/heading (breadcrumb.el)
-(use-package breadcrumb
-  :ensure t
-  :functions (prot/breadcrumb-local-mode)
-  :hook ((text-mode prog-mode) . prot/breadcrumb-local-mode)
-  :config
-  (setq breadcrumb-project-max-length 0.5)
-  (setq breadcrumb-project-crumb-separator "/")
-  (setq breadcrumb-imenu-max-length 1.0)
-  (setq breadcrumb-imenu-crumb-separator " > ")
-
-  (defun prot/breadcrumb-local-mode ()
-    "Enable `breadcrumb-local-mode' if the buffer is visiting a file."
-    (when buffer-file-name
-      (breadcrumb-local-mode 1))))
 #+end_src
 
 *** The =prot-emacs-window.el= ~provide~ form
@@ -11354,7 +11157,7 @@ passwordeval "gpg -q --for-your-eyes-only -d ~/.authinfo.gpg | awk -F ' ' '/gand
 account default : gandi
 #+end_example
 
-** TODO The =prot-emacs-web.el= module
+** The =prot-emacs-web.el= module
 :PROPERTIES:
 :CUSTOM_ID: h:f23d9cef-ab7b-4486-a070-9c7ae664eadf
 :END:
@@ -11601,10 +11404,63 @@ file to provide only these commands:
     ("J" . prot-eww-visit-url-on-page)))
 #+end_src
 
-*** TODO The =prot-emacs-web.el= RSS/Atom reader (~elfeed~)
+*** The =prot-emacs-web.el= RSS/Atom reader (~elfeed~)
 :PROPERTIES:
 :CUSTOM_ID: h:adc258d3-f444-4bb5-8a8d-43025a689167
 :END:
+
+The ~elfeed~ package by Christopher Wellons is an excellent RSS/Atom
+feed reader. It maintains an index of all feeds it has downloaded and
+provides a search-driven interface to them. We start by defining our
+feeds in the variable ~elfeed-feeds~. Each entry is a list with a
+string to the URL and them optional keywords. Those keywords are tags
+which expose the feed to relevant queries. Here is an example:
+
+#+begin_example emacs-lisp
+(setq elfeed-feeds '(("https://protesilaos.com/codelog.xml" emacs linux)
+                     ("https://protesilaos.com/interpretations.xml" art philosophy)))
+#+end_example
+
+When we invoke the ~elfeed~ command, we are taken to the main search
+view. To fetch new updates, we invoke the command ~elfeed-update~. The
+buffer will be populated with a listing of articles. It includes the
+date, the title, the name of the feed, and tags associated with that
+feed. From there, we can use the command ~elfeed-search-live-filter~
+or ~elfeed-search-set-filter~ to narrow the results to what we are
+interested in.
+
+The Elfeed query engine has the following semantics:
+
+- The pattern =+word= means to only show articles with the given tag,
+  while =-word= means to remove those which have that tag.
+- The =@= sign is used to specify a date or range thereof. For
+  example, it understands =@7-days-ago=, =@2-weeks-ago=,
+  =@2025-10-28=, =@2025-10-20--2025-10-28=, and
+  =@7-days-ago--3-days-ago=.
+- The =#= instructs Elfeed to limit the results to the given number,
+  like =#10= to show the first 10 matches.
+- The ~=~ is a prefix for regular expressions. Those are matched
+  against the feed title or URL.
+- Any space-separated words are treated like regular expressions.
+
+While all this is powerful, I find that I only use the =+word= and, on
+occasion, the =@3-months-ago= patterns.
+
+To read an article, just move the cursor to its line and type =RET=.
+This switches away from the buffer that runs ~elfeed-search-mode~ to
+the one which shows the article and uses ~elfeed-show-mode~.
+
+Use =M-x describe-keymap= on ~elfeed-search-mode-map~ and
+~elfeed-show-mode-map~ to learn about the available key bindings in
+the respective major modes.
+
+In the following configuration block, you will notice how I put all
+feeds in their own file and load them separately from my Emacs
+settings. This is an Emacs Lisp file which does a ~(setq elfeed-feeds
+FEEDS)~, as shown in the example above. Doing ~(load FILE)~ has the
+effect of evaluating the Elisp therein. By default ~load~ will throw
+an error if it cannot load the given file, which is exactly what I
+want in this case.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-web.el"
 ;;; Elfeed feed/RSS reader
@@ -11613,12 +11469,19 @@ file to provide only these commands:
   :hook
   (elfeed-show-mode . visual-line-mode)
   :bind
-  ("C-c e" . elfeed)
+  ( :map global-map
+    ("C-c e" . elfeed)
+    :map elfeed-search-mode-map
+    ("w" . elfeed-search-yank)
+    ("g" . elfeed-update)
+    ("G" . elfeed-search-update--force)
+    :map elfeed-show-mode-map
+    ("w" . elfeed-show-yank))
   :config
   (setq elfeed-use-curl nil)
   (setq elfeed-curl-max-connections 10)
-  (setq elfeed-db-directory (concat user-emacs-directory "elfeed/"))
-  (setq elfeed-enclosure-default-dir "~/Downloads/")
+  (setq elfeed-db-directory (expand-file-name "elfeed/" user-emacs-directory))
+  (setq elfeed-enclosure-default-dir (expand-file-name "~/Downloads/"))
   (setq elfeed-search-filter "@2-weeks-ago +unread")
   (setq elfeed-sort-order 'descending)
   (setq elfeed-search-clipboard-type 'CLIPBOARD)
@@ -11628,28 +11491,15 @@ file to provide only these commands:
   (setq elfeed-show-truncate-long-urls t)
   (setq elfeed-show-unique-buffers t)
   (setq elfeed-search-date-format '("%F %R" 20 :left))
-
-  (prot-emacs-keybind elfeed-search-mode-map
-    "w" #'elfeed-search-yank
-    "g" #'elfeed-update
-    "G" #'elfeed-search-update--force)
-
-  (define-key elfeed-show-mode-map (kbd "w") #'elfeed-show-yank))
-
-(use-package prot-elfeed
-  :ensure nil
-  :after elfeed
-  :bind
-  ( :map elfeed-search-mode-map
-    ("s" . prot-elfeed-search-tag-filter)
-    ("+" . prot-elfeed-toggle-tag)
-    :map elfeed-show-mode-map
-    ("+" . prot-elfeed-toggle-tag))
-  :hook
-  (elfeed-search-mode . prot-elfeed-load-feeds)
-  :config
-  (setq prot-elfeed-tag-faces t)
-  (prot-elfeed-fontify-tags))
+  ;; NOTE 2025-10-28: Instead of showing my `elfeed-feeds' here, I put
+  ;; it in its own Emacs Lisp file.  The `load' function will evaluate
+  ;; that code.  Internally, the file has just the following:
+  ;;
+  ;;     (setq elfeed-feeds FEEDS)
+  (load (expand-file-name "~/feeds.el.gpg"))
+  ;; Make entries tagged as "personal" use the `bold-italic' face.
+  ;; This way I can quickly notice my own entries in the listing.
+  (add-to-list 'elfeed-search-face-alist '(personal bold-italic)))
 #+end_src
 
 *** The =prot-emacs-web.el= settings for the IRC client (~rcirc~)
@@ -11771,12 +11621,13 @@ files. The user must handle this step by invoking the command
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-icons.el" :mkdirp yes
 ;;; Icons
 (use-package nerd-icons
-  :ensure t)
+  :ensure t
+  :defer 1)
 
 (use-package nerd-icons-completion
   :ensure t
   :if (display-graphic-p)
-  :after marginalia
+  :after (nerd-icons marginalia)
   ;; FIXME 2024-09-01: For some reason this stopped working because it
   ;; macroexpands to `marginalia-mode' instead of
   ;; `marginalia-mode-hook'.  What is more puzzling is that this does
@@ -11794,27 +11645,28 @@ files. The user must handle this step by invoking the command
 (use-package nerd-icons-corfu
   :ensure t
   :if (display-graphic-p)
-  :after corfu
+  :after (nerd-icons corfu)
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (use-package nerd-icons-dired
   :ensure t
   :if (display-graphic-p)
+  :after nerd-icons
   :hook
   (dired-mode . nerd-icons-dired-mode))
 
 (use-package nerd-icons-xref
   :ensure t
   :if (display-graphic-p)
-  :after xref
+  :after (nerd-icons xref)
   :config
   (nerd-icons-xref-mode 1))
 
 (use-package nerd-icons-grep
   :ensure t
   :if (display-graphic-p)
-  :after grep
+  :after (nerd-icons grep)
   :config
   (when grep-use-headings
     (nerd-icons-grep-mode 1)))
@@ -12925,197 +12777,6 @@ Also see `prot-ediff-store-layout'."
 ;;; prot-ediff.el ends here
 #+end_src
 
-** The =prot-elfeed.el= library
-:PROPERTIES:
-:CUSTOM_ID: h:98c313d7-62c2-48c1-b6ad-28cc25f22092
-:END:
-
-#+begin_src emacs-lisp :tangle "prot-lisp/prot-elfeed.el" :mkdirp yes
-;;; prot-elfeed.el --- Elfeed extensions for my dotemacs -*- lexical-binding: t -*-
-
-;; Copyright (C) 2021-2025  Protesilaos Stavrou
-
-;; Author: Protesilaos Stavrou <info@protesilaos.com>
-;; URL: https://protesilaos.com/emacs/dotemacs
-;; Version: 0.1.0
-;; Package-Requires: ((emacs "30.1"))
-
-;; This file is NOT part of GNU Emacs.
-
-;; This program is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
-;;
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
-;;
-;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-;;; Commentary:
-
-;; NOTE 2022-06-08: This is old code.  There are things I would like to
-;; improve.
-
-;;
-;; Extensions for Elfeed, intended for use in my Emacs setup:
-;; https://protesilaos.com/emacs/dotemacs.
-;;
-;; Remember that every piece of Elisp that I write is for my own
-;; educational and recreational purposes.  I am not a programmer and I
-;; do not recommend that you copy any of this if you are not certain of
-;; what it does.
-
-;;; Code:
-
-(eval-when-compile (require 'subr-x))
-(require 'elfeed nil t)
-(require 'url-util)
-(require 'prot-common)
-
-(defgroup prot-elfeed ()
-  "Personal extensions for Elfeed."
-  :group 'elfeed)
-
-(defcustom prot-elfeed-feeds-file (expand-file-name "~/feeds.el.gpg")
-  "Path to file with `elfeed-feeds'."
-  :type 'string
-  :group 'prot-elfeed)
-
-(defcustom prot-elfeed-archives-directory "~/Documents/feeds/"
-  "Path to directory for storing Elfeed entries."
-  :type 'string
-  :group 'prot-elfeed)
-
-(defcustom prot-elfeed-tag-faces nil
-  "Add faces for certain tags.
-The tags are: critical, important, personal."
-  :type 'boolean
-  :group 'prot-elfeed)
-
-(defcustom prot-elfeed-search-tags '(critical important personal)
-  "List of user-defined tags.
-Used by `prot-elfeed-toggle-tag'."
-  :type 'list
-  :group 'prot-elfeed)
-
-(defface prot-elfeed-entry-critical '((t :inherit font-lock-warning-face))
-  "Face for Elfeed entries tagged with `critical'.")
-
-(defface prot-elfeed-entry-important '((t :inherit font-lock-constant-face))
-  "Face for Elfeed entries tagged with `important'.")
-
-(defface prot-elfeed-entry-personal '((t :inherit font-lock-variable-name-face))
-  "Face for Elfeed entries tagged with `personal'.")
-
-;;;; Utilities
-
-;;;###autoload
-(defun prot-elfeed-load-feeds ()
-  "Load file containing the `elfeed-feeds' list.
-Add this to `elfeed-search-mode-hook'."
-  (let ((feeds prot-elfeed-feeds-file))
-    (if (file-exists-p feeds)
-        (load-file feeds)
-      (user-error "Missing feeds' file"))))
-
-(defvar elfeed-search-face-alist)
-
-;;;###autoload
-(defun prot-elfeed-fontify-tags ()
-  "Expand Elfeed faces if `prot-elfeed-tag-faces' is non-nil."
-  (if prot-elfeed-tag-faces
-      (setq elfeed-search-face-alist
-            '((critical prot-elfeed-entry-critical)
-              (important prot-elfeed-entry-important)
-              (personal prot-elfeed-entry-personal)
-              (unread elfeed-search-unread-title-face)))
-    (setq elfeed-search-face-alist
-          '((unread elfeed-search-unread-title-face)))))
-
-(defvar prot-elfeed--tag-hist '()
-  "History of inputs for `prot-elfeed-toggle-tag'.")
-
-(defun prot-elfeed--character-prompt (tags)
-  "Helper of `prot-elfeed-toggle-tag' to read TAGS."
-  (let ((def (car prot-elfeed--tag-hist)))
-    (completing-read
-     (format "Toggle tag [%s]: " def)
-     tags nil t nil 'prot-elfeed--tag-hist def)))
-
-(defvar elfeed-show-entry)
-(declare-function elfeed-tagged-p "elfeed")
-(declare-function elfeed-search-toggle-all "elfeed")
-(declare-function elfeed-show-tag "elfeed")
-(declare-function elfeed-show-untag "elfeed")
-
-;;;###autoload
-(defun prot-elfeed-toggle-tag (tag)
-  "Toggle TAG for the current item.
-
-When the region is active in the `elfeed-search-mode' buffer, all
-entries encompassed by it are affected.  Otherwise the item at
-point is the target.  For `elfeed-show-mode', the current entry
-is always the target.
-
-The list of tags is provided by `prot-elfeed-search-tags'."
-  (interactive
-   (list
-    (intern
-     (prot-elfeed--character-prompt prot-elfeed-search-tags))))
-  (if (derived-mode-p 'elfeed-show-mode)
-      (if (elfeed-tagged-p tag elfeed-show-entry)
-          (elfeed-show-untag tag)
-        (elfeed-show-tag tag))
-    (elfeed-search-toggle-all tag)))
-
-(defvar elfeed-show-truncate-long-urls)
-(declare-function elfeed-entry-title "elfeed")
-(declare-function elfeed-show-refresh "elfeed")
-
-;;;; General commands
-
-(defvar elfeed-search-filter-active)
-(defvar elfeed-search-filter)
-(declare-function elfeed-db-get-all-tags "elfeed")
-(declare-function elfeed-search-update "elfeed")
-(declare-function elfeed-search-clear-filter "elfeed")
-
-(defun prot-elfeed--format-tags (tags sign)
-  "Prefix SIGN to each tag in TAGS."
-  (mapcar (lambda (tag)
-            (format "%s%s" sign tag))
-          tags))
-
-;;;###autoload
-(defun prot-elfeed-search-tag-filter ()
-  "Filter Elfeed search buffer by tags using completion.
-
-Completion accepts multiple inputs, delimited by `crm-separator'.
-Arbitrary input is also possible, but you may have to exit the
-minibuffer with something like `exit-minibuffer'."
-  (interactive)
-  (unwind-protect
-      (elfeed-search-clear-filter)
-    (let* ((elfeed-search-filter-active :live)
-           (db-tags (elfeed-db-get-all-tags))
-           (plus-tags (prot-elfeed--format-tags db-tags "+"))
-           (minus-tags (prot-elfeed--format-tags db-tags "-"))
-           (all-tags (delete-dups (append plus-tags minus-tags)))
-           (tags (completing-read-multiple
-                  "Apply one or more tags: "
-                  all-tags #'prot-common-crm-exclude-selected-p t))
-           (input (string-join `(,elfeed-search-filter ,@tags) " ")))
-      (setq elfeed-search-filter input))
-    (elfeed-search-update :force)))
-
-(provide 'prot-elfeed)
-;;; prot-elfeed.el ends here
-#+end_src
-
 ** The =prot-elisp.el= library
 :PROPERTIES:
 :CUSTOM_ID: h:9d63bbb2-1ee4-44aa-8601-8728f9f857ec
@@ -13421,7 +13082,7 @@ relevant indicators (combines nicely with my `spacious-padding'
 package).")
 
 (defface prot-modeline-indicator-small
-  '((t :inherit bold :height 0.8))
+  '((t :height 0.8))
   "Face for modeline indicators (e.g. see my `notmuch-indicator')."
   :group 'prot-modeline-faces)
 
@@ -13950,7 +13611,7 @@ Specific to the current window's mode line.")
                         (current-frame (selected-frame))
                         (_ (frame-live-p current-frame))
                         (parameters (frame-parameters))
-                        (name (alist-get 'name parameters))
+                        (name (capitalize (alist-get 'name parameters)))
                         (indicator "√"))
               (format "%s %s " (propertize indicator 'face 'shadow) name)))))
   "Mode line construct to display the current frame name.")
@@ -13960,7 +13621,7 @@ Specific to the current window's mode line.")
 (defvar-local prot-modeline-which-function-indicator
   `(( :propertize
       which-func-current
-      face prot-modeline-indicator-small
+      face (prot-modeline-indicator-small prot-modeline-indicator-magenta)
       mouse-face mode-line-highlight
       help-echo (format "Current definition: `%s'"
                         (or (gethash (selected-window) which-func-table)
@@ -14004,7 +13665,6 @@ Specific to the current window's mode line.")
                      prot-modeline-eglot
                      prot-modeline-frame-name
                      prot-modeline-which-function-indicator
-                     ;; prot-modeline-align-right
                      prot-modeline-notmuch-indicator
                      prot-modeline-misc-info))
   (put construct 'risky-local-variable t))

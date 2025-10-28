@@ -1,4 +1,4 @@
-;;; init-llm.el --- LLM -*- lexical-binding: t -*-
+;;; init-ai.el --- AI -*- lexical-binding: t -*-
 
 (use-package gptel
   :ensure t
@@ -22,7 +22,7 @@
                         (insert response)))))))
 
   (setq open-router-key (with-temp-buffer
-                          (insert-file-contents "~/.llm_key/openrouter.txt")
+                          (insert-file-contents "~/.ai_key/openrouter.txt")
                           (string-trim (buffer-string))))
   (setq gptel-model "meta-llama/llama-4-maverick:free"
         gptel-backend
@@ -34,4 +34,4 @@
           :models '(meta-llama/llama-4-maverick:free
                     deepseek/deepseek-chat-v3-0324:free))))
 
-(provide 'init-llm)
+(provide 'init-ai)

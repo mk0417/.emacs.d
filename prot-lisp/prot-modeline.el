@@ -54,7 +54,7 @@ relevant indicators (combines nicely with my `spacious-padding'
 package).")
 
 (defface prot-modeline-indicator-small
-  '((t :inherit bold :height 0.8))
+  '((t :height 0.8))
   "Face for modeline indicators (e.g. see my `notmuch-indicator')."
   :group 'prot-modeline-faces)
 
@@ -527,7 +527,7 @@ Specific to the current window's mode line.")
                         (current-frame (selected-frame))
                         (_ (frame-live-p current-frame))
                         (parameters (frame-parameters))
-                        (name (alist-get 'name parameters))
+                        (name (capitalize (alist-get 'name parameters)))
                         (indicator "√"))
               (format "%s %s " (propertize indicator 'face 'shadow) name)))))
   "Mode line construct to display the current frame name.")
@@ -537,7 +537,7 @@ Specific to the current window's mode line.")
 (defvar-local prot-modeline-which-function-indicator
   `(( :propertize
       which-func-current
-      face prot-modeline-indicator-small
+      face (prot-modeline-indicator-small prot-modeline-indicator-magenta)
       mouse-face mode-line-highlight
       help-echo (format "Current definition: `%s'"
                         (or (gethash (selected-window) which-func-table)
@@ -571,7 +571,7 @@ Specific to the current window's mode line.")
                      prot-modeline-vc-branch
                      prot-modeline-eglot
                      prot-modeline-frame-name
-                     ;; prot-modeline-align-right
+                     prot-modeline-which-function-indicator
                      prot-modeline-misc-info))
   (put construct 'risky-local-variable t))
 

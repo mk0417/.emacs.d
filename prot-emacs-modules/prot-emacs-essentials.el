@@ -37,7 +37,6 @@
     ("C-x C-z" . nil) ; same idea as above
     ("C-x C-c" . nil) ; avoid accidentally exiting Emacs
     ("C-x C-c C-c" . save-buffers-kill-emacs) ; more cumbersome, less error-prone
-    ("C-x C-r" . restart-emacs) ; override `find-file-read-only'
     ("C-h h" . nil) ; Never show that "hello" file
     ("M-`" . nil)
     ("M-o" . delete-blank-lines) ; alias for C-x C-o
@@ -191,11 +190,12 @@
   (setq comment-style 'multi-line)
   (setq-default comment-column 0)
 
-  (setq prot-comment-comment-keywords '("TODO" "NOTE" "XXX" "REVIEW" "FIXME"))
+  (setq prot-comment-comment-keywords '("TODO" "NOTE" "FIXME"))
   (setq prot-comment-timestamp-format-concise "%F")
   (setq prot-comment-timestamp-format-verbose "%F %T %z")
   :bind
   (("C-;" . prot-comment)
+   ("M-;" . prot-comment) ; overrides `comment-dwim'
    ("C-x C-;" . prot-comment-timestamp-keyword)))
 
 ;;;; Prefix keymap (prot-prefix.el)
@@ -207,7 +207,8 @@
 
 (use-package recentf
   :ensure nil
-  :hook (after-init . recentf-mode)
+  :bind
+  ("C-x C-r" . recentf-open) ; override `find-file-read-only'
   :config
   (setq recentf-max-saved-items 100)
   (setq recentf-max-menu-items 25) ; I don't use the `menu-bar-mode', but this is good to know
@@ -216,7 +217,8 @@
   (setq recentf-auto-cleanup nil)
   (setq recentf-initialize-file-name-history nil)
   (setq recentf-filename-handlers nil)
-  (setq recentf-show-file-shortcuts-flag nil))
+  (setq recentf-show-file-shortcuts-flag nil)
+  (recentf-mode 1))
 
 ;;;; Mouse and mouse wheel behaviour
 (use-package mouse
@@ -426,32 +428,6 @@
   :bind
   (("C-(" . goto-last-change)
    ("C-)" . goto-last-change-reverse)))
-
-;;; Mark syntactic constructs efficiently if tree-sitter is available (expreg)
-(when (and (treesit-available-p) prot-emacs-treesitter-extras)
-  (use-package expreg
-    :ensure t
-    :functions (prot/expreg-expand prot/expreg-expand-dwim)
-    ;; There is also an `expreg-contract' command, though I have no use for it.
-    :bind ("C-M-SPC" . prot/expreg-expand-dwim) ; overrides `mark-sexp'
-    :config
-    (defun prot/expreg-expand (n)
-      "Expand to N syntactic units, defaulting to 1 if none is provided interactively."
-      (interactive "p")
-      (dotimes (_ n)
-        (expreg-expand)))
-
-    (defun prot/expreg-expand-dwim ()
-      "Do-What-I-Mean `expreg-expand' to start with symbol or word.
-If over a real symbol, mark that directly, else start with a
-word.  Fall back to regular `expreg-expand'."
-      (interactive)
-      (let ((symbol (bounds-of-thing-at-point 'symbol)))
-        (cond
-         ((equal (bounds-of-thing-at-point 'word) symbol)
-          (prot/expreg-expand 1))
-         (symbol (prot/expreg-expand 2))
-         (t (expreg-expand)))))))
 
 ;;; TMR May Ring (tmr is used to set timers)
 ;; Read the manual: <https://protesilaos.com/emacs/tmr>.
