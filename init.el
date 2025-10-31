@@ -229,6 +229,76 @@ If METHOD is any other non-nil value, install PACKAGE using
         (package-refresh-contents))
       (package-install package))))
 
+(defmacro prot-emacs-install (package &rest vc-args)
+  "Prepare to install PACKAGE.
+PACKAGE is an unquoted symbol, referring to the name of the package.  If
+VC-ARGS are nil, then install PACKAGE using `package-install'.
+
+If VC-ARGS is non-nil, then check if their `car' is a directory.  If it
+is, apply `package-vc-install-from-checkout' on VC-ARGS, else apply
+`package-vc-install'.
+
+At all times, do nothing if PACKAGE is already installled."
+  (declare (indent 0))
+  (unless (symbolp package)
+    (error "The package `%s' is not a symbol" package))
+  (cond
+   ((and package vc-args)
+    (let ((fn (if-let* ((first (car vc-args))
+                        (_ (and (stringp first) (file-directory-p first))))
+                  'package-vc-install-from-checkout
+                'package-vc-install)))
+      `(unless (package-installed-p ',package)
+         (condition-case-unless-debug err
+             (apply #',fn ,vc-args)
+           (error (message "Failed `%s' with `%S': `%S'" ',fn ,vc-args (cdr err)))))))
+   (package
+    `(progn
+       (unless (package-installed-p ',package)
+         (unless package-archive-contents
+           (package-refresh-contents))
+         (condition-case-unless-debug nil
+             (package-install ',package)
+           (error (message "Cannot install `%s'; try `M-x package-refresh-contents' first" ',package))))))))
+
+(defmacro prot-emacs-hook (hooks functions &optional remove after)
+  "For each HOOKS `add-hook' the FUNCTIONS.
+With optional REMOVE as non-nil, then `remove-hook' the FUNCTIONS from
+HOOKS.
+
+With optional AFTER as the unquoted symbol of a feature, do so after the
+given feature is available."
+  (declare (indent 0))
+  (cond
+   ((symbolp hooks)
+    (setq hooks (list hooks)))
+   ((not (proper-list-p hooks))
+    (error "The hooks are not a list: `%S'" hooks)))
+  (cond
+   ((symbolp functions)
+    (setq functions (list functions)))
+   ((not (proper-list-p functions))
+    (error "The functions are not a list: `%S'" functions)))
+  (let* ((fn (if remove 'remove-hook 'add-hook))
+         (body (mapcar
+                (lambda (h)
+                  (mapcar
+                   (lambda (f) `(,fn ',h #',f))
+                   functions))
+                hooks))
+         (hooks nil))
+    (dolist (element body)
+      (dolist (hook element)
+        (push hook hooks)))
+    (setq hooks (nreverse hooks))
+    (cond
+     (after
+      `(with-eval-after-load ',after ,@hooks))
+     ((length> hooks 1)
+      `(progn ,@hooks))
+     (t
+      (car hooks)))))
+
 (defmacro prot-emacs-keybind (keymap &rest definitions)
   "Expand key binding DEFINITIONS for the given KEYMAP.
 DEFINITIONS is a sequence of string and command pairs."
@@ -278,21 +348,12 @@ making an abbreviation to a function."
             (seq-split definitions 2)))
      (error "%s is not an abbrev table" ,table)))
 
-(defvar prot-emacs-package-form-regexp
-  "^(\\(prot-emacs-keybind\\|prot-emacs-abbrev\\) +'?\\([0-9a-zA-Z-]+\\)"
-  "Regexp to add packages to `lisp-imenu-generic-expression'.")
-
-(eval-after-load 'lisp-mode
-  `(add-to-list 'lisp-imenu-generic-expression
-                (list "Packages" ,prot-emacs-package-form-regexp 2)))
-
-(defconst prot-emacs-font-lock-keywords
-  '(("(\\(prot-emacs-\\(keybind\\|abbrev\\)\\)\\_>[ \t']*\\(\\(\\sw\\|\\s_\\)+\\)?"
-     (3 font-lock-variable-name-face nil t))
-    ("(\\(prot-emacs-comment\\)\\_>[ \t']*"
-     (1 font-lock-preprocessor-face nil t))))
-
-(font-lock-add-keywords 'emacs-lisp-mode prot-emacs-font-lock-keywords)
+(defmacro prot-emacs-configure (&rest body)
+  "Evaluate BODY and catch any errors."
+  `(condition-case err
+       (progn ,@body)
+     ((error user-error quit)
+      (message "Failed to configure package starting with `%S' because of `%S'" (car ',body) (cdr err)))))
 
 ;; For those who use my dotfiles and need an easy way to write their
 ;; own extras on top of what I already load.  The file must exist at
@@ -345,8 +406,6 @@ making an abbreviation to a function."
 ;; own extras on top of what I already load.  The file must exist at
 ;; ~/.emacs.d/prot-emacs-post-custom.el
 ;;
-;; The purpose of the "post customisations" is to make tweaks to what
-;; I already define, such as to change the default theme.  See above
-;; for the `prot-emacs-pre-custom.el' to make changes BEFORE loading
-;; any of my other configurations.
+;; The purpose of the "post customisations" is to evaluate arbitrary
+;; code AFTER loading all my configurations.
 (load (locate-user-emacs-file "prot-emacs-post-custom.el") :no-error :no-message)
