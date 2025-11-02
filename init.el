@@ -328,6 +328,19 @@ DEFINITIONS is a sequence of string and command pairs."
 ;;   "C-c b" beframe-prefix-map
 ;;   "C-x k" #'kill-buffer)
 
+(defmacro prot-emacs-autoload (functions file)
+  "Declare autoloads for FUNCTIONS for FILE."
+  (declare (indent 0))
+  (when (symbolp functions)
+    (setq functions (list functions)))
+  (unless (listp functions)
+    (error "The functions must be a list or symbol: %S" functions))
+  (unless (stringp file)
+    (error "The file must be a string: %S" file))
+  (if (length> functions 1)
+      `(progn ,@(mapcar (lambda (f) `(autoload #',f ,file)) functions))
+    `(autoload #',(car functions) ,file)))
+
 (defmacro prot-emacs-abbrev (table &rest definitions)
   "Expand abbrev DEFINITIONS for the given TABLE.
 DEFINITIONS is a sequence of (i) string pairs mapping the
@@ -350,6 +363,7 @@ making an abbreviation to a function."
 
 (defmacro prot-emacs-configure (&rest body)
   "Evaluate BODY and catch any errors."
+  (declare (indent 0))
   `(condition-case err
        (progn ,@body)
      ((error user-error quit)
@@ -362,6 +376,9 @@ making an abbreviation to a function."
 ;; The purpose of this file is for the user to define their
 ;; preferences BEFORE loading any of the modules.
 (load (locate-user-emacs-file "prot-emacs-pre-custom.el") :no-error :no-message)
+
+(defvar prot-display-graphic-p (display-graphic-p)
+  "When non-nil, the display is graphical.")
 
 (require 'prot-emacs-theme)
 (require 'prot-emacs-essentials)
@@ -391,7 +408,6 @@ making an abbreviation to a function."
 (require 'init-keybinding)
 (require 'init-keychord)
 (require 'init-abbrev)
-(require 'cursor-chg)
 
 (add-hook 'emacs-startup-hook
           (lambda ()

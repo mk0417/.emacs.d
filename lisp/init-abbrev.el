@@ -1,7 +1,7 @@
 ;;; init-abbrev.el --- Abbreviations -*- lexical-binding: t -*-
 
 (define-abbrev global-abbrev-table
-  "mewrds"
+  "mywrds"
   "def wrds_connection():
     with open(Path('~/.pass.yml').expanduser()) as f:
         wrds_username, wrds_password = [*yaml.safe_load(f)['wrds'].values()]

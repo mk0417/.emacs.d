@@ -1,15 +1,11 @@
 ;;; General minibuffer settings
-(use-package minibuffer
-  :ensure nil
-  :config
+(prot-emacs-configure
 ;;;; Completion styles
   (setq completion-styles '(basic substring initials flex orderless)) ; also see `completion-category-overrides'
   (setq completion-pcm-leading-wildcard t)) ; Emacs 31: make `partial-completion' behave like `substring'
 
 ;;;; Completion category overrides
-(use-package minibuffer
-  :ensure nil
-  :config
+(prot-emacs-configure
   ;; Reset all the per-category defaults so that (i) we use the
   ;; standard `completion-styles' and (ii) can specify our own styles
   ;; in the `completion-category-overrides' without having to
@@ -80,11 +76,8 @@
             (eglot (styles . (emacs22 substring orderless)))))))
 
 ;;; Orderless completion style (and prot-orderless.el)
-(use-package orderless
-  :ensure t
-  :demand t
-  :after minibuffer
-  :config
+(prot-emacs-configure
+  (prot-emacs-install orderless)
   ;; Remember to check my `completion-styles' and the
   ;; `completion-category-overrides'.
   (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
@@ -92,34 +85,27 @@
 
   ;; SPC should never complete: use it for `orderless' groups.
   ;; The `?' is a regexp construct.
-  :bind ( :map minibuffer-local-completion-map
-          ("SPC" . nil)
-          ("?" . nil)))
+  (prot-emacs-keybind minibuffer-local-completion-map
+    "SPC" nil
+    "?" nil))
 
 (setq completion-ignore-case t)
 (setq read-buffer-completion-ignore-case t)
 (setq-default case-fold-search t)   ; For general regexp
 (setq read-file-name-completion-ignore-case t)
 
-(use-package mb-depth
-  :ensure nil
-  :hook (after-init . minibuffer-depth-indicate-mode)
-  :config
-  (setq read-minibuffer-restore-windows nil) ; Emacs 28
-  (setq enable-recursive-minibuffers t))
+(prot-emacs-configure
+  (setq read-minibuffer-restore-windows nil)
+  (setq enable-recursive-minibuffers t) ; Emacs 28
+  (minibuffer-depth-indicate-mode 1))
 
-(use-package minibuf-eldef
-  :ensure nil
-  :hook (after-init . minibuffer-electric-default-mode)
-  :config
-  (setq minibuffer-default-prompt-format " [%s]")) ; Emacs 29
+(prot-emacs-configure
+  (setq minibuffer-default-prompt-format " [%s]") ; Emacs 29
+  (minibuffer-electric-default-mode 1))
 
-(use-package rfn-eshadow
-  :ensure nil
-  :hook (minibuffer-setup . cursor-intangible-mode)
-  :config
+(prot-emacs-configure
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   ;; Not everything here comes from rfn-eshadow.el, but this is fine.
-
   (setq resize-mini-windows t)
   (setq read-answer-short t) ; also check `use-short-answers' for Emacs28
   (setq echo-keystrokes 0.25)
@@ -135,11 +121,9 @@
 
   (file-name-shadow-mode 1))
 
-(use-package minibuffer
-  :ensure nil
-  :demand t
-  :hook (minibuffer-setup . prot-common-truncate-lines-silently)
-  :config
+(prot-emacs-configure
+  (add-hook 'minibuffer-setup #'prot-common-truncate-lines-silently)
+
   ;; (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
   (setq completions-header-format "")
   (setq completions-highlight-face 'completions-highlight)
@@ -184,27 +168,25 @@
       (when (and completions-header-format
                  (not (string-blank-p completions-header-format)))
         (setq-local display-line-numbers-offset -1))
-      (display-line-numbers-mode 1))
+      (display-line-numbers-mode 1)
+      (unless (eq (prot-common-completion-category) 'file)
+        (setq-local minibuffer-visible-completions t)))
 
-    (add-hook 'completion-list-mode-hook #'prot/completions-tweak-style)
-
-    (add-hook 'completion-list-mode-hook #'prot-common-truncate-lines-silently)))
+    (prot-emacs-hook
+      completion-list-mode-hook
+      (prot/completions-tweak-style prot-common-truncate-lines-silently))))
 
 ;;;; `savehist' (minibuffer and related histories)
-(use-package savehist
-  :ensure nil
-  :hook (after-init . savehist-mode)
-  :config
+(prot-emacs-configure
   (setq savehist-file (locate-user-emacs-file "savehist"))
   (setq history-length 100)
   (setq history-delete-duplicates t)
   (setq savehist-save-minibuffer-history t)
-  (add-to-list 'savehist-additional-variables 'kill-ring))
+  (with-eval-after-load 'savehist
+    (add-to-list 'savehist-additional-variables 'kill-ring))
+  (savehist-mode 1))
 
-(use-package dabbrev
-  :ensure nil
-  :commands (dabbrev-expand dabbrev-completion)
-  :config
+(prot-emacs-configure
 ;;;; `dabbrev' (dynamic word completion (dynamic abbreviations))
   (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
   (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
@@ -215,16 +197,16 @@
   (setq dabbrev-check-other-buffers t)
   (setq dabbrev-eliminate-newlines t)
   (setq dabbrev-upcase-means-case-search t)
-  (setq dabbrev-ignored-buffer-modes
-        '(archive-mode image-mode docview-mode pdf-view-mode)))
+  (setq dabbrev-ignored-buffer-modes '(archive-mode image-mode docview-mode pdf-view-mode)))
 
 ;;;; `abbrev' (Abbreviations, else Abbrevs)
-(use-package abbrev
-  :ensure nil
+(prot-emacs-configure
   ;; message-mode derives from text-mode, so we don't need a separate
   ;; hook for it.
-  :hook ((text-mode prog-mode git-commit-mode) . abbrev-mode)
-  :config
+  (prot-emacs-hook
+    (text-mode-hook prog-mode-hook git-commit-mode-hook)
+    abbrev-mode)
+
   (setq only-global-abbrevs nil)
 
   (prot-emacs-abbrev global-abbrev-table
@@ -321,20 +303,21 @@ Development continues on GitHub with GitLab as a mirror."))
   (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save))
 
 ;;; Corfu (in-buffer completion popup)
-;; (when prot-emacs-completion-ui
-;;   (use-package corfu
-;;     :ensure t
-;;     :if (display-graphic-p)
-;;     :hook (after-init . global-corfu-mode)
-;;     ;; I also have (setq tab-always-indent 'complete) for TAB to complete
-;;     ;; when it does not need to perform an indentation change.
-;;     :bind (:map corfu-map ("<tab>" . corfu-complete))
-;;     :config
+;; (when (and prot-emacs-completion-ui prot-display-graphic-p)
+;;   (prot-emacs-configure
+;;     (prot-emacs-install corfu)
+;;
 ;;     (setq corfu-preview-current nil)
 ;;     (setq corfu-min-width 20)
 ;;
 ;;     (setq corfu-popupinfo-delay '(1.25 . 0.5))
 ;;     (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+;;
+;;     (global-corfu-mode 1)
+;;
+;;     ;; I also have (setq tab-always-indent 'complete) for TAB to complete
+;;     ;; when it does not need to perform an indentation change.
+;;     (define-key corfu-map (kbd "<tab>") #'corfu-complete)
 ;;
 ;;     ;; Sort by input history (no need to modify `corfu-sort-function').
 ;;     (with-eval-after-load 'savehist
@@ -343,24 +326,21 @@ Development continues on GitHub with GitLab as a mirror."))
 
 ;;; Enhanced minibuffer commands (consult.el)
 (when prot-emacs-completion-extras
-  (use-package consult
-    :ensure t
-    :hook (completion-list-mode . consult-preview-at-point-mode)
-    :bind
-    ( :map global-map
-      ("M-g M-g" . consult-goto-line)
-      ("M-s M-b" . consult-buffer)
-      ("M-s M-f" . consult-find)
-      ("M-s M-g" . consult-grep)
-      ("M-s M-h" . consult-history)
-      ("M-s M-i" . consult-imenu)
-      ("M-s M-l" . consult-line)
-      ("M-s M-m" . consult-mark)
-      ("M-s M-y" . consult-yank-pop)
-      ("M-s M-s" . consult-outline)
-      :map consult-narrow-map
-      ("?" . consult-narrow-help))
-    :config
+  (prot-emacs-configure
+    (prot-emacs-install consult)
+
+    (prot-emacs-keybind global-map
+      "M-g M-g" #'consult-goto-line
+      "M-s M-b" #'consult-buffer
+      "M-s M-f" #'consult-find
+      "M-s M-g" #'consult-grep
+      "M-s M-h" #'consult-history
+      "M-s M-i" #'consult-imenu
+      "M-s M-l" #'consult-line
+      "M-s M-m" #'consult-mark
+      "M-s M-y" #'consult-yank-pop
+      "M-s M-s" #'consult-outline)
+
     (setq consult-line-numbers-widen t)
     ;; (setq completion-in-region-function #'consult-completion-in-region)
     (setq consult-async-min-input 3)
@@ -374,38 +354,36 @@ Development continues on GitHub with GitLab as a mirror."))
     (setq consult-preview-key 'any)
     (setq consult-project-function nil) ; always work from the current directory (use `cd' to switch directory)
 
-    (add-to-list 'consult-mode-histories '(vc-git-log-edit-mode . log-edit-comment-ring))
-
-    (require 'consult-imenu) ; the `imenu' extension is in its own file
-
-    (with-eval-after-load 'pulsar
-      ;; see my `pulsar' package: <https://protesilaos.com/emacs/pulsar>
-      (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
-      (dolist (fn '(pulsar-recenter-top pulsar-reveal-entry))
-        (add-hook 'consult-after-jump-hook fn)))))
+    ;; see my `pulsar' package: <https://protesilaos.com/emacs/pulsar>
+    (setq consult-after-jump-hook nil) ; reset it to avoid conflicts with my function
+    (prot-emacs-hook
+      consult-after-jump-hook
+      (pulsar-recenter-top pulsar-reveal-entry)
+      nil
+      pulsar)))
 
 ;;; Extended minibuffer actions and more (embark.el)
 (when prot-emacs-completion-extras
-  (use-package embark
-    :ensure t
-    :hook (embark-collect-mode . prot-common-truncate-lines-silently)
-    :bind
-    ( :map minibuffer-local-map
-      ("C-c C-c" . embark-collect)
-      ("C-c C-e" . embark-export)))
+  (prot-emacs-configure
+    (prot-emacs-install embark)
 
-  ;; Needed for correct exporting while using Embark with Consult
-  ;; commands.
-  (use-package embark-consult
-    :ensure t
-    :after (embark consult)))
+    (add-hook 'embark-collect-mode-hook #'prot-common-truncate-lines-silently)
+
+    (prot-emacs-keybind minibuffer-local-map
+      "C-c C-c" #'embark-collect
+      "C-c C-e" #'embark-export)
+
+    ;; Needed for correct exporting while using Embark with Consult commands.
+    (prot-emacs-install embark-consult)
+
+    (with-eval-after-load 'consult
+      (require 'embark-consult))))
 
 ;;; Detailed completion annotations (marginalia.el)
-(use-package marginalia
-  :ensure t
-  :hook (after-init . marginalia-mode)
-  :config
-  (setq marginalia-max-relative-age 0)) ; absolute time
+(prot-emacs-configure
+  (prot-emacs-install marginalia)
+  (setq marginalia-max-relative-age 0) ; absolute time
+  (marginalia-mode 1))
 
 ;;; The minibuffer user interface (mct, vertico, or none)
 (when prot-emacs-completion-ui

@@ -1,7 +1,6 @@
 ;;; Mode line
-(use-package prot-modeline
-  :ensure nil
-  :config
+(prot-emacs-configure
+  (require 'prot-modeline)
   (setq mode-line-compact nil) ; Emacs 28
   (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
   (setq prot-modeline-show-frame-name t)
@@ -61,10 +60,7 @@
     (add-hook 'spacious-padding-mode-hook #'prot/modeline-spacious-indicators)))
 
 ;;; Show the name of the current definition or heading for context (`which-function-mode')
-(use-package which-func
-  :ensure nil
-  :hook (after-init . which-function-mode)
-  :config
+(prot-emacs-configure
   (setq which-func-modes '(prog-mode org-mode))
   ;; NOTE 2025-10-26: I handle the indicator on my own via `prot-modeline-which-function-indicator'.
   (setq which-func-display 'mode) ; Emacs 30
@@ -140,23 +136,23 @@
                                       (reverse (cons (car pair) namestack)))))))))))))
           (prot-modeline-string-cut-end name)))))
 
-    (advice-add #'which-function :override #'prot/which-function)))
+    (advice-add #'which-function :override #'prot/which-function)
+
+    (which-function-mode 1)))
 
 ;;; Keycast mode
-(use-package keycast
-  :ensure t
-  :after prot-modeline
-  :commands (keycast-mode-line-mode keycast-header-line-mode keycast-tab-bar-mode keycast-log-mode)
-  :init
-  (setq keycast-mode-line-format "%2s%k%c%R")
-  (setq keycast-mode-line-insert-after 'prot-modeline-vc-branch)
-  (setq keycast-mode-line-window-predicate 'mode-line-window-selected-p)
-  (setq keycast-mode-line-remove-tail-elements nil)
-  :config
-  (dolist (input '(self-insert-command org-self-insert-command))
-    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
+(prot-emacs-configure
+  (prot-emacs-install keycast)
+  (with-eval-after-load 'prot-modeline
+    (setq keycast-mode-line-format "%2s%k%c%R")
+    (setq keycast-mode-line-insert-after 'prot-modeline-vc-branch)
+    (setq keycast-mode-line-window-predicate 'mode-line-window-selected-p)
+    (setq keycast-mode-line-remove-tail-elements nil))
+  (with-eval-after-load 'keycast
+    (dolist (input '(self-insert-command org-self-insert-command))
+      (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
 
-  (dolist (event '("<mouse-event>" "<mouse-movement>" "<mouse-2>" "<drag-mouse-1>" "<wheel-up>" "<wheel-down>" "<double-wheel-up>" "<double-wheel-down>" "<triple-wheel-up>" "<triple-wheel-down>" "<wheel-left>" "<wheel-right>" handle-select-window mouse-set-point  mouse-drag-region))
-    (add-to-list 'keycast-substitute-alist `(,event nil nil))))
+    (dolist (event '("<mouse-event>" "<mouse-movement>" "<mouse-2>" "<drag-mouse-1>" "<wheel-up>" "<wheel-down>" "<double-wheel-up>" "<double-wheel-down>" "<triple-wheel-up>" "<triple-wheel-down>" "<wheel-left>" "<wheel-right>" handle-select-window mouse-set-point  mouse-drag-region))
+      (add-to-list 'keycast-substitute-alist `(,event nil nil)))))
 
 (provide 'prot-emacs-modeline)
