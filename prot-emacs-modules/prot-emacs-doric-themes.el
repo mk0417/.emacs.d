@@ -23,9 +23,6 @@
     "C-<f5>" #'doric-themes-select
     "M-<f5>" #'doric-themes-rotate)
 
-  (doric-themes-load-random
-   (if (prot-emacs-theme-environment-dark-p)
-       'dark
-     'light)))
+  (doric-themes-load-random 'light))
 
 (provide 'prot-emacs-doric-themes)

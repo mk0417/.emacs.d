@@ -27,9 +27,7 @@
           (agenda-structure . (variable-pitch light 1.9))
           (t . (variable-pitch 1.1))))
 
-  (if (prot-emacs-theme-environment-dark-p)
-      (modus-themes-load-random 'dark)
-    (modus-themes-load-random 'light)))
+  (modus-themes-load-random 'light))
 
 (prot-emacs-comment
   (:eval nil)
@@ -46,8 +44,6 @@
     "C-<f5>" #'modus-themes-select
     "M-<f5>" #'modus-themes-load-random)
 
-  (if (prot-emacs-theme-environment-dark-p)
-      (modus-themes-load-random 'dark)
-    (modus-themes-load-random 'light)))
+  (modus-themes-load-random 'light))
 
 (provide 'prot-emacs-ef-themes)

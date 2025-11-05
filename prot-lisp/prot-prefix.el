@@ -46,14 +46,14 @@
   "a" #'beginning-of-buffer
   "e" #'end-of-buffer
   "o" (lambda () (interactive) (switch-to-buffer "*Ollama*"))
-  "d" #'prot-simple-kill-buffer-current
+  "d" #'prot-simple-kill-buffer-dwim
   "D" #'kill-buffer-and-window
   "m" #'beframe-buffer-menu
   "b" #'switch-to-buffer
   "B" #'prot-simple-buffers-major-mode
   "c" #'clone-indirect-buffer-other-window
   "f" #'fit-window-to-buffer
-  "k" #'prot-simple-kill-buffer-current
+  "k" #'prot-simple-kill-buffer-dwim
   "g" #'revert-buffer-quick
   "r" #'prot-simple-rename-file-and-buffer
   "n" #'next-buffer
