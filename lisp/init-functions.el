@@ -223,4 +223,8 @@ Version: 2023-07-12"
                 (insert new-close)))))
       (message "Not inside parentheses or brackets."))))
 
+(defun p-consult-line-symbol-at-point ()
+  (interactive)
+  (consult-line (or (thing-at-point 'symbol))))
+
 (provide 'init-functions)

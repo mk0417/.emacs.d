@@ -140,6 +140,7 @@
    '("fx" . execute-extended-command)
    '("fj" . gptel)
    '("fk" . p-gpt-rewrite-english)
+   '("f." . p-consult-line-symbol-at-point)
 
    '("<escape>" . ignore))
 
