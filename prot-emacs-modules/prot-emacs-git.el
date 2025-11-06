@@ -42,11 +42,11 @@
   (setq ediff-show-clashes-only t)
 
   (prot-emacs-autoload
-   (prot-ediff-visible-buffers-2
-    prot-ediff-visible-buffers-3
-    prot-ediff-store-layout
-    prot-ediff-restore-layout)
-   "prot-ediff")
+    (prot-ediff-visible-buffers-2
+     prot-ediff-visible-buffers-3
+     prot-ediff-store-layout
+     prot-ediff-restore-layout)
+    "prot-ediff")
   ;; The C-x v prefix is for all "version control" commands that are
   ;; already built into Emacs.  It makes sense to extend it for this
   ;; use-case.
@@ -90,7 +90,7 @@
       "t" #'vc-create-tag
       "O" #'vc-log-outgoing
       "o" #'vc-dir-find-file-other-window
-      "d" #'vc-diff         ; parallel to D: `vc-root-diff'
+      "d" #'vc-diff ; parallel to D: `vc-root-diff'
       "k" #'vc-dir-delete-file
       "G" #'vc-revert)
     (prot-emacs-keybind vc-git-stash-shared-map
@@ -168,9 +168,11 @@
   (setq magit-display-buffer-function #'display-buffer)
 
   (define-key global-map (kbd "C-c g") #'magit-status)
-  (prot-emacs-keybind magit-mode-map
-    "C-w" #'nil
-    "M-w" #'nil)
+
+  (with-eval-after-load 'magit
+    (prot-emacs-keybind magit-mode-map
+      "C-w" #'nil
+      "M-w" #'nil))
 
   (setq magit-define-global-key-bindings nil)
   (setq magit-section-visibility-indicator '(magit-fringe-bitmap> . magit-fringe-bitmapv))

@@ -2472,7 +2472,7 @@ adjust the current buffer's text size ([[#h:6b6778af-8bd2-4f97-a794-e23774aa6cf3
 
   (defun prot/enable-variable-pitch ()
     (unless (derived-mode-p 'mhtml-mode 'nxml-mode 'yaml-mode)
-      (when modus-themes-mixed-fonts
+      (when (bound-and-true-p modus-themes-mixed-fonts)
         (variable-pitch-mode 1))))
 
   ;; NOTE 2022-11-20: This may not cover every case, though it works
@@ -3302,6 +3302,7 @@ One is enough.
 ;;;; Emacs server (allow emacsclient to connect to running session)
 (prot-emacs-configure
   (setq server-client-instructions nil)
+  (require 'server)
   (unless (or (server-running-p) (daemonp))
     (server-start)))
 #+end_src
@@ -3622,46 +3623,47 @@ Now the actual configurations:
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;; Standard Unix Shell (M-x shell)
 (prot-emacs-configure
-  (prot-emacs-keybind shell-mode-map
-    "C-c C-k" #'comint-clear-buffer
-    "C-c C-w" #'comint-write-output)
+  (with-eval-after-load 'shell
+    (prot-emacs-keybind shell-mode-map
+      "C-c C-k" #'comint-clear-buffer
+      "C-c C-w" #'comint-write-output)
 
-  ;; Check my .bashrc which handles `comint-terminfo-terminal':
-  ;;
-  ;; # Default pager.  The check for the terminal is useful for Emacs with
-  ;; # M-x shell (which is how I usually interact with bash these days).
-  ;; #
-  ;; # The COLORTERM is documented in (info "(emacs) General Variables").
-  ;; # I found the reference to `dumb-emacs-ansi' in (info "(emacs)
-  ;; # Connection Variables").
-  ;; if [ "$TERM" = "dumb" ] && [ "$INSIDE_EMACS" ] || [ "$TERM" = "dumb-emacs-ansi" ] && [ "$INSIDE_EMACS" ]
-  ;; then
-  ;;     export PAGER="cat"
-  ;;     alias less="cat"
-  ;;     export TERM=dumb-emacs-ansi
-  ;;     export COLORTERM=1
-  ;; else
-  ;;     # Quit once you try to scroll past the end of the file.
-  ;;     export PAGER="less --quit-at-eof"
-  ;; fi
-  (setq shell-command-prompt-show-cwd t) ; Emacs 27.1
-  (setq shell-input-autoexpand 'input)
-  (setq shell-highlight-undef-enable t) ; Emacs 29.1
-  (setq shell-has-auto-cd nil) ; Emacs 29.1
-  (setq shell-get-old-input-include-continuation-lines t) ; Emacs 30.1
-  (setq shell-kill-buffer-on-exit t) ; Emacs 29.1
-  (setq shell-completion-fignore '("~" "#" "%"))
-  (setq tramp-default-remote-shell "/bin/bash")
+    ;; Check my .bashrc which handles `comint-terminfo-terminal':
+    ;;
+    ;; # Default pager.  The check for the terminal is useful for Emacs with
+    ;; # M-x shell (which is how I usually interact with bash these days).
+    ;; #
+    ;; # The COLORTERM is documented in (info "(emacs) General Variables").
+    ;; # I found the reference to `dumb-emacs-ansi' in (info "(emacs)
+    ;; # Connection Variables").
+    ;; if [ "$TERM" = "dumb" ] && [ "$INSIDE_EMACS" ] || [ "$TERM" = "dumb-emacs-ansi" ] && [ "$INSIDE_EMACS" ]
+    ;; then
+    ;;     export PAGER="cat"
+    ;;     alias less="cat"
+    ;;     export TERM=dumb-emacs-ansi
+    ;;     export COLORTERM=1
+    ;; else
+    ;;     # Quit once you try to scroll past the end of the file.
+    ;;     export PAGER="less --quit-at-eof"
+    ;; fi
+    (setq shell-command-prompt-show-cwd t) ; Emacs 27.1
+    (setq shell-input-autoexpand 'input)
+    (setq shell-highlight-undef-enable t) ; Emacs 29.1
+    (setq shell-has-auto-cd nil) ; Emacs 29.1
+    (setq shell-get-old-input-include-continuation-lines t) ; Emacs 30.1
+    (setq shell-kill-buffer-on-exit t) ; Emacs 29.1
+    (setq shell-completion-fignore '("~" "#" "%"))
+    (setq tramp-default-remote-shell "/bin/bash")
 
-  (setq shell-font-lock-keywords
-        '(("[ \t]\\([+-][^ \t\n]+\\)" 1 font-lock-builtin-face)
-          ("^[^ \t\n]+:.*" . font-lock-string-face)
-          ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))
+    (setq shell-font-lock-keywords
+          '(("[ \t]\\([+-][^ \t\n]+\\)" 1 font-lock-builtin-face)
+            ("^[^ \t\n]+:.*" . font-lock-string-face)
+            ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))
 
-  (prot-emacs-autoload (prot-shell prot-shell-mode) "prot-shell")
+    (prot-emacs-autoload (prot-shell prot-shell-mode) "prot-shell")
 
-  (define-key global-map (kbd "<f1>") #'prot-shell) ; I don't use F1 for help commands
-  (add-hook 'shell-mode-hook #'prot-shell-mode))
+    (define-key global-map (kbd "<f1>") #'prot-shell) ; I don't use F1 for help commands
+    (add-hook 'shell-mode-hook #'prot-shell-mode)))
 #+end_src
 
 *** The =prot-emacs-essentials.el= section about the laptop battery (~display-battery-mode~)
@@ -4033,9 +4035,8 @@ is a piece of metadata that is associated with the completion table we
 are matching against while using the minibuffer. For example, the
 ~find-file~ command has the =file= category, while the
 ~switch-to-buffer~ command uses the =buffer= category. The defaults
-for those are specified in the variable
-~completion-category-defaults~, while overrides for them can be set in
-the ~completion-category-overrides~.
+for those are specified in the ~completion-category-defaults~. The
+overrides for them can be set in the ~completion-category-overrides~.
 
 While we can override only the categories we care about, the presence
 of those ~completion-category-defaults~ will surprise us in some cases
@@ -6144,7 +6145,9 @@ configurations, which I linked to above, come into effect.
 (prot-emacs-configure
   (setq tab-bar-new-button-show nil)
   (setq tab-bar-close-button-show nil)
-  (setq tab-bar-show 1))
+  (setq tab-bar-show 1)
+
+  (advice-add #'window--delete :after #'prot-common-clear-minibuffer-message))
 #+end_src
 
 *** The =prot-emacs-window.el= section about uniquifying buffer names
@@ -7003,7 +7006,7 @@ They make more sense to me.
       "t" #'vc-create-tag
       "O" #'vc-log-outgoing
       "o" #'vc-dir-find-file-other-window
-      "d" #'vc-diff         ; parallel to D: `vc-root-diff'
+      "d" #'vc-diff ; parallel to D: `vc-root-diff'
       "k" #'vc-dir-delete-file
       "G" #'vc-revert)
     (prot-emacs-keybind vc-git-stash-shared-map
@@ -7041,8 +7044,13 @@ They make more sense to me.
     (setq log-edit-keep-buffer nil)
     (setq log-edit-require-final-newline t)
     (setq log-edit-setup-add-author nil)
-    ;; I can see the files from the Diff with C-c C-d
-    (remove-hook 'log-edit-hook #'log-edit-show-files)
+
+    (prot-emacs-hook
+      log-edit-hook
+      (log-edit-insert-message-template
+       log-edit-maybe-show-diff)
+      nil
+      log-edit)
 
     (setq vc-find-revision-no-save t)
     (setq vc-annotate-display-mode 'scale) ; scale to oldest
@@ -7230,9 +7238,11 @@ changes I make here are not necessary.
   (setq magit-display-buffer-function #'display-buffer)
 
   (define-key global-map (kbd "C-c g") #'magit-status)
-  (prot-emacs-keybind magit-mode-map
-    "C-w" #'nil
-    "M-w" #'nil)
+
+  (with-eval-after-load 'magit
+    (prot-emacs-keybind magit-mode-map
+      "C-w" #'nil
+      "M-w" #'nil))
 
   (setq magit-define-global-key-bindings nil)
   (setq magit-section-visibility-indicator '(magit-fringe-bitmap> . magit-fringe-bitmapv))
@@ -13237,7 +13247,9 @@ With optional FACE, use it to propertize the BRANCH."
                'local-map prot-modeline-vc-map)
    ;; " "
    ;; (prot-modeline-diffstat file)
-   ))
+   (if-let* ((dir (vc-root-dir)))
+       (concat " " (propertize (file-name-base (directory-file-name dir)) 'face 'shadow))
+     "")))
 
 (defun prot-modeline--vc-details (file branch &optional face)
   "Return Git BRANCH details for FILE, truncating it if necessary.
@@ -17409,30 +17421,57 @@ VARIANT is either `dark' or `light'."
   (interactive (list (prot-simple--list-accessible-colors-prompt)))
   (list-colors-display (prot-simple-accessible-colors variant)))
 
+(defun prot-simple-update-package-repositories-pull (package package-directory buffer)
+  "Pull PACKAGE which extends PACKAGE-DIRECTORY.
+Use BUFFER for standard output and return the exit code."
+  (let ((default-directory package-directory))
+    (message "Pulling %s from directory %s" package default-directory)
+    (call-process "git" nil (list buffer t) nil "pull")))
+
+(defun prot-simple-update-package-repositories-clone (package base-directory buffer)
+  "Clone PACKAGE to an extension of BASE-DIRECTORY.
+Use BUFFER for standard output and return the exit code."
+  (message "Cloning %s to directory %s" package base-directory)
+  (call-process "git" nil (list buffer t) nil "clone" (format "git@github.com:protesilaos/%s %s" package base-directory)))
+
+(define-error 'prot-package-no-update "Package could not be updated" 'error)
+
 (defun prot-simple-update-package-repositories-subr (packages)
   "Pull or clone all repositories of my PACKAGES."
   (unless (executable-find "git")
     (user-error "Cannot find git program; install it first or add it to the $PATH; aborting"))
   (unless (getenv "SSH_AUTH_SOCK")
     (user-error "Cannot find $SSH_AUTH_SOCK; check your SSH connection; aborting"))
-  (dolist (package packages)
-    (condition-case error-data
-        (let* ((common-directory (expand-file-name "~/Git/Projects/"))
-               (name (cond
-                      ((symbolp package) (symbol-name package))
-                      ((stringp package) package)
-                      (t (error "The `%s' is neither a symbol nor a string" package))))
-               (default-directory (expand-file-name name common-directory)))
-          (if (file-directory-p default-directory)
-              (shell-command-to-string "git pull")
-            (let ((default-directory common-directory))
-              (shell-command-to-string (format "git clone git@github.com:protesilaos/%s" package)))))
-      (:success
-       (message "Updated %s repository" package))
-      ((error user-error)
-       (message "The package returned error data: %s" error-data))
-      (quit
-       (message "Aborted by the user")))))
+  (let ((stdout (get-buffer-create " *prot-simple-git-package-stdout*")))
+    (dolist (package packages)
+      (let* ((name (cond
+                    ((symbolp package) (symbol-name package))
+                    ((stringp package) package)
+                    (t (error "The `%s' is neither a symbol nor a string" package))))
+             (common-directory (expand-file-name "~/Git/Projects/"))
+             (package-directory (expand-file-name name common-directory))
+             (exit-code (if (file-directory-p package-directory)
+                            (prot-simple-update-package-repositories-pull package package-directory stdout)
+                          (prot-simplew-update-package-repositories-clone package common-directory stdout))))
+        (condition-case error-data
+            (when (> exit-code 0)
+              (signal 'prot-package-no-update (list (format "Package `%s' got exit code `%s'" package exit-code))))
+          (:success
+           (message "Updated `%s' repository" package))
+          (prot-package-no-update
+           ;; TODO 2025-11-06: Is it safe to stash changes outright?
+           ;; I think it is fine, but maybe there is a case where this
+           ;; can lead to data loss?
+           (when (file-directory-p package-directory)
+             (let ((default-directory package-directory))
+               (unless (fboundp 'vc-git-stash)
+                 (require 'vc-git))
+               (vc-git-stash (format "prot-package-update %s: %s" (format-time-string "%FT%T") package))))
+           (message "Tried to stash changes in package `%s' because: %s" package (cdr error-data)))
+          ((error user-error)
+           (message "The package `%s' returned error data: %s" package error-data))
+          (quit
+           (message "Aborted by the user")))))))
 
 (defvar prot-simple-update-package-repositories-prompt-history nil
   "Minibuffer history of `prot-simple-update-package-repositories-prompt'.")
