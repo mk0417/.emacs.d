@@ -7563,7 +7563,7 @@ on how I use Org.
       pulsar)))
 #+end_src
 
-*** The =prot-emacs-org.el= Org indent mode settings
+*** The =prot-emacs-org.el= indent and default folding settings for Org
 :PROPERTIES:
 :CUSTOM_ID: h:0c758fca-0a51-4095-9483-b9b0a594333a
 :END:
@@ -7590,16 +7590,19 @@ Whereas the purely visual ~org-indent-mode~ is a feature we can turn
 on and off at will without worrying that something will change in our
 file.
 
-I do not set up this minor mode via a hook, as I do not really need it
-for small Org files. Instead, I set up the files I am interested in to
-have the following somewhere close to the top:
+We can set up this minor mode via a hook, so it takes effect in all
+Org buffers. An alternative is to enable on a per-file basis, by add
+the =indent= word to the =#+startup= keyword somewhere close to the
+top of the file. For example:
 
 : #+startup: content indent
 
 What this =#+startup= directive does is to (i) show all the headings
 while folding their contents and (ii) activate ~org-indent-mode~. If
 you add the =#+startup= to an already open file, then you need to do
-=M-x org-mode-restart= for changes to take effect.
+=M-x org-mode-restart= for changes to take effect, or move the cursor
+to that line and type =C-c C-c=. Below I configure ~org-startup-folded~
+which is underlying variable for the =content= part shown in this example.
 
 By default, ~org-indent-mode~ will hide the leading asterisks, keeping
 only one at a time. This looks cleaner overall, though I find it
@@ -7614,12 +7617,13 @@ pronounced, by setting ~org-indent-indentation-per-level~ to =4=
 instead of =2=.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
-;;;; `org-indent-mode' and related
+;;;; `org-indent-mode' and initial folding
 (prot-emacs-configure
-  (with-eval-after-load 'org
-    (setq org-adapt-indentation nil) ; No, non, nein, όχι to literal indentation!
-    (setq org-indent-mode-turns-on-hiding-stars nil)
-    (setq org-indent-indentation-per-level 4)))
+  (add-hook 'org-mode-hook #'org-indent-mode)
+  (setq org-indent-mode-turns-on-hiding-stars nil)
+  (setq org-adapt-indentation nil) ; No, non, nein, όχι to literal indentation!
+  (setq org-indent-indentation-per-level 4)
+  (setq org-startup-folded 'content))
 #+end_src
 
 *** The =prot-emacs-org.el= Org to-do and refile settings
@@ -13200,26 +13204,6 @@ face.  Let other buffers have no face.")
                           (substring rev 0 7))))
     (capitalize branch)))
 
-;; NOTE 2023-07-27: This is a good idea, but it hardcodes Git, whereas
-;; I want a generic VC method.  Granted, I only use Git but I still
-;; want it to work as a VC extension.
-
-;; (defun prot-modeline-diffstat (file)
-;;   "Return shortened Git diff numstat for FILE."
-;;   (when-let* ((output (shell-command-to-string (format "git diff --numstat %s" file)))
-;;               (stats (split-string output "[\s\t]" :omit-nulls "[\s\f\t\n\r\v]+"))
-;;               (added (nth 0 stats))
-;;               (deleted (nth 1 stats)))
-;;     (cond
-;;      ((and (equal added "0") (equal deleted "0"))
-;;       "")
-;;      ((and (not (equal added "0")) (equal deleted "0"))
-;;       (propertize (format "+%s" added) 'face 'shadow))
-;;      ((and (equal added "0") (not (equal deleted "0")))
-;;       (propertize (format "-%s" deleted) 'face 'shadow))
-;;      (t
-;;       (propertize (format "+%s -%s" added deleted) 'face 'shadow)))))
-
 (declare-function vc-git-working-revision "vc-git" (file))
 
 (defvar prot-modeline-vc-map
@@ -13244,12 +13228,7 @@ With optional FACE, use it to propertize the BRANCH."
                'face face
                'mouse-face 'mode-line-highlight
                'help-echo (prot-modeline--vc-help-echo file)
-               'local-map prot-modeline-vc-map)
-   ;; " "
-   ;; (prot-modeline-diffstat file)
-   (if-let* ((dir (vc-root-dir)))
-       (concat " " (propertize (file-name-base (directory-file-name dir)) 'face 'shadow))
-     "")))
+               'local-map prot-modeline-vc-map)))
 
 (defun prot-modeline--vc-details (file branch &optional face)
   "Return Git BRANCH details for FILE, truncating it if necessary.
