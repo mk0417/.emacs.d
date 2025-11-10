@@ -175,7 +175,9 @@
       "M-w" #'nil))
 
   (setq magit-define-global-key-bindings nil)
-  (setq magit-section-visibility-indicator '(magit-fringe-bitmap> . magit-fringe-bitmapv))
+  (setq magit-section-visibility-indicators
+        `(;; (magit-fringe-bitmap> . magit-fringe-bitmapv)
+          ("⮧" . t))) ; same as `org-ellpisis'
 
   ;; Show icons for files in the Magit status and other buffers.
   (with-eval-after-load 'nerd-icons
@@ -189,8 +191,7 @@
   (setq magit-repository-directories
         '(("~/Git" . 1)))
   (setq magit-repolist-columns
-        `(("Name" 25 ,#'magit-repolist-column-ident
-           ())
+        `(("Name" 25 ,#'magit-repolist-column-ident)
           ("Version" 15 ,#'magit-repolist-column-version
            ((:sort magit-repolist-version<)))
           ("Unpulled" 10 ,#'magit-repolist-column-unpulled-from-upstream
@@ -201,8 +202,7 @@
            ((:help-echo "Local changes not in upstream")
             (:right-align t)
             (:sort <)))
-          ("Path" 99 ,#'magit-repolist-column-path
-           ())))
+          ("Path" 99 ,#'magit-repolist-column-path)))
 
   (setq git-commit-summary-max-length 50)
   ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'

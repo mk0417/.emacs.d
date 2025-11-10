@@ -15,9 +15,10 @@
       "C-c C-b" nil
       "C-c C-f" nil)
 
-    ;; Both of these are from Emacs 31.
+    ;; All of these are from Emacs 31.
     (setq elisp-eldoc-funcall-with-docstring-length 'short)
     (setq elisp-eldoc-docstring-length-limit 1000)
+    (set-default-toplevel-value 'lexical-binding t) ; Emacs 31
 
     (require 'prot-elisp)
 
@@ -102,11 +103,11 @@
 ;;; Flyspell and prot-spell.el (spell check)
 (prot-emacs-configure
   (prot-emacs-autoload
-   (prot-spell-spell-dwim
-    prot-spell-change-dictionary
-    prot-spell-spell-dwim
-    prot-spell-change-dictionary)
-   "prot-spell")
+    (prot-spell-spell-dwim
+     prot-spell-change-dictionary
+     prot-spell-spell-dwim
+     prot-spell-change-dictionary)
+    "prot-spell")
 
   (prot-emacs-keybind global-map
     "M-$" #'prot-spell-spell-dwim

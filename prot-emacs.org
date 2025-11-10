@@ -7245,7 +7245,9 @@ changes I make here are not necessary.
       "M-w" #'nil))
 
   (setq magit-define-global-key-bindings nil)
-  (setq magit-section-visibility-indicator '(magit-fringe-bitmap> . magit-fringe-bitmapv))
+  (setq magit-section-visibility-indicators
+        `(;; (magit-fringe-bitmap> . magit-fringe-bitmapv)
+          ("⮧" . t))) ; same as `org-ellpisis'
 
   ;; Show icons for files in the Magit status and other buffers.
   (with-eval-after-load 'nerd-icons
@@ -7259,8 +7261,7 @@ changes I make here are not necessary.
   (setq magit-repository-directories
         '(("~/Git/Projects" . 1)))
   (setq magit-repolist-columns
-        `(("Name" 25 ,#'magit-repolist-column-ident
-           ())
+        `(("Name" 25 ,#'magit-repolist-column-ident)
           ("Version" 15 ,#'magit-repolist-column-version
            ((:sort magit-repolist-version<)))
           ("Unpulled" 10 ,#'magit-repolist-column-unpulled-from-upstream
@@ -7271,8 +7272,7 @@ changes I make here are not necessary.
            ((:help-echo "Local changes not in upstream")
             (:right-align t)
             (:sort <)))
-          ("Path" 99 ,#'magit-repolist-column-path
-           ())))
+          ("Path" 99 ,#'magit-repolist-column-path)))
 
   (setq git-commit-summary-max-length 50)
   ;; NOTE 2023-01-24: I used to also include `overlong-summary-line'
@@ -8506,9 +8506,10 @@ will not mess up with my work.
       "C-c C-b" nil
       "C-c C-f" nil)
 
-    ;; Both of these are from Emacs 31.
+    ;; All of these are from Emacs 31.
     (setq elisp-eldoc-funcall-with-docstring-length 'short)
     (setq elisp-eldoc-docstring-length-limit 1000)
+    (set-default-toplevel-value 'lexical-binding t) ; Emacs 31
 
     (require 'prot-elisp)
 
@@ -8938,7 +8939,7 @@ of packaging. I use it whenever I work on my numerous Emacs packages.
           '("" flymake-mode-line-error-counter
             flymake-mode-line-warning-counter
             flymake-mode-line-note-counter ""))
-    (setq flymake-show-diagnostics-at-end-of-line nil)) ; Emacs 30
+    (setq flymake-show-diagnostics-at-end-of-line nil)) ; Emacs 31
 
 ;;; Elisp packaging requirements
   (prot-emacs-install package-lint-flymake)
