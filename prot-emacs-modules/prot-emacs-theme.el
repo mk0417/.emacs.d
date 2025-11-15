@@ -159,9 +159,6 @@
 (prot-emacs-configure
   (prot-emacs-install theme-buffet)
 
-  (advice-add 'theme-buffet-timer-mins :around #'suppress-theme-buffet-startup-message)
-  (advice-add 'theme-buffet-timer-hours :around #'suppress-theme-buffet-startup-message)
-
   (setq theme-buffet-menu 'end-user)
   (setq theme-buffet-end-user
         '( :night     (modus-vivendi ef-dark ef-winter ef-autumn ef-night ef-duo-dark ef-symbiosis)
