@@ -1824,9 +1824,8 @@ editor, opt for my ~modus-themes~ ([[#h:36af519a-67e1-42b6-a38a-2052638108f9][Th
   (prot-emacs-install doric-themes)
 
   (prot-emacs-keybind global-map
-    "<f5>" #'doric-themes-toggle
-    "C-<f5>" #'doric-themes-select
-    "M-<f5>" #'doric-themes-rotate)
+    "<f5>" #'doric-themes-rotate
+    "C-<f5>" #'doric-themes-select)
 
   (doric-themes-load-random
    (if (prot-emacs-gnome-prefers-dark-p)
@@ -1842,9 +1841,8 @@ editor, opt for my ~modus-themes~ ([[#h:36af519a-67e1-42b6-a38a-2052638108f9][Th
   (require 'doric-themes)
 
   (prot-emacs-keybind global-map
-    "<f5>" #'doric-themes-toggle
-    "C-<f5>" #'doric-themes-select
-    "M-<f5>" #'doric-themes-rotate)
+    "<f5>" #'doric-themes-rotate
+    "C-<f5>" #'doric-themes-select)
 
   (doric-themes-load-random
    (if (prot-emacs-gnome-prefers-dark-p)
@@ -11109,7 +11107,8 @@ like Firefox ([[#h:edb70963-d590-4959-bc59-1e5435c8e78a][The =prot-emacs-web.el=
 
     (define-key eww-link-keymap (kbd "v")  nil) ; stop overriding `eww-view-source'
 
-    (define-key dired-mode-map (kbd "E") #'eww-open-file) ; to render local HTML files
+    (with-eval-after-load 'dired
+      (define-key dired-mode-map (kbd "E") #'eww-open-file)) ; to render local HTML files
 
     (setq eww-auto-rename-buffer 'title)
     (setq eww-header-line-format nil)
@@ -13358,7 +13357,7 @@ Specific to the current window's mode line.")
 (defvar-local prot-modeline-which-function-indicator
   `(( :propertize
       which-func-current
-      face (prot-modeline-indicator-small prot-modeline-indicator-magenta)
+      face (prot-modeline-indicator-small which-func)
       mouse-face mode-line-highlight
       help-echo (format "Current definition: `%s'"
                         (or (gethash (selected-window) which-func-table)
@@ -17072,17 +17071,14 @@ line."
 ;;;; Commands for paragraphs
 
 ;;;###autoload
-(defun prot-simple-unfill-region-or-paragraph (&optional beg end)
-  "Unfill paragraph or, when active, the region.
-Join all lines in region delimited by BEG and END, if active,
-while respecting any empty lines (so multiple paragraphs are not
-joined, just unfilled).  If no region is active, operate on the
-paragraph.  The idea is to produce the opposite effect of both
-`fill-paragraph' and `fill-region'."
-  (interactive "r")
+(defun prot-simple-unfill-region-or-paragraph ()
+  "Unfill current paragraph or the active region."
+  (interactive)
+  (unless mark-ring ; needed when entering a new buffer
+    (push-mark (point) t nil))
   (let ((fill-column most-positive-fixnum))
-    (if (use-region-p)
-        (fill-region beg end)
+    (if (region-active-p)
+        (fill-region (region-beginning) (region-end))
       (fill-paragraph))))
 
 ;;;; Commands for windows and pages
