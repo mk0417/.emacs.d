@@ -3,7 +3,7 @@
   (require 'prot-modeline)
   (setq mode-line-compact nil) ; Emacs 28
   (setq mode-line-right-align-edge 'right-margin) ; Emacs 30
-  (setq prot-modeline-show-frame-name t)
+  (setq prot-modeline-show-frame-name (alist-get 'undecorated initial-frame-alist))
 
   ;; NOTE 2023-10-05: my hack to display Jupyter indicator
   (defun get-jupyter-repl-interaction-indicator ()

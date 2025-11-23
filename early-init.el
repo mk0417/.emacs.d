@@ -28,6 +28,8 @@
                                                          (scroll-bar-width . 6)
                                                          (width . (text-pixels . 800))
                                                          (height . (text-pixels . 900))
+                                                         (undecorated . t)
+                                                         (border-width . 5)
                                                          ,@(list '(fullscreen . maximized))))))
 
 (defun prot-emacs-no-minibuffer-scroll-bar (frame)
