@@ -46,14 +46,14 @@
 (use-package python
   :ensure nil
   :hook
-  ((python-mode . electric-pair-mode)
-   (python-mode . (lambda () (setq tab-width 4)))
-   (python-mode . display-fill-column-indicator-mode)
+  (((python-mode python-ts-mode) . electric-pair-mode)
+   ((python-mode  python-ts-mode) . (lambda () (setq tab-width 4)))
+   ((python-mode  python-ts-mode) . display-fill-column-indicator-mode)
    ;; https://www.topbug.net/blog/2016/09/29/emacs-disable-certain-pairs-for-electric-pair-mode/
-   (python-mode . (lambda ()
-                    (setq-local electric-pair-inhibit-predicate
-                                `(lambda (c)
-                                   (if (member c '(?{ ?\[ ?\()) t (,electric-pair-inhibit-predicate c)))))))
+   ((python-mode  python-ts-mode) . (lambda ()
+                                      (setq-local electric-pair-inhibit-predicate
+                                                  `(lambda (c)
+                                                     (if (member c '(?{ ?\[ ?\()) t (,electric-pair-inhibit-predicate c)))))))
   :config
   (setq python-indent-offset 4)
   (setq python-indent-guess-indent-offset-verbose nil)
@@ -98,5 +98,18 @@
   (interactive)
   (let ((file (file-name-nondirectory (buffer-file-name))))
     (shell-command (concat "quarto render " file))))
+
+;;; Typst
+(use-package typst-ts-mode
+  :ensure t
+  :vc (:url "https://codeberg.org/meow_king/typst-ts-mode")
+  :custom
+  (typst-ts-watch-options '("--open"))
+  (typst-ts-grammar-location (expand-file-name "tree-sitter/libtree-sitter-typst.dylib" user-emacs-directory))
+  (typst-ts-enable-raw-blocks-highlight t)
+  :config
+  (defun typst-file-preview-darwin (file)
+    (start-process "typst-preview" nil "open" (expand-file-name file)))
+  (setq typst-ts-preview-function #'typst-file-preview-darwin))
 
 (provide 'init-programming)

@@ -11,6 +11,10 @@
       inhibit-startup-echo-area-message user-login-name ; read the docstring
       inhibit-startup-buffer-menu t)
 
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
 ;; (add-hook 'window-size-change-functions #'frame-hide-title-bar-when-maximized)
 
 ;; Do it again after init so that any intermediate changes are not
@@ -22,15 +26,15 @@
 ;; settings.
 (add-hook 'after-init-hook (lambda ()
                              (setq default-frame-alist `((horizontal-scroll-bars . nil)
-                                                         (menu-bar-lines . 0) ; alternative to disabling `menu-bar-mode'
-                                                         (tool-bar-lines . 0) ; alternative to disabling `tool-bar-mode'
+                                                         (menu-bar-lines . 0)
+                                                         (tool-bar-lines . 0)
                                                          (vertical-scroll-bars . nil)
                                                          (scroll-bar-width . 6)
                                                          (width . (text-pixels . 800))
                                                          (height . (text-pixels . 900))
                                                          (undecorated . t)
-                                                         (border-width . 5)
-                                                         ,@(list '(fullscreen . maximized))))))
+                                                         (border-width . 0)
+                                                         (fullscreen . maximized)))))
 
 (defun prot-emacs-no-minibuffer-scroll-bar (frame)
   "Remove the minibuffer scroll bars from FRAME."

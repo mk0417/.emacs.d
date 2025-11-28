@@ -351,19 +351,35 @@ Hiding the title bar declutters the view at the cost of hiding the
 frame title. To compensate, I have my active mode line display the
 frame name ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =prot-emacs-modeline.el= module]]).
 
+Those granted, I do need to experiment with the Wayland-specific build
+of Emacs. It is also known as "Pure GTK" or "PGTK". To this end, I
+apply some parameters subject to PGTK being present.
+
 #+begin_src emacs-lisp :tangle "early-init.el"
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+
 (defvar prot-laptop-p (null (directory-empty-p "/sys/class/power_supply/"))
   "When non-nil, we assume to be working on a laptop.")
 
+(when prot-laptop-p
+  (add-hook 'window-size-change-functions #'frame-hide-title-bar-when-maximized))
+
+(defvar prot-pgtk-p (string-match-p "PGTK" system-configuration-features)
+  "When non-nil, this is a build --with-pgtk.
+PGTK is the Wayland-specific build of Emacs.")
+
 (setq initial-frame-alist `((horizontal-scroll-bars . nil)
-                            (menu-bar-lines . 0) ; alternative to disabling `menu-bar-mode'
-                            (tool-bar-lines . 0) ; alternative to disabling `tool-bar-mode'
+                            (menu-bar-lines . 0)
+                            (tool-bar-lines . 0)
                             (vertical-scroll-bars . nil)
-                            (scroll-bar-width . 6)
+                            (scroll-bar-width . ,(if prot-pgtk-p 12 6))
                             (width . (text-pixels . 800))
                             (height . (text-pixels . 900))
-                            (undecorated . t)
-                            (border-width . 5)
+                            ,@(unless prot-pgtk-p
+                                (list '(undecorated . t)))
+                            (border-width . 0)
                             ,@(when prot-laptop-p
                                 (list '(fullscreen . maximized)))))
 
@@ -376,14 +392,15 @@ frame name ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =prot-emacs-modeline.
 ;; settings.
 (add-hook 'after-init-hook (lambda ()
                              (setq default-frame-alist `((horizontal-scroll-bars . nil)
-                                                         (menu-bar-lines . 0) ; alternative to disabling `menu-bar-mode'
-                                                         (tool-bar-lines . 0) ; alternative to disabling `tool-bar-mode'
+                                                         (menu-bar-lines . 0)
+                                                         (tool-bar-lines . 0)
                                                          (vertical-scroll-bars . nil)
-                                                         (scroll-bar-width . 6)
+                                                         (scroll-bar-width . (if prot-pgtk-p 12 6))
                                                          (width . (text-pixels . 800))
                                                          (height . (text-pixels . 900))
-                                                         (undecorated . t)
-                                                         (border-width . 5)
+                                                         ,@(unless prot-pgtk-p
+                                                             (list '(undecorated . t)))
+                                                         (border-width . 0)
                                                          ,@(when prot-laptop-p
                                                              (list '(fullscreen . maximized)))))))
 
@@ -2085,7 +2102,7 @@ I also take care to make it work with my customised mode line
              :mode-line-width 6
              :tab-width 4
              :right-divider-width 15
-             :scroll-bar-width ,(if x-toolkit-scroll-bars 8 6)
+             :scroll-bar-width ,(if prot-pgtk-p 12 6)
              :left-fringe-width 20
              :right-fringe-width 20))
 
@@ -6572,19 +6589,27 @@ screen real estate ([[#h:080aa291-95b4-4d54-8783-d156b13190e9][The =prot-emacs-e
 
   (beframe-mode 1)
 
-  ;; Integration with the `consult-buffer' command.  It will show only
-  ;; buffers from the current frame.  To view all buffers, first input
-  ;; a space at the empty minibuffer prompt.  This enables the "hidden
-  ;; buffers" view.
   (with-eval-after-load 'consult
-    (defun consult-beframe-buffer-list (&optional frame)
+    (defface beframe-buffer
+      '((t :inherit font-lock-string-face))
+      "Face for `consult' framed buffers.")
+
+    (defun prot/beframe-buffer-names-sorted (&optional frame)
       "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
-With optional argument FRAME, return the list of buffers of FRAME.
+With optional argument FRAME, return the list of buffers of FRAME."
+      (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
 
-For use in `consult-buffer-list'."
-      (beframe-buffer-list frame :sort #'beframe-buffer-sort-visibility))
+    (defvar beframe-consult-source
+      `( :name     "Frame-specific buffers (current frame)"
+         :narrow   ?F
+         :category buffer
+         :face     beframe-buffer
+         :history  beframe-history
+         :items    ,#'prot/beframe-buffer-names-sorted
+         :action   ,#'switch-to-buffer
+         :state    ,#'consult--buffer-state))
 
-    (setq consult-buffer-list #'consult-beframe-buffer-list)))
+    (add-to-list 'consult-buffer-sources 'beframe-consult-source)))
 #+end_src
 
 *** The =prot-emacs-window.el= configuration of ~undelete-frame-mode~ and ~winner-mode~

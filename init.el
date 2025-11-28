@@ -409,6 +409,7 @@ making an abbreviation to a function."
 (require 'init-keybinding)
 (require 'init-keychord)
 (require 'init-abbrev)
+(require 'init-treesit)
 
 (add-hook 'emacs-startup-hook
           (lambda ()
