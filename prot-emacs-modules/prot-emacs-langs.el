@@ -75,9 +75,26 @@
   (setq eldoc-message-function #'message)) ; don't use mode line for M-x eval-expression, etc.
 
 ;;;; Eglot (built-in client for the language server protocol)
-;; (prot-emacs-configure
-;;   (setq eglot-sync-connect nil)
-;;   (setq eglot-autoshutdown t))
+(prot-emacs-configure
+  (setq eglot-sync-connect nil)
+  (setq eglot-autoshutdown t)
+  (setq eglot-ignored-server-capabilities
+        '(:inlayHintProvider
+          :hoverProvider
+          :colorProvider
+          :foldingRangeProvider
+          :codeActionProvider
+          :documentHighlightProvider
+          :documentFormattingProvider
+          :documentRangeFormattingProvider
+          :documentOnTypeFormattingProvider))
+  (add-hook 'python-ts-mode-hook 'eglot-ensure)
+
+  (with-eval-after-load 'eglot
+    (setq eglot-stay-out-of '(flymake))
+    (add-to-list 'eglot-server-programs
+                 '((python-mode python-ts-mode)
+                   "basedpyright-langserver" "--stdio"))))
 
 ;;;; Handle performance for very long lines (so-long.el)
 (prot-emacs-configure

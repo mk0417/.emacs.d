@@ -13,10 +13,10 @@
     ;; same icon though, I prefer not to see any icon.
     (setq nerd-icons-completion-category-icons nil)
 
-    ;; (prot-emacs-install nerd-icons-corfu)
+    (prot-emacs-install nerd-icons-corfu)
 
-    ;; (with-eval-after-load 'corfu
-    ;;   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+    (with-eval-after-load 'corfu
+      (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
     (prot-emacs-install nerd-icons-dired)
 

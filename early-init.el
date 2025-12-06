@@ -76,6 +76,9 @@
 
 (add-hook 'after-init-hook (lambda () (set-frame-name "home")))
 
+;; https://github.com/minad/corfu/issues/601
+(setq alter-fullscreen-frames nil)
+
 ;;; No titlebar
 (add-to-list 'default-frame-alist '(undecorated . t))
 

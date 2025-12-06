@@ -3,6 +3,7 @@
 (setq treesit-language-source-alist
       '((bash . ("https://github.com/tree-sitter/tree-sitter-bash"))
         (css . ("https://github.com/tree-sitter/tree-sitter-css"))
+        (elisp . ("https://github.com/Wilfred/tree-sitter-elisp"))
         (html . ("https://github.com/tree-sitter/tree-sitter-html"))
         (json . ("https://github.com/tree-sitter/tree-sitter-json"))
         (markdown . ("https://github.com/tree-sitter-grammars/tree-sitter-markdown" nil "tree-sitter-markdown/src"))
@@ -27,7 +28,8 @@
     (dolist (lang languages)
 	  (treesit-install-language-grammar lang)
 	  (message "`%s' parser was installed." lang)
-	  (sit-for 1))))
+	  (sit-for 1)))
+  (message "All tree-sitter languages are installed."))
 
 (provide 'init-treesit)
 
