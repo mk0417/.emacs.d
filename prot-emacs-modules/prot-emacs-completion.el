@@ -318,7 +318,8 @@ Development continues on GitHub with GitLab as a mirror."))
   (setq completion-preview-sort-function #'identity)
 
   (prot-emacs-hook
-    (text-mode-hook prog-mode-hook)
+    ;; (text-mode-hook prog-mode-hook)
+    (text-mode-hook)
     completion-preview-mode)
 
   (with-eval-after-load 'completion-preview

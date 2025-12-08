@@ -123,8 +123,11 @@
    '("nj" . p-flip-brackets)
 
    ;; prefix f
-   '("fa" . lsp-bridge-find-def)
-   '("fb" . lsp-bridge-find-def-return)
+   ;; '("fa" . lsp-bridge-find-def)
+   ;; '("fb" . lsp-bridge-find-def-return)
+   '("fa" . xref-find-definitions)
+   '("fb" . xref-go-back)
+   '("fm" . xref-find-references)
    '("fc" . prot-comment)
    '("fe" . eval-buffer)
    '("ff" . find-file)

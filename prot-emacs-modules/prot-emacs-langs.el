@@ -78,20 +78,24 @@
 (prot-emacs-configure
   (setq eglot-sync-connect nil)
   (setq eglot-autoshutdown t)
-  (setq eglot-ignored-server-capabilities
-        '(:inlayHintProvider
-          :hoverProvider
-          :colorProvider
-          :foldingRangeProvider
-          :codeActionProvider
-          :documentHighlightProvider
-          :documentFormattingProvider
-          :documentRangeFormattingProvider
-          :documentOnTypeFormattingProvider))
-  (add-hook 'python-ts-mode-hook 'eglot-ensure)
+
+  (add-hook 'python-ts-mode-hook #'eglot-ensure)
 
   (with-eval-after-load 'eglot
+    (setq eglot-events-buffer-config '(:size 1))
     (setq eglot-stay-out-of '(flymake))
+    (setq eglot-ignored-server-capabilities
+          '(:inlayHintProvider
+            :hoverProvider
+            :colorProvider
+            :foldingRangeProvider
+            :codeActionProvider
+            :codeLensProvider
+            :semanticTokensProvider
+            :documentHighlightProvider
+            :documentFormattingProvider
+            :documentRangeFormattingProvider
+            :documentOnTypeFormattingProvider))
     (add-to-list 'eglot-server-programs
                  '((python-mode python-ts-mode)
                    "basedpyright-langserver" "--stdio"))))
