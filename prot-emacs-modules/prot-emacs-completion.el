@@ -1,7 +1,7 @@
 ;;; General minibuffer settings
 (prot-emacs-configure
 ;;;; Completion styles
-  (setq completion-styles '(basic partial-completion substring initials flex)) ; also see `completion-category-overrides'
+  (setq completion-styles '(basic flex)) ; also see `completion-category-overrides'
   (setq completion-pcm-leading-wildcard nil) ; Emacs 31
   (with-eval-after-load 'orderless
     (setq completion-styles (append completion-styles '(orderless)))))
@@ -24,6 +24,10 @@
     (let ((completion-extra-properties (list :category 'library)))
       (apply args)))
 
+  (define-advice emoji--read-emoji (:around (&rest args) prot)
+    (let ((completion-extra-properties (list :category 'unicode-name)))
+      (apply args)))
+
   ;; NOTE 2025-12-02: The `eager-display' and `eager-update' are part of Emacs 31.
   (setq completion-category-overrides
         `(,@(mapcar
@@ -32,29 +36,30 @@
                      '((eager-display . nil)
                        (eager-update . t))))
              '(file bookmark symbol-help))
+          (unicode-name . ((styles . (orderless))
+                           (eager-display . t)
+                           (eager-update . t)))
           ,@(mapcar
              (lambda (category)
                (cons category
-                     '((styles . (basic substring))
-                       (eager-display . t)
+                     '((eager-display . t)
                        (eager-update . t))))
              '(buffer project-file eglot kill-ring consult-location imenu embark-keybinding library)))))
 
 ;;; Orderless completion style (and prot-orderless.el)
-(when prot-emacs-completion-extras
-  (prot-emacs-configure
-    (prot-emacs-install orderless)
-    (require 'orderless)
-    ;; Remember to check my `completion-styles' and the
-    ;; `completion-category-overrides'.
-    (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
-    (setq orderless-smart-case nil)
+(prot-emacs-configure
+  (prot-emacs-install orderless)
+  (require 'orderless)
+  ;; Remember to check my `completion-styles' and the
+  ;; `completion-category-overrides'.
+  (setq orderless-matching-styles '(orderless-prefixes orderless-regexp))
+  (setq orderless-smart-case nil)
 
-    ;; SPC should never complete: use it for `orderless' groups.
-    ;; The `?' is a regexp construct.
-    (prot-emacs-keybind minibuffer-local-completion-map
-      "SPC" nil
-      "?" nil)))
+  ;; SPC should never complete: use it for `orderless' groups.
+  ;; The `?' is a regexp construct.
+  (prot-emacs-keybind minibuffer-local-completion-map
+    "SPC" nil
+    "?" nil))
 
 (setq completion-ignore-case t)
 (setq read-buffer-completion-ignore-case t)
@@ -102,17 +107,7 @@
     (setq completions-max-height 10)
     (setq completions-sort 'historical)
     (setq completion-auto-help 'always)
-    (setq completion-auto-select t)
-
-    (define-advice completion--in-region (:around (&rest args) prot)
-      "Apply ARGS with `completion-auto-help' and `completion-auto-select' bound.
-Do it so when completion requested outside the minibuffer.  Else apply
-ARGS without further changes."
-      (if (minibufferp)
-          (apply args)
-        (let ((completion-auto-help t)
-              (completion-auto-select 'second-tab))
-          (apply args))))
+    (setq completion-auto-select 'second-tab)
 
     ;; These two are for Emacs 31.  The value they have now means that
     ;; each completion category will have its own behaviour based on
