@@ -4044,7 +4044,7 @@ set of completion styles on a per-category basis using overrides
 ;;; General minibuffer settings
 (prot-emacs-configure
 ;;;; Completion styles
-  (setq completion-styles '(basic flex)) ; also see `completion-category-overrides'
+  (setq completion-styles '(basic substring partial-completion flex)) ; also see `completion-category-overrides'
   (setq completion-pcm-leading-wildcard nil) ; Emacs 31
   (with-eval-after-load 'orderless
     (setq completion-styles (append completion-styles '(orderless)))))
@@ -4104,7 +4104,7 @@ first as ~basic~ will never match something like =~/.l/s/fo= for
       (apply args)))
 
   (define-advice emoji--read-emoji (:around (&rest args) prot)
-    (let ((completion-extra-properties (list :category 'unicode-name)))
+    (let ((completion-extra-properties (list :category 'emoji)))
       (apply args)))
 
   ;; NOTE 2025-12-02: The `eager-display' and `eager-update' are part of Emacs 31.
@@ -4115,15 +4115,18 @@ first as ~basic~ will never match something like =~/.l/s/fo= for
                      '((eager-display . nil)
                        (eager-update . t))))
              '(file bookmark symbol-help))
-          (unicode-name . ((styles . (orderless))
+          (emoji . ((styles . (orderless))
                            (eager-display . t)
+                           (eager-update . t)))
+          (unicode-name . ((styles . (orderless))
+                           (eager-display . nil)
                            (eager-update . t)))
           ,@(mapcar
              (lambda (category)
                (cons category
                      '((eager-display . t)
                        (eager-update . t))))
-             '(buffer project-file eglot kill-ring consult-location imenu embark-keybinding library)))))
+             '(buffer project-file eglot kill-ring theme consult-location imenu embark-keybinding library)))))
 #+end_src
 
 *** The =prot-emacs-completion.el= for the ~orderless~ completion style
@@ -9225,7 +9228,8 @@ facilities to rename files, regardless of file type.
   (prot-emacs-keybind global-map
     "C-c n n" #'denote
     "C-c n N" #'denote-type
-    "C-c n d" #'denote-sort-dired
+    "C-c n d" #'denote-dired
+    "C-c n g" #'denote-grep
     "C-c n r" #'denote-rename-file)
 
   (with-eval-after-load 'text-mode
@@ -11394,7 +11398,8 @@ want in this case.
     ;; that code.  Internally, the file has just the following:
     ;;
     ;;     (setq elfeed-feeds FEEDS)
-    (load (expand-file-name "~/feeds.el.gpg"))
+    (unless (bound-and-true-p elfeed-feeds)
+      (load (expand-file-name "~/feeds.el.gpg") :no-error :no-message))
     ;; Make entries tagged as "personal" use the `bold-italic' face.
     ;; This way I can quickly notice my own entries in the listing.
     (add-to-list 'elfeed-search-face-alist '(personal bold-italic))))

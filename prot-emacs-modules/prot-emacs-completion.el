@@ -1,7 +1,7 @@
 ;;; General minibuffer settings
 (prot-emacs-configure
 ;;;; Completion styles
-  (setq completion-styles '(basic flex)) ; also see `completion-category-overrides'
+  (setq completion-styles '(basic substring partial-completion flex)) ; also see `completion-category-overrides'
   (setq completion-pcm-leading-wildcard nil) ; Emacs 31
   (with-eval-after-load 'orderless
     (setq completion-styles (append completion-styles '(orderless)))))
@@ -25,7 +25,7 @@
       (apply args)))
 
   (define-advice emoji--read-emoji (:around (&rest args) prot)
-    (let ((completion-extra-properties (list :category 'unicode-name)))
+    (let ((completion-extra-properties (list :category 'emoji)))
       (apply args)))
 
   ;; NOTE 2025-12-02: The `eager-display' and `eager-update' are part of Emacs 31.
@@ -36,15 +36,18 @@
                      '((eager-display . nil)
                        (eager-update . t))))
              '(file bookmark symbol-help))
+          (emoji . ((styles . (orderless))
+                    (eager-display . t)
+                    (eager-update . t)))
           (unicode-name . ((styles . (orderless))
-                           (eager-display . t)
+                           (eager-display . nil)
                            (eager-update . t)))
           ,@(mapcar
              (lambda (category)
                (cons category
                      '((eager-display . t)
                        (eager-update . t))))
-             '(buffer project-file eglot kill-ring consult-location imenu embark-keybinding library)))))
+             '(buffer project-file eglot kill-ring theme consult-location imenu embark-keybinding library)))))
 
 ;;; Orderless completion style (and prot-orderless.el)
 (prot-emacs-configure
