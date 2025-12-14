@@ -1,7 +1,7 @@
 ;;; General minibuffer settings
 (prot-emacs-configure
 ;;;; Completion styles
-  (setq completion-styles '(basic substring partial-completion flex)) ; also see `completion-category-overrides'
+  (setq completion-styles '(basic substring)) ; also see `completion-category-overrides'
   (setq completion-pcm-leading-wildcard nil) ; Emacs 31
   (with-eval-after-load 'orderless
     (setq completion-styles (append completion-styles '(orderless)))))
@@ -33,7 +33,8 @@
         `(,@(mapcar
              (lambda (category)
                (cons category
-                     '((eager-display . nil)
+                     '((styles . (partial-completion))
+                       (eager-display . nil)
                        (eager-update . t))))
              '(file bookmark symbol-help))
           (emoji . ((styles . (orderless))
@@ -45,7 +46,8 @@
           ,@(mapcar
              (lambda (category)
                (cons category
-                     '((eager-display . t)
+                     '((styles . (basic substring orderless))
+                       (eager-display . t)
                        (eager-update . t))))
              '(buffer project-file eglot kill-ring theme consult-location imenu embark-keybinding library)))))
 
@@ -111,6 +113,7 @@
     (setq completions-sort 'historical)
     (setq completion-auto-help 'always)
     (setq completion-auto-select 'second-tab)
+    ;; (setq minibuffer-visible-completions t) ; Emacs 30
 
     ;; These two are for Emacs 31.  The value they have now means that
     ;; each completion category will have its own behaviour based on
