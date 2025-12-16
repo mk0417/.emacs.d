@@ -4128,15 +4128,50 @@ first as ~basic~ will never match something like =~/.l/s/fo= for
     (let ((completion-extra-properties (list :category 'emoji)))
       (apply args)))
 
+  (defun prot/file-sort-directories-first (files)
+    "Sort FILES to have directories first and then `completions-sort' sorting."
+    (setq files (delete "../" files))
+    (setq files
+          (pcase completions-sort
+            ('nil files)
+            ('alphabetical (minibuffer-sort-alphabetically files))
+            ('historical (minibuffer-sort-by-history files))
+            (_ (funcall completions-sort files))))
+    (let ((directory-p (lambda (file) (string-suffix-p "/" file))))
+      (nconc (seq-filter directory-p files)
+             (seq-remove directory-p files))))
+
+  (defun prot/file-group (file transform)
+    "Return FILE group name unless TRANSFORM is non-nil."
+    (cond
+     (transform file)
+     ((string-suffix-p "/" file) "Directories")
+     ((string-match-p "\\.\\(tar\\|rar\\|zip\\)\\'" file) "Archives")
+     ((string-match-p "\\.\\(txt\\|md\\|org\\)\\'" file) "Text")
+     ((string-match-p "\\.\\(jpg\\|jpeg\\|png\\)\\'" file) "Images")
+     ((string-match-p "\\.\\(mkv\\|webm\\|mp4\\|mp3\\|ogg\\|flac\\|wav\\)\\'" file) "Media")
+     ((string-match-p "\\.\\(pdf\\|epub\\|texi\\|info\\)\\'" file) "Documents")
+     (t "Other")))
+
+  (defun prot/symbol-group (symbol transform)
+    "Return SYMBOL group name unless TRANSFORM is non-nil."
+    (cond
+     (transform symbol)
+     ((string-match-p "--" symbol) "Private")
+     (t "Public")))
+
   ;; NOTE 2025-12-02: The `eager-display' and `eager-update' are part of Emacs 31.
   (setq completion-category-overrides
-        `(,@(mapcar
-             (lambda (category)
-               (cons category
-                     '((styles . (partial-completion))
-                       (eager-display . nil)
-                       (eager-update . t))))
-             '(file bookmark symbol-help))
+        `((file . ((styles . (partial-completion))
+                   (eager-display . nil)
+                   (eager-update . t)
+                   (group-function . ,#'prot/file-group)
+                   (display-sort-function . ,#'prot/file-sort-directories-first)))
+          (bookmark . ((eager-display . nil)
+                       (eager-update . nil)))
+          (symbol-help . ((eager-display . nil)
+                          (eager-update . t)
+                          (group-function . ,#'prot/symbol-group)))
           (emoji . ((styles . (orderless))
                     (eager-display . t)
                     (eager-update . t)))
@@ -4218,6 +4253,7 @@ minibuffer. Let's have everything ignore casing by default.
 (setq read-buffer-completion-ignore-case t)
 (setq-default case-fold-search t)   ; For general regexp
 (setq read-file-name-completion-ignore-case t)
+(setq minibuffer-history-case-insensitive-variables t)
 #+end_src
 
 *** The =prot-emacs-completion.el= settings for recursive minibuffers
@@ -4416,7 +4452,7 @@ offers.
     ;; (setq completions-header-format (propertize "%s candidates:\n" 'face 'bold-italic))
     (setq completions-header-format "")
     (setq completions-highlight-face 'completions-highlight)
-    (setq completions-max-height 10)
+    (setq completions-max-height 12)
     (setq completions-sort 'historical)
     (setq completion-auto-help 'always)
     (setq completion-auto-select 'second-tab)
@@ -4462,6 +4498,12 @@ Also see `prot/choose-completion-no-exit' and `prot/choose-completion-dwim'."
       (choose-completion nil :no-exit)
       (exit-minibuffer))
 
+    (defun prot/crm-p ()
+      "Return non-nil if `completing-read-multiple' is in use."
+      (when-let* ((window (active-minibuffer-window))
+                  (buffer (window-buffer window)))
+        (buffer-local-value 'crm-completion-table buffer)))
+
     (defun prot/choose-completion-dwim ()
       "Call `choose-completion' that exits only on a unique match.
 If the match is not unique, then complete up to the largest common
@@ -4470,18 +4512,21 @@ switch into the directory and then show the files therein).
 
 Also see `prot/choose-completion-no-exit' and `prot/choose-completion-exit'."
       (interactive)
-      (choose-completion nil :no-exit :no-quit)
-      (switch-to-minibuffer)
-      (minibuffer-completion-help)
-      (unless (get-buffer-window "*Completions*")
-        (exit-minibuffer)))
+      (if (prot/crm-p)
+          (prot/choose-completion-no-exit)
+        (choose-completion nil :no-exit :no-quit)
+        (switch-to-minibuffer)
+        (minibuffer-completion-help)
+        (unless (get-buffer-window "*Completions*")
+          (exit-minibuffer))))
 
     (define-advice minibuffer-completion-help (:around (&rest args) prot)
       "Make `minibuffer-completion-help' display *Completions* in a side window.
 Make the window be at slot 0, such that the *Help* buffer produced by
 `prot/completions-describe-at-point' is to its right."
       (let ((display-buffer-overriding-action
-             '((display-buffer-reuse-mode-window display-buffer-in-side-window)
+             `((display-buffer-reuse-mode-window display-buffer-in-side-window)
+               (mode . completion-list-mode)
                (side . bottom)
                (slot . 0))))
         (apply args)))
@@ -4497,8 +4542,11 @@ property, such that it can be found by `prot/completions-close-help'."
       (when symbol
         (let ((help-window-select nil)
               (display-buffer-overriding-action
-               '((display-buffer-reuse-mode-window display-buffer-in-side-window)
-                 (slot . 1) ;  next to `prot/minibuffer-completion-help'
+               `((display-buffer-reuse-mode-window display-buffer-in-side-window)
+                 (mode . help-mode)
+                 (side . bottom)
+                 (slot . 1)
+                 (window-height . fit-window-to-buffer)
                  (window-parameters . ((prot-minibuffer-help . t))))))
           (describe-symbol symbol))))
 
@@ -9321,8 +9369,7 @@ preview of the file-to-linked/opened and by adding more sources to the
     (prot-emacs-keybind global-map
       "C-c n f" #'consult-denote-find
       "C-c n g" #'consult-denote-grep)
-    (with-eval-after-load 'denote
-      (consult-denote-mode 1))))
+    (consult-denote-mode 1)))
 #+end_src
 
 **** The =prot-emacs-langs.el= extension for Denote Org extras (~denote-org~)
