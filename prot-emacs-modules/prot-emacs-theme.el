@@ -46,7 +46,7 @@
   (prot-emacs-configure
     (prot-emacs-install spacious-padding)
 
-    (spacious-padding-mode 1)
+    ;; (spacious-padding-mode 1)
 
     (define-key global-map (kbd "<f8>") #'spacious-padding-mode)
 
