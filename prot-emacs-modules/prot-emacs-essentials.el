@@ -115,6 +115,7 @@
     "<escape>" #'prot-simple-keyboard-quit-dwim
     "C-g" #'prot-simple-keyboard-quit-dwim
     "C-M-SPC" #'prot-simple-mark-sexp
+    "C-x 0" #'prot-simple-delete-window-dwim ; overrides `delete-window'
     ;; Commands for lines
     "C-S-d" #'prot-simple-delete-line-backward
     "C-S-k" #'prot-simple-kill-line-backward
@@ -267,16 +268,15 @@
 
 ;;;; Registers (register.el) and my extensions (prot-register.el)
 (prot-emacs-configure
-  (prot-emacs-autoload
-    (prot-simple-file-to-register
-     prot-register-add-dwim
-     prot-register-use-dwim)
-    "prot-register")
+  (require 'prot-register)
+
+  (unless register-alist
+    (setq register-alist (prot-register-load)))
 
   (prot-emacs-keybind global-map
-    "C-, ," #'prot-register-add-dwim
-    "C-, ." #'prot-register-use-dwim
-    "C-, /" #'bookmark-jump) ; alternattive to C-x r b
+    "C-, a" #'prot-register-add-dwim
+    "C-, u" #'prot-register-use-dwim
+    "C-, j" #'bookmark-jump) ; alternattive to C-x r b
 
   (prot-emacs-hook
     prot-simple-file-to-register-jump-hook
@@ -284,12 +284,10 @@
     nil
     pulsar)
 
-  (with-eval-after-load 'register
-    (setq register-preview-delay 0.8
-          register-preview-function #'register-preview-default))
+  (setq register-preview-delay 0.5
+        register-preview-function #'register-preview-default)
 
-  (with-eval-after-load 'savehist
-    (add-to-list 'savehist-additional-variables 'register-alist)))
+  (prot-register-persist-mode 1))
 
 ;;;; Auto revert mode
 (prot-emacs-configure
@@ -443,7 +441,13 @@
 
 ;;; Standard Unix Shell (M-x shell)
 (prot-emacs-configure
-  (with-eval-after-load 'shell
+  (prot-emacs-autoload (prot-shell prot-shell-mode) "prot-shell")
+
+  (define-key global-map (kbd "<f1>") #'prot-shell) ; I don't use F1 for help commands
+
+  (with-eval-after-load 'prot-shell
+    (add-hook 'shell-mode-hook #'prot-shell-mode)
+
     (prot-emacs-keybind shell-mode-map
       "C-c C-k" #'comint-clear-buffer
       "C-c C-w" #'comint-write-output)
@@ -478,12 +482,7 @@
     (setq shell-font-lock-keywords
           '(("[ \t]\\([+-][^ \t\n]+\\)" 1 font-lock-builtin-face)
             ("^[^ \t\n]+:.*" . font-lock-string-face)
-            ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))
-
-    (prot-emacs-autoload (prot-shell prot-shell-mode) "prot-shell")
-
-    (define-key global-map (kbd "<f1>") #'prot-shell) ; I don't use F1 for help commands
-    (add-hook 'shell-mode-hook #'prot-shell-mode)))
+            ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))))
 
 ;;; Show battery status on the mode line with `display-battery-mode'
 (prot-emacs-configure

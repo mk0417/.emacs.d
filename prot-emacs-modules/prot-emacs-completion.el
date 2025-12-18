@@ -1,7 +1,7 @@
 ;;; General minibuffer settings
 (prot-emacs-configure
 ;;;; Completion styles
-  (setq completion-styles '(basic substring)) ; also see `completion-category-overrides'
+  (setq completion-styles '(basic)) ; also see `completion-category-overrides'
   (setq completion-pcm-leading-wildcard nil) ; Emacs 31
   (with-eval-after-load 'orderless
     (setq completion-styles (append completion-styles '(orderless)))))
@@ -81,10 +81,11 @@
           ,@(mapcar
              (lambda (category)
                (cons category
-                     '((styles . (basic substring orderless))
+                     '((styles . (basic orderless))
                        (eager-display . t)
                        (eager-update . t))))
-             '(buffer project-file eglot kill-ring theme consult-location imenu embark-keybinding library)))))
+             '( buffer denote-file project-file eglot kill-ring
+                theme consult-location imenu embark-keybinding library)))))
 
 ;;; Orderless completion style (and prot-orderless.el)
 (prot-emacs-configure
@@ -159,7 +160,7 @@
 
     (defun prot/completions-tweak-style ()
       "Tweak the style of the Completions buffer."
-      ;; (setq-local mode-line-format "*Completions*)
+      (setq-local mode-line-format nil)
       (setq-local cursor-in-non-selected-windows nil)
       (when (and completions-header-format
                  (not (string-blank-p completions-header-format)))
@@ -193,7 +194,8 @@ Also see `prot/choose-completion-no-exit' and `prot/choose-completion-dwim'."
 
     (defun prot/crm-p ()
       "Return non-nil if `completing-read-multiple' is in use."
-      (when-let* ((window (active-minibuffer-window))
+      (when-let* ((_ (bound-and-true-p crm-completion-table))
+                  (window (active-minibuffer-window))
                   (buffer (window-buffer window)))
         (buffer-local-value 'crm-completion-table buffer)))
 
@@ -386,7 +388,9 @@ Development continues on GitHub with GitLab as a mirror."))
   (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save))
 
 ;;; Corfu (in-buffer completion popup)
-(when (and prot-emacs-completion-extras prot-display-graphic-p)
+(when (and (eq prot-emacs-completion-ui 'vertico)
+           prot-emacs-completion-extras
+           prot-display-graphic-p)
   (prot-emacs-configure
     (prot-emacs-install corfu)
 
@@ -406,6 +410,26 @@ Development continues on GitHub with GitLab as a mirror."))
     (with-eval-after-load 'savehist
       (corfu-history-mode 1)
       (add-to-list 'savehist-additional-variables 'corfu-history))))
+
+(prot-emacs-comment
+  (prot-emacs-configure
+    (setq completion-preview-exact-match-only nil)
+    (setq completion-preview-commands '(self-insert-command
+                                        insert-char
+                                        analyze-text-conversion
+                                        completion-preview-insert-word))
+    (setq completion-preview-minimum-symbol-length 4)
+    (setq completion-preview-idle-delay 0.3)
+    (setq completion-preview-ignore-case t)
+    (setq completion-preview-sort-function #'identity)
+
+    (add-hook 'prog-mode-hook #'completion-preview-mode)
+
+    (with-eval-after-load 'completion-preview
+      (prot-emacs-keybind completion-preview-active-mode-map
+        "M-n" #'completion-preview-next-candidate
+        "M-p" #'completion-preview-prev-candidate
+        "<tab>" #'completion-preview-complete))))
 
 ;;; Enhanced minibuffer commands (consult.el)
 (when prot-emacs-completion-extras
