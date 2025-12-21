@@ -389,7 +389,7 @@ making an abbreviation to a function."
 (require 'init-default)
 (require 'init-functions)
 (require 'init-programming)
-;; (require 'init-lsp)
+(require 'init-lsp)
 (require 'init-latex)
 (require 'init-ai)
 (require 'init-database)

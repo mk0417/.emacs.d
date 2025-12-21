@@ -15,7 +15,7 @@
                          (propertize "%[" 'face 'prot-modeline-indicator-red)
                          '(:eval
                            (concat
-                            (prot-modeline-major-mode-indicator)
+                            (prot-modeline-major-mode-icon (unless (mode-line-window-selected-p) 'shadow))
                             " "
                             (propertize
                              (prot-modeline-major-mode-name)
