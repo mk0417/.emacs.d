@@ -122,7 +122,7 @@
   :group 'prot-icons)
 
 (defvar prot-icons
-  '((dired-mode "|_" prot-icons-gray)
+  '((dired-mode "|_" dired-directory)
     (archive-mode "|@" prot-icons-yellow)
     (prog-mode ">λ" prot-icons-purple)
     (text-mode ">t" prot-icons-cyan)

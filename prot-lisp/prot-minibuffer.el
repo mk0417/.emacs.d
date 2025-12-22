@@ -67,20 +67,11 @@
                   (my-function-symbol (intern-soft my-function-name)))
         (advice-remove original my-function-symbol)))))
 
-(defun prot-minibuffer--set-default-sort (candidates)
-  "Sort CANDIDATES according to `completions-sort' and return the sorted list."
-  (setq candidates
-        (pcase completions-sort
-          ('nil candidates)
-          ('alphabetical (minibuffer-sort-alphabetically candidates))
-          ('historical (minibuffer-sort-by-history candidates))
-          (_ (funcall completions-sort candidates)))))
-
-(defun prot-minibuffer-file-sort-directories-first (files)
+(defun prot-minibuffer-file-sort (files)
   "Sort FILES to have directories first and then `completions-sort' sorting.
 Omit the .. directory from FILES."
   (setq files (delete "../" files))
-  (setq files (prot-minibuffer--set-default-sort files))
+  (setq files (minibuffer-sort-alphabetically files))
   (let ((directory-p (lambda (file) (string-suffix-p "/" file))))
     (nconc (seq-filter directory-p files)
            (seq-remove directory-p files))))
@@ -89,10 +80,7 @@ Omit the .. directory from FILES."
   "Return FILES with prefix and suffix."
   (mapcar
    (lambda (file)
-     (list
-      file
-      (format "%s " (prot-icons-get-file-icon file))
-      (prot-minibuffer--propertize-suffix-with-space (format "%s" file))))
+     (list file (format "%s " (prot-icons-get-file-icon file)) ""))
    files))
 
 (defun prot-minibuffer-file-group (file transform)
@@ -108,6 +96,15 @@ Omit the .. directory from FILES."
    ((string-match-p (prot-common--get-file-type-regexp 'document) file) "Document")
    ((string-match-p (prot-common--get-file-type-regexp 'program) file) "Program")
    (t "Other")))
+
+(defun prot-minibuffer--set-default-sort (candidates)
+  "Sort CANDIDATES according to `completions-sort' and return the sorted list."
+  (setq candidates
+        (pcase completions-sort
+          ('nil candidates)
+          ('alphabetical (minibuffer-sort-alphabetically candidates))
+          ('historical (minibuffer-sort-by-history candidates))
+          (_ (funcall completions-sort candidates)))))
 
 (defun prot-minibuffer-symbol-sort (symbols)
   "Sort SYMBOLS so that public ones come first."

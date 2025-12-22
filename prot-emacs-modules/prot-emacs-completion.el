@@ -27,7 +27,7 @@
                      (eager-update . t)
                      (group-function . ,#'prot-minibuffer-file-group)
                      (affixation-function . ,#'prot-minibuffer-file-affixate)
-                     (display-sort-function . ,#'prot-minibuffer-file-sort-directories-first)))
+                     (display-sort-function . ,#'prot-minibuffer-file-sort)))
             (bookmark . (,@eager-update-properties
                          (affixation-function . ,#'prot-minibuffer-bookmark-affixate)))
             (project-file . (,@eager-update-properties
@@ -42,6 +42,7 @@
                        (affixation-function . ,#'prot-minibuffer-buffer-affixate)))
             (command . ((affixation-function . nil)
                         (annotation-function . ,#'prot-minibuffer-command-annotate)))
+            (denote-file . ,eager-update-properties)
             (emoji . ,eager-update-properties)
             (theme . ,eager-update-properties)
             (unicode-name . ,eager-update-properties)
