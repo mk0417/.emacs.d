@@ -179,7 +179,8 @@
         `(;; (magit-fringe-bitmap> . magit-fringe-bitmapv)
           (" ▼" . t))) ; same as `org-ellipsis'
 
-  ;; Show icons for files in the Magit status and other buffers.
+  ;; Show icons for files in the Magit status and other buffers.  This
+  ;; is from my prot-icons.el.
   (with-eval-after-load 'prot-icons
     (setq magit-format-file-function
           (lambda (_kind file face &rest _)
