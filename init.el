@@ -364,6 +364,7 @@ making an abbreviation to a function."
 
 (require 'prot-emacs-theme)
 (require 'prot-emacs-essentials)
+(require 'init-keybinding)
 (require 'prot-emacs-modeline)
 (require 'prot-emacs-completion)
 (require 'prot-emacs-search)
@@ -380,15 +381,14 @@ making an abbreviation to a function."
 (require 'init-default)
 (require 'init-functions)
 (require 'init-programming)
-(require 'init-lsp)
 (require 'init-latex)
 (require 'init-ai)
 (require 'init-database)
 (require 'init-vc)
-(require 'init-keybinding)
 (require 'init-keychord)
 (require 'init-abbrev)
 (require 'init-treesit)
+(require 'init-lsp)
 
 (add-hook 'emacs-startup-hook
           (lambda ()
