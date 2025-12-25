@@ -122,9 +122,11 @@
   :group 'prot-icons)
 
 (defvar prot-icons
-  '((dired-mode "|_" prot-icons-gray)
+  '((dired-mode "|+" prot-icons-gray)
     (archive-mode "|@" prot-icons-gray)
+    (diff-mode ">Δ" prot-icons-gray) ; διαφορά
     (prog-mode ">Π" prot-icons-magenta) ; πρόγραμμα
+    (conf-mode ">Π" prot-icons-faint) ; πρόγραμμα
     (text-mode ">Α" prot-icons-green) ; αλφάβητο
     (comint-mode ">_" prot-icons-gray)
     (document ">Σ" prot-icons-red) ; σύγγραμμα
@@ -171,8 +173,12 @@ FACE is the face to use for it, where applicable.")
     (prot-icons-get-icon 'video))
    ((string-match-p (prot-common--get-file-type-regexp 'document) file)
     (prot-icons-get-icon 'document))
+   ((string-match-p (prot-common--get-file-type-regexp 'diff) file)
+    (prot-icons-get-icon 'diff-mode))
    ((string-match-p (prot-common--get-file-type-regexp 'program) file)
     (prot-icons-get-icon 'prog-mode))
+   ((string-match-p (prot-common--get-file-type-regexp 'program-data) file)
+    (prot-icons-get-icon 'conf-mode))
    (t (prot-icons-get-icon nil))))
 
 ;;;; Icons for Dired
@@ -184,7 +190,8 @@ FACE is the face to use for it, where applicable.")
   (let ((overlay (make-overlay (1- pos) pos)))
     (overlay-put overlay 'prot-icons-overlay t)
     (overlay-put overlay 'evaporate t)
-    (overlay-put overlay 'after-string (propertize string 'display string))))
+    (overlay-put overlay 'before-string (propertize string 'display string))
+    (overlay-put overlay 'after-string (propertize " " 'display '(space :align-to 1)))))
 
 (defun prot-icons-dired--remove-all-overlays ()
   "Remove all `prot-icons' overlays."
@@ -203,9 +210,7 @@ FACE is the face to use for it, where applicable.")
                   (icon (if (file-directory-p file)
                             (prot-icons-get-file-icon (concat file "/"))
                           (prot-icons-get-file-icon file))))
-        (if (member file '("." ".."))
-            (prot-icons-dired--add-overlay (dired-move-to-filename) "  \t")
-          (prot-icons-dired--add-overlay (dired-move-to-filename) (concat icon "\t")))))))
+        (prot-icons-dired--add-overlay (dired-move-to-filename) icon)))))
 
 (defun prot-icons-dired--refresh ()
   "Update the display of icons of files in a Dired buffer."
@@ -242,7 +247,8 @@ FACE is the face to use for it, where applicable.")
   (let ((overlay (make-overlay position (+ position 1))))
     (overlay-put overlay 'prot-icons-overlay t)
     (overlay-put overlay 'evaporate t)
-    (overlay-put overlay 'before-string (propertize string 'display string))))
+    (overlay-put overlay 'before-string (propertize string 'display string))
+    (overlay-put overlay 'after-string (propertize " " 'display '(space :align-to 1)))))
 
 (defun prot-icons-xref--add-icons ()
   "Add icons to Xref headings."
@@ -254,7 +260,7 @@ FACE is the face to use for it, where applicable.")
                     (end (prop-match-end prop))
                     (file (string-chop-newline (buffer-substring-no-properties start end)))
                     (icon (prot-icons-get-file-icon file)))
-          (prot-icons-xref--add-overlay start (concat icon " ")))))))
+          (prot-icons-xref--add-overlay start icon))))))
 
 ;;;###autoload
 (define-minor-mode prot-icons-xref-mode
