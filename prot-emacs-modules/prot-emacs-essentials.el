@@ -101,7 +101,7 @@
 
   (prot-emacs-keybind prot-simple-override-mode-map
     "C-a" #'prot-simple-duplicate-line-or-region ; "again" mnemonic, overrides `move-beginning-of-line'
-    ;; "C-d" #'prot-simple-delete-line ; overrides `delete-char'
+    "C-d" #'prot-simple-delete-line ; overrides `delete-char'
     "C-v" #'prot-simple-multi-line-below ; overrides `scroll-up-command'
     "<next>" #'prot-simple-multi-line-below ; overrides `scroll-up-command'
     "M-v" #'prot-simple-multi-line-above ; overrides `scroll-down-command'
