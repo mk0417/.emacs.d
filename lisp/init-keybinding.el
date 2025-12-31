@@ -150,7 +150,7 @@
 
   (define-key meow-insert-state-keymap (kbd "C-g") 'meow-insert-exit)
   (define-key meow-keypad-state-keymap (kbd "C-g") 'meow-keypad-quit)
-  (define-key meow-insert-state-keymap (kbd "C-i") 'delete-backward-char)
+  (define-key meow-insert-state-keymap (kbd "C-k") 'delete-backward-char)
   (define-key meow-insert-state-keymap (kbd "C-w") 'backward-kill-word))
 
 (use-package prot-prefix
