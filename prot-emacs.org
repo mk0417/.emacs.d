@@ -4084,9 +4084,9 @@ for this.
             (project-file . (,@eager-update-properties
                              (group-function . ,#'prot-minibuffer-file-group)
                              (affixation-function . ,#'prot-minibuffer-file-affixate)))
-            (library . (,@eager-update-properties
-                        (annotation-function . ,#'prot-minibuffer-library-annotate)
-                        (display-sort-function . ,#'prot-minibuffer-library-sort)))
+            (prot-minibuffer-library . (,@eager-update-properties
+                                        (annotation-function . ,#'prot-minibuffer-library-annotate)
+                                        (display-sort-function . ,#'prot-minibuffer-library-sort)))
             (symbol-help . (,@eager-update-properties
                             (display-sort-function . ,#'prot-minibuffer-symbol-sort)))
             (buffer . (,@eager-update-properties
@@ -4094,12 +4094,14 @@ for this.
             (command . ((affixation-function . nil)
                         (annotation-function . ,#'prot-minibuffer-command-annotate)))
             (denote-file . ,eager-update-properties)
-            (emoji . ,eager-update-properties)
+            (prot-minibuffer-emoji . ,eager-update-properties)
             (theme . ,eager-update-properties)
             (unicode-name . ,eager-update-properties)
-            (kill-ring . ,eager-update-properties-no-sort)
             (imenu . ,eager-update-properties-no-sort)
-            (consult-location . ,eager-update-properties-no-sort)))))
+            (consult-location . ,eager-update-properties-no-sort)
+            (prot-minibuffer-kill-ring . ((eager-display . t)
+                                          (eager-update . t)
+                                          (display-sort-function . identity)))))))
 #+end_src
 
 *** The =prot-emacs-completion.el= for the ~orderless~ completion style
@@ -4284,13 +4286,12 @@ experience.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-completion.el"
 (prot-emacs-configure
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-  ;; Not everything here comes from rfn-eshadow.el, but this is fine.
   (setq resize-mini-windows t)
   (setq read-answer-short t) ; also check `use-short-answers' for Emacs28
   (setq echo-keystrokes 0.25)
   (setq kill-ring-max 60) ; Keep it small
 
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   ;; Do not allow the cursor to move inside the minibuffer prompt.  I
   ;; got this from the documentation of Daniel Mendler's Vertico
   ;; package: <https://github.com/minad/vertico>.
@@ -6506,15 +6507,16 @@ case-by-case basis.
   (prot-emacs-hook (world-clock-mode-hook calendar-mode-hook) prot-common-truncate-lines-silently))
 #+end_src
 
-*** The =prot-emacs-window.el= section key bindings
+*** The =prot-emacs-window.el= section with relevant key bindings
 :PROPERTIES:
 :CUSTOM_ID: h:49ad5448-2ccd-4f47-82fd-17819ffdbdf3
 :END:
 
-Here I simply define some key bindings. The commands I use the most in
-this list are ~delete-other-windows-vertically~, ~previous-buffer~,
-and ~next-buffer~. I rarely resize windows, though I am happy to use
-the mouse for such a case.
+Here I simply define some key bindings pertaining to window
+operations. The commands I use the most in this list are
+~delete-other-windows-vertically~, ~previous-buffer~, and
+~next-buffer~. I rarely resize windows, though I am happy to use the
+mouse for such a case.
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
 (prot-emacs-configure
@@ -7018,48 +7020,6 @@ They make more sense to me.
     (require 'add-log)
     (require 'log-view)
 
-    ;; NOTE: I override lots of the defaults
-    (prot-emacs-keybind global-map
-      "C-x v B" #'vc-annotate ; Blame mnemonic
-      "C-x v e" #'vc-ediff
-      "C-x v k" #'vc-delete-file ; 'k' for kill==>delete is more common
-      "C-x v G" #'vc-log-search  ; git log --grep
-      "C-x v t" #'vc-create-tag
-      "C-x v c" #'vc-clone ; Emacs 31
-      "C-x v l" #'vc-print-change-log ; Emacs 31 replacement for `vc-print-log'
-      "C-x v L" #'vc-print-root-change-log ; Emacs 31 replacement for `vc-print-root-log'
-      "C-x v d" #'vc-diff
-      "C-x v ." #'vc-dir-root ; `vc-dir-root' is from Emacs 28
-      "C-x v <return>" #'vc-dir-root)
-    (prot-emacs-keybind vc-dir-mode-map
-      "t" #'vc-create-tag
-      "O" #'vc-log-outgoing
-      "o" #'vc-dir-find-file-other-window
-      "d" #'vc-diff ; parallel to D: `vc-root-diff'
-      "k" #'vc-dir-delete-file
-      "G" #'vc-revert)
-    (prot-emacs-keybind vc-git-stash-shared-map
-      "a" #'vc-git-stash-apply-at-point
-      "c" #'vc-git-stash ; "create" named stash
-      "k" #'vc-git-stash-delete-at-point ; symmetry with `vc-dir-delete-file'
-      "p" #'vc-git-stash-pop-at-point
-      "s" #'vc-git-stash-snapshot)
-    (prot-emacs-keybind vc-annotate-mode-map
-      "M-q" #'vc-annotate-toggle-annotation-visibility
-      "C-c C-c" #'vc-annotate-goto-line
-      "<return>" #'vc-annotate-find-revision-at-line)
-    (prot-emacs-keybind log-edit-mode-map
-      "M-s" #'nil ; I use M-s for my search commands
-      "M-r" #'nil) ; I use `consult-history'
-    (prot-emacs-keybind log-view-mode-map
-      "<tab>" #'log-view-toggle-entry-display
-      "<return>" #'log-view-find-revision
-      "s" #'vc-log-search
-      "o" #'vc-log-outgoing
-      "f" #'vc-log-incoming
-      "F" #'vc-update
-      "P" #'vc-push)
-
     ;; I only use Git.  If I ever need another, I will include it here.
     ;; This may have an effect on performance, as Emacs will not try to
     ;; check for a bunch of backends.
@@ -7106,7 +7066,109 @@ They make more sense to me.
 
     ;; These two are from Emacs 29
     (setq vc-git-log-edit-summary-target-len 50)
-    (setq vc-git-log-edit-summary-max-len 70)))
+    (setq vc-git-log-edit-summary-max-len 70)
+
+    (define-advice vc-push (:around (&rest args) prot)
+      (let ((current-window (selected-window)))
+        (apply args)
+        (select-window current-window)))
+
+    (define-advice vc-pull (:around (&rest args) prot)
+      (let ((current-window (selected-window)))
+        (apply args)
+        (select-window current-window)))
+
+    (defun prot/vc-diff-dwim ()
+      "Show diff of buffer against file or against VC history."
+      (interactive)
+      (if-let* ((buffer (current-buffer))
+                (_ (buffer-modified-p buffer)))
+          (diff-buffer-with-file buffer)
+        (call-interactively #'vc-diff)))
+
+    (defvar prot/vc-git-grep-history nil
+      "Minibuffer history for `prot/vc-git-grep'.")
+
+    (defun prot/vc-git-grep (directory regexp)
+      "Use `vc-git-grep' with REGEXP in the current root Git DIRECTORY."
+      (interactive
+       (let ((directory (or (vc-root-dir)
+                            (locate-dominating-file "." ".git")
+                            (user-error "No VC root available"))))
+         (list
+          directory
+          (read-regexp
+           (format "vc-git-grep for REGEXP in `%s': "
+                   (propertize directory 'face 'warning))
+           nil 'prot/vc-git-grep-history))))
+      (vc-git-grep regexp "*" directory))
+
+    ;; NOTE: I override lots of the defaults
+    (prot-emacs-keybind global-map
+      "C-x v B" #'vc-annotate ; Blame mnemonic
+      "C-x v g" #'prot/vc-git-grep ; override original `vc-annotate' key
+      "C-x v e" #'vc-ediff
+      "C-x v k" #'vc-delete-file ; 'k' for kill==>delete is more common
+      "C-x v G" #'vc-log-search  ; git log --grep
+      "C-x v t" #'vc-create-tag
+      "C-x v c" #'vc-clone ; Emacs 31
+      "C-x v d" #'prot/vc-diff-dwim
+      "C-x v ." #'vc-dir-root ; `vc-dir-root' is from Emacs 28
+      "C-x v <return>" #'vc-dir-root)
+    (prot-emacs-keybind vc-dir-mode-map
+      "t" #'vc-create-tag
+      "I" #'vc-log-incoming
+      "O" #'vc-log-outgoing
+      "o" #'vc-dir-find-file-other-window
+      "d" #'vc-diff ; parallel to D: `vc-root-diff'
+      "k" #'vc-dir-delete-file
+      "G" #'vc-revert)
+    (prot-emacs-keybind vc-git-stash-shared-map
+      "a" #'vc-git-stash-apply-at-point
+      "c" #'vc-git-stash ; "create" named stash
+      "k" #'vc-git-stash-delete-at-point ; symmetry with `vc-dir-delete-file'
+      "p" #'vc-git-stash-pop-at-point
+      "s" #'vc-git-stash-snapshot)
+    (prot-emacs-keybind vc-annotate-mode-map
+      "M-q" #'vc-annotate-toggle-annotation-visibility
+      "C-c C-c" #'vc-annotate-goto-line
+      "<return>" #'vc-annotate-find-revision-at-line)
+    (prot-emacs-keybind log-edit-mode-map
+      "M-s" nil ; I use M-s for my search commands
+      "M-r" nil)
+    (prot-emacs-keybind log-view-mode-map
+      "<tab>" #'log-view-toggle-entry-display
+      "<return>" #'log-view-find-revision
+      "s" #'vc-log-search))
+
+  (defun prot/modus-vc-annotate ()
+    (modus-themes-with-colors
+      (setq vc-annotate-background-mode nil)
+      (setq vc-annotate-very-old-color fg-dim)
+      (setq vc-annotate-color-map
+            `(( 20. . ,red)
+              ( 40. . ,red-cooler)
+              ( 60. . ,red-warmer)
+              ( 80. . ,yellow-warmer)
+              (100. . ,yellow)
+              (120. . ,yellow-cooler)
+              (140. . ,green-warmer)
+              (160. . ,green)
+              (180. . ,green-cooler)
+              (200. . ,cyan-cooler)
+              (220. . ,cyan-warmer)
+              (240. . ,cyan)
+              (260. . ,blue-warmer)
+              (280. . ,blue)
+              (300. . ,blue-cooler)
+              (320. . ,blue-intense)
+              (340. . ,magenta-cooler)
+              (360. . ,fg-dim)))))
+
+  (when (memq prot-emacs-load-theme-family '(modus ef standard))
+    (with-eval-after-load 'vc-annotate
+      (prot/modus-vc-annotate)
+      (add-hook 'modus-themes-after-load-theme-hook #'prot/modus-vc-annotate))))
 #+end_src
 
 *** COMMENT The =prot-emacs-git.el= section about ~agitate~
@@ -11414,7 +11476,7 @@ not test it as much and do not try to make it work for all cases.
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-abbrev.el" :mkdirp yes
 ;;; prot-abbrev.el --- Functions for use with abbrev-mode -*- lexical-binding: t -*-
 
-;; Copyright (C) 2025-2025  Protesilaos Stavrou
+;; Copyright (C) 2025-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -11530,7 +11592,7 @@ Use completion among previous entries, retrieving their data from
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-comment.el" :mkdirp yes
 ;;; prot-comment.el --- Extensions newcomment.el for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2021-2025  Protesilaos Stavrou
+;; Copyright (C) 2021-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -11687,7 +11749,7 @@ an alternative date format, as specified by
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-common.el" :mkdirp yes
 ;;; prot-common.el --- Common functions for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020-2025  Protesilaos Stavrou
+;; Copyright (C) 2020-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -12132,7 +12194,7 @@ belong to the given subset of CONSEQUENCES.
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-dired.el" :mkdirp yes
 ;;; prot-dired.el --- Extensions to dired.el for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020-2025  Protesilaos Stavrou
+;; Copyright (C) 2020-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -12412,7 +12474,7 @@ Add this to `dired-mode-hook'."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-ediff.el" :mkdirp yes
 ;;; prot-ediff.el --- Ediff extensions for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2025  Protesilaos Stavrou
+;; Copyright (C) 2025-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -12496,7 +12558,7 @@ Also see `prot-ediff-store-layout'."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-elisp.el" :mkdirp yes
 ;;; prot-elisp.el --- Emacs Lisp extras for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2025  Protesilaos Stavrou
+;; Copyright (C) 2025-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -12588,7 +12650,7 @@ Now use `display-buffer-alist' like the Lisp gods intended."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-icons.el" :mkdirp yes
 ;;; prot-icons.el --- Get characters, icons, and symbols for things -*- lexical-binding: t -*-
 
-;; Copyright (C) 2025  Protesilaos Stavrou
+;; Copyright (C) 2025-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; Maintainer: Protesilaos Stavrou <info@protesilaos.com>
@@ -12901,7 +12963,7 @@ FACE is the face to use for it, where applicable.")
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-eww.el" :mkdirp yes
 ;;; prot-eww.el --- Extensions for EWW -*- lexical-binding: t -*-
 
-;; Copyright (C) 2021-2025  Protesilaos Stavrou
+;; Copyright (C) 2021-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; Maintainer: Protesilaos Stavrou <info@protesilaos.com>
@@ -13047,7 +13109,7 @@ buffer instead of the current one."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-minibuffer.el" :mkdirp yes
 ;;; prot-minibuffer.el --- Extensions for the minibuffer and completions -*- lexical-binding: t -*-
 
-;; Copyright (C) 2025  Protesilaos Stavrou
+;; Copyright (C) 2025-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; Maintainer: Protesilaos Stavrou <info@protesilaos.com>
@@ -13089,15 +13151,15 @@ buffer instead of the current one."
 ;; Add some missing completion categories to let me configure the
 ;; relevant prompts via the `completion-category-overrides'.
 (defun prot-minibuffer@read-from-kill-ring (&rest args)
-  (let ((completion-extra-properties (list :category 'kill-ring)))
+  (let ((completion-extra-properties (list :category 'prot-minibuffer-kill-ring)))
     (apply args)))
 
 (defun prot-minibuffer@read-library-name (&rest args)
-  (let ((completion-extra-properties (list :category 'library)))
+  (let ((completion-extra-properties (list :category 'prot-minibuffer-library)))
     (apply args)))
 
 (defun prot-minibuffer@emoji--read-emoji (&rest args)
-  (let ((completion-extra-properties (list :category 'emoji)))
+  (let ((completion-extra-properties (list :category 'prot-minibuffer-emoji)))
     (apply args)))
 
 ;;;###autoload
@@ -13366,7 +13428,7 @@ property, such that it can be found by `prot-minibuffer-completions-close-help'.
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-modeline.el" :mkdirp yes
 ;;; prot-modeline.el --- Code for my custom mode line -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023-2025  Protesilaos Stavrou
+;; Copyright (C) 2023-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -13987,7 +14049,7 @@ Specific to the current window's mode line.")
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-notmuch.el" :mkdirp yes
 ;;; prot-notmuch.el --- Tweaks for my notmuch.el configurations -*- lexical-binding: t -*-
 
-;; Copyright (C) 2021-2025  Protesilaos Stavrou
+;; Copyright (C) 2021-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -14265,7 +14327,7 @@ Add this to `notmuch-mua-send-hook'."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-orderless.el" :mkdirp yes
 ;;; prot-orderless.el --- Extensions for Orderless -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020-2025  Protesilaos Stavrou
+;; Copyright (C) 2020-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -14328,7 +14390,7 @@ Add this to `notmuch-mua-send-hook'."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-org.el" :mkdirp yes
 ;;; prot-org.el --- Tweaks for my org-mode configurations -*- lexical-binding: t -*-
 
-;; Copyright (C) 2021-2025  Protesilaos Stavrou
+;; Copyright (C) 2021-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -14910,7 +14972,7 @@ from the heading text instead of a UUID."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-pair.el" :mkdirp yes
 ;;; prot-pair.el --- Insert character pair around symbol or region -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023-2025  Protesilaos Stavrou
+;; Copyright (C) 2023-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -15096,7 +15158,7 @@ controlled by `delete-pair-blink-delay'."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-prefix.el" :mkdirp yes
 ;;; prot-prefix.el --- Prefix keymap for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023-2025  Protesilaos Stavrou
+;; Copyright (C) 2023-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -15459,7 +15521,7 @@ controlled by `delete-pair-blink-delay'."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-project.el" :mkdirp yes
 ;;; prot-project.el --- Extensions for project.el -*- lexical-binding: t -*-
 
-;; Copyright (C) 2025-2025  Protesilaos Stavrou
+;; Copyright (C) 2025-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -15643,7 +15705,7 @@ is a string."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-register.el" :mkdirp yes
 ;;; prot-register.el --- Extensions for project.el -*- lexical-binding: t -*-
 
-;; Copyright (C) 2025  Protesilaos Stavrou
+;; Copyright (C) 2025-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -15806,7 +15868,7 @@ Also see `prot-register-use-dwim'."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-scratch.el" :mkdirp yes
 ;;; prot-scratch.el --- Scratch buffers for editable major mode of choice -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023-2025  Protesilaos Stavrou
+;; Copyright (C) 2023-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -15938,7 +16000,7 @@ for the given MAJOR-MODE, any text is appended to it."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-search.el" :mkdirp yes
 ;;; prot-search.el --- Extensions to isearch, replace, grep for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020-2025  Protesilaos Stavrou
+;; Copyright (C) 2020-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -16487,7 +16549,7 @@ and function as links to the context they reference."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-shell.el" :mkdirp yes
 ;;; prot-shell.el --- M-x shell extensions for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023-2025  Protesilaos Stavrou
+;; Copyright (C) 2023-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -16836,7 +16898,7 @@ Add a bookmark handler for shell buffer and activate the
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-simple.el" :mkdirp yes
 ;;; prot-simple.el --- Common commands for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020-2025  Protesilaos Stavrou
+;; Copyright (C) 2020-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -17991,7 +18053,7 @@ major mode.")
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-spell.el" :mkdirp yes
 ;;; prot-spell.el --- Spelling-related extensions for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2021-2025  Protesilaos Stavrou
+;; Copyright (C) 2021-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -18099,7 +18161,7 @@ function.  Then you can control the buffer's specifics via
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-vertico.el" :mkdirp yes
 ;;; prot-vertico.el --- Custom Vertico extras -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023-2025  Protesilaos Stavrou
+;; Copyright (C) 2023-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs
@@ -18230,7 +18292,7 @@ Else do `vertico-exit'."
 #+begin_src emacs-lisp :tangle "prot-lisp/prot-window.el" :mkdirp yes
 ;;; prot-window.el --- Display-buffer and window-related extensions for my dotemacs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023-2025  Protesilaos Stavrou
+;; Copyright (C) 2023-2026  Protesilaos Stavrou
 
 ;; Author: Protesilaos Stavrou <info@protesilaos.com>
 ;; URL: https://protesilaos.com/emacs/dotemacs

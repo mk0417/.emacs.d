@@ -32,9 +32,9 @@
             (project-file . (,@eager-update-properties
                              (group-function . ,#'prot-minibuffer-file-group)
                              (affixation-function . ,#'prot-minibuffer-file-affixate)))
-            (library . (,@eager-update-properties
-                        (annotation-function . ,#'prot-minibuffer-library-annotate)
-                        (display-sort-function . ,#'prot-minibuffer-library-sort)))
+            (prot-minibuffer-library . (,@eager-update-properties
+                                        (annotation-function . ,#'prot-minibuffer-library-annotate)
+                                        (display-sort-function . ,#'prot-minibuffer-library-sort)))
             (symbol-help . (,@eager-update-properties
                             (display-sort-function . ,#'prot-minibuffer-symbol-sort)))
             (buffer . (,@eager-update-properties
@@ -42,12 +42,14 @@
             (command . ((affixation-function . nil)
                         (annotation-function . ,#'prot-minibuffer-command-annotate)))
             (denote-file . ,eager-update-properties)
-            (emoji . ,eager-update-properties)
+            (prot-minibuffer-emoji . ,eager-update-properties)
             (theme . ,eager-update-properties)
             (unicode-name . ,eager-update-properties)
-            (kill-ring . ,eager-update-properties-no-sort)
             (imenu . ,eager-update-properties-no-sort)
-            (consult-location . ,eager-update-properties-no-sort)))))
+            (consult-location . ,eager-update-properties-no-sort)
+            (prot-minibuffer-kill-ring . ((eager-display . t)
+                                          (eager-update . t)
+                                          (display-sort-function . identity)))))))
 
 ;;; Orderless completion style (and prot-orderless.el)
 (when prot-emacs-completion-extras
@@ -81,13 +83,12 @@
   (minibuffer-electric-default-mode 1))
 
 (prot-emacs-configure
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
-  ;; Not everything here comes from rfn-eshadow.el, but this is fine.
   (setq resize-mini-windows t)
   (setq read-answer-short t) ; also check `use-short-answers' for Emacs28
   (setq echo-keystrokes 0.25)
   (setq kill-ring-max 60) ; Keep it small
 
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
   ;; Do not allow the cursor to move inside the minibuffer prompt.  I
   ;; got this from the documentation of Daniel Mendler's Vertico
   ;; package: <https://github.com/minad/vertico>.
