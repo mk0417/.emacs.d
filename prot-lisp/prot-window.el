@@ -26,11 +26,6 @@
 ;;
 ;; This covers my window and display-buffer extensions, for use in my
 ;; Emacs setup: https://protesilaos.com/emacs/dotemacs.
-;;
-;; Remember that every piece of Elisp that I write is for my own
-;; educational and recreational purposes.  I am not a programmer and I
-;; do not recommend that you copy any of this if you are not certain of
-;; what it does.
 
 ;;; Code:
 
@@ -238,7 +233,7 @@ Also see `prot-window-delete-popup-frame'." command)
 ;;;###autoload (autoload 'prot-window-popup-tmr "prot-window")
 (prot-window-define-with-popup-frame tmr)  ; defines command `prot-window-popup-tmr'
 
-;;;###autoload (autoload 'prot-window-popup-tmr "prot-window")
+;;;###autoload (autoload 'prot-window-popup-prot-project-switch "prot-window")
 (prot-window-define-with-popup-frame prot-project-switch)  ; defines command `prot-window-popup-prot-project-switch'
 
 (defun prot-window-set-delete-popup-hook (feature hook)

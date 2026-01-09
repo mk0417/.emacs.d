@@ -3762,6 +3762,27 @@ as soon as the given package/feature is loaded.
                   "  "
                   prot-modeline-misc-info))
 
+  (when (memq prot-emacs-load-theme-family '(modus ef standard))
+    (defun prot/modeline-set-faces ()
+      (modus-themes-with-colors
+        (custom-set-faces
+         `(prot-modeline-indicator-red ((,c :foreground ,red)))
+         `(prot-modeline-indicator-green ((,c :foreground ,green)))
+         `(prot-modeline-indicator-yellow ((,c :foreground ,yellow)))
+         `(prot-modeline-indicator-blue ((,c :foreground ,blue)))
+         `(prot-modeline-indicator-magenta ((,c :foreground ,magenta)))
+         `(prot-modeline-indicator-cyan ((,c :foreground ,cyan)))
+         `(prot-modeline-indicator-red-bg ((,c :background ,bg-red-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-green-bg ((,c :background ,bg-green-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-yellow-bg ((,c :background ,bg-yellow-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-blue-bg ((,c :background ,bg-blue-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-magenta-bg ((,c :background ,bg-magenta-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-cyan-bg ((,c :background ,bg-cyan-intense :foreground ,fg-main))))))
+
+    (prot/modeline-set-faces)
+
+    (add-hook 'modus-themes-after-load-theme-hook #'prot/modeline-set-faces))
+
   (with-eval-after-load 'spacious-padding
     (defun prot/modeline-spacious-indicators ()
       "Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
@@ -6788,6 +6809,7 @@ functionality I rely on, so do take a look at what it has to offer.
   (advice-add #'project-switch-project :after #'prot-common-clear-minibuffer-message)
 
   (autoload #'prot-project-maybe-in-tab "prot-project")
+  (autoload #'prot-project-switch "prot-project")
   (define-key project-prefix-map (kbd "p") #'prot-project-maybe-in-tab))
 #+end_src
 
@@ -8990,7 +9012,7 @@ of packaging. I use it whenever I work on my numerous Emacs packages.
 
 ;;; Elisp packaging requirements
   (prot-emacs-install package-lint-flymake)
-  (add-hook 'flymake-diagnostic-functions #'package-lint-flymake))
+  (package-lint-flymake-setup))
 #+end_src
 
 *** The =prot-emacs-langs.el= settings for ~outline-minor-mode~
@@ -11445,6 +11467,21 @@ are handled by =prot-modeline.el=:
 ;; `completion-category-overrides' for completion-related icons.
 (prot-emacs-configure
   (prot-emacs-autoload (prot-icons-dired-mode prot-icons-xref-mode) "prot-icons")
+
+  (when (memq prot-emacs-load-theme-family '(modus ef standard))
+    (defun prot/icons-set-faces ()
+      (modus-themes-with-colors
+        (custom-set-faces
+         `(prot-icons-red ((,c :foreground ,red)))
+         `(prot-icons-green ((,c :foreground ,green)))
+         `(prot-icons-yellow ((,c :foreground ,yellow)))
+         `(prot-icons-blue ((,c :foreground ,blue)))
+         `(prot-icons-magenta ((,c :foreground ,magenta)))
+         `(prot-icons-cyan ((,c :foreground ,cyan))))))
+
+    (prot/icons-set-faces)
+
+    (add-hook 'modus-themes-after-load-theme-hook #'prot/icons-set-faces))
 
   (prot-icons-dired-mode 1)
   (prot-icons-xref-mode 1))
@@ -18525,7 +18562,7 @@ Also see `prot-window-delete-popup-frame'." command)
 ;;;###autoload (autoload 'prot-window-popup-tmr "prot-window")
 (prot-window-define-with-popup-frame tmr)  ; defines command `prot-window-popup-tmr'
 
-;;;###autoload (autoload 'prot-window-popup-tmr "prot-window")
+;;;###autoload (autoload 'prot-window-popup-prot-project-switch "prot-window")
 (prot-window-define-with-popup-frame prot-project-switch)  ; defines command `prot-window-popup-prot-project-switch'
 
 (defun prot-window-set-delete-popup-hook (feature hook)
