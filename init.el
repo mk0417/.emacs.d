@@ -148,10 +148,29 @@ These include the packages `marginalia', `consult', `corfu',
 
 ;; Also read: <https://protesilaos.com/codelog/2022-05-13-emacs-elpa-devel/>
 (setq package-pinned-packages
-      `(,@(mapcar
-           (lambda (package)
-             (cons package "gnu-elpa-devel"))
-           prot-emacs-my-packages)))
+      (mapcar
+       (lambda (package)
+         (cons package "gnu-elpa-devel"))
+       prot-emacs-my-packages))
+
+;; These are for Emacs 31.
+(setq package-review-policy
+      (mapcar
+       (lambda (package)
+         (list 'not 'packagge package))
+       prot-emacs-my-packages))
+
+(setq package-review-diff-command
+      (cons diff-command
+            '("-u"
+              "-x" "'*.elc'"
+              "-x" "'*-autoloads.el'"
+              "-x" "'*-pkg.el'"
+              "-x" "'*.info'"
+              "-x" "'*.texi'"
+              "-x" "'*.txt'"
+              "-x" "'*.md'"
+              "-x" "'*.org'")))
 
 (setq custom-safe-themes t)
 
