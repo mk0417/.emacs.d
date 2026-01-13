@@ -1041,10 +1041,15 @@ attacks, which are really common these days.
 
 ;; These are for Emacs 31.
 (setq package-review-policy
-      (mapcar
-       (lambda (package)
-         (list 'not 'packagge package))
-       prot-emacs-my-packages))
+      (append
+       (mapcar
+        (lambda (package)
+          (list 'not 'packagge package))
+        prot-emacs-my-packages)
+       (mapcar
+        (lambda (archive)
+          (list 'archive (car archive)))
+        package-archives)))
 
 (setq package-review-diff-command
       (cons diff-command
@@ -3811,12 +3816,12 @@ as soon as the given package/feature is loaded.
          `(prot-modeline-indicator-blue ((,c :foreground ,blue)))
          `(prot-modeline-indicator-magenta ((,c :foreground ,magenta)))
          `(prot-modeline-indicator-cyan ((,c :foreground ,cyan)))
-         `(prot-modeline-indicator-red-bg ((,c :background ,bg-red-intense :foreground ,fg-main)))
-         `(prot-modeline-indicator-green-bg ((,c :background ,bg-green-intense :foreground ,fg-main)))
-         `(prot-modeline-indicator-yellow-bg ((,c :background ,bg-yellow-intense :foreground ,fg-main)))
-         `(prot-modeline-indicator-blue-bg ((,c :background ,bg-blue-intense :foreground ,fg-main)))
-         `(prot-modeline-indicator-magenta-bg ((,c :background ,bg-magenta-intense :foreground ,fg-main)))
-         `(prot-modeline-indicator-cyan-bg ((,c :background ,bg-cyan-intense :foreground ,fg-main))))))
+         `(prot-modeline-indicator-red-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-red-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-green-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-green-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-yellow-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-yellow-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-blue-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-blue-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-magenta-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-magenta-intense :foreground ,fg-main)))
+         `(prot-modeline-indicator-cyan-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-cyan-intense :foreground ,fg-main))))))
 
     (prot/modeline-set-faces)
 
@@ -3826,7 +3831,7 @@ as soon as the given package/feature is loaded.
     (defun prot/modeline-spacious-indicators ()
       "Set box attribute to `'prot-modeline-indicator-button' if spacious-padding is enabled."
       (if (bound-and-true-p spacious-padding-mode)
-          (set-face-attribute 'prot-modeline-indicator-button nil :box t)
+          (set-face-attribute 'prot-modeline-indicator-button nil :box '(:style flat-button))
         (set-face-attribute 'prot-modeline-indicator-button nil :box 'unspecified)))
 
     ;; Run it at startup and then afterwards whenever
@@ -4022,14 +4027,15 @@ interpret user input and match candidates accordingly.
   point. Using the above example, this one will consider patterns that
   match all of ~emacs22~ as well as anything that completes =suffix=.
 
-- partial-completion :: This is used for file navigation. Instead of
-  typing out a full path like =~/.local/share/fonts=, we do =~/.l/s/f=
-  or variants thereof to make the matches unique such as =~/.l/sh/fon=.
-  It is a joy to navigate the file system in this way.
-
 - substring :: Matches the given sequence of characters literally
   regardless of where it is in a word. So =pro= will match
   =professional= as well as =reproduce=.
+
+- partial-completion :: This is used for file navigation. Instead of
+  typing out a full path like =~/.local/share/fonts=, we do =~/.l/s/f=
+  or variants thereof to make the matches unique such as =~/.l/sh/fon=.
+  It is a joy to navigate the file system in this way. Though it also
+  expands words are substrings.
 
 - flex :: Completion of an in-order subset of characters. It does not
   matter where the charactes are in the word, so long as they are
@@ -4071,7 +4077,7 @@ of ([[#h:0d49218d-4199-4847-9765-60a3f94e515d][The =prot-emacs-completion.el= se
 ;;; General minibuffer settings
 (prot-emacs-configure
 ;;;; Completion styles
-  (setq completion-styles '(basic substring initials flex)) ; also see `completion-category-overrides'
+  (setq completion-styles '(basic substring initials partial-completion flex)) ; also see `completion-category-overrides'
   (setq completion-pcm-leading-wildcard nil) ; Emacs 31
   (with-eval-after-load 'orderless
     (setq completion-styles (append completion-styles '(orderless)))))
@@ -11511,13 +11517,15 @@ are handled by =prot-modeline.el=:
     (defun prot/icons-set-faces ()
       (modus-themes-with-colors
         (custom-set-faces
-         `(prot-icons-gray ((,c :foreground ,fg-dim)))
-         `(prot-icons-red ((,c :foreground ,red)))
-         `(prot-icons-green ((,c :foreground ,green)))
-         `(prot-icons-yellow ((,c :foreground ,yellow)))
-         `(prot-icons-blue ((,c :foreground ,blue)))
-         `(prot-icons-magenta ((,c :foreground ,magenta)))
-         `(prot-icons-cyan ((,c :foreground ,cyan))))))
+         `(prot-icons-icon ((,c :inherit (bold fixed-pitch) :box (:line-width (1 . -1)) :inverse-video t)))
+         `(prot-icons-directory ((,c :inherit prot-icons-icon :foreground ,accent-0)))
+         `(prot-icons-gray ((,c :inherit prot-icons-icon :foreground ,fg-dim)))
+         `(prot-icons-red ((,c :inherit prot-icons-icon :foreground ,red)))
+         `(prot-icons-green ((,c :inherit prot-icons-icon :foreground ,green)))
+         `(prot-icons-yellow ((,c :inherit prot-icons-icon :foreground ,yellow)))
+         `(prot-icons-blue ((,c :inherit prot-icons-icon :foreground ,blue)))
+         `(prot-icons-magenta ((,c :inherit prot-icons-icon :foreground ,magenta)))
+         `(prot-icons-cyan ((,c :inherit prot-icons-icon :foreground ,cyan))))))
 
     (prot/icons-set-faces)
 
@@ -12838,8 +12846,15 @@ Now use `display-buffer-alist' like the Lisp gods intended."
   "Face for icons."
   :group 'prot-icons)
 
+(defface prot-icons-directory
+  `((t :inherit ,(if (facep 'dired-directory)
+                     '(prot-icons-icon dired-directory)
+                   'prot-icons-icon)))
+  "Face for icons."
+  :group 'prot-icons)
+
 (defvar prot-icons
-  '((dired-mode "|+" prot-icons-gray)
+  '((dired-mode "|+" prot-icons-directory)
     (archive-mode "|@" prot-icons-gray)
     (diff-mode ">Δ" prot-icons-gray) ; διαφορά
     (prog-mode ">Π" prot-icons-magenta) ; πρόγραμμα
@@ -13854,9 +13869,9 @@ face.  Let other buffers have no face.")
 
 ;;;; Major mode
 
-(defun prot-modeline-major-mode-icon (&optional face)
-  "Return icon for the major mode, optionally propertized with FACE."
-  (prot-icons-get-icon major-mode face))
+(defun prot-modeline-major-mode-icon ()
+  "Return icon for the major mode."
+  (prot-icons-get-icon major-mode 'prot-modeline-indicator-gray))
 
 (defun prot-modeline-major-mode-name ()
   "Return capitalized `major-mode' without the -mode suffix."
@@ -13873,7 +13888,7 @@ face.  Let other buffers have no face.")
      (propertize "%[" 'face 'prot-modeline-indicator-red)
      '(:eval
        (concat
-        (prot-modeline-major-mode-icon (unless (mode-line-window-selected-p) 'shadow))
+        (prot-modeline-major-mode-icon)
         " "
         (propertize
          (prot-modeline-string-abbreviate-but-last
