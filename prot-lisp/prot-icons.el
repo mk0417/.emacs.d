@@ -119,7 +119,7 @@
   :group 'prot-icons)
 
 (defvar prot-icons
-  '((dired-mode "|/" prot-icons-directory)
+  '((dired-mode "|*" prot-icons-directory)
     (archive-mode "|@" prot-icons-directory)
     (diff-mode ">Δ" prot-icons-yellow) ; διαφορά
     (prog-mode ">Π" prot-icons-magenta) ; πρόγραμμα
@@ -130,6 +130,8 @@
     (audio ">Η" prot-icons-cyan) ; ήχος
     (image ">Ε" prot-icons-yellow) ; εικόνα
     (video ">Κ" prot-icons-blue) ; κίνηση (κινηματογράφος)
+    (frame "[]" prot-icons-gray)
+    (git "|-" prot-icons-gray)
     (t ">." prot-icons-gray))
   "Major modes or concepts and their corresponding icons.
 Each element is a cons cell of the form (THING STRING FACE), where THING

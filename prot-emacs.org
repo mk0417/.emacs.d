@@ -9714,6 +9714,7 @@ most potent I have ever used ([[#h:33151014-3621-4be6-9185-aacc34ee2d2c][Overvie
   (setq message-confirm-send nil)
   (setq message-kill-buffer-on-exit t)
   ;; (add-to-list 'mm-body-charset-encoding-alist '(utf-8 . base64))
+  (setq message-forward-as-mime t)
   (setq message-wide-reply-confirm-recipients nil))
 #+end_src
 
@@ -11525,10 +11526,10 @@ are handled by =prot-modeline.el=:
          `(prot-icons-directory ((,c :inherit bold :foreground ,accent-0)))
          `(prot-icons-gray ((,c :inherit bold :foreground ,fg-dim)))
          `(prot-icons-red ((,c :inherit prot-icons-icon :foreground ,red)))
-         `(prot-icons-green ((,c :inherit prot-icons-icon :foreground ,green)))
+         `(prot-icons-green ((,c :inherit prot-icons-icon :foreground ,green-warmer)))
          `(prot-icons-yellow ((,c :inherit prot-icons-icon :foreground ,yellow)))
-         `(prot-icons-blue ((,c :inherit prot-icons-icon :foreground ,blue)))
-         `(prot-icons-magenta ((,c :inherit prot-icons-icon :foreground ,magenta)))
+         `(prot-icons-blue ((,c :inherit prot-icons-icon :foreground ,blue-cooler)))
+         `(prot-icons-magenta ((,c :inherit prot-icons-icon :foreground ,magenta-cooler)))
          `(prot-icons-cyan ((,c :inherit prot-icons-icon :foreground ,cyan))))))
 
     (prot/icons-set-faces)
@@ -12858,7 +12859,7 @@ Now use `display-buffer-alist' like the Lisp gods intended."
   :group 'prot-icons)
 
 (defvar prot-icons
-  '((dired-mode "|/" prot-icons-directory)
+  '((dired-mode "|*" prot-icons-directory)
     (archive-mode "|@" prot-icons-directory)
     (diff-mode ">Δ" prot-icons-yellow) ; διαφορά
     (prog-mode ">Π" prot-icons-magenta) ; πρόγραμμα
@@ -12869,6 +12870,8 @@ Now use `display-buffer-alist' like the Lisp gods intended."
     (audio ">Η" prot-icons-cyan) ; ήχος
     (image ">Ε" prot-icons-yellow) ; εικόνα
     (video ">Κ" prot-icons-blue) ; κίνηση (κινηματογράφος)
+    (frame "[]" prot-icons-gray)
+    (git "|-" prot-icons-gray)
     (t ">." prot-icons-gray))
   "Major modes or concepts and their corresponding icons.
 Each element is a cons cell of the form (THING STRING FACE), where THING
@@ -13936,7 +13939,7 @@ face.  Let other buffers have no face.")
   "Prepare text for Git controlled FILE, given BRANCH.
 With optional FACE, use it to propertize the BRANCH."
   (format "%s %s "
-          (propertize "\\/" 'face 'prot-modeline-indicator-gray)
+          (prot-icons-get-icon 'git 'prot-modeline-indicator-gray)
           ;; (propertize (char-to-string #xE0A0) 'face 'prot-modeline-indicator-gray)
           (propertize branch
                       'face face
@@ -14063,9 +14066,8 @@ Specific to the current window's mode line.")
                         (current-frame (selected-frame))
                         (_ (frame-live-p current-frame))
                         (parameters (frame-parameters))
-                        (name (capitalize (alist-get 'name parameters)))
-                        (indicator "[+]"))
-              (format "%s %s " (propertize indicator 'face 'prot-modeline-indicator-gray) name)))))
+                        (name (capitalize (alist-get 'name parameters))))
+              (format "%s %s " (prot-icons-get-icon 'frame 'prot-modeline-indicator-gray) name)))))
   "Mode line construct to display the current frame name.")
 
 ;;;; `which-function-mode' indicator
