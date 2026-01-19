@@ -17,7 +17,7 @@
 (setq lsp-bridge-python-lsp-server "basedpyright")
 (setq lsp-bridge-multi-lang-server-mode-list '(((python-mode python-ts-mode) . nil)))
 (setq lsp-bridge-code-action-enable-popup-menu nil)
-(setq acm-enable-capf t)
+;; (setq acm-enable-capf t)
 (setq acm-enable-lsp-workspace-symbol t)
 (setq acm-enable-codeium nil)
 (setq acm-enable-yas nil)
