@@ -87,14 +87,9 @@ Omit the .. directory from FILES."
   "Return FILE group name unless TRANSFORM is non-nil."
   (cond
    (transform file)
-   ((string-suffix-p "/" file) "Directory")
-   ((string-match-p (prot-common--get-file-type-regexp 'archive) file) "Archive")
-   ((string-match-p (prot-common--get-file-type-regexp 'text) file) "Text")
-   ((string-match-p (prot-common--get-file-type-regexp 'image) file) "Image")
-   ((string-match-p (prot-common--get-file-type-regexp 'audio) file) "Audio")
-   ((string-match-p (prot-common--get-file-type-regexp 'video) file) "Video")
-   ((string-match-p (prot-common--get-file-type-regexp 'document) file) "Document")
-   ((string-match-p (prot-common--get-file-type-regexp 'program) file) "Program")
+   ((string-suffix-p "/" file) "/")
+   ((string-prefix-p "." file) ".")
+   ((file-name-extension file :include-dot))
    (t "Other")))
 
 (defun prot-minibuffer--set-default-sort (candidates)
@@ -120,6 +115,13 @@ Omit the .. directory from FILES."
               (propertize " " 'display '(space :align-to 60))
             " ")
           (propertize string 'face 'completions-annotations)))
+
+(defun prot-minibuffer-buffer-group (buffer-name transform)
+  "Return BUFFER-NAME group name unless TRANSFORM is non-nil."
+  (if transform
+      buffer-name
+    (with-current-buffer (get-buffer buffer-name)
+      (format "%s" major-mode))))
 
 (defun prot-minibuffer-buffer-affixate (buffers)
   "Return BUFFERS with prefix and suffix."

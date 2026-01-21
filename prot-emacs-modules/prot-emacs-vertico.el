@@ -14,6 +14,12 @@
     ;; only your current input.
     (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
+  (setq vertico-group-format
+        (concat
+         (propertize (make-string 20 ? ) 'face 'completions-group-separator)
+         (propertize " %s " 'face 'completions-group-title)
+         (propertize " " 'face 'completions-group-separator 'display '(space :align-to right))))
+
   (vertico-mode 1))
 
 ;;; Custom tweaks for vertico (prot-vertico.el)

@@ -65,7 +65,7 @@ These include the packages `marginalia', `consult', `corfu',
 (mapc
  (lambda (command)
    (put command 'disabled nil))
- '(list-timers narrow-to-region narrow-to-page upcase-region downcase-region))
+ '(list-timers narrow-to-region narrow-to-page upcase-region downcase-region diff-restrict-view))
 
 ;; And disable these
 (mapc

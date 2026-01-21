@@ -38,6 +38,7 @@
             (symbol-help . (,@eager-update-properties
                             (display-sort-function . ,#'prot-minibuffer-symbol-sort)))
             (buffer . (,@eager-update-properties
+                       (group-function . ,#'prot-minibuffer-buffer-group)
                        (affixation-function . ,#'prot-minibuffer-buffer-affixate)))
             (command . ((affixation-function . nil)
                         (annotation-function . ,#'prot-minibuffer-command-annotate)))
@@ -103,6 +104,12 @@
   (prot-emacs-hook
     (completion-list-mode-hook minibuffer-setup-hook)
     prot-common-truncate-lines-silently)
+
+  (setq completions-group-format
+        (concat
+         (propertize (make-string 20 ? ) 'face 'completions-group-separator)
+         (propertize " %s " 'face 'completions-group-title)
+         (propertize " " 'face 'completions-group-separator 'display '(space :align-to right))))
 
   (unless prot-emacs-completion-ui
     (prot-minibuffer-completions-mode 1)

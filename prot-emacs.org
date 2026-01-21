@@ -835,7 +835,7 @@ then put some on the disabled list.
 (mapc
  (lambda (command)
    (put command 'disabled nil))
- '(list-timers narrow-to-region narrow-to-page upcase-region downcase-region))
+ '(list-timers narrow-to-region narrow-to-page upcase-region downcase-region diff-restrict-view))
 
 ;; And disable these
 (mapc
@@ -4160,6 +4160,7 @@ for this.
             (symbol-help . (,@eager-update-properties
                             (display-sort-function . ,#'prot-minibuffer-symbol-sort)))
             (buffer . (,@eager-update-properties
+                       (group-function . ,#'prot-minibuffer-buffer-group)
                        (affixation-function . ,#'prot-minibuffer-buffer-affixate)))
             (command . ((affixation-function . nil)
                         (annotation-function . ,#'prot-minibuffer-command-annotate)))
@@ -4398,6 +4399,12 @@ completion are collectively enabled through the minor mode ~prot-minibuffer-comp
   (prot-emacs-hook
     (completion-list-mode-hook minibuffer-setup-hook)
     prot-common-truncate-lines-silently)
+
+  (setq completions-group-format
+        (concat
+         (propertize (make-string 20 ? ) 'face 'completions-group-separator)
+         (propertize " %s " 'face 'completions-group-title)
+         (propertize " " 'face 'completions-group-separator 'display '(space :align-to right))))
 
   (unless prot-emacs-completion-ui
     (prot-minibuffer-completions-mode 1)
@@ -5160,21 +5167,27 @@ The extras I provide for ~vertico~ are in [[#h:3796a4c9-8659-4782-8aaa-3cf4e9509
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-vertico.el" :mkdirp yes
 ;;; Vertical completion layout (vertico)
 (prot-emacs-configure
- (prot-emacs-install vertico)
+  (prot-emacs-install vertico)
 
- (setq vertico-scroll-margin 0)
- (setq vertico-count 5)
- (setq vertico-resize t)
- (setq vertico-cycle t)
+  (setq vertico-scroll-margin 0)
+  (setq vertico-count 5)
+  (setq vertico-resize t)
+  (setq vertico-cycle t)
 
- (with-eval-after-load 'rfn-eshadow
-   ;; This works with `file-name-shadow-mode' enabled.  When you are in
-   ;; a sub-directory and use, say, `find-file' to go to your home '~/'
-   ;; or root '/' directory, Vertico will clear the old path to keep
-   ;; only your current input.
-   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
+  (with-eval-after-load 'rfn-eshadow
+    ;; This works with `file-name-shadow-mode' enabled.  When you are in
+    ;; a sub-directory and use, say, `find-file' to go to your home '~/'
+    ;; or root '/' directory, Vertico will clear the old path to keep
+    ;; only your current input.
+    (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
- (vertico-mode 1))
+  (setq vertico-group-format
+        (concat
+         (propertize (make-string 20 ? ) 'face 'completions-group-separator)
+         (propertize " %s " 'face 'completions-group-title)
+         (propertize " " 'face 'completions-group-separator 'display '(space :align-to right))))
+
+  (vertico-mode 1))
 
 ;;; Custom tweaks for vertico (prot-vertico.el)
 (prot-emacs-configure
@@ -12891,7 +12904,8 @@ FACE is the face to use for it, where applicable.")
 (defun prot-icons-get-icon (thing &optional face)
   "Return propertized icon THING."
   (pcase-let ((`(,icon ,inherent-face) (prot-icons--get thing)))
-    (format "%2s" (propertize icon 'font-lock-face (or face inherent-face)))))
+    (let ((face (or face inherent-face)))
+      (format "%2s" (propertize icon 'font-lock-face face 'face face)))))
 
 (defun prot-icons-get-file-icon (file)
   "Return FILE icon and face."
@@ -13285,14 +13299,9 @@ Omit the .. directory from FILES."
   "Return FILE group name unless TRANSFORM is non-nil."
   (cond
    (transform file)
-   ((string-suffix-p "/" file) "Directory")
-   ((string-match-p (prot-common--get-file-type-regexp 'archive) file) "Archive")
-   ((string-match-p (prot-common--get-file-type-regexp 'text) file) "Text")
-   ((string-match-p (prot-common--get-file-type-regexp 'image) file) "Image")
-   ((string-match-p (prot-common--get-file-type-regexp 'audio) file) "Audio")
-   ((string-match-p (prot-common--get-file-type-regexp 'video) file) "Video")
-   ((string-match-p (prot-common--get-file-type-regexp 'document) file) "Document")
-   ((string-match-p (prot-common--get-file-type-regexp 'program) file) "Program")
+   ((string-suffix-p "/" file) "/")
+   ((string-prefix-p "." file) ".")
+   ((file-name-extension file :include-dot))
    (t "Other")))
 
 (defun prot-minibuffer--set-default-sort (candidates)
@@ -13318,6 +13327,13 @@ Omit the .. directory from FILES."
               (propertize " " 'display '(space :align-to 60))
             " ")
           (propertize string 'face 'completions-annotations)))
+
+(defun prot-minibuffer-buffer-group (buffer-name transform)
+  "Return BUFFER-NAME group name unless TRANSFORM is non-nil."
+  (if transform
+      buffer-name
+    (with-current-buffer (get-buffer buffer-name)
+      (format "%s" major-mode))))
 
 (defun prot-minibuffer-buffer-affixate (buffers)
   "Return BUFFERS with prefix and suffix."
