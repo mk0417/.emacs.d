@@ -5213,6 +5213,8 @@ The extras I provide for ~vertico~ are in [[#h:3796a4c9-8659-4782-8aaa-3cf4e9509
   (prot-emacs-keybind vertico-map
     "<left>" #'backward-char
     "<right>" #'forward-char
+    "C-M-n" #'vertico-next-group
+    "C-M-p" #'vertico-previous-group
     "TAB" #'prot-vertico-private-complete
     "DEL" #'vertico-directory-delete-char
     "M-DEL" #'vertico-directory-delete-word
@@ -13331,7 +13333,9 @@ Omit the .. directory from FILES."
    (transform file)
    ((string-suffix-p "/" file) "/")
    ((string-prefix-p "." file) ".")
-   ((file-name-extension file :include-dot))
+   ((when-let* ((extension (file-name-extension file :include-dot))
+                (_ (not (string-blank-p extension))))
+      extension))
    (t "Other")))
 
 (defun prot-minibuffer--set-default-sort (candidates)
@@ -18176,7 +18180,7 @@ major mode.")
 ;;;; Preview hexadecimal RGB colours
 
 ;; FIXME 2026-01-10: Why is this not working in Org tables?  The
-;; properties are applied by the face is not displayed.
+;; properties are applied but the face is not displayed.
 (defun prot-simple-hex-fontify (limit)
   "Fontify the # of a hexadecimal RGB colour up to LIMIT."
   (when-let* ((found (re-search-forward "\\(#\\)\\([a-fA-F0-9]\\{6\\}\\)" limit t))
