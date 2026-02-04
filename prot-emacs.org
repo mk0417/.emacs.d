@@ -13357,17 +13357,31 @@ Omit the .. directory from FILES."
 (defun prot-minibuffer--propertize-suffix-with-space (string)
   "Propertize STRING with spacing before it."
   (format " %s%s"
-          (if (eq completions-format 'one-column)
-              (propertize " " 'display '(space :align-to 60))
-            " ")
+          (if (and (or (eq completions-format 'horizontal)
+                       (eq completions-format 'vertical))
+                   (not prot-emacs-completion-ui))
+              " "
+            (propertize " " 'display '(space :align-to 60)))
           (propertize string 'face 'completions-annotations)))
 
 (defun prot-minibuffer-buffer-group (buffer-name transform)
   "Return BUFFER-NAME group name unless TRANSFORM is non-nil."
-  (if transform
-      buffer-name
-    (with-current-buffer (get-buffer buffer-name)
-      (format "%s" major-mode))))
+  (cond
+   (transform buffer-name)
+   ((string-prefix-p "*" buffer-name) "Special")
+   ((string-match-p "\\`magit.*?:" buffer-name) "Git")
+   ((if-let* ((buffer (get-buffer buffer-name)))
+      (with-current-buffer buffer
+        (cond
+         ((derived-mode-p 'dired-mode)
+          "Directory")
+         ((derived-mode-p 'prog-mode)
+          "Program")
+         ((derived-mode-p 'text-mode)
+          "Prose")
+         (t
+          (format "%s" major-mode))))
+      ""))))
 
 (defun prot-minibuffer-buffer-affixate (buffers)
   "Return BUFFERS with prefix and suffix."
@@ -13397,7 +13411,7 @@ Omit the .. directory from FILES."
   "Sort LIBRARIES, omitting autoloads and bytecode files."
   (setq libraries (seq-remove
                    (lambda (library)
-                     (string-match-p "\\(-autoload\\|\\.elc\\)" library))
+                     (string-match-p "\\(-autoload\\|\\.elc\\|\\.dir-locals\\)" library))
                    libraries))
   (prot-minibuffer--set-default-sort libraries))
 
@@ -13409,21 +13423,17 @@ Omit the .. directory from FILES."
 
 (defun prot-minibuffer-command-annotate (command)
   "Annotate COMMAND with its key binding and shortened documentation string."
-  (let ((symbol (intern-soft command)))
-    (format "%s%s%s"
-            (if-let* ((binding (where-is-internal symbol overriding-local-map t))
-                      (description (key-description binding))
-                      (key (when (and binding (not (stringp binding)))
-                             (format " %s " description))))
-                (propertize key 'face 'help-key-binding)
-              "")
-            (if (eq completions-format 'one-column)
-                (propertize " " 'display '(space :align-to 60))
-              " ")
-            (if-let* ((doc (condition-case nil (documentation symbol) (error nil)))
-                      (first-line (substring doc 0 (string-search "\n" doc))))
-                (propertize first-line 'face 'completions-annotations)
-              ""))))
+  (let* ((symbol (intern-soft command))
+         (key (if-let* ((binding (where-is-internal symbol overriding-local-map t))
+                        (description (key-description binding))
+                        (_ (and binding (not (stringp binding)))))
+                  (format "  %s " (propertize description 'face 'help-key-binding))
+                ""))
+         (doc (if-let* ((doc (condition-case nil (documentation symbol) (error nil)))
+                        (first-line (substring doc 0 (string-search "\n" doc))))
+                  (propertize first-line 'face 'completions-annotations)
+                "")))
+    (format "%s%s" key (prot-minibuffer--propertize-suffix-with-space doc))))
 
 ;;;; Completions
 
@@ -15095,6 +15105,59 @@ from the heading text instead of a UUID."
             (message "Copied %s" (propertize url 'face 'success)))
         (error "No CUSTOM_ID for the current entry"))
     (user-error "You are not in the right file")))
+
+;;;; Org and Diary integration
+
+(defun prot-org-diary--get-file (ics-file)
+  "Return diary file path that reuses the name of ICS-FILE.
+The path is relative to the `diary-file'."
+  (unless (file-exists-p diary-file)
+    (error "The `diary-file' does not exist"))
+  (let* ((directory (file-name-directory diary-file))
+         (ics-name (file-name-sans-extension (file-name-nondirectory ics-file)))
+         (diary-name (format "%s%s-%s-diary.txt" directory (format-time-string "%Y-%m-%d") ics-name)))
+    (when-let* ((buffer (get-file-buffer diary-name)))
+      (with-current-buffer buffer
+        (erase-buffer)))
+    (when (file-exists-p diary-name)
+      (delete-file diary-name))
+    diary-name))
+
+(defun prot-org-diary-include-file (diary-file-to-include)
+  "Include DIARY-FILE-TO-INCLUDE in the `diary-file'."
+  (unless (file-exists-p diary-file)
+    (error "The `diary-file' does not exist"))
+  (with-current-buffer (find-file-noselect diary-file)
+    (let ((include-directive (format "#include %S" diary-file-to-include)))
+      (save-excursion
+        (goto-char (point-min))
+        (while (re-search-forward (format "^%s.*" include-directive) nil t)
+          (delete-region (match-beginning 0) (match-end 0)))
+        (goto-char (point-max))
+        (insert "\n")
+        (insert include-directive)
+        (insert "\n")
+        (save-buffer)))))
+
+;;;###autoload
+(defun prot-org-diary-import-ics (ics-file diary-file-to-include)
+  "Import ICS-FILE to DIARY-FILE."
+  (interactive
+   (let ((ics-file (read-file-name "Which ICS file? ")))
+     (list
+      ics-file
+      (prot-org-diary--get-file ics-file))))
+  (save-window-excursion
+    (icalendar-import-file ics-file diary-file-to-include))
+  (let ((diary-file-propertized (propertize diary-file-to-include 'face 'success))
+        (main-diary-file-propertized (propertize diary-file 'face 'warning)))
+    (when (yes-or-no-p (format
+                        "Imported `%s' as `%s'\nINCLUDE IT in `%s'?"
+                        (propertize ics-file 'face 'error)
+                        diary-file-propertized
+                        main-diary-file-propertized))
+      (prot-org-diary-include-file diary-file-to-include)
+      (message "Appended `%s' to `%s'" diary-file-propertized main-diary-file-propertized))))
 
 (provide 'prot-org)
 ;;; prot-org.el ends here

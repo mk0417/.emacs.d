@@ -38,95 +38,6 @@
 
 ;;;; org-capture
 
-(defvar prot-org--capture-coach-person-history nil)
-
-(declare-function message-fetch-field "message" (header &optional first))
-(declare-function notmuch-show-get-header "notmuch-show")
-
-(defun prot-org--capture-coach-person-message-from ()
-  "Return default value for `prot-org--capture-coach-person-prompt'."
-  (when-let* ((from (cond
-                     ((derived-mode-p 'message-mode)
-                      (message-fetch-field "To"))
-                     ((derived-mode-p 'notmuch-show-mode)
-                      (notmuch-show-get-header :From)))))
-    (string-clean-whitespace (car (split-string from "<")))))
-
-(defun prot-org--capture-coach-person-message-from-and-subject ()
-  "Return default value for `prot-org--capture-coach-person-prompt'."
-  (cond
-   ((derived-mode-p 'message-mode)
-    (message-fetch-field "Subject"))
-   ((derived-mode-p 'notmuch-show-mode)
-    (notmuch-show-get-header :Subject))))
-
-(defun prot-org--capture-coach-person-prompt ()
-  "Prompt for person for use in `prot-org-capture-coach'."
-  (minibuffer-with-setup-hook
-      (lambda ()
-        (use-local-map
-         (let ((map (make-composed-keymap nil (current-local-map))))
-           (define-key map (kbd "SPC") nil)
-           map)))
-    (completing-read "Person to coach: "
-                     prot-org--capture-coach-person-history
-                     nil nil nil
-                     'prot-org--capture-coach-person-history
-                     (prot-org--capture-coach-person-message-from))))
-
-(defvar prot-org--capture-coach-description-history nil)
-
-(defun prot-org--capture-coach-description-prompt ()
-  "Prompt for description in `prot-org-capture-coach'."
-  (read-string "Description: "
-               nil
-               'prot-org--capture-coach-description-history
-               (prot-org--capture-coach-person-message-from-and-subject)))
-
-(defun prot-org--capture-coach-date-prompt-range ()
-  "Prompt for Org date and return it as a +1h range.
-For use in `prot-org-capture-coach'."
-  (let ((date (org-read-date :with-time)))
-    ;; We cannot use this here, unfortunately, as the Org agenda
-    ;; interprets it both as a deadline and an event with the date
-    ;; range.
-    ;;
-    ;; (format "DEADLINE: <%s>--<%s>\n" date
-    (format "<%s>--<%s>\n" date
-            (org-read-date
-             :with-time nil "++1h" nil
-             (org-encode-time (org-parse-time-string date))))))
-
-(defun prot-org-capture-coach ()
-  "Contents of an Org capture template for my coaching lessons."
-  (let ((identifier (format-time-string "%Y%m%dT%H%M%S")))
-    (format "* TODO %s %s :coaching:
-DEADLINE: %%^T
-:PROPERTIES:
-:CAPTURED: %%U
-:CUSTOM_ID: h:%s
-:APPT_WARNTIME: 20
-:END:
-
-%%a%%?"
-            (prot-org--capture-coach-person-prompt)
-            (prot-org--capture-coach-description-prompt)
-            identifier
-            identifier)))
-
-(defun prot-org-capture-coach-clock ()
-  "Contents of an Org capture for my clocked coaching services."
-  (format "* TODO %s %s :service:
-:PROPERTIES:
-:CAPTURED: %%U
-:CUSTOM_ID: h:%s
-:END:
-
-%%a%%?"
-          (prot-org--capture-coach-person-prompt)
-          (prot-org--capture-coach-description-prompt)
-          (format-time-string "%Y%m%dT%H%M%S")))
-
 (declare-function cl-letf "cl-lib")
 
 ;; Adapted from source: <https://stackoverflow.com/a/54251825>.
@@ -658,6 +569,59 @@ from the heading text instead of a UUID."
             (message "Copied %s" (propertize url 'face 'success)))
         (error "No CUSTOM_ID for the current entry"))
     (user-error "You are not in the right file")))
+
+;;;; Org and Diary integration
+
+(defun prot-org-diary--get-file (ics-file)
+  "Return diary file path that reuses the name of ICS-FILE.
+The path is relative to the `diary-file'."
+  (unless (file-exists-p diary-file)
+    (error "The `diary-file' does not exist"))
+  (let* ((directory (file-name-directory diary-file))
+         (ics-name (file-name-sans-extension (file-name-nondirectory ics-file)))
+         (diary-name (format "%s%s-%s-diary.txt" directory (format-time-string "%Y-%m-%d") ics-name)))
+    (when-let* ((buffer (get-file-buffer diary-name)))
+      (with-current-buffer buffer
+        (erase-buffer)))
+    (when (file-exists-p diary-name)
+      (delete-file diary-name))
+    diary-name))
+
+(defun prot-org-diary-include-file (diary-file-to-include)
+  "Include DIARY-FILE-TO-INCLUDE in the `diary-file'."
+  (unless (file-exists-p diary-file)
+    (error "The `diary-file' does not exist"))
+  (with-current-buffer (find-file-noselect diary-file)
+    (let ((include-directive (format "#include %S" diary-file-to-include)))
+      (save-excursion
+        (goto-char (point-min))
+        (while (re-search-forward (format "^%s.*" include-directive) nil t)
+          (delete-region (match-beginning 0) (match-end 0)))
+        (goto-char (point-max))
+        (insert "\n")
+        (insert include-directive)
+        (insert "\n")
+        (save-buffer)))))
+
+;;;###autoload
+(defun prot-org-diary-import-ics (ics-file diary-file-to-include)
+  "Import ICS-FILE to DIARY-FILE."
+  (interactive
+   (let ((ics-file (read-file-name "Which ICS file? ")))
+     (list
+      ics-file
+      (prot-org-diary--get-file ics-file))))
+  (save-window-excursion
+    (icalendar-import-file ics-file diary-file-to-include))
+  (let ((diary-file-propertized (propertize diary-file-to-include 'face 'success))
+        (main-diary-file-propertized (propertize diary-file 'face 'warning)))
+    (when (yes-or-no-p (format
+                        "Imported `%s' as `%s'\nINCLUDE IT in `%s'?"
+                        (propertize ics-file 'face 'error)
+                        diary-file-propertized
+                        main-diary-file-propertized))
+      (prot-org-diary-include-file diary-file-to-include)
+      (message "Appended `%s' to `%s'" diary-file-propertized main-diary-file-propertized))))
 
 (provide 'prot-org)
 ;;; prot-org.el ends here
