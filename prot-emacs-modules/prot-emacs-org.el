@@ -389,12 +389,13 @@
     (setq org-agenda-max-effort nil)
 
 ;;;;; General agenda view options
-    ;; NOTE 2021-12-07: Also see my `org-agenda-custom-commands'
-    (setq org-agenda-prefix-format
-          '((agenda . " %i %-12:c%?-12t% s")
-            (todo . " %i %-12:c")
-            (tags . " %i %-12:c")
-            (search . " %i %-12:c")))
+    ;; ;; NOTE 2021-12-07: Also see my `org-agenda-custom-commands'
+    ;; (setq org-agenda-prefix-format
+    ;;       '((agenda . " %i %-12:c%?-12t% s")
+    ;;         (todo . " %i %-12:c")
+    ;;         (tags . " %i %-12:c")
+    ;;         (search . " %i %-12:c")))
+    (setq org-agenda-prefix-format "%c	 %t %s")
     (setq org-agenda-sorting-strategy
           '(((agenda habit-down time-up priority-down category-keep)
              (todo priority-down category-keep)
