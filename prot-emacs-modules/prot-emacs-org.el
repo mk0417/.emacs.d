@@ -356,7 +356,6 @@
           `(("A" "Daily agenda and top priority tasks"
              ,prot-org-custom-daily-agenda
              ((org-agenda-fontify-priorities nil)
-              (org-agenda-prefix-format "	 %t %s")
               (org-agenda-dim-blocked-tasks nil)))
             ("P" "Plain text daily agenda and top priorities"
              ,prot-org-custom-daily-agenda
