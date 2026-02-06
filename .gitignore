@@ -7,6 +7,8 @@
 /tree-sitter
 /request
 /eln-cache
+/prot-lisp/*.elc
+/prot-lisp/.user-lisp-autoloads.el
 .bookmarks.el
 .DS_Store
 custom.el
