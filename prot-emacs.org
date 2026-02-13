@@ -1179,21 +1179,21 @@ respect the priorities I set for package archives ([[#h:424340cc-f3d7-4083-93c9-
 ;; => (unless (package-installed-p 'modus-themes)
 ;; =>   (condition-case-unless-debug err
 ;; =>       (apply #'package-vc-install
-;; =>              ("https://github.com/protesilaos/modus-themes.git"))
+;; =>              '("https://github.com/protesilaos/modus-themes.git"))
 ;; =>     (error
 ;; =>      (message "Failed `%s' with `%S': `%S'" 'package-vc-install
-;; =>               ("https://github.com/protesilaos/modus-themes.git")
+;; =>               '("https://github.com/protesilaos/modus-themes.git")
 ;; =>               (cdr err)))))
 
 (prot-emacs-install modus-themes :url "https://github.com/protesilaos/modus-themes.git" :branch "main")
 ;; => (unless (package-installed-p 'modus-themes)
 ;; =>   (condition-case-unless-debug err
 ;; =>       (apply #'package-vc-install
-;; =>              (:url "https://github.com/protesilaos/modus-themes.git"
+;; =>              '(:url "https://github.com/protesilaos/modus-themes.git"
 ;; =>                    :branch "main"))
 ;; =>     (error
 ;; =>      (message "Failed `%s' with `%S': `%S'" 'package-vc-install
-;; =>               (:url "https://github.com/protesilaos/modus-themes.git"
+;; =>               '(:url "https://github.com/protesilaos/modus-themes.git"
 ;; =>                     :branch "main")
 ;; =>               (cdr err)))))
 
@@ -1205,17 +1205,17 @@ respect the priorities I set for package archives ([[#h:424340cc-f3d7-4083-93c9-
 ;; =>     (error
 ;; =>      (message "Failed `%s' with `%S': `%S'"
 ;; =>               'package-vc-install-from-checkout
-;; =>               ("~/Git/Projects/modus-themes") (cdr err)))))
+;; =>               '("~/Git/Projects/modus-themes") (cdr err)))))
 
 (prot-emacs-install modus-themes "~/Git/Projects/modus-themes-arbitrary-name-of-dir" "modus-themes")
 ;; => (unless (package-installed-p 'modus-themes)
 ;; =>   (condition-case-unless-debug err
 ;; =>       (apply #'package-vc-install
-;; =>              ("~/Git/Projects/modus-themes-arbitrary-name-of-dir"
+;; =>              '("~/Git/Projects/modus-themes-arbitrary-name-of-dir"
 ;; =>               "modus-themes"))
 ;; =>     (error
 ;; =>      (message "Failed `%s' with `%S': `%S'" 'package-vc-install
-;; =>               ("~/Git/Projects/modus-themes-arbitrary-name-of-dir"
+;; =>               '("~/Git/Projects/modus-themes-arbitrary-name-of-dir"
 ;; =>                "modus-themes")
 ;; =>               (cdr err)))))
 #+end_example
@@ -1244,8 +1244,8 @@ At all times, do nothing if PACKAGE is already installled."
                 'package-vc-install)))
       `(unless (package-installed-p ',package)
          (condition-case-unless-debug err
-             (apply #',fn ,vc-args)
-           (error (message "Failed `%s' with `%S': `%S'" ',fn ,vc-args (cdr err)))))))
+             (apply #',fn ',vc-args)
+           (error (message "Failed `%s' with `%S': `%S'" ',fn ',vc-args (cdr err)))))))
    (package
     `(progn
        (unless (package-installed-p ',package)
@@ -2244,6 +2244,40 @@ such as in the difference between writing and reading.
     ;; We have to use the "point" mnemonic, because C-c c is often the
     ;; suggested binding for `org-capture' and is the one I use as well.
     (define-key global-map (kbd "C-c p") #'cursory-set-preset)))
+#+end_src
+
+*** GNOME accent theme switcher for GNU Emacs
+:PROPERTIES:
+:CUSTOM_ID: h:79bcb083-0700-45d4-98cb-6e52f40b72ee
+:END:
+
+This is a small package of mine that provides the minor mode
+~gnome-accent-theme-switcher-mode~. Once enabled, this mode receives
+input from the GNOME desktop environment to update the Emacs theme
+based on the user's choice of accent color and light/dark mode. Those
+are settings provided by the GNOME desktop environment.
+
+The user option ~gnome-accent-theme-switcher-collection~ defines
+the list of themes that are used for each accent color, grouped by
+light and dark mode. By default, almost all of my themes are included,
+spanning the packages ~modus-themes~, ~ef-themes~, ~doric-themes~, and
+~standard-themes~.
+
+I enable this mode when no theme is explicitly loaded and I am using
+the GNOME desktop environment ([[#h:3f1a33e4-762e-4cf3-a0ae-4c2954d9cbb8][The =prot-emacs-theme.el= section to load a theme (~prot-emacs-load-theme-family~)]]).
+
+- Git repository: <https://github.com/protesilaos/gnome-accent-theme-switcher>.
+- Video demonstration: <https://protesilaos.com/codelog/2026-02-13-emacs-gnome-accent-theme-switcher/>
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
+;;; GNOME accent theme switcher
+(prot-emacs-configure
+  (prot-emacs-install
+    gnome-accent-theme-switcher
+    "https://github.com/protesilaos/gnome-accent-theme-switcher.git")
+  (when (and (null prot-emacs-load-theme-family)
+             (string= (getenv "DESKTOP_SESSION") "gnome"))
+    (gnome-accent-theme-switcher-mode 1)))
 #+end_src
 
 *** The =prot-emacs-theme.el= section for ~theme-buffet~
