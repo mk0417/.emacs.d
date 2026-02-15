@@ -214,31 +214,6 @@ effects."
           (indent-region beg end))
       (user-error "No active region; will not insert `prot-emacs-comment' here"))))
 
-(defun prot-emacs-package-install (package &optional method)
-  "Install PACKAGE with optional METHOD.
-
-If METHOD is nil or the `builtin' symbol, PACKAGE is not
-installed as it is considered part of Emacs.
-
-If METHOD is a string, it must be a URL pointing to the version
-controlled repository of PACKAGE.  Installation is done with
-`package-vc-install'.
-
-If METHOD is a quoted list, it must have a form accepted by
-`package-vc-install' such as:
-
-\\='(denote :url \"https://github.com/protesilaos/denote\" :branch \"main\")
-
-If METHOD is any other non-nil value, install PACKAGE using
-`package-install'."
-  (unless (or (eq method 'builtin) (null method))
-    (unless (package-installed-p package)
-      (when (or (stringp method) (listp method))
-        (package-vc-install method))
-      (unless package-archive-contents
-        (package-refresh-contents))
-      (package-install package))))
-
 (defmacro prot-emacs-install (package &rest vc-args)
   "Prepare to install PACKAGE.
 PACKAGE is an unquoted symbol, referring to the name of the package.  If
