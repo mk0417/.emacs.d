@@ -2046,6 +2046,10 @@ text or reading through the buffer's contents, so the current line
 highlight is more of a reminder of the point's location on the
 vertical axis.
 
+Lin can also integrate with the GNOME desktop environment to update
+its ~lin-face~ when the user changes an accent colour. This is what
+the minor mode ~lin-gnome-accent-color-mode~ is for.
+
 + Package name (GNU ELPA): ~lin~
 + Official manual: <https://protesilaos.com/emacs/lin>
 + Change log: <https://protesilaos.com/emacs/lin-changelog>
@@ -2060,7 +2064,10 @@ vertical axis.
 (prot-emacs-configure
   (prot-emacs-install lin)
   (setq lin-face 'lin-cyan)
-  (lin-global-mode 1))
+  (lin-global-mode 1)
+  (when (and (null prot-emacs-load-theme-family)
+             (string= (getenv "DESKTOP_SESSION") "gnome"))
+    (lin-gnome-accent-color-mode 1)))
 #+end_src
 
 *** The =prot-emacs-theme.el= section for ~spacious-padding~
@@ -2246,7 +2253,7 @@ such as in the difference between writing and reading.
     (define-key global-map (kbd "C-c p") #'cursory-set-preset)))
 #+end_src
 
-*** GNOME accent theme switcher for GNU Emacs
+*** GNOME accent theme switcher (~gnome-accent-theme-switcher~)
 :PROPERTIES:
 :CUSTOM_ID: h:79bcb083-0700-45d4-98cb-6e52f40b72ee
 :END:
@@ -2263,6 +2270,11 @@ light and dark mode. By default, almost all of my themes are included,
 spanning the packages ~modus-themes~, ~ef-themes~, ~doric-themes~, and
 ~standard-themes~.
 
+The command ~gnome-accent-theme-switcher-toggle-mode~ toggles the
+GNOME light/dark preference from inside Emacs. While the command
+~gnome-accent-theme-switcher-change-accent~ prompts for an accent
+color and changes it accordingly.
+
 I enable this mode when no theme is explicitly loaded and I am using
 the GNOME desktop environment ([[#h:3f1a33e4-762e-4cf3-a0ae-4c2954d9cbb8][The =prot-emacs-theme.el= section to load a theme (~prot-emacs-load-theme-family~)]]).
 
@@ -2277,6 +2289,9 @@ the GNOME desktop environment ([[#h:3f1a33e4-762e-4cf3-a0ae-4c2954d9cbb8][The =p
     "https://github.com/protesilaos/gnome-accent-theme-switcher.git")
   (when (and (null prot-emacs-load-theme-family)
              (string= (getenv "DESKTOP_SESSION") "gnome"))
+    (prot-emacs-keybind global-map
+      "<f5>" #'gnome-accent-theme-switcher-toggle-mode
+      "C-<f5>" #'gnome-accent-theme-switcher-change-accent)
     (gnome-accent-theme-switcher-mode 1)))
 #+end_src
 
@@ -7627,6 +7642,45 @@ Org is far more capable, so I switched to it completely.
     (require 'cal-dst)
     (setq calendar-standard-time-zone-name "+0200")
     (setq calendar-daylight-time-zone-name "+0300")))
+#+end_src
+
+*** The =prot-emacs-org.el= section about Institution Calendar (~institution-calendar~)
+:PROPERTIES:
+:CUSTOM_ID: h:a9b19aca-6705-42c8-a24a-73253ae30226
+:END:
+
+The ~institution-calendar~ is another one of my many packages. It
+augments the regular =M-x calendar= with term+week numbers for one's
+institution of choice. This is typically useful for schools and
+universities that organise their yearly work by terms, each with its
+own number of weeks. (e.g. the University of Oxford counts the week of
+2026-02-11 as week 2 of the Hilary term). The manual shows how you can
+define your own institution. The universities of Oxford and Cambridge
+are supported by default.
+
++ Official manual: <https://protesilaos.com/emacs/institution-calendar>
++ Git repository: <https://github.com/protesilaos/institution-calendar>
++ Screenshot: <https://protesilaos.com/codelog/2026-02-11-emacs-institution-calendar/>
++ Backronyms: Interestingly Nothing Serving Teachers Implement Term
+  Utilities Took Inspiration from Oxford Novices... calendar;
+  Institution ... Cambridge Added Lent Entry Notwithstanding Dates
+  Already Recorded.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-org.el"
+(prot-emacs-configure
+  (prot-emacs-install
+    institution-calendar
+    "https://github.com/protesilaos/institution-calendar.git")
+
+  ;; Remember to read the manual on how to register your own institution!
+  (setopt institution-calendar-entity 'oxford-university)
+
+  (setopt institution-calendar-include-extra-week-numbers t)
+  (setopt institution-calendar-include-intermonth-header nil)
+
+  ;; If you want to permanently change what M-x calendar shows, enable
+  ;; this mode.  Otherwise, use the relevant command.
+  (institution-calendar-mode 1))
 #+end_src
 
 *** The =prot-emacs-org.el= section about appointment reminders (=appt.el=)

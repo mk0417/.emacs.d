@@ -75,11 +75,11 @@
   (setq ess-indent-with-fancy-comments nil))
 
 ;;; Julia
-;; (use-package julia-mode
-;;   :ensure t
-;;   :hook
-;;   ((julia-mode . display-fill-column-indicator-mode)
-;;    (julia-mode . electric-pair-mode)))
+(use-package julia-mode
+  :ensure t
+  :hook
+  ((julia-mode . display-fill-column-indicator-mode)
+   (julia-mode . electric-pair-mode)))
 
 ;; (use-package eglot-jl
 ;;   :ensure t
