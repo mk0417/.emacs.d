@@ -68,7 +68,7 @@
         (advice-remove original my-function-symbol)))))
 
 (defun prot-minibuffer-file-sort (files)
-  "Sort FILES to have directories first and then `completions-sort' sorting.
+  "Sort FILES to have directories first and the rest alphabetically.
 Omit the .. directory from FILES."
   (setq files (delete "../" files))
   (setq files (minibuffer-sort-alphabetically files))
@@ -106,9 +106,19 @@ Omit the .. directory from FILES."
 (defun prot-minibuffer-symbol-sort (symbols)
   "Sort SYMBOLS so that public ones come first."
   (setq symbols (prot-minibuffer--set-default-sort symbols))
-  (let ((private-p (lambda (symbol) (string-suffix-p "--" symbol))))
+  (let ((private-p (lambda (symbol) (string-match-p "--" symbol))))
     (nconc (seq-remove private-p symbols)
            (seq-filter private-p symbols))))
+
+(defun prot-minibuffer-symbol-group (symbol-name transform)
+  "Return SYMBOL-NAME group unless TRANSFORM is non-nil."
+  (let ((first-word-fn (lambda (string)
+                         (if (string-match "\\(.*?\\)[@/-].*" string)
+                             (match-string 1 string)
+                           string))))
+    (cond
+     (transform symbol-name)
+     ((funcall first-word-fn symbol-name)))))
 
 (defun prot-minibuffer--propertize-suffix-with-space (string)
   "Propertize STRING with spacing before it."
