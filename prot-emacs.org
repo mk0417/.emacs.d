@@ -2685,7 +2685,7 @@ key bindings.
   (setq save-interprogram-paste-before-kill t)
   (setq scroll-error-top-bottom t)
   (setq tramp-connection-timeout (* 60 10)) ; seconds
-  (setq trusted-content '("~/Git/Projects/")) ; Emacs 30
+  (setq trusted-content '("~/Git/Projects/" "~/Coach/")) ; Emacs 30
   (setq truncate-partial-width-windows nil)
 
   ;; Keys I unbind here are either to avoid accidents or to bind them
@@ -2871,7 +2871,8 @@ this via some hook.
     "M-r" #'window-layout-transpose ; Emacs 31 override `move-to-window-line-top-bottom'
     "M-S-r" #'rotate-windows-back ; Emacs 31
     ;; Commands for buffers
-    "<C-f2>" #'prot-simple-rename-file-and-buffer
+    "C-x <f2>" #'prot-simple-copy-current-path
+    "C-<f2>" #'prot-simple-rename-file-and-buffer
     "C-x k" #'prot-simple-kill-buffer-dwim
     "C-x K" #'kill-buffer ; leaving this here to contrast with the above
     "M-s b" #'prot-simple-buffers-major-mode
@@ -7838,6 +7839,7 @@ on how I use Org.
             ("X" . "export")
             ("q" . "quote")))
     (setq org-fold-catch-invisible-edits 'show)
+    (setq org-yank-folded-subtrees nil)
     (setq org-return-follows-link nil)
     (setq org-loop-over-headlines-in-active-region 'start-level)
     (setq org-modules '(ol-info ol-eww))
@@ -18187,6 +18189,17 @@ buffers in its history."
       (kill-buffer-and-window))
      (t
       (kill-buffer)))))
+
+;;;###autoload
+(defun prot-simple-copy-current-path ()
+  "Copy the current absolute path.
+If in a file-visiting buffer, copy the `buffer-file-name'.  Else copy
+the `default-directory'."
+  (declare (interactive-only t))
+  (interactive)
+  (let ((path (or buffer-file-name default-directory)))
+    (kill-new path)
+    (message "Copied `%s'" (propertize path 'face 'success))))
 
 ;;;###autoload
 (defun prot-simple-rename-file-and-buffer (name)
