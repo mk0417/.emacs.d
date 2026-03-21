@@ -387,7 +387,6 @@ making an abbreviation to a function."
 (require 'init-latex)
 (require 'init-ai)
 (require 'init-database)
-(require 'init-vc)
 (require 'init-keychord)
 (require 'init-abbrev)
 (require 'init-treesit)

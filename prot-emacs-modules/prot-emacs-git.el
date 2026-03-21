@@ -33,6 +33,20 @@
   (setq diff-font-lock-prettify t) ; I think nil is better for patches, but let me try this for a while
   (setq diff-font-lock-syntax nil))
 
+;;;; `diff-hl'
+(prot-emacs-configure
+  (prot-emacs-install diff-hl)
+
+  (prot-emacs-keybind global-map
+    "C-x v <up>" #'diff-hl-previous-hunk
+    "C-x v <down>" #'diff-hl-next-hunk)
+
+  (setq diff-hl-draw-borders nil)
+  (setq diff-hl-update-async t)
+
+  (add-hook 'prog-mode-hook 'turn-on-diff-hl-mode)
+  (add-hook 'vc-dir-mode-hook 'turn-on-diff-hl-mode))
+
 ;;;; `ediff'
 (prot-emacs-configure
   (setq ediff-split-window-function 'split-window-horizontally)
@@ -260,6 +274,7 @@
               (format "%s %s" icon (propertize file 'font-lock-face face))))))
 
   (setq magit-diff-refine-hunk t)
+  (setq magit-diff-fontify-hunk t)
   (setq magit-diff-refine-ignore-whitespace t)
 
   (setq magit-log-auto-more t)
