@@ -4,10 +4,16 @@
 (prot-emacs-configure
   (require 'prot-icons)
 
+  (setq prot-icons-style 'alphabetic) ; `alphabetic', `symbolic', or `emoji'
+
   (prot-icons-dired-mode 1)
   (prot-icons-xref-mode 1)
 
-  (when prot-emacs-load-theme-family
+  (when (eq prot-icons-style 'symbolic)
+    (set-face-attribute 'prot-icons-icon nil :inherit 'unspecified))
+
+  (when (and prot-emacs-load-theme-family
+             (eq prot-icons-style 'alphabetic))
     (cond
      ((memq prot-emacs-load-theme-family '(modus ef standard))
       (defun prot/icons-set-faces ()
