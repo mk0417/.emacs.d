@@ -26,11 +26,6 @@
 ;;
 ;; This covers my shell.el extensions, for use in my Emacs setup:
 ;; <https://protesilaos.com/emacs/dotemacs>.
-;;
-;; Remember that every piece of Elisp that I write is for my own
-;; educational and recreational purposes.  I am not a programmer and I
-;; do not recommend that you copy any of this if you are not certain of
-;; what it does.
 
 ;;; Code:
 
@@ -319,7 +314,7 @@ that buffer already exists, then reuse it."
 ;;;; Minor mode setup
 
 (defvar-keymap prot-shell-mode-map
-  :doc "Key map for `prot-shell-mode'."
+  :doc "keymap for `prot-shell-mode'."
   "<up>" #'prot-shell-up-dwim
   "<down>" #'prot-shell-down-dwim
   "C-c C-d" #'prot-shell-cd
