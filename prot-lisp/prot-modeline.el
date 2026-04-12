@@ -351,10 +351,17 @@ See `prot-modeline-string-cut-middle'."
 
 (defvar-local prot-modeline-buffer-identification
   '(:eval
-    (propertize (prot-modeline-buffer-name)
-                'face (prot-modeline-buffer-identification-face)
-                'mouse-face 'mode-line-highlight
-                'help-echo (prot-modeline-buffer-name-help-echo)))
+    (let* ((name (propertize (prot-modeline--buffer-name)
+                             'face (prot-modeline-buffer-identification-face)
+                             'mouse-face 'mode-line-highlight
+                             'help-echo (prot-modeline-buffer-name-help-echo)))
+           (read-only-icon (prot-icons-get-icon
+                            'read-only
+                            (unless (mode-line-window-selected-p)
+                              'prot-modeline-indicator-gray))))
+      (if buffer-read-only
+          (format "%s  %s" read-only-icon name)
+        name)))
   "Mode line construct for identifying the buffer being displayed.
 Propertize the current buffer with the `mode-line-buffer-id'
 face.  Let other buffers have no face.")
@@ -413,7 +420,7 @@ face.  Let other buffers have no face.")
     (define-key map [mode-line down-mouse-1] 'vc-diff)
     (define-key map [mode-line down-mouse-3] 'vc-root-diff)
     map)
-  "Keymap to display on VC indicator.")
+  "Keymap for the `prot-modeline-vc-branch'.")
 
 (defun prot-modeline--vc-help-echo (file)
   "Return `help-echo' message for FILE tracked by VC."
@@ -488,27 +495,41 @@ Specific to the current window's mode line.")
   "When non-nil, display the current frame name."
   :type 'boolean)
 
+(defvar prot-modeline-frame-name-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [mode-line down-mouse-1] 'buffer-menu)
+    map)
+  "Keymap for the `prot-modeline-frame-name'.")
+
 (defvar-local prot-modeline-frame-name
   '(prot-modeline-show-frame-name
     (" "
-     (:eval (when-let* ((_ (mode-line-window-selected-p))
-                        (current-frame (selected-frame))
-                        (_ (frame-live-p current-frame))
-                        (parameters (frame-parameters))
-                        (name (capitalize (alist-get 'name parameters))))
-              (format "%s %s " (prot-icons-get-icon 'frame 'prot-modeline-indicator-gray) name)))))
+     (:eval
+      (when-let* ((_ (mode-line-window-selected-p))
+                  (current-frame (selected-frame))
+                  (_ (frame-live-p current-frame))
+                  (parameters (frame-parameters))
+                  (name (capitalize (alist-get 'name parameters))))
+        (format "%s %s "
+                (prot-icons-get-icon 'frame 'prot-modeline-indicator-gray)
+                (propertize name
+                            'mouse-face 'mode-line-highlight
+                            'help-echo (format "Current frame name\nmouse-1: `buffer-menu'")
+                            'local-map prot-modeline-frame-name-map))))))
   "Mode line construct to display the current frame name.")
 
 ;;;; `which-function-mode' indicator
 
 (defvar-local prot-modeline-which-function-indicator
-  `(( :propertize
-      which-func-current
-      face (prot-modeline-indicator-small which-func)
-      mouse-face mode-line-highlight
-      help-echo (format "Current definition: `%s'"
-                        (or (gethash (selected-window) which-func-table)
-                            which-func-unknown))))
+  '(which-function-mode
+    (:eval
+     (when (or (provided-mode-derived-p major-mode 'text-mode)
+               (provided-mode-derived-p major-mode 'prog-mode))
+       (let ((string (or (gethash (selected-window) which-func-table) which-func-unknown)))
+         (propertize string
+                     'face '(prot-modeline-indicator-small which-func)
+                     'mouse-face 'mode-line-highlight
+                     'help-echo (format "Current definition: `%s'" string))))))
   "The equivalent of `which-func-format'.")
 
 (with-eval-after-load 'which-func

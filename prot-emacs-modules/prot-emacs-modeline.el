@@ -46,6 +46,7 @@
                   "  "
                   mode-line-format-right-align ; Emacs 30
                   prot-modeline-which-function-indicator
+                  " "
                   prot-modeline-misc-info))
 
   (when prot-emacs-load-theme-family
@@ -66,7 +67,6 @@
            `(prot-modeline-indicator-blue-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-blue-intense :foreground ,fg-main)))
            `(prot-modeline-indicator-magenta-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-magenta-intense :foreground ,fg-main)))
            `(prot-modeline-indicator-cyan-bg ((,c :inherit (bold prot-modeline-indicator-button) :background ,bg-cyan-intense :foreground ,fg-main))))))
-
       (add-hook 'modus-themes-after-load-theme-hook #'prot/modeline-set-faces))
      ((eq prot-emacs-load-theme-family 'doric)
       (defun prot/modeline-set-faces ()
@@ -107,80 +107,7 @@
   ;; NOTE 2025-10-26: I handle the indicator on my own via `prot-modeline-which-function-indicator'.
   (setq which-func-display 'mode) ; Emacs 30
   (setq which-func-unknown "")
-
-  ;; NOTE 2025-10-24: This is an experiment.  It seems to work, but there may be downsides.
-  (with-eval-after-load 'prot-modeline
-    (defun prot/which-function ()
-      "A more opinionated `which-function'."
-      (let ((name nil))
-        (cond
-         ((derived-mode-p 'lisp-data-mode)
-          (ignore-errors
-            (when-let* ((text (save-excursion
-                                (beginning-of-defun)
-                                (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
-                        (definition (replace-regexp-in-string "(.+?\s+\\(.*\\)" "\\1" text)))
-              (setq name (if (string-prefix-p ";" definition)
-                             ""
-                           (prot-modeline-string-abbreviate-but-last definition 1))))))
-         (t
-          (when (null name)
-            (setq name (add-log-current-defun)))
-          ;; If Imenu is loaded, try to make an index alist with it.
-          ;; If `add-log-current-defun' ran and gave nil, accept that.
-          (when (and (null name)
-                     (null add-log-current-defun-function))
-            (when (and (null name)
-                       (boundp 'imenu--index-alist)
-                       (or (null imenu--index-alist)
-                           ;; Update if outdated
-                           (/= (buffer-chars-modified-tick) imenu-menubar-modified-tick))
-                       (null which-function-imenu-failed))
-              (ignore-errors (imenu--make-index-alist t))
-              (unless imenu--index-alist
-                (setq-local which-function-imenu-failed t)))
-            ;; If we have an index alist, use it.
-            (when (and (null name)
-                       (boundp 'imenu--index-alist) imenu--index-alist)
-              (let ((alist imenu--index-alist)
-                    (minoffset (point-max))
-                    offset pair mark imstack namestack)
-                ;; Elements of alist are either ("name" . marker), or
-                ;; ("submenu" ("name" . marker) ... ). The list can be
-                ;; arbitrarily nested.
-                (while (or alist imstack)
-                  (if (null alist)
-                      (setq alist     (car imstack)
-                            namestack (cdr namestack)
-                            imstack   (cdr imstack))
-
-                    (setq pair (car-safe alist)
-                          alist (cdr-safe alist))
-
-                    (cond
-                     ((atom pair))            ; Skip anything not a cons.
-
-                     ((imenu--subalist-p pair)
-                      (setq imstack   (cons alist imstack)
-                            namestack (cons (car pair) namestack)
-                            alist     (cdr pair)))
-
-                     ((or (number-or-marker-p (setq mark (cdr pair)))
-                          (and (overlayp mark)
-                               (setq mark (overlay-start mark))))
-                      (when (and (>= (setq offset (- (point) mark)) 0)
-                                 (< offset minoffset)) ; Find the closest item.
-                        (setq minoffset offset
-                              name (if (null which-func-imenu-joiner-function)
-                                       (car pair)
-                                     (funcall
-                                      which-func-imenu-joiner-function
-                                      (reverse (cons (car pair) namestack)))))))))))))
-          (prot-modeline-string-cut-end name)))))
-
-    (advice-add #'which-function :override #'prot/which-function)
-
-    (which-function-mode 1)))
+  (which-function-mode 1))
 
 ;;; Keycast mode
 (prot-emacs-configure

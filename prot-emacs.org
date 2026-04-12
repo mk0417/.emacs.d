@@ -2117,7 +2117,7 @@ I also take care to make it work with my customised mode line
              :tab-width 4
              :right-divider-width 15
              :scroll-bar-width ,(if prot-pgtk-p 12 6)
-             :left-fringe-width 20
+             :left-fringe-width 8
              :right-fringe-width 20))
 
     ;; (setq spacious-padding-subtle-mode-line nil)
@@ -3942,80 +3942,7 @@ did what to take the original value and make some minor tweaks to it.
   ;; NOTE 2025-10-26: I handle the indicator on my own via `prot-modeline-which-function-indicator'.
   (setq which-func-display 'mode) ; Emacs 30
   (setq which-func-unknown "")
-
-  ;; NOTE 2025-10-24: This is an experiment.  It seems to work, but there may be downsides.
-  (with-eval-after-load 'prot-modeline
-    (defun prot/which-function ()
-      "A more opinionated `which-function'."
-      (let ((name nil))
-        (cond
-         ((derived-mode-p 'lisp-data-mode)
-          (ignore-errors
-            (when-let* ((text (save-excursion
-                          (beginning-of-defun)
-                          (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
-                        (definition (replace-regexp-in-string "(.+?\s+\\(.*\\)" "\\1" text)))
-              (setq name (if (string-prefix-p ";" definition)
-                             ""
-                           (prot-modeline-string-abbreviate-but-last definition 1))))))
-         (t
-          (when (null name)
-            (setq name (add-log-current-defun)))
-          ;; If Imenu is loaded, try to make an index alist with it.
-          ;; If `add-log-current-defun' ran and gave nil, accept that.
-          (when (and (null name)
-                     (null add-log-current-defun-function))
-            (when (and (null name)
-                       (boundp 'imenu--index-alist)
-                       (or (null imenu--index-alist)
-                           ;; Update if outdated
-                           (/= (buffer-chars-modified-tick) imenu-menubar-modified-tick))
-                       (null which-function-imenu-failed))
-              (ignore-errors (imenu--make-index-alist t))
-              (unless imenu--index-alist
-                (setq-local which-function-imenu-failed t)))
-            ;; If we have an index alist, use it.
-            (when (and (null name)
-                       (boundp 'imenu--index-alist) imenu--index-alist)
-              (let ((alist imenu--index-alist)
-                    (minoffset (point-max))
-                    offset pair mark imstack namestack)
-                ;; Elements of alist are either ("name" . marker), or
-                ;; ("submenu" ("name" . marker) ... ). The list can be
-                ;; arbitrarily nested.
-                (while (or alist imstack)
-                  (if (null alist)
-                      (setq alist     (car imstack)
-                            namestack (cdr namestack)
-                            imstack   (cdr imstack))
-
-                    (setq pair (car-safe alist)
-                          alist (cdr-safe alist))
-
-                    (cond
-                     ((atom pair))            ; Skip anything not a cons.
-
-                     ((imenu--subalist-p pair)
-                      (setq imstack   (cons alist imstack)
-                            namestack (cons (car pair) namestack)
-                            alist     (cdr pair)))
-
-                     ((or (number-or-marker-p (setq mark (cdr pair)))
-                          (and (overlayp mark)
-                               (setq mark (overlay-start mark))))
-                      (when (and (>= (setq offset (- (point) mark)) 0)
-                                 (< offset minoffset)) ; Find the closest item.
-                        (setq minoffset offset
-                              name (if (null which-func-imenu-joiner-function)
-                                       (car pair)
-                                     (funcall
-                                      which-func-imenu-joiner-function
-                                      (reverse (cons (car pair) namestack)))))))))))))
-          (prot-modeline-string-cut-end name)))))
-
-    (advice-add #'which-function :override #'prot/which-function)
-
-    (which-function-mode 1)))
+  (which-function-mode 1))
 #+end_src
 
 *** The =prot-emacs-modeline.el= section about ~keycast~
@@ -6548,9 +6475,6 @@ to a certain height.
            (dedicated . t)
            (preserve-size . (t . t))
            (body-function . select-window))
-          ("\\(\\*Capture\\*\\|CAPTURE-.*\\)"
-           (display-buffer-reuse-mode-window display-buffer-below-selected)
-           (inhibit-switch-frame . t))
           ((derived-mode . reb-mode) ; M-x re-builder
            (display-buffer-reuse-mode-window display-buffer-below-selected)
            (inhibit-switch-frame . t)
@@ -13112,6 +13036,7 @@ Any other value has the same meaning as `text'."
     (conf-mode ">Π" prot-icons-gray) ; πρόγραμμα
     (text-mode ">Α" prot-icons-green) ; αλφάβητο
     (comint-mode ">_" prot-icons-gray)
+    (read-only "" prot-icons-red)
     (document ">Σ" prot-icons-red) ; σύγγραμμα
     (audio ">Η" prot-icons-cyan) ; ήχος
     (image ">Ε" prot-icons-yellow) ; εικόνα
@@ -13132,6 +13057,7 @@ FACE is the face to use for it, where applicable.")
     (conf-mode "📝" prot-icons-gray)
     (text-mode "✏️" prot-icons-green)
     (comint-mode "🖥️" prot-icons-gray)
+    (read-only "🔒" prot-icons-red)
     (document "📜" prot-icons-red)
     (audio "🔊" prot-icons-cyan)
     (image "🎨" prot-icons-yellow)
@@ -13142,17 +13068,18 @@ FACE is the face to use for it, where applicable.")
   "Same as `prot-icons-alphabetic' with emoji characters.")
 
 (defvar prot-icons-symbolic
-  '((dired-mode "⫒" prot-icons-directory)
-    (archive-mode "⫑" prot-icons-directory)
+  '((dired-mode "🗀" prot-icons-directory)
+    (archive-mode "🮯" prot-icons-directory)
     (diff-mode "⇄" prot-icons-yellow)
     (prog-mode "⨍" prot-icons-magenta)
     (conf-mode "🗅" prot-icons-gray)
     (text-mode "¶" prot-icons-green)
     (comint-mode "⨠" prot-icons-gray)
+    (read-only "" prot-icons-red)
     (document "🗎" prot-icons-red)
     (audio "𝅘𝅥𝅮" prot-icons-cyan)
     (image "𜷻" prot-icons-yellow)
-    (video "‣" prot-icons-blue)
+    (video "▶" prot-icons-blue)
     (frame "𜲋" prot-icons-gray)
     (git "⇅" prot-icons-gray)
     (t "·" prot-icons-gray))
@@ -14176,13 +14103,6 @@ See `prot-modeline-string-cut-middle'."
   (when-let* ((name (buffer-name)))
     (prot-modeline-string-cut-middle name)))
 
-(defun prot-modeline-buffer-name ()
-  "Return buffer name, with read-only indicator if relevant."
-  (let ((name (prot-modeline--buffer-name)))
-    (if buffer-read-only
-        (format "%s %s" (char-to-string #xE0A2) name)
-      name)))
-
 (defun prot-modeline-buffer-name-help-echo ()
   "Return `help-echo' value for `prot-modeline-buffer-identification'."
   (concat
@@ -14194,11 +14114,18 @@ See `prot-modeline-string-cut-middle'."
     'face 'font-lock-doc-face)))
 
 (defvar-local prot-modeline-buffer-identification
-    '(:eval
-      (propertize (prot-modeline-buffer-name)
-                  'face (prot-modeline-buffer-identification-face)
-                  'mouse-face 'mode-line-highlight
-                  'help-echo (prot-modeline-buffer-name-help-echo)))
+  '(:eval
+    (let* ((name (propertize (prot-modeline--buffer-name)
+                             'face (prot-modeline-buffer-identification-face)
+                             'mouse-face 'mode-line-highlight
+                             'help-echo (prot-modeline-buffer-name-help-echo)))
+           (read-only-icon (prot-icons-get-icon
+                            'read-only
+                            (unless (mode-line-window-selected-p)
+                              'prot-modeline-indicator-gray))))
+      (if buffer-read-only
+          (format "%s  %s" read-only-icon name)
+        name)))
   "Mode line construct for identifying the buffer being displayed.
 Propertize the current buffer with the `mode-line-buffer-id'
 face.  Let other buffers have no face.")
@@ -14257,7 +14184,7 @@ face.  Let other buffers have no face.")
     (define-key map [mode-line down-mouse-1] 'vc-diff)
     (define-key map [mode-line down-mouse-3] 'vc-root-diff)
     map)
-  "Keymap to display on VC indicator.")
+  "Keymap for the `prot-modeline-vc-branch'.")
 
 (defun prot-modeline--vc-help-echo (file)
   "Return `help-echo' message for FILE tracked by VC."
@@ -14388,27 +14315,41 @@ Specific to the current window's mode line.")
   "When non-nil, display the current frame name."
   :type 'boolean)
 
+(defvar prot-modeline-frame-name-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map [mode-line down-mouse-1] 'buffer-menu)
+    map)
+  "Keymap for the `prot-modeline-frame-name'.")
+
 (defvar-local prot-modeline-frame-name
   '(prot-modeline-show-frame-name
     (" "
-     (:eval (when-let* ((_ (mode-line-window-selected-p))
-                        (current-frame (selected-frame))
-                        (_ (frame-live-p current-frame))
-                        (parameters (frame-parameters))
-                        (name (capitalize (alist-get 'name parameters))))
-              (format "%s %s " (prot-icons-get-icon 'frame 'prot-modeline-indicator-gray) name)))))
+     (:eval
+      (when-let* ((_ (mode-line-window-selected-p))
+                  (current-frame (selected-frame))
+                  (_ (frame-live-p current-frame))
+                  (parameters (frame-parameters))
+                  (name (capitalize (alist-get 'name parameters))))
+        (format "%s %s "
+                (prot-icons-get-icon 'frame 'prot-modeline-indicator-gray)
+                (propertize name
+                            'mouse-face 'mode-line-highlight
+                            'help-echo (format "Current frame name\nmouse-1: `buffer-menu'")
+                            'local-map prot-modeline-frame-name-map))))))
   "Mode line construct to display the current frame name.")
 
 ;;;; `which-function-mode' indicator
 
 (defvar-local prot-modeline-which-function-indicator
-  `(( :propertize
-      which-func-current
-      face (prot-modeline-indicator-small which-func)
-      mouse-face mode-line-highlight
-      help-echo (format "Current definition: `%s'"
-                        (or (gethash (selected-window) which-func-table)
-                            which-func-unknown))))
+  '(which-function-mode
+    (:eval
+     (when (or (provided-mode-derived-p major-mode 'text-mode)
+               (provided-mode-derived-p major-mode 'prog-mode))
+       (let ((string (or (gethash (selected-window) which-func-table) which-func-unknown)))
+         (propertize string
+                     'face '(prot-modeline-indicator-small which-func)
+                     'mouse-face 'mode-line-highlight
+                     'help-echo (format "Current definition: `%s'" string))))))
   "The equivalent of `which-func-format'.")
 
 (with-eval-after-load 'which-func
