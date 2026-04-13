@@ -332,13 +332,6 @@ See `prot-modeline-string-cut-middle'."
   (when-let* ((name (buffer-name)))
     (prot-modeline-string-cut-middle name)))
 
-(defun prot-modeline-buffer-name ()
-  "Return buffer name, with read-only indicator if relevant."
-  (let ((name (prot-modeline--buffer-name)))
-    (if buffer-read-only
-        (format "%s %s" (char-to-string #xE0A2) name)
-      name)))
-
 (defun prot-modeline-buffer-name-help-echo ()
   "Return `help-echo' value for `prot-modeline-buffer-identification'."
   (concat
