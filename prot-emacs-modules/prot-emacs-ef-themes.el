@@ -1,9 +1,8 @@
 ;;; The Ef (εὖ) themes
 
-;; The themes are customisable.  Read the manual:
-;; <https://protesilaos.com/emacs/ef-themes>.
 (prot-emacs-configure
   (prot-emacs-install ef-themes)
+
   (ef-themes-take-over-modus-themes-mode 1)
 
   (prot-emacs-keybind global-map
@@ -33,6 +32,7 @@
 
 (prot-emacs-comment
   (:eval nil)
+
   (add-to-list 'load-path "~/Git/Projects/modus-themes/")
   (add-to-list 'load-path "~/Git/Projects/ef-themes/")
 
@@ -46,6 +46,8 @@
     "C-<f5>" #'modus-themes-select
     "M-<f5>" #'modus-themes-load-random)
 
-  (modus-themes-load-random 'light))
+  (if (prot-emacs-gnome-prefers-dark-p)
+      (modus-themes-load-random 'dark)
+    (modus-themes-load-random 'light)))
 
 (provide 'prot-emacs-ef-themes)

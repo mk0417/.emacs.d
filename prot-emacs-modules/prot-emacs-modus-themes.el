@@ -44,12 +44,12 @@
 
   (setq modus-themes-common-palette-overrides nil)
 
-  ;; (modus-themes-load-theme (car modus-themes-to-toggle))
   (modus-themes-load-random 'light))
 
 ;; NOTE: For testing purposes
 (prot-emacs-comment
   (:eval nil)
+
   (add-to-list 'load-path "~/Git/Projects/modus-themes/")
 
   (require 'modus-themes)
@@ -61,6 +61,8 @@
     "C-<f5>" #'modus-themes-select
     "M-<f5>" #'modus-themes-load-random)
 
-  (modus-themes-load-random 'light))
+  (if (prot-emacs-gnome-prefers-dark-p)
+      (modus-themes-load-random 'dark)
+    (modus-themes-load-random 'light)))
 
 (provide 'prot-emacs-modus-themes)
