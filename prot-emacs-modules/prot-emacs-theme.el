@@ -127,6 +127,11 @@
   ;; suggested binding for `org-capture' and is the one I use as well.
   (define-key global-map (kbd "C-c p") #'cursory-set-preset))
 
+;;; Modus themes exporter
+(prot-emacs-configure
+  ;; The use the command `modus-themes-exporter-export'.
+  (prot-emacs-install modus-themes-exporter "https://github.com/protesilaos/modus-themes-exporter.git"))
+
 ;;;; Theme buffet
 (prot-emacs-configure
   (prot-emacs-install theme-buffet)

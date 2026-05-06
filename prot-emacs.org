@@ -2252,7 +2252,7 @@ such as in the difference between writing and reading.
     (define-key global-map (kbd "C-c p") #'cursory-set-preset)))
 #+end_src
 
-*** GNOME accent theme switcher (~gnome-accent-theme-switcher~)
+*** The =prot-emacs-theme.el= section the GNOME accent theme switcher (~gnome-accent-theme-switcher~)
 :PROPERTIES:
 :CUSTOM_ID: h:79bcb083-0700-45d4-98cb-6e52f40b72ee
 :END:
@@ -2295,6 +2295,30 @@ the GNOME desktop environment ([[#h:3f1a33e4-762e-4cf3-a0ae-4c2954d9cbb8][The =p
     (gnome-accent-theme-switcher-mode 1)))
 #+end_src
 
+*** The =prot-emacs-theme.el= section for ~modus-themes-exporter~
+:PROPERTIES:
+:CUSTOM_ID: h:ac631ebf-1130-41ee-8c4e-441be3c01cbb
+:END:
+
+This is another package of mine. It empowers the user to export a
+Modus or Modus-derived theme to another application. The idea is to
+get one's favourite terminal emulator (or other such tool) to use the
+colours that are shown in Emacs.
+
+I developed this package during a live stream:
+<https://protesilaos.com/codelog/2026-04-13-emacs-live-develop-modus-themes-exporter-package/>.
+
++ Git repository: <https://github.com/protesilaos/modus-themes-exporter>
++ Backronym: modus-themes... Export Xenotropically Preconfigured
+  Orderly Rendered Terminal Emulator Reifications.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
+;;; Modus themes exporter
+(prot-emacs-configure
+  ;; The use the command `modus-themes-exporter-export'.
+  (prot-emacs-install modus-themes-exporter "https://github.com/protesilaos/modus-themes-exporter.git"))
+#+end_src
+
 *** The =prot-emacs-theme.el= section for ~theme-buffet~
 :PROPERTIES:
 :CUSTOM_ID: h:2af10314-c8c2-4946-bf9c-a5b0f5fe881b
@@ -2331,7 +2355,7 @@ Bruno Boal is the lead developer and I am a co-maintainer.
   (theme-buffet-timer-hours 1))
 #+end_src
 
-*** The =prot-emacs-theme.el= section about ~fontaine~
+*** The =prot-emacs-theme.el= section for ~fontaine~
 :PROPERTIES:
 :CUSTOM_ID: h:cb41fef0-41a5-4a85-9552-496d96290258
 :END:
@@ -2477,7 +2501,7 @@ Also check my ~show-font~ package ([[#h:60a005be-77bd-49f1-a865-78d7cf75bd2a][Th
     (add-hook 'fontaine-set-preset-hook #'pulsar-pulse-line)))
 #+end_src
 
-*** The =prot-emacs-theme.el= section about ~show-font~
+*** The =prot-emacs-theme.el= section for ~show-font~
 :PROPERTIES:
 :CUSTOM_ID: h:60a005be-77bd-49f1-a865-78d7cf75bd2a
 :END:
@@ -2515,7 +2539,7 @@ To actually set fonts, I use my ~fontaine~ package ([[#h:cb41fef0-41a5-4a85-9552
       "C-c S l" #'show-font-tabulated)))
 #+end_src
 
-*** The =prot-emacs-theme.el= section about ~variable-pitch-mode~ and font resizing
+*** The =prot-emacs-theme.el= section for ~variable-pitch-mode~ and font resizing
 :PROPERTIES:
 :CUSTOM_ID: h:60d6aae2-6e4b-402c-b6a8-411fc49a6857
 :END:
@@ -6783,6 +6807,34 @@ the placement of a window in the given direction.
     "C-M-S-<left>" #'windmove-swap-states-left)
 
   (setq windmove-create-window nil)) ; Emacs 27.1
+#+end_src
+
+*** The =prot-emacs-window.el= section for ~buffer-to-pdf~
+:PROPERTIES:
+:CUSTOM_ID: h:4bdb59e9-1c3c-4e60-9c11-0a6372b838db
+:END:
+
+This is yet another package of mine. It allows the user to export
+their current buffer to a PDF. In practice, this is like a screen
+capture of whatever is in the current buffer, paginated in a sensible
+way. For example, an Org file will have one heading per page.
+
+The font size and current theme are preserved. This way, users have a
+"what you see is what you get" result. For presentations, user may
+thus prefer to create a file based on the font size they like, check
+that each screenfull shows the heading with its contents, and then
+call the command ~buffer-to-pdf~. For printer-friendly output the
+~buffer-to-pdf-black-on-white~ can be used instead.
+
+- Git repository: <https://github.com/protesilaos/buffer-to-pdf>.
+- Video demonstration: <https://protesilaos.com/codelog/2026-05-02-emacs-buffer-to-pdf-new-package/>.
+- Backronym: Bewitched Users Find Files Effortlessly Rendered To PDF.
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-window.el"
+;;; Buffer to PDF
+(prot-emacs-configure
+  ;; The use the command `buffer-to-pdf' or `buffer-to-pdf-black-on-white'.
+  (prot-emacs-install buffer-to-pdf "https://github.com/protesilaos/buffer-to-pdf.git"))
 #+end_src
 
 *** The =prot-emacs-window.el= ~provide~ form
