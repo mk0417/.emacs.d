@@ -128,9 +128,9 @@
   (define-key global-map (kbd "C-c p") #'cursory-set-preset))
 
 ;;; Modus themes exporter
-(prot-emacs-configure
-  ;; The use the command `modus-themes-exporter-export'.
-  (prot-emacs-install modus-themes-exporter "https://github.com/protesilaos/modus-themes-exporter.git"))
+;; (prot-emacs-configure
+;;   ;; The use the command `modus-themes-exporter-export'.
+;;   (prot-emacs-install modus-themes-exporter "https://github.com/protesilaos/modus-themes-exporter.git"))
 
 ;;;; Theme buffet
 (prot-emacs-configure
