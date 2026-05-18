@@ -72,7 +72,9 @@
   (setq ess-imenu-use-p nil)
   (setq ess-indent-offset 4)
   (setq ess-use-flymake nil)
-  (setq ess-indent-with-fancy-comments nil))
+  ;; https://chainsawriot.com/postmannheim/2025/04/04/fancycomments.html
+  (setq ess-style 'OWN)
+  (setf (cdr (assoc 'ess-indent-with-fancy-comments ess-own-style-list)) nil))
 
 ;;; Julia
 (use-package julia-mode
