@@ -5590,8 +5590,8 @@ by visiting individual files or by using a grep buffer as an index.
    "M-s M-o" #'prot-search-occur-outline
    "M-s M-u" #'prot-search-occur-browse-url)
  (prot-emacs-keybind isearch-mode-map
-   "<home>" #'isearch-beginning-of-buffer
-   "<end>" #'isearch-end-of-buffer
+   "C-<home>" #'isearch-beginning-of-buffer
+   "C-<end>" #'isearch-end-of-buffer
    "<up>" #'isearch-repeat-backward
    "<down>" #'isearch-repeat-forward
    "<backspace>" #'prot-search-isearch-abort-dwim
@@ -5726,7 +5726,7 @@ Dired lets us work with our files in a way that still feels close to
 the command-line, yet has more powerful interactive features than even
 fully fledged, graphical file managers.
 
-*** The =prot-emacs-dired.el= settings for common operations
+*** The =prot-emacs-dired.el= settings for copy, rename, delete operations
 :PROPERTIES:
 :CUSTOM_ID: h:39fb0eab-54bb-4e5b-8e38-9443dbe5c5ee
 :END:
@@ -5983,6 +5983,7 @@ given directory ([[#h:b902e6a3-cdd2-420f-bc99-3d973c37cd20][The =prot-emacs-sear
     (require 'prot-dired)
     (add-hook 'dired-mode #'prot-dired-setup-imenu)
     (prot-emacs-keybind dired-mode-map
+      "f" nil ; disable `dired-find-file' as it is on RET already
       "i" #'prot-dired-insert-subdir ; override `dired-maybe-insert-subdir'
       "/" #'prot-dired-limit-regexp
       "C-M-<return>" #'prot-dired-open-directory-externally ; C-<return> is `dired-do-open'
@@ -11548,11 +11549,13 @@ want in this case.
 
     (define-key elfeed-show-mode-map (kbd "w") #'elfeed-show-yank)
 
+    (setq elfeed-last-update-relative 0) ; absolute time in the header-line
+    (setq elfeed-search-separator-date-format nil) ; no date sections in the search buffer
     (setq elfeed-use-curl nil)
     (setq elfeed-curl-max-connections 10)
     (setq elfeed-db-directory (expand-file-name "elfeed/" user-emacs-directory))
     (setq elfeed-enclosure-default-dir (expand-file-name "~/Downloads/"))
-    (setq elfeed-search-filter "@2-weeks-ago +unread")
+    (setq-default elfeed-search-filter "@2-weeks-ago +unread") ; NOTE 2026-05-28: was changed to buffer-local
     (setq elfeed-sort-order 'descending)
     (setq elfeed-search-clipboard-type 'CLIPBOARD)
     (setq elfeed-search-title-max-width 100)
@@ -11570,7 +11573,15 @@ want in this case.
       (load (expand-file-name "~/feeds.el.gpg") :no-error :no-message))
     ;; Make entries tagged as "personal" use the `bold-italic' face.
     ;; This way I can quickly notice my own entries in the listing.
-    (add-to-list 'elfeed-search-face-alist '(personal bold-italic))))
+    (add-to-list 'elfeed-search-face-alist '(personal bold-italic))
+
+    ;; NOTE 2026-05-29: Make `elfeed-search-yank' mark the entry as
+    ;; read.  If I am copying the URL, then it means I already plan to
+    ;; do something with this entry outside of Elfeed.
+    (define-advice elfeed-search-yank (:around (&rest args) prot)
+      (save-excursion
+        (apply args))
+      (call-interactively 'elfeed-search-untag-all-unread))))
 #+end_src
 
 *** The =prot-emacs-web.el= settings for the IRC client (~rcirc~)

@@ -163,7 +163,7 @@
   :demand t
   :bind
   ( :map global-map
-    ("C-c ." . embark-act)
+    ("C-, ," . embark-act)
     ("s-m" . ns-do-hide-emacs)))
 
 (provide 'init-keybinding)
