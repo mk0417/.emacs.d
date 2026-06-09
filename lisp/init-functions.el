@@ -227,4 +227,116 @@ Version: 2023-07-12"
   (interactive)
   (consult-line (or (thing-at-point 'symbol))))
 
+;; https://github.com/xahlee/xah-fly-keys/blob/master/xah-fly-keys.el
+(defvar xah-smart-delete-dispatch
+  '((xah-wolfram-mode . xah-wolfram-smart-delete-backward)
+    (xah-html-mode . xah-html-smart-delete-backward))
+  "Used by `xah-smart-delete'.
+This makes that function behavior dependent on current major-mode.
+Value is Alist of pairs, each is of the form
+(‹major-mode-name› . ‹function-name›)
+If ‹major-mode-name› match current var `major-mode', the paired function is called.
+If no major mode matches, `xah-smart-delete' default behavior is used.
+Version: 2024-06-05")
+
+(defun xah-smart-delete (&optional BracketOnly SkipDispatch)
+  "Smart backward delete.
+Typically, delete to the left 1 char or entire bracketed text.
+Behavior depends on what's left char, and current `major-mode'.
+
+If `xah-smart-delete-dispatch' match, call the matched function instead.
+If region active, delete region.
+If cursor left is space tab newline, delete them.
+If cursor left is bracket, delete the whole bracket block.
+If cursor left is string quote, delete the string.
+Else just delete one char to the left.
+
+If `universal-argument' is called first, do not delete bracket's innertext.
+
+In elisp code, arg BracketOnly if true, do not delete innertext. SkipDispatch if true, skip checking `xah-smart-delete-dispatch'.
+
+Created: 2023-07-22
+Version: 2025-07-30"
+  (interactive (list current-prefix-arg nil))
+  (let (xfun)
+    (cond
+     ((and (not SkipDispatch) (setq xfun (assq major-mode xah-smart-delete-dispatch)))
+      (message "calling cdr of %s" xfun)
+      (funcall (cdr xfun)))
+     ((region-active-p)
+      (kill-region (region-beginning) (region-end)))
+     ((or
+       ;; 32 is space, 9 is tab, 10 is newline
+       (eq (char-before) 32)
+       (eq (char-before) 10)
+       (eq (char-before) 9))
+      (if (minibufferp (current-buffer))
+          (while (or (eq (char-before) 32) (eq (char-before) 10) (eq (char-before) 9))
+            (delete-char -1))
+        (let ((xp0 (point)) xbeg xend)
+          (skip-chars-backward " \t\n")
+          (setq xbeg (point) xend xp0)
+          (if (eq real-this-command real-last-command)
+              (kill-append (delete-and-extract-region xbeg xend) t)
+            (kill-region xbeg xend)))))
+     ((prog2 (backward-char) (looking-at "\\s)") (forward-char))
+      ;; (message "cursor left is closing bracket")
+      (cond
+       ;; unmatched bracket, just delete it
+       ((not (condition-case nil (scan-sexps (point) -1) (scan-error nil)))
+        (warn "There was unmatched bracket: no paired opening bracket on left of cursor")
+        (delete-char -1))
+       ;; delete just the brackets
+       (BracketOnly
+        (let ((xp0 (point)) xbeg)
+          (forward-sexp -1)
+          (while (looking-at "\\s'") (forward-char))
+          (setq xbeg (point))
+          (goto-char xp0)
+          (delete-char -1)
+          (goto-char xbeg)
+          (delete-char 1)
+          (goto-char (- xp0 2))))
+       ;; delete the bracket block
+       (t
+        (let ((xp0 (point)) xbeg xend)
+          (forward-sexp -1)
+          (while (looking-at "\\s'") (forward-char))
+          (setq xbeg (point) xend xp0)
+          (if (eq real-this-command real-last-command)
+              (kill-append (delete-and-extract-region xbeg xend) t)
+            (kill-region xbeg xend))))))
+     ((prog2 (backward-char) (looking-at "\\s(") (forward-char))
+      ;; (message "cursor left is opening bracket")
+      (cond
+       ;; unmatched bracket, just delete it
+       ((save-excursion
+          (backward-char)
+          (not (condition-case nil (scan-sexps (point) 1) (scan-error nil))))
+        (warn "There was unmatched bracket: no paired closing bracket on right of cursor")
+        (delete-char -1))
+       ;; delete just the brackets
+       (BracketOnly
+        (let (xbeg)
+          (backward-char)
+          (setq xbeg (point))
+          (forward-sexp 1)
+          (delete-char -1)
+          (goto-char xbeg)
+          (delete-char 1)))
+       ;; delete the bracket block
+       (t
+        (let (xbeg xend)
+          (backward-char)
+          (setq xbeg (point))
+          (forward-sexp 1)
+          (setq xend (point))
+          (if (eq real-this-command real-last-command)
+              (kill-append (delete-and-extract-region xbeg xend) t)
+            (kill-region xbeg xend))))))
+     ((prog2 (backward-char) (looking-at "\\s\"") (forward-char))
+      (message "calling xah-delete-string-backward")
+      (xah-delete-string-backward BracketOnly))
+     (t (delete-char -1)))))
+
 (provide 'init-functions)
