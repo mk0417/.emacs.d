@@ -251,29 +251,64 @@ Development continues on GitHub with GitLab as a mirror."))
   (remove-hook 'save-some-buffers-functions #'abbrev--possibly-save))
 
 ;;; Corfu (in-buffer completion popup)
-;; (when (and prot-emacs-completion-extras
-;;            prot-display-graphic-p)
-;;   (prot-emacs-configure
-;;     (prot-emacs-install corfu)
-;;
-;;     (setq corfu-preview-current nil)
-;;     (setq corfu-min-width 20)
-;;
-;;     (setq corfu-popupinfo-delay '(1.25 . 0.5))
-;;     (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
-;;
-;;     (global-corfu-mode 1)
-;;
-;;     ;; I also have (setq tab-always-indent 'complete) for TAB to complete
-;;     ;; when it does not need to perform an indentation change.
-;;     (define-key corfu-map (kbd "<tab>") #'corfu-complete)
-;;
-;;     ;; Sort by input history (no need to modify `corfu-sort-function').
-;;     (with-eval-after-load 'savehist
-;;       (corfu-history-mode 1)
-;;       (add-to-list 'savehist-additional-variables 'corfu-history))))
+(when (eq prot-emacs-completion-in-buffer 'corfu)
+  (prot-emacs-configure
+    (prot-emacs-install corfu)
 
-(prot-emacs-comment
+    (setq corfu-preview-current nil)
+    (setq corfu-min-width 20)
+
+    (setq corfu-popupinfo-delay '(1.25 . 0.5))
+    (corfu-popupinfo-mode 1) ; shows documentation after `corfu-popupinfo-delay'
+
+    (global-corfu-mode 1)
+
+    ;; I also have (setq tab-always-indent 'complete) for TAB to complete
+    ;; when it does not need to perform an indentation change.
+    (define-key corfu-map (kbd "<tab>") #'corfu-complete)
+
+    ;; Sort by input history (no need to modify `corfu-sort-function').
+    (with-eval-after-load 'savehist
+      (corfu-history-mode 1)
+      (add-to-list 'savehist-additional-variables 'corfu-history))))
+
+(when (eq prot-emacs-completion-in-buffer 'corfu)
+  (prot-emacs-configure
+    (prot-emacs-install cape)
+
+    (defun prot/cape-super-set-local (capfs)
+      "Set `completion-at-point-functions' to current value plus CAPFs."
+      (let* ((all (append completion-at-point-functions capfs))
+             (all-minus-global (delq t all))
+             (cape-super (apply #'cape-capf-super all-minus-global)))
+        (setq-local completion-at-point-functions (list cape-super t))))
+
+    (defun prot/cape-prog-setup ()
+      "Set up Cape for programming."
+      (prot/cape-super-set-local '(cape-file cape-dabbrev)))
+
+    (add-hook 'prog-mode-hook #'prot/cape-prog-setup)
+
+    (defun prot/cape-text-setup ()
+      "Set up Cape for prose."
+      (prot/cape-super-set-local '(cape-file cape-dabbrev cape-dict)))
+
+    (add-hook 'text-mode-hook #'prot/cape-text-setup)))
+
+(when (eq prot-emacs-completion-in-buffer 'company)
+  (prot-emacs-configure
+    (prot-emacs-install company)
+    (setq company-dabbrev-code-completion-styles t) ; use the `completion-styles'
+    (setq company-tooltip-limit 6)
+    (setq company-tooltip-minimum-width 25)
+    (setq company-tooltip-align-annotations t)
+    (setq company-backends '((company-dabbrev-code company-capf) company-files))
+    (setq company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
+                              company-preview-if-just-one-frontend
+                              company-echo-metadata-frontend))
+    (global-company-mode 1)))
+
+(when (eq prot-emacs-completion-in-buffer 'completion-preview)
   (prot-emacs-configure
     (setq completion-preview-exact-match-only nil)
     (setq completion-preview-commands '(self-insert-command
