@@ -1,19 +1,15 @@
 ;;; init-abbrev.el --- Abbreviations -*- lexical-binding: t -*-
 
 (progn
-  (when (boundp 'python-mode-abbrev-table)
-    (clear-abbrev-table python-mode-abbrev-table))
-  (define-abbrev-table 'python-mode-abbrev-table
+  (when (boundp 'python-ts-mode-abbrev-table)
+    (clear-abbrev-table python-ts-mode-abbrev-table))
+  (define-abbrev-table 'python-ts-mode-abbrev-table
     '(
       ("mywrds"
-       "with open(Path('~/.pass.yml').expanduser()) as f:
-    wrds_username, wrds_password = [*yaml.safe_load(f)['wrds'].values()]")
-
-      ("mywrdsconn"
-       "def wrds_connection():
-    with open(Path('~/.pass.yml').expanduser()) as f:
-        wrds_username, wrds_password = [*yaml.safe_load(f)['wrds'].values()]
-
+       "def wrds_uri():
+    load_dotenv(Path('~/.env').expanduser())
+    wrds_username = os.getenv('wrds_username')
+    wrds_password = os.getenv('wrds_password')
     uri = (
         f'postgresql://{wrds_username}:{wrds_password}'
         '@wrds-pgdata.wharton.upenn.edu:9737/wrds?sslmode=require')
