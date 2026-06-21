@@ -3354,7 +3354,6 @@ these and many other buffers by configuring the ~display-buffer-alist~
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-essentials.el"
 ;;;; World clock (M-x world-clock)
 (prot-emacs-configure
-  (setq display-time-world-list t)
   (setq zoneinfo-style-world-list ; M-x shell RET timedatectl list-timezones
         '(("America/Los_Angeles" "🇺🇸 Los Angeles")
           ("America/Vancouver" "🇨🇦 Vancouver")
@@ -14327,7 +14326,7 @@ Specific to the current window's mode line.")
     '(:eval
       (when (and (mode-line-window-selected-p)
                  (buffer-narrowed-p)
-                 (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
+                 (not (memq major-mode '(Info-mode help-mode message-mode special-mode))))
         (propertize " Narrow " 'face 'prot-modeline-indicator-cyan-bg)))
   "Mode line construct to report the narrowed state of the current buffer.")
 
