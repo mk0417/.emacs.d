@@ -84,6 +84,7 @@
 ;;   (add-hook 'python-ts-mode-hook #'eglot-ensure)
 ;;
 ;;   (with-eval-after-load 'eglot
+;;     (setq eglot-watch-files-outside-project-root nil)
 ;;     (setq eglot-events-buffer-config '(:size 1))
 ;;     (setq eglot-stay-out-of '(flymake))
 ;;     (setq eglot-ignored-server-capabilities

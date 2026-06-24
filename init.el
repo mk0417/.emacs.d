@@ -49,7 +49,7 @@ These include the packages `marginalia', `consult', `corfu',
   :group 'prot-emacs
   :type 'boolean)
 
-(defcustom prot-emacs-completion-in-buffer 'nil
+(defcustom prot-emacs-completion-in-buffer nil
   "Front-end for text completion in the buffer.
 When the value is either `corfu' or `company', use the package of the
 given name.  When the value is `completion-preview' use the built-in
