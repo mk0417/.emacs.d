@@ -93,9 +93,7 @@
 ;; https://github.com/xahlee/xah-fly-keys/blob/master/xah-fly-keys.el
 (defun xah-shrink-whitespaces ()
   "Remove whitespaces around cursor .
-
 Shrink neighboring spaces, then newlines, then spaces again, leaving one space or newline at each step, till no more white space.
-
 URL `http://xahlee.info/emacs/emacs/emacs_shrink_whitespace.html'
 Created: 2014-10-21
 Version: 2023-07-12"
@@ -143,16 +141,6 @@ Version: 2023-07-12"
           (insert "\n"))))
      (t (progn
           (message "nothing done. logic error 40873. shouldn't reach here"))))))
-
-(defun p-format-to-left ()
-  (interactive)
-  (backward-paragraph)
-  (skip-chars-forward "\n\t ")
-  (xah-shrink-whitespaces)
-  (let ((start (point)))
-    (forward-paragraph)
-    (skip-chars-backward "\n\t ")
-    (indent-region start (point))))
 
 (defun p-flip-quotes ()
   (interactive)
