@@ -3,6 +3,9 @@
 ;;; Produce backtraces when errors occur: can be helpful to diagnose startup issues
 (setq debug-on-error t)
 
+;;; Do not native compile certain packages
+(setq native-comp-jit-compilation-deny-list '("lsp-bridge"))
+
 ;;; Fringe
 (fringe-mode '(3 . 0))
 
