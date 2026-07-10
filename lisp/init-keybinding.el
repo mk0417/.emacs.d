@@ -162,6 +162,7 @@
   :demand t
   :bind
   ( :map global-map
+    ("C-c n m" . denote-subdirectory)
     ("C-, ," . embark-act)
     ("s-m" . ns-do-hide-emacs)))
 
