@@ -71,4 +71,6 @@
 (setq scroll-step 1
       scroll-conservatively 10000)
 
+(setq org-startup-with-inline-images t)
+
 (provide 'init-default)
