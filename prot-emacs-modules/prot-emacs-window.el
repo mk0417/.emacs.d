@@ -48,6 +48,11 @@
   ;; Use absolute numbers in narrowed buffers
   (setq-default display-line-numbers-widen t))
 
+(prot-emacs-configure
+  (setq prot-streaming-mode-modes '(text-mode prog-mode dired-mode comint-mode))
+  (prot-emacs-autoload prot-streaming-mode "prot-streaming")
+  (define-key global-map (kbd "<f7>") #'prot-streaming-mode))
+
 ;;;; `window', `display-buffer-alist', and related
 (prot-emacs-configure
   (require 'prot-window)
@@ -82,7 +87,9 @@
            (preserve-size . (t . t))
            (body-function . select-window))
           ("\\*Embark Actions\\*"
-           (display-buffer-below-selected)
+           ;; NOTE 2026-07-14: I am including `display-buffer-at-bottom' here because Embark can be
+           ;; called from the minibuffer where `display-buffer-below-selected' does not work as intended.
+           (display-buffer-reuse-mode-window display-buffer-below-selected display-buffer-at-bottom)
            (window-height . fit-window-to-buffer)
            (window-parameters . ((no-other-window . t)
                                  (mode-line-format . none))))
@@ -141,7 +148,8 @@
            (display-buffer-reuse-mode-window display-buffer-same-window))
           ((or . ((derived-mode . magit-diff-mode)
                   (derived-mode . magit-log-mode)))
-           (prot-window-display-other-or-current))
+           (display-buffer-reuse-mode-window prot-window-display-new display-buffer-pop-up-window)
+           (inhibit-switch-frame . t))
           ;; other `tab-bar-mode' tab
           ((derived-mode . magit-status-mode)
            (display-buffer-reuse-mode-window display-buffer-in-tab)
