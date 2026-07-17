@@ -71,6 +71,8 @@
 (setq scroll-step 1
       scroll-conservatively 10000)
 
+;;; Org
 (setq org-startup-with-inline-images t)
+(setq org-startup-folded nil)
 
 (provide 'init-default)
