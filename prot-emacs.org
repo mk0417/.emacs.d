@@ -2097,7 +2097,7 @@ the minor mode ~lin-gnome-accent-color-mode~ is for.
 ;; Read the lin manual: <https://protesilaos.com/emacs/lin>.
 (prot-emacs-configure
   (prot-emacs-install lin)
-  (setq lin-face 'lin-cyan)
+  (setq lin-face 'lin-slate)
   (lin-global-mode 1)
   (when (string= (getenv "DESKTOP_SESSION") "gnome")
     (lin-gnome-accent-color-mode 1)))
@@ -2316,12 +2316,12 @@ the GNOME desktop environment ([[#h:3f1a33e4-762e-4cf3-a0ae-4c2954d9cbb8][The =p
 
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-theme.el"
 ;;; GNOME accent theme switcher
-(prot-emacs-configure
-  (prot-emacs-install
-    gnome-accent-theme-switcher
-    "https://github.com/protesilaos/gnome-accent-theme-switcher.git")
-  (when (and (null prot-emacs-load-theme-family)
-             (string= (getenv "DESKTOP_SESSION") "gnome"))
+(when (and (null prot-emacs-load-theme-family)
+           (string= (getenv "DESKTOP_SESSION") "gnome"))
+  (prot-emacs-configure
+    (prot-emacs-install
+      gnome-accent-theme-switcher
+      "https://github.com/protesilaos/gnome-accent-theme-switcher.git")
     (prot-emacs-keybind global-map
       "<f5>" #'gnome-accent-theme-switcher-toggle-mode
       "C-<f5>" #'gnome-accent-theme-switcher-change-accent
@@ -4876,15 +4876,32 @@ some Language Server Protocol).
 
     (setq company-backends '((company-capf company-dabbrev) company-files))
 
-    (add-hook 'prog-mode-hook
-              (lambda ()
-                (setq-local company-backends '((company-dabbrev-code company-capf) company-files))))
+    (define-advice company-show-doc-buffer (:around (&rest args) prot)
+      (let ((help-window-select nil)
+            (display-buffer-alist nil)
+            (display-buffer-overriding-action
+             '((display-buffer-reuse-mode-window display-buffer-below-selected)
+               (window-height . 0.3)
+               (post-command-select-window . nil))))
+        (apply args)))
 
-    (add-hook 'text-mode-hook
-              (lambda ()
-                (setq-local company-backends '((company-dabbrev company-ispell company-capf) company-files))))
+    (defun prot/company-prog-backends ()
+      "Set `company-backends' locally to my preferred value for `prog-mode' and derivatives."
+      (setq-local company-backends '((company-capf company-dabbrev-code) company-files)))
 
-    (global-company-mode 1)))
+    (add-hook 'prog-mode-hook #'prot/company-prog-backends)
+
+    (defun prot/company-text-backends ()
+      "Set `company-backends' locally to my preferred value for `text-mode' and derivatives."
+      (setq-local company-backends '((company-dabbrev company-ispell company-capf) company-files)))
+
+    (add-hook 'text-mode-hook #'prot/company-text-backends)
+
+    (global-company-mode 1)
+
+    (prot-emacs-install company-statistics)
+
+    (company-statistics-mode 1)))
 #+end_src
 
 *** The =prot-emacs-completion.el= for in-buffer completion hints (~completion-preview-mode~)
@@ -8911,7 +8928,7 @@ are a few cases where ~setq-default~ is needed, so keep this in mind.
 ;;;; Tabs, indentation, and the TAB key
 (prot-emacs-configure
   (setq tab-always-indent 'complete)
-  (setq tab-first-completion 'word-or-paren-or-punct) ; Emacs 27
+  (setq tab-first-completion nil) ; Emacs 27
   (setq-default tab-width 4
                 indent-tabs-mode nil))
 #+end_src
