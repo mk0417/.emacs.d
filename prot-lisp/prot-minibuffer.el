@@ -30,7 +30,6 @@
 
 ;;; Code:
 
-(require 'prot-common)
 (require 'prot-icons)
 
 (defgroup prot-minibuffer nil
@@ -53,19 +52,29 @@
   (let ((completion-extra-properties (list :category 'prot-minibuffer-emoji)))
     (apply args)))
 
+(defun prot-minibuffer@password-store--completing-read (&rest args)
+  (let ((completion-extra-properties (list :category 'prot-minibuffer-pass)))
+    (apply args)))
+
+(defun prot-minibuffer--do-advice (advice functions place)
+  "Handle the advice installed by the function `prot-minibuffer-missing-categories-mode'.
+For each function in FUNCTIONS apply ARGS."
+  (dolist (original functions)
+    (when-let* ((my-function-name (format "prot-minibuffer@%s" original))
+                (my-function-symbol (intern-soft my-function-name))
+                (args (if place
+                          (list advice original place my-function-symbol)
+                        (list advice original my-function-symbol))))
+      (apply args))))
+
 ;;;###autoload
 (define-minor-mode prot-minibuffer-missing-categories-mode
   "When enabled, add missing compleiton categories to relevant prompts."
   :global t
-  (if prot-minibuffer-missing-categories-mode
-      (dolist (original (list #'read-from-kill-ring #'read-library-name #'emoji--read-emoji))
-        (when-let* ((my-function-name (format "prot-minibuffer@%s" original))
-                    (my-function-symbol (intern-soft my-function-name)))
-          (advice-add original :around my-function-symbol)))
-    (dolist (original (list #'read-from-kill-ring #'read-library-name #'emoji--read-emoji))
-      (when-let* ((my-function-name (format "prot-minibuffer@%s" original))
-                  (my-function-symbol (intern-soft my-function-name)))
-        (advice-remove original my-function-symbol)))))
+  (let ((functions '(read-from-kill-ring read-library-name emoji--read-emoji password-store--completing-read)))
+    (if prot-minibuffer-missing-categories-mode
+        (prot-minibuffer--do-advice #'advice-add functions :around)
+      (prot-minibuffer--do-advice #'advice-remove functions nil))))
 
 (defun prot-minibuffer-file-sort (files)
   "Sort FILES to have directories first and the rest alphabetically.
@@ -134,35 +143,38 @@ Omit the .. directory from FILES."
   "Sort BUFFERS by visibility.
 This is a copy of `beframe-buffer-sort-visibility', from my `beframe'
 package."
-  (let ((bufs (seq-group-by
-               (lambda (buf)
-                 (cond
-                  ((eq buf (current-buffer)) :current)
-                  ((get-buffer-window buf 'visible) :visible)
-                  (t :hidden)))
-               buffers)))
-    (nconc (alist-get :hidden  bufs)
-           (alist-get :visible bufs)
-           (alist-get :current bufs))))
+  (let* ((bufs (seq-group-by
+                (lambda (buf)
+                  (cond
+                   ((eq buf (current-buffer)) :current)
+                   ((get-buffer-window buf 'visible) :visible)
+                   (t :hidden)))
+                buffers))
+         (hidden (alist-get :hidden  bufs))
+         (visible (alist-get :visible bufs))
+         (current (alist-get :current bufs)))
+    (nconc hidden visible current)))
 
-(defun prot-minibuffer-buffer-group (buffer-name transform)
-  "Return BUFFER-NAME group name unless TRANSFORM is non-nil."
-  (cond
-   (transform buffer-name)
-   ((string-prefix-p "*" buffer-name) "Special")
-   ((string-match-p "\\`magit.*?:" buffer-name) "Git")
-   ((if-let* ((buffer (get-buffer buffer-name)))
-        (with-current-buffer buffer
-          (cond
-           ((derived-mode-p 'dired-mode)
-            "Directory")
-           ((derived-mode-p 'prog-mode)
-            "Program")
-           ((derived-mode-p 'text-mode)
-            "Prose")
-           (t
-            (format "%s" major-mode))))
-      ""))))
+;; NOTE 2026-07-25: I am disabling this because it messes up with the sorting.
+
+;; (defun prot-minibuffer-buffer-group (buffer-name transform)
+;;   "Return BUFFER-NAME group name unless TRANSFORM is non-nil."
+;;   (cond
+;;    (transform buffer-name)
+;;    ((string-prefix-p "*" buffer-name) "Special")
+;;    ((string-match-p "\\`magit.*?:" buffer-name) "Git")
+;;    ((if-let* ((buffer (get-buffer buffer-name)))
+;;       (with-current-buffer buffer
+;;         (cond
+;;          ((derived-mode-p 'dired-mode)
+;;           "Directory")
+;;          ((derived-mode-p 'prog-mode)
+;;           "Program")
+;;          ((derived-mode-p 'text-mode)
+;;           "Prose")
+;;          (t
+;;           (format "%s" major-mode))))
+;;       ""))))
 
 (defun prot-minibuffer-buffer-affixate (buffers)
   "Return BUFFERS with prefix and suffix."
@@ -234,17 +246,23 @@ package."
 
 (defun prot-minibuffer-choose-completion-no-exit ()
   "Call `choose-completion' without exiting the minibuffer.
-Also see `prot-minibuffer-choose-completion-exit' and `prot-minibuffer-choose-completion-dwim'."
+Also see `prot-minibuffer-choose-completion-exit' and
+`prot-minibuffer-choose-completion-dwim'."
   (interactive)
-  (choose-completion nil :no-exit :no-quit)
-  (switch-to-minibuffer))
+  (if minibuffer-visible-completions
+      (minibuffer-choose-completion :no-exit :no-quit)
+    (choose-completion nil :no-exit :no-quit)
+    (switch-to-minibuffer)))
 
 (defun prot-minibuffer-choose-completion-exit ()
   "Call `choose-completion' and exit the minibuffer.
-Also see `prot-minibuffer-choose-completion-no-exit' and `prot-minibuffer-choose-completion-dwim'."
+Also see `prot-minibuffer-choose-completion-no-exit' and
+`prot-minibuffer-choose-completion-dwim'."
   (interactive)
-  (choose-completion nil :no-exit)
-  (exit-minibuffer))
+  (if minibuffer-visible-completions
+      (or (minibuffer-choose-completion-or-exit) (exit-minibuffer))
+    (choose-completion nil :no-exit)
+    (exit-minibuffer)))
 
 (defun prot-minibuffer-crm-p ()
   "Return non-nil if `completing-read-multiple' is in use."
@@ -253,16 +271,23 @@ Also see `prot-minibuffer-choose-completion-no-exit' and `prot-minibuffer-choose
               (buffer (window-buffer window)))
     (buffer-local-value 'crm-completion-table buffer)))
 
+(defun prot-minibuffer-empty-p ()
+  "Return non-nil if the minibuffer is empty."
+  (eq (minibuffer-prompt-end) (point-max)))
+
 (defun prot-minibuffer-choose-completion-dwim ()
   "Call `choose-completion' that exits only on a unique match.
 If the match is not unique, then complete up to the largest common
 prefix or, anyhow, continue with the completion (e.g. in `find-file'
 switch into the directory and then show the files therein).
 
-Also see `prot-minibuffer-choose-completion-no-exit' and `prot-minibuffer-choose-completion-exit'."
+Also see `prot-minibuffer-choose-completion-no-exit' and
+`prot-minibuffer-choose-completion-exit'."
   (interactive)
   (if (prot-minibuffer-crm-p)
-      (prot-minibuffer-choose-completion-no-exit)
+      (if (prot-minibuffer-empty-p)
+          (prot-minibuffer-choose-completion-no-exit)
+        (prot-minibuffer-choose-completion-exit))
     (choose-completion nil :no-exit :no-quit)
     (switch-to-minibuffer)
     (minibuffer-completion-help)
@@ -285,9 +310,12 @@ Make the window be at slot 0, such that the *Help* buffer produced by
 Place the *Help* buffer in a side window, situated to the right of the
 *Completions* buffer.  Make the window have the `prot-minibuffer-help'
 property, such that it can be found by `prot-minibuffer-completions-close-help'."
-  (interactive (list (intern-soft (thing-at-point 'symbol))))
-  (unless (derived-mode-p 'completion-list-mode)
-    (user-error "Can only do this from the *Completions* buffer"))
+  (interactive
+   (list
+    (intern-soft
+     (if minibuffer-visible-completions
+         (completion--selected-candidate)
+       (thing-at-point 'symbol)))))
   (when symbol
     (let ((help-window-select nil)
           (display-buffer-overriding-action
@@ -321,7 +349,8 @@ property, such that it can be found by `prot-minibuffer-completions-close-help'.
         (setq completions-max-height 12)
         (setq completions-sort 'historical)
         (setq completion-auto-help t)
-        (setq completion-auto-select t)
+        (setq completion-auto-select nil)
+        (setq minibuffer-visible-completions t)
         (setq completion-eager-display 'auto)
         (setq completion-eager-update 'auto)
         (add-hook 'completion-list-mode-hook #'prot-minibuffer-completions-tweak-style)
@@ -336,6 +365,7 @@ property, such that it can be found by `prot-minibuffer-completions-close-help'.
     (setq completions-sort 'alphabetical)
     (setq completion-auto-help t)
     (setq completion-auto-select nil)
+    (setq minibuffer-visible-completions nil)
     (setq completion-eager-display 'auto)
     (setq completion-eager-update 'auto)
     (remove-hook 'completion-list-mode-hook #'prot-minibuffer-completions-tweak-style)

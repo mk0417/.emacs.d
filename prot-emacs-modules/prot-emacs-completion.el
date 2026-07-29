@@ -22,38 +22,33 @@
                                     (eager-update . t)))
          (eager-update-properties-no-sort (append eager-update-properties (list (cons 'display-sort-function #'identity)))))
     (setq completion-category-overrides
-          `((file . ((styles . (partial-completion))
-                     (eager-display . nil)
-                     (eager-update . t)
+          `((file . (,@eager-update-properties
+                     (styles . (partial-completion))
                      (group-function . ,#'prot-minibuffer-file-group)
                      (affixation-function . ,#'prot-minibuffer-file-affixate)
                      (display-sort-function . ,#'prot-minibuffer-file-sort)))
-            (bookmark . (,@eager-update-properties
-                         (affixation-function . ,#'prot-minibuffer-bookmark-affixate)))
+            (buffer . (,@eager-update-properties
+                       (affixation-function . ,#'prot-minibuffer-buffer-affixate)))
             (project-file . (,@eager-update-properties
                              (group-function . ,#'prot-minibuffer-file-group)
                              (affixation-function . ,#'prot-minibuffer-file-affixate)))
             (prot-minibuffer-library . (,@eager-update-properties
                                         (annotation-function . ,#'prot-minibuffer-library-annotate)
                                         (display-sort-function . ,#'prot-minibuffer-library-sort)))
-            (symbol-help . (,@eager-update-properties
-                            (group-function . ,#'prot-minibuffer-symbol-group)
-                            (display-sort-function . ,#'prot-minibuffer-symbol-sort)))
-            (buffer . (,@eager-update-properties
-                       (group-function . ,#'prot-minibuffer-buffer-group)
-                       (affixation-function . ,#'prot-minibuffer-buffer-affixate)
-                       (display-sort-function . ,#'prot-minibuffer-buffer-sort)))
-            (command . ((affixation-function . nil)
+            (bookmark . (,@eager-update-properties
+                         (affixation-function . ,#'prot-minibuffer-bookmark-affixate)))
+            (command . (,@eager-update-properties
+                        (affixation-function . nil) ; so that the `annotation-function' can take effect
                         (annotation-function . ,#'prot-minibuffer-command-annotate)))
+            (symbol-help . ,eager-update-properties)
             (denote-file . ,eager-update-properties)
             (prot-minibuffer-emoji . ,eager-update-properties)
             (theme . ,eager-update-properties)
             (unicode-name . ,eager-update-properties)
+            (prot-minibuffer-pass . ,eager-update-properties)
             (imenu . ,eager-update-properties-no-sort)
             (consult-location . ,eager-update-properties-no-sort)
-            (prot-minibuffer-kill-ring . ((eager-display . t)
-                                          (eager-update . t)
-                                          (display-sort-function . identity)))))))
+            (prot-minibuffer-kill-ring . ,eager-update-properties-no-sort)))))
 
 ;;; Orderless completion style (and prot-orderless.el)
 (when prot-emacs-completion-extras
@@ -117,11 +112,15 @@
   (unless prot-emacs-completion-ui
     (prot-minibuffer-completions-mode 1)
 
+    (prot-emacs-keybind minibuffer-local-completion-map
+      "C-h C-h" #'prot-minibuffer-completions-describe-at-point ; overrides `help-for-help'
+      "C-<tab>" #'prot-minibuffer-choose-completion-no-exit
+      "RET" #'prot-minibuffer-choose-completion-exit)
+
     (prot-emacs-keybind completion-list-mode-map
-      "h" #'prot-minibuffer-completions-describe-at-point ; "Help" mnemonic
-      "c" #'prot-minibuffer-choose-completion-no-exit ; "Choose" mnemonic
-      "TAB" #'prot-minibuffer-choose-completion-dwim
-      "RET" #'prot-minibuffer-choose-completion-exit)))
+      "C-h C-h" #'prot-minibuffer-completions-describe-at-point ; overrides `help-for-help'
+      "C-<tab>" #'prot-minibuffer-choose-completion-no-exit
+      "RET" #'prot-minibuffer-choose-completion-dwim)))
 
 ;;;; `savehist' (minibuffer and related histories)
 (prot-emacs-configure
