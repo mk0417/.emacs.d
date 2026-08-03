@@ -118,32 +118,15 @@ minibuffer, even without explicitly focusing it.
 The DWIM behaviour of this command is as follows:
 
 - When the region is active, disable it.
-
-- When a minibuffer is open, but not focused, close the minibuffer.  For
-  recursive minibuffers, make sure to only close one level of depth.
-
-- When in a *Completions* or `special-mode' buffer (e.g. *Help* or
-  *Messages*), close it.
-
-- When the *Completions* or a `special-mode' buffer is on display but
-  not selected, close it.  If there are more than one, close them all.
-
+- When a minibuffer is open, but not focused, close the minibuffer.
+- When the Completions buffer is selected, close it.
 - In every other case use the regular `keyboard-quit'."
   (interactive)
   (cond
    ((region-active-p)
     (keyboard-quit))
-   ((and (derived-mode-p 'completion-list-mode 'special-mode)
-         (not (one-window-p)))
-    (quit-window))
-   ((when-let* ((_ (not (one-window-p)))
-                (windows (seq-filter
-                          (lambda (window)
-                            (with-selected-window window
-                              (derived-mode-p 'completion-list-mode 'special-mode)))
-                          (window-list))))
-      (dolist (window windows)
-        (quit-window nil window))))
+   ((derived-mode-p 'completion-list-mode)
+    (delete-completion-window))
    ((> (minibuffer-depth) 0)
     (abort-recursive-edit))
    (t
@@ -954,8 +937,8 @@ buffers in its history."
 ;;;###autoload
 (defun prot-simple-copy-current-path ()
   "Copy the current absolute path.
-If in a file-visiting buffer, copy the `buffer-file-name'.  Else copy
-the `default-directory'."
+If in a file-visiting buffer, copy the variable `buffer-file-name'.
+Else copy the `default-directory'."
   (declare (interactive-only t))
   (interactive)
   (let ((path (or buffer-file-name default-directory)))
@@ -1141,7 +1124,7 @@ update them all instead."
       (prot-simple-update-package-repositories-prompt))))
   (prot-simple-update-package-repositories-subr packages))
 
-;;;; Global minor mode to override key maps
+;;;; Global minor mode to override keymaps
 
 (defvar prot-simple-override-mode-map (make-sparse-keymap)
   "keymap for `prot-simple-override-mode'.
