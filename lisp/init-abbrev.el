@@ -4,7 +4,7 @@
   '(
     ;; Python WRDS uri
     ("pywrds"
-     "def wrds_uri():
+     "def gen_wrds_uri():
     load_dotenv(Path('~/.env').expanduser())
     wrds_username = os.getenv('wrds_username')
     wrds_password = os.getenv('wrds_password')
