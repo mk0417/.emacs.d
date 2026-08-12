@@ -27,17 +27,17 @@
 
   (prot-emacs-keybind global-map
     "<f2>" #'toggle-input-method  ; F2 overrides that two-column gimmick.  Sorry, but no!
-    "<insert>" #'nil
-    "<menu>" #'nil
+    "<insert>" 'nil
+    "<menu>" 'nil
     "C-M-w" nil ; never use it
-    "C-x C-d" #'nil ; never use it
-    "C-x C-v" #'nil ; never use it
-    "C-z" #'nil ; I have a window manager, thanks!
-    "C-x C-z" #'nil ; same idea as above
-    "C-x C-c" #'nil ; avoid accidentally exiting Emacs
+    "C-x C-d" 'nil ; never use it
+    "C-x C-v" 'nil ; never use it
+    "C-z" 'nil ; I have a window manager, thanks!
+    "C-x C-z" 'nil ; same idea as above
+    "C-x C-c" 'nil ; avoid accidentally exiting Emacs
     "C-x C-c C-c" #'save-buffers-kill-emacs ; more cumbersome, less error-prone
-    "C-h h" #'nil ; Never show that "hello" file
-    "M-`" #'nil
+    "C-h h" 'nil ; Never show that "hello" file
+    "M-`" 'nil
     "M-o" #'delete-blank-lines ; alias for C-x C-o
     "M-SPC" #'cycle-spacing
     "M-z" #'zap-up-to-char ; NOT `zap-to-char'
@@ -363,6 +363,7 @@
           ("Pacific/Auckland" "🇳🇿 Auckland")))
 
   ;; All of the following variables are for Emacs 28
+  (setq world-clock-sort-order nil) ; Emacs 31
   (setq world-clock-list t)
   (setq world-clock-time-format "%z %R	%a %d %b (%Z)")
   (setq world-clock-buffer-name "*world-clock*") ; Placement handled by `display-buffer-alist'
