@@ -843,8 +843,15 @@ This sets up Emacs for me to be able to type in Greek while still
 using Emacs key bindings involving modifier keys (I don't get this if
 I switch keyboard layouts at the system level).
 
-Watch my video about multilingual editing:
-<https://protesilaos.com/codelog/2023-12-12-emacs-multilingual-editing/>.
+Watch my videos:
+- [[https://protesilaos.com/codelog/2023-12-12-emacs-multilingual-editing/][multilingual editing (Greek, French, Chinese, etc.)]] (2023-12-12);
+- [[https://protesilaos.com/codelog/2026-07-02-emacs-french-input-method-jinx-spell/][write with input method (e.g. French) and Jinx for spelling]] (2026-07-02).
+
+In my =prot-minibuffer.el= I define extensions to sort input methods
+and group them by those I rely on versus the rest:
+
+- [[#h:761861c9-9a0e-4c97-b98d-20f13a6b3b79][The =prot-minibuffer= library]];
+- [[#h:0d49218d-4199-4847-9765-60a3f94e515d][The =prot-emacs-completion.el= settings for completion category overrides]].
 
 #+begin_src emacs-lisp :tangle "init.el"
 (setq default-input-method "greek") ; also check "greek-postfix"
@@ -2257,7 +2264,6 @@ such as in the difference between writing and reading.
             (underscore
              :cursor-color warning ; will typically be yellow
              :cursor-type (hbar . 3)
-
              :blink-cursor-blinks 50)
             (underscore-no-other-window
              :inherit underscore
@@ -2283,7 +2289,25 @@ such as in the difference between writing and reading.
 
     ;; We have to use the "point" mnemonic, because C-c c is often the
     ;; suggested binding for `org-capture' and is the one I use as well.
-    (define-key global-map (kbd "C-c p") #'cursory-set-preset)))
+    (define-key global-map (kbd "C-c p") #'cursory-set-preset)
+
+    (with-eval-after-load 'prot-streaming
+      (defvar prot/cursory-streaming--last-preset nil
+        "The last Cursory preset before enabling `prot/cursory-streaming-mode'.")
+
+      (defun prot/cursory-streaming-mode ()
+        "Set the Cursory preset to `box-no-blink' when streaming."
+        (cond
+         (prot-streaming-mode
+          (setq prot/cursory-streaming-mode cursory-last-selected-preset)
+          (cursory-set-preset 'box-no-blink))
+         (prot/cursory-streaming-mode
+          (cursory-set-preset prot/cursory-streaming-mode)
+          (setq prot/cursory-streaming-mode nil))
+         (t
+          (cursory-set-last-or-fallback))))
+
+      (add-hook 'prot-streaming-mode-hook #'prot/cursory-streaming-mode))))
 #+end_src
 
 *** The =prot-emacs-theme.el= section the GNOME accent theme switcher (~gnome-accent-theme-switcher~)
@@ -4217,6 +4241,9 @@ for this.
             (command . (,@eager-update-only
                         (affixation-function . nil) ; so that the `annotation-function' can take effect
                         (annotation-function . ,#'prot-minibuffer-command-annotate)))
+            (prot-minibuffer-input-method . (,@eager-update-only
+                                             (group-function . ,#'prot-minibuffer-input-method-group)
+                                             (display-sort-function . ,#'prot-minibuffer-input-method-sort)))
             (symbol-help . ,eager-update-only)
             (denote-file . ,eager-update-only)
             (tmr-timer . ,eager-both)
@@ -4576,6 +4603,8 @@ static, user-defined abbreviations ([[#h:fd84b79a-351e-40f0-b383-bf520d77834b][T
 
 [ Watch: [[https://protesilaos.com/codelog/2024-02-03-emacs-abbrev-mode/][abbreviations with abbrev-mode (quick text expansion)]] (2024-02-03). ]
 
+[ Watch: [[https://protesilaos.com/codelog/2026-08-09-emacs-expand-abbrev-mode-definitions-conditionally/][conditionally expand abbrev-mode definitions]] (2026-08-09). ]
+
 Unlike "dynamic abbreviations" that depend on the text already
 available in a buffer, we can define abbreviations that always expand
 to what we have specified ([[#h:567bb00f-1d82-4746-93e5-e0f60721728a][The =prot-emacs-completion.el= settings for dynamic text expansion (~dabbrev~)]]).
@@ -4628,18 +4657,11 @@ templates to have a real need for it---but it works).
   (define-key global-map (kbd "C-x a u") #'unexpand-abbrev)
 
   (prot-emacs-abbrev global-abbrev-table
-    "meweb"   "https://protesilaos.com"
-    "megit"   "https://github.com/protesilaos"
-    "mehub"   "https://github.com/protesilaos"
-    "meclone" "git@github.com/protesilaos/"
-    "melab"   "https://gitlab.com/protesilaos"
-    "medrive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/"
     ";web"   "https://protesilaos.com"
     ";git"   "https://github.com/protesilaos"
     ";hub"   "https://github.com/protesilaos"
     ";clone" "git@github.com/protesilaos/"
-    ";lab"   "https://gitlab.com/protesilaos"
-    ";drive" "hyper://5cr7mxac8o8aymun698736tayrh1h4kbqf359cfk57swjke716gy/")
+    ";lab"   "https://gitlab.com/protesilaos")
 
   (prot-emacs-abbrev text-mode-abbrev-table
     "asciidoc"       "AsciiDoc"
@@ -4689,9 +4711,7 @@ templates to have a real need for it---but it works).
       "niceday"      "Have a nice day,\nProtesilaos (or simply \"Prot\")"
       "abest"        "All the best,\nProt"
       "bregards"     "Best regards,\nProt"
-      "nday"         "Have a nice day,\nProt"
-      "nosrht"       "P.S. I am phasing out SourceHut: <https://protesilaos.com/codelog/2024-01-27-sourcehut-no-more/>.
-Development continues on GitHub with GitLab as a mirror."))
+      "nday"         "Have a nice day,\nProt"))
 
   ;; The `prot-emacs-abbrev' macro, which simplifies how we use
   ;; `define-abbrev', does not only expand a static text.  It can take
@@ -4700,9 +4720,6 @@ Development continues on GitHub with GitLab as a mirror."))
   ;; templating system.
   (require 'prot-abbrev)
   (prot-emacs-abbrev global-abbrev-table
-    "metime" #'prot-abbrev-current-time
-    "medate" #'prot-abbrev-current-date
-    "mejitsi" #'prot-abbrev-jitsi-link
     ";time" #'prot-abbrev-current-time
     ";date" #'prot-abbrev-current-date
     ";jitsi" #'prot-abbrev-jitsi-link)
@@ -5640,6 +5657,26 @@ end of the buffer).
   (setq isearch-repeat-on-direction-change t))
 #+end_src
 
+*** The =prot-emacs-search.el= settings for ~query-replace
+:PROPERTIES:
+:CUSTOM_ID: h:7003a374-66e3-4b32-971d-9cc23144364c
+:END:
+
+[ Watch: [[https://protesilaos.com/codelog/2023-06-10-emacs-search-replace-basics/][Emacs: basics of search and replace]] (2023-06-10). ]
+
+The ~query-replace~ command provides an interactive method for
+replacing text from the point onward. The default behaviour is to ask
+the user whether to replace the current match or not. Sometimes I need
+to go through the results one-by-one, though I usually perform a
+replacement on everything by inputting =!= at the prompt. That
+granted, I rely more on my ~substitute~ package ([[#h:b4b3c8b7-e35c-4a56-bfb9-0c8bb33b2423][The =prot-emacs-essentials.el= section about ~substitute~]]).
+
+#+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-search.el"
+(prot-emacs-configure
+  (setq query-replace-show-preview t) ; Emacs 32
+  (setq query-replace-from-to-separator " > "))
+#+end_src
+
 *** The =prot-emacs-search.el= tweaks for the occur buffer
 :PROPERTIES:
 :CUSTOM_ID: h:85aca4da-b89b-4fbe-89e9-3ec536ad7b0d
@@ -5826,6 +5863,7 @@ Note the use of the ~let~ to decide whether I use the ~grep~ or ~rg~
     ;; All those have been changed for Emacs 28
     (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ; for M-.
     (setq xref-show-xrefs-function #'xref-show-definitions-buffer) ; for grep and the like
+
     (setq xref-file-name-display 'project-relative)
     (setq xref-search-program (if ripgrep 'ripgrep 'grep))
 
@@ -5838,7 +5876,13 @@ Note the use of the ~let~ to decide whether I use the ~grep~ or ~rg~
               "/usr/bin/rg -nH --null -e <R> <F>"
             "/usr/bin/grep <X> <C> -nH --null -e <R> <F>")))
 
-  (add-hook 'grep-mode #'prot-common-truncate-lines-silently))
+  (add-hook 'grep-mode #'prot-common-truncate-lines-silently)
+
+  (with-eval-after-load 'outline
+    ;; The `outline-xref' is for Emacs 32
+    (define-advice outline-xref (:around (&rest args) prot)
+      (let ((xref-show-xrefs-function #'xref-show-definitions-completing-read))
+        (apply args)))))
 #+end_src
 
 *** The =prot-emacs-search.el= setup for editable grep buffers (~grep-edit-mode~ or ~wgrep~)
@@ -6723,7 +6767,7 @@ to a certain height.
            (display-buffer-reuse-mode-window display-buffer-at-bottom)
            (inhibit-switch-frame . t))
           ;; below current window
-          ("*prot-elisp-macroexpand*"
+          ("\\*prot-elisp-macroexpand\\*"
            (display-buffer-below-selected)
            (window-height . 0.3)
            (dedicated . t)
@@ -6781,9 +6825,10 @@ to a certain height.
            (display-buffer-reuse-mode-window prot-window-display-new display-buffer-pop-up-window)
            (inhibit-switch-frame . t))
           ;; other `tab-bar-mode' tab
-          ((derived-mode . magit-status-mode)
+          ((or . ((derived-mode . magit-status-mode)
+                  (derived-mode . vc-dir-mode)))
            (display-buffer-reuse-mode-window display-buffer-in-tab)
-           (mode . magit-status-mode)
+           (mode . (magit-status-mode vc-dir-mode))
            (tab-name . (lambda (buffer _alist) (buffer-name buffer)))
            (reusable-frames . :just-the-selected-frame)
            (inhibit-switch-frame . t)))))
@@ -9521,30 +9566,26 @@ of packaging. I use it whenever I work on my numerous Emacs packages.
 #+begin_src emacs-lisp :tangle "prot-emacs-modules/prot-emacs-langs.el"
 ;;; Flymake
 (prot-emacs-configure
-  (defvar prot/flymake-mode-projects-path
-    (file-name-as-directory (expand-file-name "Projects" "~/Git/"))
-    "Path to my Git projects.")
-
-  (defun prot/flymake-mode-lexical-binding ()
-    (when lexical-binding
+  (defun prot/flymake-mode-in-my-projects ()
+    "Enable `flymake-mode' when editing a trusted file."
+    (when (and buffer-file-name
+               (not (file-directory-p buffer-file-name))
+               (file-regular-p buffer-file-name)
+               (seq-some
+                (lambda (directory-or-file)
+                  (string-prefix-p (expand-file-name directory-or-file) (expand-file-name buffer-file-name)))
+                trusted-content))
       (flymake-mode 1)))
 
-  (defun prot/flymake-mode-in-my-projects ()
-    (when-let* ((file (buffer-file-name))
-                ((string-prefix-p prot/flymake-mode-projects-path (expand-file-name file)))
-                ((not (file-directory-p file)))
-                ((file-regular-p file)))
-      (add-hook 'find-file-hook #'prot/flymake-mode-lexical-binding nil t)))
-
-  (add-hook 'emacs-lisp-mode-hook #'prot/flymake-mode-in-my-projects)
+  (add-hook 'prog-mode-hook #'prot/flymake-mode-in-my-projects)
 
   (define-key ctl-x-x-map (kbd "m") #'flymake-mode) ; C-x x m
 
   (with-eval-after-load 'flymake
     (prot-emacs-keybind flymake-mode-map
       "C-c ! s" #'flymake-start
-      "C-c ! d" #'flymake-show-buffer-diagnostics ; Emacs28
-      "C-c ! D" #'flymake-show-project-diagnostics ; Emacs28
+      "C-c ! d" #'flymake-show-buffer-diagnostics ; Emacs 28
+      "C-c ! D" #'flymake-show-project-diagnostics ; Emacs 28
       "C-c ! n" #'flymake-goto-next-error
       "C-c ! p" #'flymake-goto-prev-error)
 
@@ -9563,7 +9604,10 @@ of packaging. I use it whenever I work on my numerous Emacs packages.
           '("" flymake-mode-line-error-counter
             flymake-mode-line-warning-counter
             flymake-mode-line-note-counter ""))
-    (setq flymake-show-diagnostics-at-end-of-line nil)) ; Emacs 31
+    (setq flymake-inline-diagnostics ; Emacs 32
+          '((current . fancy)
+            (current-line . short)
+            (t . nil))))
 
 ;;; Elisp packaging requirements
   (prot-emacs-install package-lint-flymake)
@@ -13974,6 +14018,10 @@ buffer instead of the current one."
   (let ((completion-extra-properties (list :category 'prot-minibuffer-pass)))
     (apply args)))
 
+(defun prot-minibuffer@read-input-method-name (&rest args)
+  (let ((completion-extra-properties (list :category 'prot-minibuffer-input-method)))
+    (apply args)))
+
 (defun prot-minibuffer--do-advice (advice functions place)
   "Handle the advice installed by the function `prot-minibuffer-missing-categories-mode'.
 For each function in FUNCTIONS apply ARGS."
@@ -13985,11 +14033,16 @@ For each function in FUNCTIONS apply ARGS."
                         (list advice original my-function-symbol))))
       (apply args))))
 
+(defvar prot-minibuffer-missing-completion-categories-symbols
+  '( read-from-kill-ring read-library-name emoji--read-emoji
+     read-input-method-name password-store--completing-read)
+  "Symbols to be advised by `prot-minibuffer-missing-categories-mode'.")
+
 ;;;###autoload
 (define-minor-mode prot-minibuffer-missing-categories-mode
   "When enabled, add missing compleiton categories to relevant prompts."
   :global t
-  (let ((functions '(read-from-kill-ring read-library-name emoji--read-emoji password-store--completing-read)))
+  (when-let* ((functions prot-minibuffer-missing-completion-categories-symbols))
     (if prot-minibuffer-missing-categories-mode
         (prot-minibuffer--do-advice #'advice-add functions :around)
       (prot-minibuffer--do-advice #'advice-remove functions nil))))
@@ -14014,12 +14067,12 @@ Omit the .. directory from FILES."
   "Return FILE group name unless TRANSFORM is non-nil."
   (cond
    (transform file)
-   ((string-suffix-p "/" file) "/")
-   ((string-prefix-p "." file) ".")
+   ((string-suffix-p "/" file) "Directories")
+   ((string-prefix-p "." file) "Dotfiles")
    ((when-let* ((extension (file-name-extension file :include-dot))
                 (_ (not (string-blank-p extension))))
       extension))
-   (t "Other")))
+   (t "Other files")))
 
 (defun prot-minibuffer--set-default-sort (candidates)
   "Sort CANDIDATES according to `completions-sort' and return the sorted list."
@@ -14126,6 +14179,30 @@ package."
                    libraries))
   (prot-minibuffer--set-default-sort libraries))
 
+(defcustom prot-minibuffer-used-input-methods
+  '("greek" "french-postfix" "spanish-postfix")
+  "Input methods that I use."
+  :type '(choice (const nil)
+                 (repeat mule-input-method-string)))
+
+(defun prot-minibuffer--my-method-p (input-method)
+  "Return non-nil if INPUT-METHOD is a member of `prot-minibuffer-used-input-methods'."
+  (member input-method prot-minibuffer-used-input-methods))
+
+(defun prot-minibuffer-input-method-sort (input-methods)
+  "Sort INPUT-METHODS into `prot-minibuffer-used-input-methods' and the rest."
+  (setq input-methods (prot-minibuffer--set-default-sort input-methods))
+  (nconc (seq-filter #'prot-minibuffer--my-method-p input-methods)
+         (seq-remove #'prot-minibuffer--my-method-p input-methods)))
+
+(defun prot-minibuffer-input-method-group (input-method transform)
+  "Group INPUT-METHOD into `prot-minibuffer-used-input-methods' and the rest.
+Do it when TRANSFORM is non-nil, else return INPUT-METHOD."
+  (cond
+   (transform input-method)
+   ((prot-minibuffer--my-method-p input-method) "My input methods")
+   (t "Other input methods")))
+
 ;; NOTE 2025-12-19: Maybe there is a better way, but this is okay to start with.
 (defun prot-minibuffer-library-annotate (library)
   "Return the group documentation of LIBRARY."
@@ -14140,7 +14217,9 @@ package."
                         (_ (and binding (not (stringp binding)))))
                   (format "  %s " (propertize description 'face 'help-key-binding))
                 ""))
-         (doc (if-let* ((doc (condition-case nil (documentation symbol) (error nil)))
+         (doc (if-let* ((doc (condition-case nil
+                                 (documentation symbol)
+                               (error nil)))
                         (first-line (substring doc 0 (string-search "\n" doc))))
                   (propertize first-line 'face 'completions-annotations)
                 "")))

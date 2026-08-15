@@ -20,6 +20,10 @@
   (setq isearch-repeat-on-direction-change t))
 
 (prot-emacs-configure
+  (setq query-replace-show-preview t) ; Emacs 32
+  (setq query-replace-from-to-separator " > "))
+
+(prot-emacs-configure
   (setq list-matching-lines-jump-to-current-line nil) ; do not jump to current line in `*occur*' buffers
   (prot-emacs-hook occur-mode-hook (prot-common-truncate-lines-silently hl-line-mode)))
 
@@ -76,6 +80,7 @@
     ;; All those have been changed for Emacs 28
     (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ; for M-.
     (setq xref-show-xrefs-function #'xref-show-definitions-buffer) ; for grep and the like
+
     (setq xref-file-name-display 'project-relative)
     (setq xref-search-program (if ripgrep 'ripgrep 'grep))
 
@@ -88,7 +93,13 @@
               "/usr/bin/rg -nH --null -e <R> <F>"
             "/usr/bin/grep <X> <C> -nH --null -e <R> <F>")))
 
-  (add-hook 'grep-mode #'prot-common-truncate-lines-silently))
+  (add-hook 'grep-mode #'prot-common-truncate-lines-silently)
+
+  (with-eval-after-load 'outline
+    ;; The `outline-xref' is for Emacs 32
+    (define-advice outline-xref (:around (&rest args) prot)
+      (let ((xref-show-xrefs-function #'xref-show-definitions-completing-read))
+        (apply args)))))
 
 ;;; wgrep (writable grep)
 ;; See the `grep-edit-mode' for the new built-in feature.
