@@ -42,107 +42,109 @@
 ;;;; Increase padding of windows/frames
 ;; Yet another one of my packages:
 ;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
-(prot-emacs-configure
-  (prot-emacs-install spacious-padding)
+(when prot-display-graphic-p
+  (prot-emacs-configure
+    (prot-emacs-install spacious-padding)
 
-  ;; (spacious-padding-mode 1)
+    ;; (spacious-padding-mode 1)
 
-  (define-key global-map (kbd "<f8>") #'spacious-padding-mode)
+    (define-key global-map (kbd "<f8>") #'spacious-padding-mode)
 
-  (setq spacious-padding-widths
-        `( :internal-border-width 15
-           :header-line-width 4
-           :mode-line-width 6
-           :tab-width 4
-           :right-divider-width 15
-           :scroll-bar-width ,(if x-toolkit-scroll-bars 12 6)
-           :left-fringe-width 8
-           :right-fringe-width 20))
+    (setq spacious-padding-widths
+          `( :internal-border-width 15
+             :header-line-width 4
+             :mode-line-width 6
+             :tab-width 4
+             :right-divider-width 15
+             :scroll-bar-width ,(if x-toolkit-scroll-bars 12 6)
+             :left-fringe-width 8
+             :right-fringe-width 20))
 
-  ;; (setq spacious-padding-subtle-mode-line nil)
+    ;; (setq spacious-padding-subtle-mode-line nil)
 
-  ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
-  ;; is very flexible.  Here we make the mode lines be a single
-  ;; overline, while header lines have an underline.
-  (setq spacious-padding-subtle-frame-lines
-        '( :mode-line-active spacious-padding-line-active
-           :mode-line-inactive spacious-padding-line-inactive
-           :header-line-active spacious-padding-line-active
-           :header-line-inactive spacious-padding-line-inactive))
+    ;; Read the doc string of `spacious-padding-subtle-mode-line' as it
+    ;; is very flexible.  Here we make the mode lines be a single
+    ;; overline, while header lines have an underline.
+    (setq spacious-padding-subtle-frame-lines
+          '( :mode-line-active spacious-padding-line-active
+             :mode-line-inactive spacious-padding-line-inactive
+             :header-line-active spacious-padding-line-active
+             :header-line-inactive spacious-padding-line-inactive))
 
-  (when (< emacs-major-version 29)
-    (setq x-underline-at-descent-line (when spacious-padding-subtle-frame-lines t))))
+    (when (< emacs-major-version 29)
+      (setq x-underline-at-descent-line (when spacious-padding-subtle-frame-lines t)))))
 
 ;;; Cursor appearance (cursory)
 ;; Read the manual: <https://protesilaos.com/emacs/cursory>.
-(prot-emacs-configure
-  (prot-emacs-install cursory)
+(when prot-display-graphic-p
+  (prot-emacs-configure
+    (prot-emacs-install cursory)
 
-  (require 'cursory)
+    (require 'cursory)
 
-  (setq cursory-presets
-        '((box
-           :blink-cursor-interval 1.2)
-          (box-no-blink
-           :inherit box
-           :blink-cursor-mode -1)
-          (bar
-           :cursor-type (bar . 2)
-           :cursor-color error ; will typically be red
-           :blink-cursor-interval 0.8)
-          (bar-no-other-window
-           :inherit bar
-           :cursor-in-non-selected-windows nil)
-          (bar-no-blink
-           :inherit bar
-           :blink-cursor-mode -1)
-          (underscore
-           :cursor-color warning ; will typically be yellow
-           :cursor-type (hbar . 3)
-           :blink-cursor-blinks 50)
-          (underscore-no-other-window
-           :inherit underscore
-           :cursor-in-non-selected-windows nil)
-          (underscore-thick
-           :inherit underscore
-           :cursor-type (hbar . 8)
-           :cursor-in-non-selected-windows (hbar . 3))
-          (t ; the default values
-           :cursor-color unspecified ; use the theme's original
-           :cursor-type box
-           :cursor-in-non-selected-windows hollow
-           :blink-cursor-mode 1
-           :blink-cursor-blinks 10
-           :blink-cursor-interval 0.2
-           :blink-cursor-delay 0.2)))
+    (setq cursory-presets
+          '((box
+             :blink-cursor-interval 1.2)
+            (box-no-blink
+             :inherit box
+             :blink-cursor-mode -1)
+            (bar
+             :cursor-type (bar . 2)
+             :cursor-color error ; will typically be red
+             :blink-cursor-interval 0.8)
+            (bar-no-other-window
+             :inherit bar
+             :cursor-in-non-selected-windows nil)
+            (bar-no-blink
+             :inherit bar
+             :blink-cursor-mode -1)
+            (underscore
+             :cursor-color warning ; will typically be yellow
+             :cursor-type (hbar . 3)
+             :blink-cursor-blinks 50)
+            (underscore-no-other-window
+             :inherit underscore
+             :cursor-in-non-selected-windows nil)
+            (underscore-thick
+             :inherit underscore
+             :cursor-type (hbar . 8)
+             :cursor-in-non-selected-windows (hbar . 3))
+            (t ; the default values
+             :cursor-color unspecified ; use the theme's original
+             :cursor-type box
+             :cursor-in-non-selected-windows hollow
+             :blink-cursor-mode 1
+             :blink-cursor-blinks 10
+             :blink-cursor-interval 0.2
+             :blink-cursor-delay 0.2)))
 
-  (cursory-set-last-or-fallback)
+    (cursory-set-last-or-fallback)
 
-  ;; Persist configurations between Emacs sessions.  Also apply the
-  ;; :cursor-color again when swithcing to another theme.
-  (cursory-mode 1)
+    ;; Persist configurations between Emacs sessions.  Also apply the
+    ;; :cursor-color again when swithcing to another theme.
+    (cursory-mode 1)
 
-  ;; We have to use the "point" mnemonic, because C-c c is often the
-  ;; suggested binding for `org-capture' and is the one I use as well.
-  (define-key global-map (kbd "C-c p") #'cursory-set-preset)
+    ;; We have to use the "point" mnemonic, because C-c c is often the
+    ;; suggested binding for `org-capture' and is the one I use as well.
+    (define-key global-map (kbd "C-c p") #'cursory-set-preset)
 
-  (with-eval-after-load 'prot-streaming
-    (defvar prot/cursory-streaming--last-preset nil
-      "The last Cursory preset before enabling `prot/cursory-streaming-mode'.")
+    (with-eval-after-load 'prot-streaming
+      (defvar prot/cursory-streaming--last-preset nil
+        "The last Cursory preset before enabling `prot/cursory-streaming-mode'.")
 
-    (defun prot/cursory-streaming-mode ()
-      "Set the Cursory preset to `box-no-blink' when streaming."
-      (cond
-       (prot-streaming-mode
-        (setq prot/cursory-streaming-mode cursory-last-selected-preset)
-        (cursory-set-preset 'box-no-blink))
-       (prot/cursory-streaming-mode
-        (cursory-set-preset prot/cursory-streaming-mode)
-        (setq prot/cursory-streaming-mode nil))
-       (t
-        (cursory-set-last-or-fallback))))
+      (defun prot/cursory-streaming-mode ()
+        "Set the Cursory preset to `box-no-blink' when streaming."
+        (cond
+         (prot-streaming-mode
+          (setq prot/cursory-streaming-mode cursory-last-selected-preset)
+          (cursory-set-preset 'box-no-blink))
+         (prot/cursory-streaming-mode
+          (cursory-set-preset prot/cursory-streaming-mode)
+          (setq prot/cursory-streaming-mode nil))
+         (t
+          (cursory-set-last-or-fallback))))
 
-    (add-hook 'prot-streaming-mode-hook #'prot/cursory-streaming-mode)))
+      (add-hook 'prot-streaming-mode-hook #'prot/cursory-streaming-mode))))
 
 ;;; Modus themes exporter
 ;; (prot-emacs-configure
@@ -277,14 +279,15 @@
 
 ;;;; Show Font (preview fonts)
 ;; Read the manual: <https://protesilaos.com/emacs/show-font>
-(prot-emacs-configure
-  (prot-emacs-install show-font)
+(when prot-display-graphic-p
+  (prot-emacs-configure
+    (prot-emacs-install show-font)
 
-  (setq show-font-display-buffer-action-alist '(display-buffer-full-frame))
+    (setq show-font-display-buffer-action-alist '(display-buffer-full-frame))
 
-  (prot-emacs-keybind global-map
-    "C-c S s" #'show-font-select-preview
-    "C-c S l" #'show-font-tabulated))
+    (prot-emacs-keybind global-map
+      "C-c S s" #'show-font-select-preview
+      "C-c S l" #'show-font-tabulated)))
 
 ;;;;; `variable-pitch-mode' setup
 (prot-emacs-configure
