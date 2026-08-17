@@ -10,6 +10,10 @@
                        '(pair ("<") (">"))
                        '(pair ("<") (">")))
 
+  (meow-thing-register 'tag
+                       '(pair (">") ("<"))
+                       '(pair (">") ("<")))
+
   (setq meow-char-thing-table
         '((?b . round)
           (?f . square)
@@ -19,7 +23,8 @@
           (?s . string)
           (?p . paragraph)
           (?l . line)
-          (?x . buffer)))
+          (?x . buffer)
+          (?t . tag)))
 
   (meow-leader-define-key
    '("1" . meow-digit-argument)
@@ -85,18 +90,20 @@
    '("." . meow-bounds-of-thing)
    '("," . meow-inner-of-thing)
    '("'" . meow-reverse)
+   '("[" . repeat)
 
    ;; prefix v
    '("va" . meow-find)
    '("vc" . meow-save-char)
    '("vd" . forward-paragraph)
-   '("ve" . meow-end-kmacro)
+   '("ve" . kmacro-end-or-call-macro)
    '("vg" . meow-grab)
    '("vh" . meow-left-expand)
    '("vj" . meow-next-expand )
    '("vk" . meow-prev-expand)
    '("vl" . meow-right-expand)
-   '("vm" . meow-start-kmacro-or-insert-counter)
+   '("vm" . kmacro-start-macro-or-insert-counter)
+   '("vn" . negative-argument)
    '("vp" . p-mark-paragraph)
    '("vr" . meow-query-replace-regexp)
    '("vs" . meow-mark-symbol)
