@@ -7,9 +7,9 @@
   (setq yas-verbosity 0))
 
 (prot-emacs-configure
-  (prot-emacs-install
-    lsp-bridge
-    "https://github.com/manateelazycat/lsp-bridge")
+  (prot-emacs-install-vc
+   lsp-bridge
+   "https://github.com/manateelazycat/lsp-bridge")
 
   (setq lsp-bridge-enable-mode-line nil)
   (setq lsp-bridge-enable-diagnostics nil)

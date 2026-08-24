@@ -20,9 +20,9 @@
     (setq calendar-daylight-time-zone-name "+0300")))
 
 (prot-emacs-configure
-  (prot-emacs-install
-    institution-calendar
-    "https://github.com/protesilaos/institution-calendar.git")
+  (prot-emacs-install-vc
+   institution-calendar
+   "https://github.com/protesilaos/institution-calendar.git")
 
   ;; If you want to permanently change what M-x calendar shows, enable
   ;; `institution-calendar-mode'.  Otherwise, use the relevant command:
