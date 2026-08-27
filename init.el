@@ -380,6 +380,8 @@ making an abbreviation to a function."
 (defvar prot-display-graphic-p (display-graphic-p)
   "When non-nil, the display is graphical.")
 
+(require 'init-env)
+
 (require 'prot-emacs-theme)
 (require 'prot-emacs-essentials)
 (require 'init-keybinding)
@@ -395,7 +397,6 @@ making an abbreviation to a function."
 (require 'prot-emacs-which-key)
 (require 'prot-emacs-icons)
 
-(require 'init-env)
 (require 'init-default)
 (require 'init-functions)
 (require 'init-programming)
