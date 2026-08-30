@@ -280,7 +280,7 @@ excerpt: \"Just read the poem. No further comment.\"
       (corfu-history-mode 1)
       (add-to-list 'savehist-additional-variables 'corfu-history))))
 
-(when (eq prot-emacs-completion-in-buffer 'corfu)
+(unless (eq prot-emacs-completion-in-buffer 'company)
   (prot-emacs-configure
     (prot-emacs-install cape)
 
@@ -368,6 +368,9 @@ INDIVIDUAL-CAPFS to the list."
     (setq completion-preview-minimum-symbol-length 2)
     (setq completion-preview-idle-delay nil)
     (setq completion-preview-ignore-case t)
+
+    (with-eval-after-load 'org
+      (add-to-list 'completion-preview-commands #'org-self-insert-command))
 
     (prot-emacs-hook
       (prog-mode-hook log-edit-mode-hook git-commit-mode-hook comint-mode-hook)
