@@ -1,5 +1,18 @@
 ;;; init-functions.el --- My functions -*- lexical-binding: t -*-
 
+(defun p-read-env (name)
+  (let ((env-file (expand-file-name "~/.env")))
+    (when (file-readable-p env-file)
+      (with-temp-buffer
+        (insert-file-contents env-file)
+        (let ((value nil))
+          (dolist (line (split-string (buffer-string) "\n"))
+            (when (string-match
+                   (concat "^" (regexp-quote name) "=[ \t]*\\(.*\\)$")
+                   line)
+              (setq value (string-trim (match-string 1 line)))))
+          value)))))
+
 (defun p-mark-paragraph ()
   (interactive)
   (if (region-active-p)
