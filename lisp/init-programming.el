@@ -3,8 +3,8 @@
 ;;; Jupyter
 (use-package jupyter
   :ensure t
-  ;; :vc ( :url "https://github.com/emacs-jupyter/jupyter"
-  ;;       :rev 242fdc709ce0faa3b9ee81dcc48cfd791898e6b8)
+  :vc ( :url "https://github.com/emacs-jupyter/jupyter"
+        :rev 242fdc709ce0faa3b9ee81dcc48cfd791898e6b8)
   :hook (jupyter-repl-interaction-mode . p-remove-jupyter-completion)
   :config
   ;; https://github.com/nnicandro/emacs-zmq
