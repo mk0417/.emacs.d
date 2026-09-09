@@ -224,6 +224,7 @@ Version: 2023-07-12"
                 (insert new-close)))))
       (message "Not inside parentheses or brackets."))))
 
+;; Xah Lee functions
 (defun p-consult-line-symbol-at-point ()
   (interactive)
   (consult-line (or (thing-at-point 'symbol))))
@@ -339,5 +340,46 @@ Version: 2025-07-30"
       (message "calling xah-delete-string-backward")
       (xah-delete-string-backward BracketOnly))
      (t (delete-char -1)))))
+
+(defvar xah-brackets '( "“”" "()" "[]" "{}" "<>" "＜＞" "（）" "［］" "｛｝" "⦅⦆" "〚〛" "⦃⦄" "‹›" "«»" "「」" "〈〉" "《》" "【】" "〔〕" "⦗⦘" "『』" "〖〗" "〘〙" "｢｣" "⟦⟧" "⟨⟩" "⟪⟫" "⟮⟯" "⟬⟭" "⌈⌉" "⌊⌋" "⦇⦈" "⦉⦊" "❛❜" "❝❞" "❨❩" "❪❫" "❴❵" "❬❭" "❮❯" "❰❱" "❲❳" "〈〉" "⦑⦒" "⧼⧽" "﹙﹚" "﹛﹜" "﹝﹞" "⁽⁾" "₍₎" "⦋⦌" "⦍⦎" "⦏⦐" "⁅⁆" "⸢⸣" "⸤⸥" "⟅⟆" "⦓⦔" "⦕⦖" "⸦⸧" "⸨⸩" "｟｠")
+  "A list of strings, each element is a string of 2 chars, the left bracket and a matching right bracket.
+Used by
+`xah-backward-left-bracket'.
+`xah-forward-right-bracket'.
+`xah-goto-matching-bracket'.
+URL `http://xahlee.info/emacs/emacs/emacs_navigating_keys_for_brackets.html'
+")
+
+(defconst xah-left-brackets
+  (regexp-opt (mapcar (lambda (x) (substring x 0 1)) xah-brackets))
+  "Regex string of left bracket chars. Generated from `xah-brackets'.
+URL `http://xahlee.info/emacs/emacs/emacs_navigating_keys_for_brackets.html'
+")
+
+(defconst xah-right-brackets
+  (regexp-opt (mapcar (lambda (x) (substring x 1 2)) xah-brackets))
+  "Regex string of right bracket chars. Generated from `xah-brackets'.
+URL `http://xahlee.info/emacs/emacs/emacs_navigating_keys_for_brackets.html'
+")
+
+(defun xah-backward-left-bracket ()
+  "Move cursor to the previous occurrence of left bracket.
+The list of brackets to jump to is defined by `xah-left-brackets'.
+
+URL `http://xahlee.info/emacs/emacs/emacs_navigating_keys_for_brackets.html'
+Created: 2015-10-01
+Version: 2026-07-09"
+  (interactive)
+  (re-search-backward xah-left-brackets nil t))
+
+(defun xah-forward-right-bracket ()
+  "Move cursor to the next occurrence of right bracket.
+The list of brackets to jump to is defined by `xah-right-brackets'.
+
+URL `http://xahlee.info/emacs/emacs/emacs_navigating_keys_for_brackets.html'
+Created: 2015-10-01
+Version: 2026-07-09"
+  (interactive)
+  (re-search-forward xah-right-brackets nil t))
 
 (provide 'init-functions)

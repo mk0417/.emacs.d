@@ -111,6 +111,8 @@
    '("vv" . meow-visit)
    '("vw" . meow-mark-word)
    '("vx" . meow-swap-grab)
+   '("v," . xah-backward-left-bracket)
+   '("v." . xah-forward-right-bracket)
 
    ;; prefix n
    '("na" . p-add-space-around)
