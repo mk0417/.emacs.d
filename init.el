@@ -415,6 +415,7 @@ making an abbreviation to a function."
 (require 'init-abbrev)
 (require 'init-treesit)
 (require 'init-lsp)
+(require 'init-xah)
 
 (add-hook 'emacs-startup-hook
           (lambda ()
