@@ -137,7 +137,7 @@ Any other value has the same meaning as `text'."
     (conf-mode ">Π" prot-icons-gray) ; πρόγραμμα
     (text-mode ">Α" prot-icons-green) ; αλφάβητο
     (comint-mode ">_" prot-icons-gray)
-    (read-only "" prot-icons-red)
+    (read-only "|!" prot-icons-red)
     (document ">Σ" prot-icons-red) ; σύγγραμμα
     (audio ">Η" prot-icons-cyan) ; ήχος
     (image ">Ε" prot-icons-yellow) ; εικόνα
@@ -368,7 +368,7 @@ More specifically, return the value of `prot-icons-alphabetic' or
   (let* ((name (tab-bar-tab-name-current))
          (buffer (get-buffer name))
          (mode (with-current-buffer buffer major-mode))
-         (icon (prot-icons-get-icon mode)))
+         (icon (prot-icons-get-icon mode 'tab-bar-current)))
     (format "%s %s" icon name)))
 
 ;;;###autoload
