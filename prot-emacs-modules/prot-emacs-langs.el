@@ -20,6 +20,8 @@
     (setq elisp-eldoc-docstring-length-limit 1000)
     (set-default-toplevel-value 'lexical-binding t) ; Emacs 31
 
+    (setq debugger-stack-frame-as-list t)
+
     (require 'prot-elisp)
 
     (prot-emacs-keybind emacs-lisp-mode-map
