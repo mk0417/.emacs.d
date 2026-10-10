@@ -21,7 +21,7 @@
              Text:
               %s"
              text)))
-      (setq gptel-model "inclusionai/ling-3.0-flash-vl:free")
+      (setq gptel-model "nvidia/nemotron-3.5-lightning:free")
       (gptel-request
           prompt
         :callback
@@ -39,13 +39,13 @@
                           (insert-file-contents "~/.ai_key/openrouter.txt")
                           (string-trim (buffer-string))))
 
-  (setq gptel-model 'openrouter/hunter-alpha
+  (setq gptel-model 'openrouter/nvidia/nemotron-3.5-lightning:free
         gptel-backend
         (gptel-make-openai "OpenRouter"
           :host "openrouter.ai"
           :endpoint "/api/v1/chat/completions"
           :stream t
           :key open-router-key
-          :models '(inclusionai/ling-3.0-flash-vl:free))))
+          :models '(nvidia/nemotron-3.5-lightning:free))))
 
 (provide 'init-ai)
