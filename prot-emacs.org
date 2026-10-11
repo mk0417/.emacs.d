@@ -2761,6 +2761,9 @@ from 2026-07-08: <https://protesilaos.com/codelog/2026-07-08-emacs-global-keybin
   (setq tramp-connection-timeout (* 60 10)) ; seconds
   (setq trusted-content '("~/Git/Projects/" "~/Coach/")) ; Emacs 30
   (setq truncate-partial-width-windows nil)
+  (setq strike-through-line-scaling-flag t) ; Emacs 32
+  (setq underline-line-scaling-flag t) ; Emacs 32
+  (setq overline-line-scaling-flag t) ; Emacs 32
 
   ;; Keys I unbind here are either to avoid accidents or to bind them
 
@@ -4148,7 +4151,7 @@ of ([[#h:0d49218d-4199-4847-9765-60a3f94e515d][The =prot-emacs-completion.el= se
 (prot-emacs-configure
 ;;;; Completion styles
   (setq completion-styles '(basic substring initials partial-completion flex)) ; also see `completion-category-overrides'
-  (setq completion-flex-nospace t)
+  (setq completion-flex-nospace nil)
   (setq completion-pcm-leading-wildcard nil) ; Emacs 31
   (with-eval-after-load 'orderless
     (setq completion-styles (append completion-styles '(orderless)))))
@@ -9612,10 +9615,19 @@ of packaging. I use it whenever I work on my numerous Emacs packages.
   (define-key ctl-x-x-map (kbd "m") #'flymake-mode) ; C-x x m
 
   (with-eval-after-load 'flymake
+    (defun prot/flymake-show-buffer-diagnostics-anywhere ()
+      "Do `flymake-show-buffer-diagnostics' from anywhere in the file."
+      (interactive)
+      (save-excursion
+        (goto-char (point-min))
+        (flymake-goto-next-error)
+        (flymake-show-buffer-diagnostics)))
+
     (prot-emacs-keybind flymake-mode-map
       "C-c ! s" #'flymake-start
       "C-c ! d" #'flymake-show-buffer-diagnostics ; Emacs 28
       "C-c ! D" #'flymake-show-project-diagnostics ; Emacs 28
+      "C-c ! !" #'prot/flymake-show-buffer-diagnostics-anywhere
       "C-c ! n" #'flymake-goto-next-error
       "C-c ! p" #'flymake-goto-prev-error)
 
@@ -9637,7 +9649,7 @@ of packaging. I use it whenever I work on my numerous Emacs packages.
     (setq flymake-inline-diagnostics ; Emacs 32
           '((current . fancy)
             (current-line . short)
-            (t . nil))))
+            (t . eol))))
 
 ;;; Elisp packaging requirements
   (prot-emacs-install package-lint-flymake)
@@ -9830,24 +9842,11 @@ facilities to rename files, regardless of file type.
     (setq denote-rename-confirmations nil) ; CAREFUL with this if you are not familiar with Denote!
     (setq denote-backlinks-show-context nil)
     (setq denote-buffer-name-prefix "[D] ")
-    (setq denote-rename-buffer-format "%D")
+    (setq denote-rename-buffer-format "%D%b")
 
     (denote-rename-buffer-mode 1)
 
-    ;; ;; EXPERIMENT 2025-04-25: This is not the default order, though
-    ;; ;; Denote supports any order for its file name components.
-    ;; (setq denote-file-name-components-order '(identifier signature keywords title))
-
-    (defun prot/denote-rename-all-to-reorder-components ()
-      "Call `denote-dired-rename-files' without any prompts.
-In other words, preserve the value of each Denote file name component.
-
-Use this command if you want to modify the user option
-`denote-file-name-components-order' and then want your files to
-retroactively follow that order."
-      (interactive)
-      (let ((denote-prompts nil))
-        (call-interactively 'denote-dired-rename-files)))))
+    (denote-data-mode 1)))
 #+end_src
 
 **** The =prot-emacs-langs.el= integration between Consult and Denote (~consult-denote~)
