@@ -72,36 +72,39 @@
 
 ;;;; Eldoc (Emacs live documentation feedback)
 (prot-emacs-configure
-  (add-hook 'prog-mode-hook #'eldoc-mode)
+  ;; (add-hook 'prog-mode-hook #'eldoc-mode)
+  (add-hook 'prog-mode-hook (lambda () (eldoc-mode -1)))
   (setq eldoc-idle-delay 1.0)
   (setq eldoc-message-function #'message)) ; don't use mode line for M-x eval-expression, etc.
 
 ;;;; Eglot (built-in client for the language server protocol)
-;; (prot-emacs-configure
-;;   (setq eglot-sync-connect nil)
-;;   (setq eglot-autoshutdown t)
-;;
-;;   (add-hook 'python-ts-mode-hook #'eglot-ensure)
-;;
-;;   (with-eval-after-load 'eglot
-;;     (setq eglot-watch-files-outside-project-root nil)
-;;     (setq eglot-events-buffer-config '(:size 1))
-;;     (setq eglot-stay-out-of '(flymake))
-;;     (setq eglot-ignored-server-capabilities
-;;           '(:inlayHintProvider
-;;             :hoverProvider
-;;             :colorProvider
-;;             :foldingRangeProvider
-;;             :codeActionProvider
-;;             :codeLensProvider
-;;             :semanticTokensProvider
-;;             :documentHighlightProvider
-;;             :documentFormattingProvider
-;;             :documentRangeFormattingProvider
-;;             :documentOnTypeFormattingProvider))
-;;     (add-to-list 'eglot-server-programs
-;;                  '((python-mode python-ts-mode)
-;;                    "basedpyright-langserver" "--stdio"))))
+(prot-emacs-configure
+  (setq eglot-sync-connect nil)
+  (setq eglot-autoshutdown t)
+
+  (add-hook 'python-ts-mode-hook #'eglot-ensure)
+  (with-eval-after-load 'eglot
+    (setq eglot-watch-files-outside-project-root nil)
+    (setq eglot-events-buffer-config '(:size 1))
+    (setq eglot-stay-out-of '(flymake))
+    (setq eglot-ignored-server-capabilities
+          '(:inlayHintProvider
+            :hoverProvider
+            :colorProvider
+            :foldingRangeProvider
+            :codeActionProvider
+            :codeLensProvider
+            :semanticTokensProvider
+            :documentHighlightProvider
+            :documentFormattingProvider
+            :documentRangeFormattingProvider
+            :documentOnTypeFormattingProvider))
+    (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1)))
+    (add-to-list 'eglot-server-programs
+                 '((python-mode python-ts-mode)
+                   . ("zuban" "server"
+                      :initializationOptions
+                      ( :typeCheckingMode "off"))))))
 
 ;;;; Handle performance for very long lines (so-long.el)
 (prot-emacs-configure

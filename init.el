@@ -49,7 +49,7 @@ These include the packages `marginalia', `consult', `corfu',
   :group 'prot-emacs
   :type 'boolean)
 
-(defcustom prot-emacs-completion-in-buffer nil
+(defcustom prot-emacs-completion-in-buffer 'corfu
   "Front-end for text completion in the buffer.
 When the value is either `corfu' or `company', use the package of the
 given name.  When the value is `completion-preview' use the built-in
@@ -414,7 +414,7 @@ making an abbreviation to a function."
 (require 'init-keychord)
 (require 'init-abbrev)
 (require 'init-treesit)
-(require 'init-lsp)
+;; (require 'init-lsp)
 (require 'init-xah)
 
 (add-hook 'emacs-startup-hook
