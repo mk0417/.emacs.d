@@ -130,12 +130,12 @@
    '("n." . xah-forward-right-bracket)
 
    ;; prefix f
-   '("fa" . lsp-bridge-find-def)
-   '("fb" . lsp-bridge-find-def-return)
-   '("fm" . lsp-bridge-find-references)
-   ;; '("fa" . xref-find-definitions)
-   ;; '("fb" . xref-go-back)
-   ;; '("fm" . xref-find-references)
+   ;; '("fa" . lsp-bridge-find-def)
+   ;; '("fb" . lsp-bridge-find-def-return)
+   ;; '("fm" . lsp-bridge-find-references)
+   '("fa" . xref-find-definitions)
+   '("fb" . xref-go-back)
+   '("fm" . xref-find-references)
    '("fc" . prot-comment)
    '("fe" . eval-buffer)
    '("ff" . find-file)

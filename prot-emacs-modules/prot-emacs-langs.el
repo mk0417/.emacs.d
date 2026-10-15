@@ -99,6 +99,10 @@
             :documentFormattingProvider
             :documentRangeFormattingProvider
             :documentOnTypeFormattingProvider))
+    (add-hook 'eglot-managed-mode-hook
+              (lambda ()
+                (setq mode-line-misc-info
+                      (assq-delete-all 'eglot--managed-mode mode-line-misc-info))))
     (add-hook 'eglot-managed-mode-hook (lambda () (eldoc-mode -1)))
     (add-to-list 'eglot-server-programs
                  '((python-mode python-ts-mode)
