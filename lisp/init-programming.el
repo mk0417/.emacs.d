@@ -85,9 +85,9 @@
   ((julia-mode . display-fill-column-indicator-mode)
    (julia-mode . electric-pair-mode)))
 
-;; (use-package eglot-jl
-;;   :ensure t
-;;   :hook (julia-mode . eglot-jl-init))
+(use-package eglot-jl
+  :ensure t
+  :hook (julia-mode . eglot-jl-init))
 
 ;;; HTML
 (use-package htmlize
@@ -115,5 +115,17 @@
   (defun typst-file-preview-darwin (file)
     (start-process "typst-preview" nil "open" (expand-file-name file)))
   (setq typst-ts-preview-function #'typst-file-preview-darwin))
+
+;;; Markdown
+(use-package markdown-ts-appear
+  :ensure t
+  :hook (markdown-ts-mode . markdown-ts-appear-mode))
+
+(use-package latex-to-svg-for-markdown
+  :ensure t
+  :defer t
+  :custom
+  (markdown-ts-appear-enable-math-preview t)
+  (latex-to-svg-frontend-center-display-math t))
 
 (provide 'init-programming)
