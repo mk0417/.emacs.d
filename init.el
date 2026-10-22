@@ -163,7 +163,7 @@ Use the generic completions buffer if any other value is set."
     spacious-padding
     ;; standard-themes
     substitute
-    ;; sxhkdrc-mode
+    sxhkdrc-mode
     theme-buffet
     tmr)
   "List of symbols representing the packages I develop/maintain.")
