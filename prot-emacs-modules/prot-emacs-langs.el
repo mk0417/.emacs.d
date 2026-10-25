@@ -82,10 +82,14 @@
   (setq eglot-sync-connect nil)
   (setq eglot-autoshutdown t)
 
-  (add-hook 'python-ts-mode-hook #'eglot-ensure)
+  ;; (add-hook 'python-ts-mode-hook #'eglot-ensure)
   (with-eval-after-load 'eglot
     (setq eglot-watch-files-outside-project-root nil)
-    (setq eglot-events-buffer-config '(:size 1))
+    ;; (setq eglot-events-buffer-config '(:size 1))
+    (setq eglot-events-buffer-config '(:size 0 :format short))
+    (setq eglot-max-file-watches 5000)
+    (setq eglot-report-progress nil)
+    (setq eglot-code-action-indications nil)
     (setq eglot-stay-out-of '(flymake))
     (setq eglot-ignored-server-capabilities
           '(:inlayHintProvider
