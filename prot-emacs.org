@@ -5905,9 +5905,9 @@ Note the use of the ~let~ to decide whether I use the ~grep~ or ~rg~
   (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ; for M-.
   (setq xref-show-xrefs-function #'xref-show-definitions-buffer) ; for grep and the like
 
-  ;; The `outline-xref' is for Emacs 32
+  ;; The `outline-find-headings' is for Emacs 32
   (with-eval-after-load 'outline
-    (define-advice outline-xref (:around (&rest args) prot)
+    (define-advice outline-find-headings (:around (&rest args) prot)
       (let ((xref-show-xrefs-function #'xref-show-definitions-completing-read))
         (apply args))))
 
@@ -9646,10 +9646,11 @@ of packaging. I use it whenever I work on my numerous Emacs packages.
           '("" flymake-mode-line-error-counter
             flymake-mode-line-warning-counter
             flymake-mode-line-note-counter ""))
-    (setq flymake-inline-diagnostics ; Emacs 32
-          '((current . fancy)
-            (current-line . short)
-            (t . eol))))
+    ;; (setq flymake-inline-diagnostics ; Emacs 32
+    ;;       '((current . fancy)
+    ;;         (current-line . short)
+    ;;         (t . eol)))
+    (setq flymake-inline-diagnostics nil)) ; Emacs 32
 
 ;;; Elisp packaging requirements
   (prot-emacs-install package-lint-flymake)
@@ -11973,7 +11974,7 @@ want in this case.
       "g" #'elfeed-update
       "G" #'revert-buffer)
 
-    (define-key elfeed-show-mode-map (kbd "w") #'elfeed-show-yank)
+    (define-key elfeed-show-mode-map (kbd "w") #'elfeed-show-copy-link)
 
     (setq elfeed-last-update-relative 0) ; absolute time in the header-line
     (setq elfeed-search-separator-date-format nil) ; no date sections in the search buffer
