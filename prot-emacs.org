@@ -4038,7 +4038,7 @@ with my customised mode line ([[#h:41ee38d0-9099-4444-85e4-cc8dce00fb9a][The =pr
   (prot-emacs-install keycast)
   (with-eval-after-load 'prot-modeline
     (setq keycast-mode-line-format "%2s%k%c%R")
-    (setq keycast-mode-line-insert-after 'prot-modeline-vc-branch)
+    (setq keycast-mode-line-insert-after 'prot-modeline-major-mode)
     (setq keycast-mode-line-window-predicate 'mode-line-window-selected-p)
     (setq keycast-mode-line-remove-tail-elements nil))
   (with-eval-after-load 'keycast
@@ -14900,7 +14900,8 @@ than `split-width-threshold'."
 
 (defvar-local prot-modeline-vc-branch
     '(:eval
-      (when-let* (((mode-line-window-selected-p))
+      (when-let* ((_ (mode-line-window-selected-p))
+                  (_ (not (prot-common-window-small-p)))
                   (file (or buffer-file-name default-directory))
                   (backend (or (vc-backend file) 'Git))
                   ;; ((vc-git-registered file))
@@ -14995,6 +14996,7 @@ Specific to the current window's mode line.")
     (" "
      (:eval
       (when-let* ((_ (mode-line-window-selected-p))
+                  (_ (not (prot-common-window-small-p)))
                   (current-frame (selected-frame))
                   (_ (frame-live-p current-frame))
                   (parameters (frame-parameters))
