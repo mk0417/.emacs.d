@@ -17,6 +17,13 @@
 
 ;; (add-hook 'window-size-change-functions #'frame-hide-title-bar-when-maximized)
 
+(defvar prot-pgtk-p (string-match-p "PGTK" system-configuration-features)
+  "When non-nil, this is a build --with-pgtk.
+PGTK is the Wayland-specific build of Emacs.")
+
+(when prot-pgtk-p
+  (setq pgtk-input-purpose 'free-form)) ; Emacs 32
+
 ;; Do it again after init so that any intermediate changes are not
 ;; retained.  Note that we cannot rely on setting this to
 ;; `initial-frame-alist' as that may change in the meantime.  We
