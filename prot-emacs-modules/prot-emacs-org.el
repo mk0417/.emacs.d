@@ -268,8 +268,9 @@
 
     (require 'prot-org)
 
+    (setq org-default-notes-file (expand-file-name "20261112T111159--agenda__emacs.org" org-directory))
     (setq org-capture-templates
-          (let* ((file (expand-file-name "20261112T111159--agenda__emacs.org" org-directory))
+          (let* ((file org-default-notes-file)
                  (without-time (concat ":PROPERTIES:\n"
                                        ":CAPTURED: %U\n"
                                        ":CUSTOM_ID: h:%(format-time-string \"%Y%m%dT%H%M%S\")\n"

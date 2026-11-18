@@ -62,7 +62,12 @@
     (setq sentence-end-without-period nil)
     (setq colon-double-space nil)
     (setq use-hard-newlines nil)
-    (setq adaptive-fill-mode t)))
+    (setq adaptive-fill-mode t)
+
+    (require 'prot-text)
+
+    ;; I bind C-; to `prot-comment' and do not use the default M-;
+    (define-key text-mode-map (kbd "M-;") #'prot-text-prefix-leader)))
 
 (prot-emacs-configure
   ;; Arch Linux and AUR package scripts (sh-mode)
@@ -72,8 +77,8 @@
 
 ;;;; Eldoc (Emacs live documentation feedback)
 (prot-emacs-configure
-  ;; (add-hook 'prog-mode-hook #'eldoc-mode)
-  (add-hook 'prog-mode-hook (lambda () (eldoc-mode -1)))
+  (add-hook 'prog-mode-hook #'eldoc-mode)
+  ;; (add-hook 'prog-mode-hook (lambda () (eldoc-mode -1)))
   (setq eldoc-idle-delay 1.0)
   (setq eldoc-message-function #'message)) ; don't use mode line for M-x eval-expression, etc.
 
